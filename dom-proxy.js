@@ -11,6 +11,7 @@ class CLElement {
         this._type = "";
         this._id = "";
         this._dom_element = null;
+        this._cvar = null;
     }
 
     init(type, id) {
@@ -40,6 +41,7 @@ class CLElement {
         this._dom_element = el;
         this._dom_element.onchange = function() {
             alert(el.value);
+            this._cvar = parseInt(el.value);
         };
     }
 
