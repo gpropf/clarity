@@ -8,10 +8,11 @@ function gv(element_name, attribute_name) {
 class CLElement {
     constructor() {
         
-        this._type = "";
-        this._id = "";
-        this._dom_element = null;
-        this._cvar = null;
+        // this._type = "";
+        // this._id = "";
+        // this._dom_element = null;
+        // this._cvar = null;
+        //this._owner = null;
     }
 
     init(type, id) {
@@ -23,7 +24,11 @@ class CLElement {
         return new CLElement();
     }
 
-    setval(v) {
+    
+    set owner(owner) {
+        console.log("Trying to set owner from JS side.");
+        this._owner = owner;
+        console.log("this._owner = " + owner);
         
     }
 
@@ -37,11 +42,16 @@ class CLElement {
 
     set id(id) {
         this._id = id;
+        console.log("ID {id} being set in C++ constructor.");
         var el = document.getElementById(this._id);
         this._dom_element = el;
         this._dom_element.onchange = function() {
-            alert(el.value);
+            //alert(el.value);
+            console.log("Javascript onchange callback called")
             this._cvar = parseInt(el.value);
+            
+            //Module.lerp(9);
+            this._owner["valueUpdated"]();
         };
     }
 
