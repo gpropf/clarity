@@ -5,7 +5,7 @@ JSOUT	= clarity_embind.js
 CPPIN	= clarity.cpp
 
 clarity: clarity.cpp clarity.html
-	$(CC) $(CFLAGS) -o $(JSOUT) 
+	$(CC) $(CFLAGS) -o $(JSOUT) $(CPPIN)
 
 
 all: clarity
