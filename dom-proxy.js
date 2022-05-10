@@ -9,7 +9,7 @@ class CLElement {
     constructor() {
         
         // this._type = "";
-        // this._id = "";
+         //this._id = "";
         // this._dom_element = null;
         // this._cvar = null;
         this._owner = null;
@@ -65,7 +65,7 @@ class CLElement {
             this._cvar = parseInt(el.value);
             
             //Module.lerp(9);
-            Module.CLElement_CPP.updateCurrent(this._cvar);
+            Module.CLElement_CPP.updateCurrent(this._cvar, id);
             //this._owner.valueUpdated();
         };
     }

@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include <map>
 #include <emscripten.h>
 #include <emscripten/val.h>
 #include <emscripten/bind.h>
@@ -36,6 +37,7 @@ public:
     _jsVal.set("id", val(id));
     _jsVal.set("value", val(ival));
     _jsVal.set("owner", this);
+    //globalMap[id] = this;
     
   }
 
@@ -44,8 +46,8 @@ public:
     cout << "C++ side: Value Updated! Now: " << this->_ival << endl;
   }
 
-  static vector<CLElement_CPP> globalVec;
-
+  //static vector<CLElement_CPP> globalVec;
+  static map<string, CLElement_CPP*> globalMap;
   // CLElement_CPP()
   // {
   //   val CLContext = val::global("CLElement");
@@ -75,7 +77,8 @@ public:
   // }
   CLElement_CPP* getSelf() { return this; }
   //static CLElement_CPP* getGlobalCLE( CLElement_CPP  * tptr) { globalCLE->valueUpdated();  return tptr; }
-  static void updateCurrent(int newval) { globalVec.at(0).valueUpdated(newval); }
+  //static void updateCurrent(int newval) { globalVec.at(0).valueUpdated(newval); }
+  static void updateCurrent(int newval, string id) { globalMap[id]->valueUpdated(newval); }
   //void setSelf(CLElement_CPP * newSelf) { _self = newSelf; }
   
 
@@ -126,7 +129,12 @@ int main()
     return -1;
   }
   //CLElement_CPP* testinput = new CLElement_CPP("text", "testinput", 3);
-  CLElement_CPP::globalVec.push_back(CLElement_CPP("text", "testinput", 9));
+  //CLElement_CPP::globalVec.push_back(CLElement_CPP("text", "testinput", 9));
+  
+  CLElement_CPP* testinput = new CLElement_CPP("text", string("testinput"), 39);
+
+  CLElement_CPP::globalMap["testinput"] = testinput;
+  
   //CLElement_CPP::globalCLE = new CLElement_CPP("text", "testinput", 9);
   //testinput->setIval(7);
   //CLElement_CPP::globalCLE = new CLElement_CPP[1];
