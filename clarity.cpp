@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 #include <iostream>
-#include <vector>
+//#include <vector>
 #include <map>
 #include <emscripten.h>
 #include <emscripten/val.h>
