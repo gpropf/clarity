@@ -6,10 +6,12 @@
 // }
 
 class CLElement {
-    constructor() {}
+    constructor() {
+        
+    }
 
-    init(type, id) {
-        this._type = type;
+    init(domtype, id) {
+        this._domtype = domtype;
         this._id = id;
     }
 
@@ -17,29 +19,46 @@ class CLElement {
         return new CLElement();
     }
     
-    set owner(owner) {}
+    set owner(owner) {
+        this._owner = owner;
+    }
 
     get owner() {
         return this._owner;
     }
 
-    get type() {
-        return this._type;
+    set cpptype(cpptype) {
+        this._cpptype = cpptype;    
     }
 
-    set type(type) {        
-        this._type = type;
+    get cpptype() {
+        return this._cpptype;
+    }
+
+    get domtype() {
+        return this._domtype;
+    }
+
+    set domtype(domtype) {        
+        this._domtype = domtype;
     }
 
     set id(id) {
         this._id = id;
         console.log("ID {id} being set in C++ constructor.");
         var el = document.getElementById(this._id);
-        this._dom_element = el;        
+        this._dom_element = el;
+        var cpptype = this._cpptype;        
         this._dom_element.onchange = function() {            
             console.log("Javascript onchange callback called")
-            this._cvar = parseInt(el.value);
-            Module.CLElement_CPP.updateCurrent(this._cvar, id);            
+            if (cpptype == 0) {
+                this._cvar = parseInt(el.value);
+            }
+            else {
+                this._cvar = parseFloat(el.value);
+            }
+            
+            Module.CLElement_CPP.updateVal(this._cvar, id);            
         };
     }
 
