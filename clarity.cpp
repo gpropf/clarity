@@ -126,9 +126,7 @@ int main()
   // World * worldPtr = new ToyClass();
   ToyClass T;
 
-  void cb() {
-    
-  };
+  
 
   int i = 39;
   const int testinputType = CLElement_CPP::FLOAT;
