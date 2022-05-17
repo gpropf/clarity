@@ -32,7 +32,7 @@ public:
   {
     val CLContext = val::global("CLElement");
     _jsVal = CLContext.new_();
-    //_jsVal.set("cpptype", val(int(0)));
+    _jsVal.set("cpptype", val(int(1)));
     _jsVal.set("domtype", val(domtype));
     _jsVal.set("id", val(id));
     _jsVal.set("value", val(ival));
@@ -94,7 +94,7 @@ public:
 
   CLElement_CPP *getSelf() { return this; }
 
-  static void updateIntVal(int newval, string id) { globalMap[id]->intValueUpdated(newval); }
+  
   static void updateVal(int newval, string id) { globalMap[id]->valueUpdated(newval); }
   //static void updateVal(float newval, string id) { globalMap[id]->valueUpdated(newval); }
   static CLElement_CPP & getCLElementById(string id) { return *globalMap[id]; }
@@ -118,8 +118,7 @@ EMSCRIPTEN_BINDINGS(CLElement_CPP)
       .property("anyvalPtrType", &CLElement_CPP::getAnyvalPtrType, &CLElement_CPP::setAnyvalPtrType)
       .function("intValueUpdated", &CLElement_CPP::intValueUpdated)      
       .function("valueUpdated", &CLElement_CPP::valueUpdated)
-      .function("getSelf", &CLElement_CPP::getSelf, allow_raw_pointers())
-      .class_function("updateIntVal", &CLElement_CPP::updateIntVal, allow_raw_pointers())
+      .function("getSelf", &CLElement_CPP::getSelf, allow_raw_pointers())      
       .class_function("getCLElementById", &CLElement_CPP::getCLElementById, allow_raw_pointers())
       .class_function("updateVal", &CLElement_CPP::updateVal, allow_raw_pointers());
   ;
