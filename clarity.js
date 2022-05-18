@@ -14,11 +14,6 @@ class CLElement {
     STRING: 2
   }
 
-  init(domtype, id) {
-    this._domtype = domtype
-    this._id = id
-  }
-
   jsToCPPVal(jsval) {
     switch (this._cpptype) {
       case CLElement.CPP_Type.INT:
@@ -60,32 +55,33 @@ class CLElement {
     this._domtype = domtype
   }
 
+  get anyval() {
+      return this._anyval;
+  }
+
+  set anyval(anyval) {
+      this._anyval = anyval;
+  }
+
   set id(id) {
     this._id = id
     console.log(`ID ${id} being set in C++ constructor.`)
     var el = document.getElementById(this._id)
-    this._dom_element = el
-    var cpptype = this._cpptype
+    this._dom_element = el    
 
     let outerThis = this
     this._dom_element.onchange = function () {
       outerThis._anyval = outerThis.jsToCPPVal(el.value)
-      console.log(`value is ${outerThis._anyval}\n`)
-      console.log('Javascript onchange callback called')
-    //   if (cpptype == 0) {
-    //     this._anyval = parseInt(el.value)
-    //   } else {
-    //     this._anyval = parseFloat(el.value)
-    //   }
-
+      console.log(`JS value is ${outerThis._anyval}\n`)
+      console.log('Javascript onchange callback called')  
       Module.CLElement_CPP.updateVal(id)
     }
   }
 
-  set value(v) {
-    console.log('Setting value in JS to:' + v)
-    this._dom_element.value = v
-  }
+//   set value(v) {
+//     console.log('Setting value in JS to:' + v)
+//     this._dom_element.value = v
+//   }
 }
 
 window.CLElement = CLElement

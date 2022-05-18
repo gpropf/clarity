@@ -17,43 +17,20 @@ class World
   virtual void printState() = 0;
 };
 
-class ToyClass
-{
-public:
-  float total = 0;
-  float delta = 0;
-  void iterate()
-  {
-    total += delta;
-  }
-  void printState()
-  {
-    cout << "Total: " << total << " , delta: " << delta << endl;
-  }
-};
-
 class CLElement_CPP
 {
 public:
-  // enum CPP_Type
-  // {
-  //   INT = int(0),
-  //   UINT = 1,
-  //   FLOAT = 2,
-  //   DOUBLE = 3,
-  //   STRING = 4
-  // };
-
   static const int INT = 0;
   static const int FLOAT = 1;
 
-  CLElement_CPP(string domtype, string id, const int &anyvalPtrType, void *world) : _domtype(domtype),
-                                                                                    _id(id), _world(world)
+  CLElement_CPP(string domtag, string id, const int anyvalPtrType) : _domtag(domtag),
+                                                                     _id(id),
+                                                                     _anyvalPtrType(anyvalPtrType)
   {
     val CLContext = val::global("CLElement");
     _jsVal = CLContext.new_();
     _jsVal.set("cpptype", val(anyvalPtrType));
-    _jsVal.set("domtype", val(domtype));
+    _jsVal.set("domtag", val(domtag));
     _jsVal.set("id", val(id));
     //_jsVal.set("anyval", val(_anyvalPtr));
     _jsVal.set("owner", this);
@@ -63,13 +40,15 @@ public:
   {
     //*(int*)_anyvalPtr = newInt;
     //*reinterpret_cast<int *>(_anyvalPtr) = newInt;
-    cout << "C++ side: New Value!" << endl;
+    //this->_anyvalPtr = (this->_jsVal["anyval"]).as<void *>();
+    *reinterpret_cast<float *>(_anyvalPtr) = this->_jsVal["anyval"].as<float>();
+    cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(_anyvalPtr) << endl;
   }
 
   static map<string, CLElement_CPP *> globalMap;
 
-  string getDomType() const { return _domtype; }
-  void setDomType(string domtype) { _domtype = domtype; }
+  string getDomTag() const { return _domtag; }
+  void setDomTag(string domtag) { _domtag = domtag; }
   string getId() const { return _id; }
   void setId(string id) { _id = id; }
   void *getAnyvalPtr() const { return _anyvalPtr; }
@@ -85,9 +64,8 @@ public:
   static CLElement_CPP &getCLElementById(string id) { return *globalMap[id]; }
 
 private:
-  void (*updateCallback)();
-  void *_world;
-  std::string _domtype;
+  std::string _domtag;
+  string _inputType;
   std::string _id;
   int _anyvalPtrType;
   void *_anyvalPtr;
@@ -97,8 +75,8 @@ private:
 EMSCRIPTEN_BINDINGS(CLElement_CPP)
 {
   class_<CLElement_CPP>("CLElement_CPP")
-      .constructor<std::string, std::string, const int &, void *>(allow_raw_pointers())
-      .property("domtype", &CLElement_CPP::getDomType, &CLElement_CPP::setDomType)
+      .constructor<std::string, std::string, const int>(allow_raw_pointers())
+      .property("domtag", &CLElement_CPP::getDomTag, &CLElement_CPP::setDomTag)
       .property("id", &CLElement_CPP::getId, &CLElement_CPP::setId)
       .property("anyvalPtrType", &CLElement_CPP::getAnyvalPtrType, &CLElement_CPP::setAnyvalPtrType)
       //.property("anyvalPtr", &CLElement_CPP::getAnyvalPtr, &CLElement_CPP::setAnyvalPtr)
@@ -107,6 +85,33 @@ EMSCRIPTEN_BINDINGS(CLElement_CPP)
       .class_function("getCLElementById", &CLElement_CPP::getCLElementById, allow_raw_pointers())
       .class_function("updateVal", &CLElement_CPP::updateVal, allow_raw_pointers());
 }
+
+class ToyClass
+{
+public:
+  float total = 0;
+  float delta = 0;
+
+  ToyClass()
+  {
+    delta = 51;
+    const int testinputType = CLElement_CPP::FLOAT;
+    CLElement_CPP *testinput = new CLElement_CPP("text", string("testinput"), testinputType);
+    testinput->setAnyvalPtrType(testinputType);
+    testinput->setId("testinput");
+    testinput->splicePtrs((float *)&(delta));
+    CLElement_CPP::globalMap["testinput"] = testinput;
+  }
+
+  void iterate()
+  {
+    total += delta;
+  }
+  void printState()
+  {
+    cout << "Total: " << total << " , delta: " << delta << endl;
+  }
+};
 
 int main()
 {
@@ -121,20 +126,8 @@ int main()
     return -1;
   }
 
-  
-
   // World * worldPtr = new ToyClass();
   ToyClass T;
-
-  
-
-  int i = 39;
-  const int testinputType = CLElement_CPP::FLOAT;
-  CLElement_CPP *testinput = new CLElement_CPP("text", string("testinput"), testinputType, &T);
-  testinput->setAnyvalPtrType(testinputType);
-  testinput->setId("testinput");
-  testinput->splicePtrs((float *)&(T.delta));
-  CLElement_CPP::globalMap["testinput"] = testinput;
 
   printf("Everything should be set!\n");
 
