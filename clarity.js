@@ -65,6 +65,7 @@ class CLElement {
 
   set id(id) {
     this._id = id
+    //this._owner = Module.CLElement_CPP.getCLElementById(id);
     console.log(`ID ${id} being set in C++ constructor.`)
     var el = document.getElementById(this._id)
     this._dom_element = el    
@@ -75,6 +76,7 @@ class CLElement {
       console.log(`JS value is ${outerThis._anyval}\n`)
       console.log('Javascript onchange callback called')  
       Module.CLElement_CPP.updateVal(id)
+      //this._owner.valueUpdated();
     }
   }
 

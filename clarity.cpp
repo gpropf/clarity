@@ -33,16 +33,28 @@ public:
     _jsVal.set("domtag", val(domtag));
     _jsVal.set("id", val(id));
     //_jsVal.set("anyval", val(_anyvalPtr));
-    _jsVal.set("owner", this);
+    //_jsVal.set("owner", val(this));
   }
 
   void valueUpdated()
   {
-    //*(int*)_anyvalPtr = newInt;
-    //*reinterpret_cast<int *>(_anyvalPtr) = newInt;
-    //this->_anyvalPtr = (this->_jsVal["anyval"]).as<void *>();
-    *reinterpret_cast<float *>(_anyvalPtr) = this->_jsVal["anyval"].as<float>();
-    cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(_anyvalPtr) << endl;
+    switch (this->_anyvalPtrType)
+    {
+    case INT:
+      *reinterpret_cast<int *>(_anyvalPtr) = this->_jsVal["anyval"].as<int>();
+      cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(_anyvalPtr) << endl;
+      break;
+    case FLOAT:
+      *reinterpret_cast<float *>(_anyvalPtr) = this->_jsVal["anyval"].as<float>();
+      cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(_anyvalPtr) << endl;
+      break;
+    default:
+      break;
+    }
+
+    // this->_anyvalPtr = (this->_jsVal["anyval"]).as<void *>();
+
+    
   }
 
   static map<string, CLElement_CPP *> globalMap;
@@ -61,7 +73,7 @@ public:
   }
   void splicePtrs(void *worldValuePtr) { _anyvalPtr = worldValuePtr; }
   static void updateVal(string id) { globalMap[id]->valueUpdated(); }
-  static CLElement_CPP &getCLElementById(string id) { return *globalMap[id]; }
+  static CLElement_CPP &getCLElementById(string id) { return *(globalMap[id]); }
 
 private:
   std::string _domtag;
@@ -90,16 +102,16 @@ class ToyClass
 {
 public:
   float total = 0;
-  float delta = 0;
+  int delta = 0;
 
   ToyClass()
   {
     delta = 51;
-    const int testinputType = CLElement_CPP::FLOAT;
+    const int testinputType = CLElement_CPP::INT;
     CLElement_CPP *testinput = new CLElement_CPP("text", string("testinput"), testinputType);
     testinput->setAnyvalPtrType(testinputType);
     testinput->setId("testinput");
-    testinput->splicePtrs((float *)&(delta));
+    testinput->splicePtrs((int *)&(delta));
     CLElement_CPP::globalMap["testinput"] = testinput;
   }
 
