@@ -20,6 +20,7 @@ class World
 class CLElement_CPP
 {
 public:
+  enum class TAGS { div, input, button };
   static const int INT = 0;
   static const int FLOAT = 1;
 
@@ -41,6 +42,18 @@ public:
     //_jsval.set("owner", val(this));
   }
 
+  void setupEventHandlers() {
+    switch (this->_tag)
+    {
+    case TAGS::div:
+      /* code */
+      break;
+    
+    default:
+      break;
+    }
+  }
+
   void valueUpdated()
   {
     switch (this->_anyvalPtrType)
@@ -57,6 +70,9 @@ public:
       break;
     }
   }
+
+  
+
 
   bool appendChild(CLElement_CPP & child) {
   
@@ -129,7 +145,7 @@ public:
     CLElement_CPP *testinput = new CLElement_CPP("input", "text", "tc_delta", testinputType);
     div->appendChild(*testinput);
     testinput->setAnyvalPtrType(testinputType);
-    testinput->setId("tc_delta");
+    //testinput->setId("tc_delta");
     testinput->splicePtrs((int *)&(delta));
     //CLElement_CPP::globalMap["tc_delta"] = testinput;
   }
