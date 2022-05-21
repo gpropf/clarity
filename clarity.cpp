@@ -23,17 +23,22 @@ public:
   static const int INT = 0;
   static const int FLOAT = 1;
 
-  CLElement_CPP(string domtag, string id, const int anyvalPtrType) : _domtag(domtag),
-                                                                     _id(id),
-                                                                     _anyvalPtrType(anyvalPtrType)
+  CLElement_CPP(string tag, string type, string id, const int anyvalPtrType) : _tag(tag),
+                                                                               _type(type),
+                                                                               _id(id),
+                                                                               _anyvalPtrType(anyvalPtrType)
+
   {
     val CLContext = val::global("CLElement");
-    _jsVal = CLContext.new_();
-    _jsVal.set("cpptype", val(anyvalPtrType));
-    _jsVal.set("domtag", val(domtag));
-    _jsVal.set("id", val(id));
-    //_jsVal.set("anyval", val(_anyvalPtr));
-    //_jsVal.set("owner", val(this));
+    _jsval = CLContext.new_();
+    _jsval.set("cpptype", val(anyvalPtrType));
+    _jsval.set("tag", val(tag));
+    _jsval.set("type", val(type));
+    _jsval.set("id", val(id));
+
+    CLElement_CPP::globalMap[id] = this;
+    //_jsval.set("anyval", val(_anyvalPtr));
+    //_jsval.set("owner", val(this));
   }
 
   void valueUpdated()
@@ -41,54 +46,64 @@ public:
     switch (this->_anyvalPtrType)
     {
     case INT:
-      *reinterpret_cast<int *>(_anyvalPtr) = this->_jsVal["anyval"].as<int>();
+      *reinterpret_cast<int *>(_anyvalPtr) = this->_jsval["anyval"].as<int>();
       cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(_anyvalPtr) << endl;
       break;
     case FLOAT:
-      *reinterpret_cast<float *>(_anyvalPtr) = this->_jsVal["anyval"].as<float>();
+      *reinterpret_cast<float *>(_anyvalPtr) = this->_jsval["anyval"].as<float>();
       cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(_anyvalPtr) << endl;
       break;
     default:
       break;
     }
+  }
 
-    // this->_anyvalPtr = (this->_jsVal["anyval"]).as<void *>();
-
-    
+  bool appendChild(CLElement_CPP & child) {
+  
+    _children.push_back(child);
+    _jsval.call<void>("appendChild", child.getJsval());
+    return true; // FIXME: need to check for duplicate ids.
   }
 
   static map<string, CLElement_CPP *> globalMap;
 
-  string getDomTag() const { return _domtag; }
-  void setDomTag(string domtag) { _domtag = domtag; }
+  string getTag() const { return _tag; }
+  void setTag(string tag) { _tag = tag; }
+  void setParent(CLElement_CPP * parent) { this->_parent = parent; }
+  CLElement_CPP * getParent() { return this->_parent; }
   string getId() const { return _id; }
   void setId(string id) { _id = id; }
+
+  val getJsval() const { return _jsval; }
+  void setJsval(val jsval) { _jsval = jsval; }
   void *getAnyvalPtr() const { return _anyvalPtr; }
   void setAnyvalPtr(void *valptr) { _anyvalPtr = valptr; }
   int getAnyvalPtrType() const { return _anyvalPtrType; }
   void setAnyvalPtrType(int cpp_type)
   {
     _anyvalPtrType = cpp_type;
-    _jsVal.set("cpptype", cpp_type);
+    _jsval.set("cpptype", cpp_type);
   }
   void splicePtrs(void *worldValuePtr) { _anyvalPtr = worldValuePtr; }
   static void updateVal(string id) { globalMap[id]->valueUpdated(); }
   static CLElement_CPP &getCLElementById(string id) { return *(globalMap[id]); }
 
 private:
-  std::string _domtag;
-  string _inputType;
-  std::string _id;
+  vector<CLElement_CPP> _children;
+  CLElement_CPP * _parent;
+  string _tag;
+  string _type;
+  string _id;
   int _anyvalPtrType;
   void *_anyvalPtr;
-  val _jsVal = val::global("CLElement");
+  val _jsval = val::global("CLElement");
 };
 
 EMSCRIPTEN_BINDINGS(CLElement_CPP)
 {
   class_<CLElement_CPP>("CLElement_CPP")
-      .constructor<std::string, std::string, const int>(allow_raw_pointers())
-      .property("domtag", &CLElement_CPP::getDomTag, &CLElement_CPP::setDomTag)
+      .constructor<string, string, string, const int>(allow_raw_pointers())
+      .property("tag", &CLElement_CPP::getTag, &CLElement_CPP::setTag)
       .property("id", &CLElement_CPP::getId, &CLElement_CPP::setId)
       .property("anyvalPtrType", &CLElement_CPP::getAnyvalPtrType, &CLElement_CPP::setAnyvalPtrType)
       //.property("anyvalPtr", &CLElement_CPP::getAnyvalPtr, &CLElement_CPP::setAnyvalPtr)
@@ -108,11 +123,15 @@ public:
   {
     delta = 51;
     const int testinputType = CLElement_CPP::INT;
-    CLElement_CPP *testinput = new CLElement_CPP("text", string("testinput"), testinputType);
+    CLElement_CPP *div = new CLElement_CPP("div", "", "tc_div", testinputType);
+
+    
+    CLElement_CPP *testinput = new CLElement_CPP("input", "text", "tc_delta", testinputType);
+    div->appendChild(*testinput);
     testinput->setAnyvalPtrType(testinputType);
-    testinput->setId("testinput");
+    testinput->setId("tc_delta");
     testinput->splicePtrs((int *)&(delta));
-    CLElement_CPP::globalMap["testinput"] = testinput;
+    //CLElement_CPP::globalMap["tc_delta"] = testinput;
   }
 
   void iterate()

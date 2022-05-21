@@ -10,8 +10,8 @@ class CLElement {
 
   static CPP_Type = {
     INT: 0,
-    FLOAT: 1,    
-    STRING: 2
+    FLOAT: 1,
+    STRING: 2,
   }
 
   jsToCPPVal(jsval) {
@@ -26,6 +26,10 @@ class CLElement {
   }
 
   //object.freeze(CPP_Type);
+
+  appendChild(child) {
+    this.domElement.appendChild(child.domElement);
+  }
 
   createCLElement() {
     return new CLElement()
@@ -47,43 +51,67 @@ class CLElement {
     return this._cpptype
   }
 
-  get domtype() {
-    return this._domtype
+  get tag() {
+    return this._tag
   }
 
-  set domtype(domtype) {
-    this._domtype = domtype
+  set tag(tag) {
+    this._tag = tag
+  }
+
+  get type() {
+    return this._type
+  }
+
+  set type(type) {
+    this._type = type
   }
 
   get anyval() {
-      return this._anyval;
+    return this._anyval
   }
 
   set anyval(anyval) {
-      this._anyval = anyval;
+    this._anyval = anyval
+  }
+
+  get domElement() {
+    return this._domElement
   }
 
   set id(id) {
     this._id = id
     //this._owner = Module.CLElement_CPP.getCLElementById(id);
-    console.log(`ID ${id} being set in C++ constructor.`)
+    console.log(`ID ${id} being set by C++ constructor.`)
     var el = document.getElementById(this._id)
-    this._dom_element = el    
+    if (el == null) {
+      el = document.createElement(this._tag)
+      document.body.appendChild(el)
+      el.id = id
+      el.type = this._type
+      
+    }
+    this._domElement = el
+    
 
     let outerThis = this
-    this._dom_element.onchange = function () {
+    this._domElement.onchange = function () {
       outerThis._anyval = outerThis.jsToCPPVal(el.value)
-      console.log(`JS value is ${outerThis._anyval}\n`)
-      console.log('Javascript onchange callback called')  
+      console.log(`${outerThis.id}: JS value is ${outerThis._anyval}\n`)
+      console.log('Javascript onchange callback called')
       Module.CLElement_CPP.updateVal(id)
       //this._owner.valueUpdated();
     }
   }
 
-//   set value(v) {
-//     console.log('Setting value in JS to:' + v)
-//     this._dom_element.value = v
-//   }
+  get id() {
+    return this._id;
+  }
+
+  //   set value(v) {
+  //     console.log('Setting value in JS to:' + v)
+  //     this._domElement.value = v
+  //   }
 }
 
 window.CLElement = CLElement
