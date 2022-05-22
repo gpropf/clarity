@@ -20,11 +20,11 @@ class World
 class CLElement_CPP
 {
 public:
-  enum class TAGS { div, input, button };
+  enum class Tag: int { div, button, input };
   static const int INT = 0;
   static const int FLOAT = 1;
 
-  CLElement_CPP(string tag, string type, string id, const int anyvalPtrType) : _tag(tag),
+  CLElement_CPP(Tag tag, string type, string id, const int anyvalPtrType) : _tag(tag),
                                                                                _type(type),
                                                                                _id(id),
                                                                                _anyvalPtrType(anyvalPtrType)
@@ -42,17 +42,23 @@ public:
     //_jsval.set("owner", val(this));
   }
 
-  void setupEventHandlers() {
-    switch (this->_tag)
-    {
-    case TAGS::div:
-      /* code */
-      break;
+  // void setupEventHandlers() {
+  //   switch (this->_tag)
+  //   {
+  //   case Tag::div:
+  //     /* code */
+  //     break;
+  //   case Tag::button:
+  //     /* code */
+  //     break;
+  //   case Tag::input:
+  //     /* code */
+  //     break;
     
-    default:
-      break;
-    }
-  }
+  //   default:
+  //     break;
+  //   }
+  // }
 
   void valueUpdated()
   {
@@ -83,8 +89,8 @@ public:
 
   static map<string, CLElement_CPP *> globalMap;
 
-  string getTag() const { return _tag; }
-  void setTag(string tag) { _tag = tag; }
+  Tag getTag() const { return _tag; }
+  void setTag(Tag tag) { _tag = tag; }
   void setParent(CLElement_CPP * parent) { this->_parent = parent; }
   CLElement_CPP * getParent() { return this->_parent; }
   string getId() const { return _id; }
@@ -107,7 +113,7 @@ public:
 private:
   vector<CLElement_CPP> _children;
   CLElement_CPP * _parent;
-  string _tag;
+  Tag _tag;
   string _type;
   string _id;
   int _anyvalPtrType;
@@ -118,7 +124,7 @@ private:
 EMSCRIPTEN_BINDINGS(CLElement_CPP)
 {
   class_<CLElement_CPP>("CLElement_CPP")
-      .constructor<string, string, string, const int>(allow_raw_pointers())
+      .constructor<CLElement_CPP::Tag, string, string, const int>(allow_raw_pointers())
       .property("tag", &CLElement_CPP::getTag, &CLElement_CPP::setTag)
       .property("id", &CLElement_CPP::getId, &CLElement_CPP::setId)
       .property("anyvalPtrType", &CLElement_CPP::getAnyvalPtrType, &CLElement_CPP::setAnyvalPtrType)
@@ -127,6 +133,10 @@ EMSCRIPTEN_BINDINGS(CLElement_CPP)
       .function("splicePtrs", &CLElement_CPP::splicePtrs, allow_raw_pointers())
       .class_function("getCLElementById", &CLElement_CPP::getCLElementById, allow_raw_pointers())
       .class_function("updateVal", &CLElement_CPP::updateVal, allow_raw_pointers());
+  enum_<CLElement_CPP::Tag>("Tag")
+      .value("div", CLElement_CPP::Tag::div)
+      .value("button", CLElement_CPP::Tag::button)
+      .value("input", CLElement_CPP::Tag::input);
 }
 
 class ToyClass
@@ -139,10 +149,10 @@ public:
   {
     delta = 51;
     const int testinputType = CLElement_CPP::INT;
-    CLElement_CPP *div = new CLElement_CPP("div", "", "tc_div", testinputType);
+    CLElement_CPP *div = new CLElement_CPP(CLElement_CPP::Tag::div, "", "tc_div", testinputType);
 
     
-    CLElement_CPP *testinput = new CLElement_CPP("input", "text", "tc_delta", testinputType);
+    CLElement_CPP *testinput = new CLElement_CPP(CLElement_CPP::Tag::input, "text", "tc_delta", testinputType);
     div->appendChild(*testinput);
     testinput->setAnyvalPtrType(testinputType);
     //testinput->setId("tc_delta");

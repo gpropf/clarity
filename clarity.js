@@ -12,6 +12,12 @@ class CLElement {
     INT: 0,
     FLOAT: 1,
     STRING: 2,
+  };
+
+  static Tagmap = {
+    0: "div",
+    1: "button",
+    2: "input"
   }
 
   jsToCPPVal(jsval) {
@@ -85,7 +91,7 @@ class CLElement {
     console.log(`ID ${id} being set by C++ constructor.`)
     var el = document.getElementById(this._id)
     if (el == null) {
-      el = document.createElement(this._tag)
+      el = document.createElement(CLElement.Tagmap[this._tag.value])
       document.body.appendChild(el)
       el.id = id
       el.type = this._type
