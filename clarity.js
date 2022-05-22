@@ -33,7 +33,7 @@ class CLElement {
 
   //object.freeze(CPP_Type);
 
-  installEventHandler() {
+  installEventHandlers() {
     let outerThis = this
     var handlerMap = {
       0: null,
@@ -102,6 +102,7 @@ class CLElement {
   }
 
   set id(id) {
+    //this._owner = Module.CLElement_CPP.getCLElementById[id]
     this._id = id
     //this._owner = Module.CLElement_CPP.getCLElementById(id);
     console.log(`ID ${id} being set by C++ constructor.`)
@@ -124,7 +125,7 @@ class CLElement {
     //   Module.CLElement_CPP.updateVal(id)
     //   //this._owner.valueUpdated();
     // }
-    this.installEventHandler()
+    this.installEventHandlers()
   }
 
   get id() {
