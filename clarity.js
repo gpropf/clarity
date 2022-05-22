@@ -17,7 +17,7 @@ class CLElement {
   static Tagmap = {
     0: "div",
     1: "button",
-    2: "input"
+    2: "input",
   }
 
   jsToCPPVal(jsval) {
@@ -32,6 +32,22 @@ class CLElement {
   }
 
   //object.freeze(CPP_Type);
+
+  installEventHandler() {
+    let outerThis = this
+    var handlerMap = {
+      0: null,
+      1: null,
+      2: function () {
+        outerThis._anyval = outerThis.jsToCPPVal(outerThis._domElement.value)
+        console.log(`${outerThis.id}: JS value is ${outerThis._anyval}\n`)
+        console.log('Javascript onchange callback called')
+        Module.CLElement_CPP.updateVal(outerThis._id)
+        //this._owner.valueUpdated();
+      }
+    }
+    this._domElement.onchange = handlerMap[this._tag.value];
+  }
 
   appendChild(child) {
     this.domElement.appendChild(child.domElement);
@@ -100,14 +116,15 @@ class CLElement {
     this._domElement = el
     
 
-    let outerThis = this
-    this._domElement.onchange = function () {
-      outerThis._anyval = outerThis.jsToCPPVal(el.value)
-      console.log(`${outerThis.id}: JS value is ${outerThis._anyval}\n`)
-      console.log('Javascript onchange callback called')
-      Module.CLElement_CPP.updateVal(id)
-      //this._owner.valueUpdated();
-    }
+    // let outerThis = this
+    // this._domElement.onchange = function () {
+    //   outerThis._anyval = outerThis.jsToCPPVal(el.value)
+    //   console.log(`${outerThis.id}: JS value is ${outerThis._anyval}\n`)
+    //   console.log('Javascript onchange callback called')
+    //   Module.CLElement_CPP.updateVal(id)
+    //   //this._owner.valueUpdated();
+    // }
+    this.installEventHandler()
   }
 
   get id() {
