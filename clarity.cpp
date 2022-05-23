@@ -11,11 +11,11 @@
 using namespace std;
 using namespace emscripten;
 
-class World
-{
-  virtual void iterate() = 0;
-  virtual void printState() = 0;
-};
+// class World
+// {
+//   virtual void iterate() = 0;
+//   virtual void printState() = 0;
+// };
 
 class CLElement_CPP
 {
@@ -23,6 +23,8 @@ public:
   enum class Tag: int { div, button, input };
   static const int INT = 0;
   static const int FLOAT = 1;
+
+  CLElement_CPP() {}
 
   CLElement_CPP(Tag tag, string type, string id, const int anyvalPtrType) : _tag(tag),
                                                                                _type(type),
@@ -42,23 +44,6 @@ public:
     //_jsval.set("owner", val(this));
   }
 
-  // void setupEventHandlers() {
-  //   switch (this->_tag)
-  //   {
-  //   case Tag::div:
-  //     /* code */
-  //     break;
-  //   case Tag::button:
-  //     /* code */
-  //     break;
-  //   case Tag::input:
-  //     /* code */
-  //     break;
-    
-  //   default:
-  //     break;
-  //   }
-  // }
 
   void valueUpdated()
   {
@@ -76,9 +61,6 @@ public:
       break;
     }
   }
-
-  
-
 
   bool appendChild(CLElement_CPP & child) {
   
@@ -121,6 +103,39 @@ private:
   val _jsval = val::global("CLElement");
 };
 
+class ToyModel {
+  float s_, delta_;
+  void iterate() {
+    s_ += delta_;
+  }
+  ToyModel(float s, float delta): s_(s), delta_(delta) {}
+};
+
+
+class ToyControl: public CLElement_CPP
+{
+
+public:
+  
+
+  ToyControl() {
+    
+    
+    CLElement_CPP *mainDiv_ = new CLElement_CPP(CLElement_CPP::Tag::div, "", "mainDiv_", CLElement_CPP::INT);    
+    CLElement_CPP *inputA_ = new CLElement_CPP(CLElement_CPP::Tag::input, "text", "inputA_", CLElement_CPP::FLOAT);
+    CLElement_CPP *inputB_ = new CLElement_CPP(CLElement_CPP::Tag::input, "text", "inputB_", CLElement_CPP::FLOAT);    
+    inputA_->setAnyvalPtrType(CLElement_CPP::FLOAT);
+    inputB_->setAnyvalPtrType(CLElement_CPP::FLOAT);
+    mainDiv_->appendChild(*inputA_);
+    mainDiv_->appendChild(*inputB_);
+    
+    //testinput->setId("tc_delta");
+    
+    //CLElement_CPP::globalMap["tc_delta"] = testinput;
+  } 
+  
+};
+
 EMSCRIPTEN_BINDINGS(CLElement_CPP)
 {
   class_<CLElement_CPP>("CLElement_CPP")
@@ -139,36 +154,7 @@ EMSCRIPTEN_BINDINGS(CLElement_CPP)
       .value("input", CLElement_CPP::Tag::input);
 }
 
-class ToyClass
-{
-public:
-  float total = 0;
-  int delta = 0;
 
-  ToyClass()
-  {
-    delta = 51;
-    const int testinputType = CLElement_CPP::INT;
-    CLElement_CPP *div = new CLElement_CPP(CLElement_CPP::Tag::div, "", "tc_div", testinputType);
-
-    
-    CLElement_CPP *testinput = new CLElement_CPP(CLElement_CPP::Tag::input, "text", "tc_delta", testinputType);
-    div->appendChild(*testinput);
-    testinput->setAnyvalPtrType(testinputType);
-    //testinput->setId("tc_delta");
-    testinput->splicePtrs((int *)&(delta));
-    //CLElement_CPP::globalMap["tc_delta"] = testinput;
-  }
-
-  void iterate()
-  {
-    total += delta;
-  }
-  void printState()
-  {
-    cout << "Total: " << total << " , delta: " << delta << endl;
-  }
-};
 
 int main()
 {
@@ -182,42 +168,12 @@ int main()
   {
     return -1;
   }
+  //testinput->splicePtrs((int *)&(delta));
 
   // World * worldPtr = new ToyClass();
-  ToyClass T;
+  ToyControl T;
 
   printf("Everything should be set!\n");
 
   return 0;
 }
-
-// ============================================================
-
-// void intValueUpdated(int newval)
-// {
-//   this->_ival = newval;
-//   cout << "C++ side: Value Updated! Now: " << this->_ival << endl;
-// }
-
-// void valueUpdated(void* newvalPtr)
-// {
-//   switch(this->_anyvalPtrType) {
-//     case INT:
-//       _anyvalPtr = reinterpret_cast<int*>(newvalPtr);
-
-//     break;
-//     case FLOAT:
-
-//     break;
-//   }
-
-//   // this->_ival = newval;
-//   // cout << "C++ side: Value Updated! Now: " << this->_ival << endl;
-// }
-
-// void valueUpdated(float newFloat)
-// {
-//   //*(int*)_anyvalPtr = newInt;
-//   *reinterpret_cast<float *>(_anyvalPtr) = newFloat;
-//   cout << "C++ side: using reinterpret_cast! New value Now: " << *reinterpret_cast<float *>(_anyvalPtr) << endl;
-// }
