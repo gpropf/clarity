@@ -8,24 +8,29 @@
 class CLElement {
   constructor() {}
 
-  static CPP_Type = {
-    INT: 0,
-    FLOAT: 1,
-    STRING: 2,
-  };
-
-  static Tagmap = {
-    0: "div",
-    1: "button",
-    2: "input",
+  
+  translateTag() {
+    switch (this._tag) {
+      case Module.CLElement_CPPTag.Div:
+        return "div";
+      case Module.CLElement_CPPTag.Button:
+        return "button";
+      case Module.CLElement_CPPTag.Input:
+        return "input";
+      default:
+        return "br";
+    }
   }
+
 
   jsToCPPVal(jsval) {
     switch (this._cpptype) {
-      case CLElement.CPP_Type.INT:
+      case Module.CLElement_CPPCppType.Int:
         return parseInt(jsval)
-      case CLElement.CPP_Type.FLOAT:
+      case Module.CLElement_CPPCppType.Float:
         return parseFloat(jsval)
+      case Module.CLElement_CPPCppType.NoData:
+        return null;
       default:
         return jsval
     }
@@ -35,18 +40,20 @@ class CLElement {
 
   installEventHandlers() {
     let outerThis = this
-    var handlerMap = {
-      0: null,
-      1: null,
-      2: function () {
+    var handlerMap = new Map([
+      [Module.CLElement_CPPTag.Div , null],
+      [Module.CLElement_CPPTag.Button , null],
+      [Module.CLElement_CPPTag.Input , function (e) {
         outerThis._anyval = outerThis.jsToCPPVal(outerThis._domElement.value)
         console.log(`${outerThis.id}: JS value is ${outerThis._anyval}\n`)
         console.log('Javascript onchange callback called')
         Module.CLElement_CPP.updateVal(outerThis._id)
         //this._owner.valueUpdated();
-      }
-    }
-    this._domElement.onchange = handlerMap[this._tag.value];
+      }]]);
+      
+    
+    this._domElement.addEventListener('change', handlerMap[this._tag]);
+    console.log(this._domElement.onchange);
   }
 
   appendChild(child) {
@@ -104,11 +111,14 @@ class CLElement {
   set id(id) {
     //this._owner = Module.CLElement_CPP.getCLElementById[id]
     this._id = id
+    //console.log(`jsToCPPVal: ${this.jsToCPPVal('1.3')}`)
     //this._owner = Module.CLElement_CPP.getCLElementById(id);
     console.log(`ID ${id} being set by C++ constructor.`)
     var el = document.getElementById(this._id)
     if (el == null) {
-      el = document.createElement(CLElement.Tagmap[this._tag.value])
+      //el = document.createElement(this.getTag())
+      console.log(`ELEMENT ${id}: tag is ${this._tag.value}`)
+      el = document.createElement(this.translateTag())
       document.body.appendChild(el)
       el.id = id
       el.type = this._type
@@ -117,6 +127,7 @@ class CLElement {
     this._domElement = el
     
 
+    
     // let outerThis = this
     // this._domElement.onchange = function () {
     //   outerThis._anyval = outerThis.jsToCPPVal(el.value)
