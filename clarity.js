@@ -40,24 +40,6 @@ class CLElement {
 
   //object.freeze(CPP_Type);
 
-  installEventHandlers() {
-    let outerThis = this
-    var handlerMap = new Map([
-      [Module.CLElement_CPPTag.Div , null],
-      [Module.CLElement_CPPTag.Button , null],
-      [Module.CLElement_CPPTag.Input , function (e) {
-        outerThis._anyval = outerThis.jsToCPPVal(outerThis._domElement.value)
-        console.log(`${outerThis.id}: JS value is ${outerThis._anyval}\n`)
-        console.log('Javascript onchange callback called')
-        Module.CLElement_CPP.updateVal(outerThis._id)
-        //this._owner.valueUpdated();
-      }]]);
-      
-    
-    this._domElement.addEventListener('change', handlerMap[this._tag]);
-    console.log(this._domElement.onchange);
-  }
-
   appendChild(child) {
     this.domElement.appendChild(child.domElement);
   }
@@ -128,16 +110,6 @@ class CLElement {
     }
     this._domElement = el
     
-
-    
-    
-    // this._domElement.onchange = function () {
-    //   outerThis._anyval = outerThis.jsToCPPVal(el.value)
-    //   console.log(`${outerThis.id}: JS value is ${outerThis._anyval}\n`)
-    //   console.log('Javascript onchange callback called')
-    //   Module.CLElement_CPP.updateVal(id)
-    //   //this._owner.valueUpdated();
-    // }
     if (this._tag == Module.CLElement_CPPTag.Input) {
       var outerThis = this;
       this._domElement.addEventListener('change', function (e) {
@@ -145,20 +117,13 @@ class CLElement {
         console.log(`${outerThis.id}: JS value is ${outerThis._anyval}\n`)
         console.log('Javascript onchange callback called')
         Module.CLElement_CPP.updateVal(outerThis._id)
-        //this._owner.valueUpdated();
       })
     }
-    //this.installEventHandlers()
   }
 
   get id() {
     return this._id;
-  }
-
-  //   set value(v) {
-  //     console.log('Setting value in JS to:' + v)
-  //     this._domElement.value = v
-  //   }
+  }  
 }
 
 window.CLElement = CLElement

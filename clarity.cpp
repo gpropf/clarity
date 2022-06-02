@@ -17,121 +17,149 @@ using namespace emscripten;
 //   virtual void printState() = 0;
 // };
 // Run with 'python3 -m http.server 8000'
-
-class CLElement_CPP
+namespace clarity
 {
-public:
-  enum class Tag : int
+
+  
+
+
+  class WebElement
   {
-    Div,
-    Button,
-    Input
-  };
-
-  enum class CppType : int
-  {
-    Int,
-    Float,
-    String,
-    NoData
-  };
-
-  //===========
-  CLElement_CPP() {}
-
-  CLElement_CPP(const Tag tag, string type, string id, const CppType anyvalPtrType) : _tag(tag),
-                                                                                _type(type),
-                                                                                _id(id),
-                                                                                _anyvalPtrType(anyvalPtrType)
-
-  {
-    val CLContext = val::global("CLElement");
-    _jsval = CLContext.new_();
-    _jsval.set("cpptype", val(anyvalPtrType));
-    _jsval.set("tag", val(tag));
-    _jsval.set("type", val(type));
-    _jsval.set("id", val(id));
-
-    _default_id = _id;
-    CLElement_CPP::globalMap[id] = this;
-    //_jsval.set("anyval", val(_anyvalPtr));
-    //_jsval.set("owner", val(this));
-  }
-
-
-
-  void valueUpdated()
-  {
-    switch (this->_anyvalPtrType)
+  public:
+    enum class Tag : int
     {
-    case CppType::Int:
-      *reinterpret_cast<int *>(_anyvalPtr) = this->_jsval["anyval"].as<int>();
-      cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(_anyvalPtr) << endl;
-      break;
-    case CppType::Float:
-      *reinterpret_cast<float *>(_anyvalPtr) = this->_jsval["anyval"].as<float>();
-      cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(_anyvalPtr) << endl;
-      break;
-    case CppType::String:
-      //*reinterpret_cast<float *>(_anyvalPtr) = this->_jsval["anyval"].as<float>();
-      cout << "C++ side: New String Value: " << endl;
-      break;
-    case CppType::NoData:
-      //*reinterpret_cast<float *>(_anyvalPtr) = this->_jsval["anyval"].as<float>();
-      cout << "C++ side: New NoData Value: " << endl;
-      break;
-    default:
-      break;
+      Div,
+      Button,
+      Input
+    };
+
+    enum class CppType : int
+    {
+      Int,
+      Float,
+      String,
+      NoData
+    };
+
+    //===========
+    //ValueElement() {}
+
+    WebElement(string id, string tag) {}
+
+    WebElement(const Tag tag, string type, string id, const CppType anyvalPtrType) : _tag(tag),
+                                                                                     _type(type),
+                                                                                     _id(id),
+                                                                                     _anyvalPtrType(anyvalPtrType)
+
+    {
+      val CLContext = val::global("CLElement");
+      _jsval = CLContext.new_();
+      _jsval.set("cpptype", val(anyvalPtrType));
+      _jsval.set("tag", val(tag));
+      _jsval.set("type", val(type));
+      _jsval.set("id", val(id));
+
+      _default_id = _id;
+      WebElement::globalMap[id] = this;
+      //_jsval.set("anyval", val(_anyvalPtr));
+      //_jsval.set("owner", val(this));
     }
-  }
 
-  bool appendChild(CLElement_CPP &child)
+    void valueUpdated()
+    {
+      switch (this->_anyvalPtrType)
+      {
+      case CppType::Int:
+        *reinterpret_cast<int *>(_anyvalPtr) = this->_jsval["anyval"].as<int>();
+        cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(_anyvalPtr) << endl;
+        break;
+      case CppType::Float:
+        *reinterpret_cast<float *>(_anyvalPtr) = this->_jsval["anyval"].as<float>();
+        cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(_anyvalPtr) << endl;
+        break;
+      case CppType::String:
+        //*reinterpret_cast<float *>(_anyvalPtr) = this->_jsval["anyval"].as<float>();
+        cout << "C++ side: New String Value: " << endl;
+        break;
+      case CppType::NoData:
+        //*reinterpret_cast<float *>(_anyvalPtr) = this->_jsval["anyval"].as<float>();
+        cout << "C++ side: New NoData Value: " << endl;
+        break;
+      default:
+        break;
+      }
+    }
+
+    bool appendChild(WebElement &child)
+    {
+      _children.push_back(child);
+      _jsval.call<void>("appendChild", child.getJsval());
+      return true; // FIXME: need to check for duplicate ids.
+    }
+
+    static map<string, WebElement *> globalMap;
+
+    Tag getTag() const { return _tag; }
+    void setTag(Tag tag)
+    {
+      _tag = tag;
+      _jsval.set("tag", tag);
+    }
+    void setParent(WebElement *parent) { this->_parent = parent; }
+    WebElement *getParent() { return this->_parent; }
+    string getId() const { return _id; }
+    void setId(string id) { _id = id; }
+
+    val getJsval() const { return _jsval; }
+    void setJsval(val jsval) { _jsval = jsval; }
+    void *getAnyvalPtr() const { return _anyvalPtr; }
+    void setAnyvalPtr(void *valptr) { _anyvalPtr = valptr; }
+    CppType getAnyvalPtrType() const { return _anyvalPtrType; }
+    void setAnyvalPtrType(CppType cppType)
+    {
+      _anyvalPtrType = cppType;
+      _jsval.set("cpptype", cppType);
+    }
+    void splicePtrs(void *worldValuePtr) { _anyvalPtr = worldValuePtr; }
+    static void updateVal(string id) { globalMap[id]->valueUpdated(); }
+    static WebElement &getCLElementById(string id) { return *(globalMap[id]); }
+
+  private:
+    vector<WebElement> _children;
+    WebElement *_parent;
+    Tag _tag, _default_tag; // This is the HTML tag
+
+    string _id, _default_id;
+    string _type, _default_type; // This is the 'type' attribute in the HTML tag, NOT the data type.
+
+    CppType _anyvalPtrType; // c++ Data type
+    void *_anyvalPtr;       // pointer to actual data
+    val _jsval = val::global("CLElement");
+  };
+
+  EMSCRIPTEN_BINDINGS(WebElement)
   {
-
-    _children.push_back(child);
-    _jsval.call<void>("appendChild", child.getJsval());
-    return true; // FIXME: need to check for duplicate ids.
+    class_<WebElement>("CLElement_CPP")
+        .constructor<WebElement::Tag, string, string, const WebElement::CppType>(allow_raw_pointers())
+        .property("tag", &WebElement::getTag, &WebElement::setTag)
+        .property("id", &WebElement::getId, &WebElement::setId)
+        .property("anyvalPtrType", &WebElement::getAnyvalPtrType, &WebElement::setAnyvalPtrType)
+        //.property("anyvalPtr", &CLElement_CPP::getAnyvalPtr, &CLElement_CPP::setAnyvalPtr)
+        .function("valueUpdated", &WebElement::valueUpdated)
+        .function("splicePtrs", &WebElement::splicePtrs, allow_raw_pointers())
+        .class_function("getCLElementById", &WebElement::getCLElementById, allow_raw_pointers())
+        .class_function("updateVal", &WebElement::updateVal, allow_raw_pointers());
+    enum_<WebElement::Tag>("CLElement_CPPTag")
+        .value("Div", WebElement::Tag::Div)
+        .value("Button", WebElement::Tag::Button)
+        .value("Input", WebElement::Tag::Input);
+    enum_<WebElement::CppType>("CLElement_CPPCppType")
+        .value("Int", WebElement::CppType::Int)
+        .value("Float", WebElement::CppType::Float)
+        .value("String", WebElement::CppType::String)
+        .value("NoData", WebElement::CppType::NoData);
   }
-
-  static map<string, CLElement_CPP *> globalMap;
-
-  Tag getTag() const { return _tag; }
-  void setTag(Tag tag)
-  {
-    _tag = tag;
-    _jsval.set("tag", tag);
-  }
-  void setParent(CLElement_CPP *parent) { this->_parent = parent; }
-  CLElement_CPP *getParent() { return this->_parent; }
-  string getId() const { return _id; }
-  void setId(string id) { _id = id; }
-
-  val getJsval() const { return _jsval; }
-  void setJsval(val jsval) { _jsval = jsval; }
-  void *getAnyvalPtr() const { return _anyvalPtr; }
-  void setAnyvalPtr(void *valptr) { _anyvalPtr = valptr; }
-  CppType getAnyvalPtrType() const { return _anyvalPtrType; }
-  void setAnyvalPtrType(CppType cppType)
-  {
-    _anyvalPtrType = cppType;
-    _jsval.set("cpptype", cppType);
-  }
-  void splicePtrs(void *worldValuePtr) { _anyvalPtr = worldValuePtr; }
-  static void updateVal(string id) { globalMap[id]->valueUpdated(); }
-  static CLElement_CPP &getCLElementById(string id) { return *(globalMap[id]); }
-
-private:
-  vector<CLElement_CPP> _children;
-  CLElement_CPP *_parent;
-  Tag _tag, _default_tag; // This is the HTML tag
-
-  string _id, _default_id;
-  string _type, _default_type; // This is the 'type' attribute in the HTML tag, NOT the data type.
-
-  CppType _anyvalPtrType; // c++ Data type
-  void *_anyvalPtr;       // pointer to actual data
-  val _jsval = val::global("CLElement");
-};
+}
 
 class ToyModel
 {
@@ -146,17 +174,17 @@ private:
   float s_, delta_;
 };
 
-class ToyControl : public CLElement_CPP
+class ToyControl : public clarity::WebElement
 {
 
 public:
-  ToyControl()
+  ToyControl(string id, string tag): WebElement(id, tag)
   {
 
-    CLElement_CPP *mainDiv_ = new CLElement_CPP(CLElement_CPP::Tag::Div, "", "mainDiv_", CppType::NoData);
-    CLElement_CPP *inputA_ = new CLElement_CPP(CLElement_CPP::Tag::Input, "text", "inputA_", CppType::Float);
-    CLElement_CPP *inputB_ = new CLElement_CPP(CLElement_CPP::Tag::Input, "text", "inputB_", CppType::Float);
-    CLElement_CPP *applyButton_ = new CLElement_CPP(CLElement_CPP::Tag::Button, "", "applyButton_", CppType::NoData);
+    clarity::WebElement *mainDiv_ = new clarity::WebElement(clarity::WebElement::Tag::Div, "", "mainDiv_", CppType::NoData);
+    clarity::WebElement *inputA_ = new clarity::WebElement(clarity::WebElement::Tag::Input, "text", "inputA_", CppType::Float);
+    clarity::WebElement *inputB_ = new clarity::WebElement(clarity::WebElement::Tag::Input, "text", "inputB_", CppType::Float);
+    clarity::WebElement *applyButton_ = new clarity::WebElement(clarity::WebElement::Tag::Button, "", "applyButton_", CppType::NoData);
     inputA_->setAnyvalPtrType(CppType::Float);
     inputA_->setTag(Tag::Div);
     inputB_->setAnyvalPtrType(CppType::Float);
@@ -171,29 +199,6 @@ public:
     // CLElement_CPP::globalMap["tc_delta"] = testinput;
   }
 };
-
-EMSCRIPTEN_BINDINGS(CLElement_CPP)
-{
-  class_<CLElement_CPP>("CLElement_CPP")
-      .constructor<CLElement_CPP::Tag, string, string, const CLElement_CPP::CppType>(allow_raw_pointers())
-      .property("tag", &CLElement_CPP::getTag, &CLElement_CPP::setTag)
-      .property("id", &CLElement_CPP::getId, &CLElement_CPP::setId)
-      .property("anyvalPtrType", &CLElement_CPP::getAnyvalPtrType, &CLElement_CPP::setAnyvalPtrType)
-      //.property("anyvalPtr", &CLElement_CPP::getAnyvalPtr, &CLElement_CPP::setAnyvalPtr)
-      .function("valueUpdated", &CLElement_CPP::valueUpdated)
-      .function("splicePtrs", &CLElement_CPP::splicePtrs, allow_raw_pointers())
-      .class_function("getCLElementById", &CLElement_CPP::getCLElementById, allow_raw_pointers())
-      .class_function("updateVal", &CLElement_CPP::updateVal, allow_raw_pointers());
-  enum_<CLElement_CPP::Tag>("CLElement_CPPTag")
-      .value("Div", CLElement_CPP::Tag::Div)
-      .value("Button", CLElement_CPP::Tag::Button)
-      .value("Input", CLElement_CPP::Tag::Input);
-  enum_<CLElement_CPP::CppType>("CLElement_CPPCppType")
-      .value("Int", CLElement_CPP::CppType::Int)
-      .value("Float", CLElement_CPP::CppType::Float)
-      .value("String", CLElement_CPP::CppType::String)
-      .value("NoData", CLElement_CPP::CppType::NoData);
-}
 
 int main()
 {
@@ -211,7 +216,7 @@ int main()
 
   // World * worldPtr = new ToyClass();
   ToyModel tm = ToyModel(0, 1.5);
-  ToyControl tc = ToyControl();
+  ToyControl tc = ToyControl("tc1", "div");
 
   printf("Everything should be set!\n");
 
