@@ -16,6 +16,7 @@ using namespace emscripten;
 //   virtual void iterate() = 0;
 //   virtual void printState() = 0;
 // };
+// Run with 'python3 -m http.server 8000'
 
 class CLElement_CPP
 {
@@ -56,6 +57,8 @@ public:
     //_jsval.set("anyval", val(_anyvalPtr));
     //_jsval.set("owner", val(this));
   }
+
+
 
   void valueUpdated()
   {

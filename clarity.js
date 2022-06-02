@@ -5,6 +5,8 @@
 //     return parseInt(el[attribute_name]);
 // }
 
+// Run with 'python3 -m http.server 8000'
+
 class CLElement {
   constructor() {}
 
@@ -128,7 +130,7 @@ class CLElement {
     
 
     
-    // let outerThis = this
+    
     // this._domElement.onchange = function () {
     //   outerThis._anyval = outerThis.jsToCPPVal(el.value)
     //   console.log(`${outerThis.id}: JS value is ${outerThis._anyval}\n`)
@@ -136,7 +138,17 @@ class CLElement {
     //   Module.CLElement_CPP.updateVal(id)
     //   //this._owner.valueUpdated();
     // }
-    this.installEventHandlers()
+    if (this._tag == Module.CLElement_CPPTag.Input) {
+      var outerThis = this;
+      this._domElement.addEventListener('change', function (e) {
+        outerThis._anyval = outerThis.jsToCPPVal(outerThis._domElement.value)
+        console.log(`${outerThis.id}: JS value is ${outerThis._anyval}\n`)
+        console.log('Javascript onchange callback called')
+        Module.CLElement_CPP.updateVal(outerThis._id)
+        //this._owner.valueUpdated();
+      })
+    }
+    //this.installEventHandlers()
   }
 
   get id() {
