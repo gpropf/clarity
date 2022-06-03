@@ -28,7 +28,7 @@ class CLElement {
   appendChild(child) {
     this.domElement.appendChild(child.domElement);
   }
-
+  
   createCLElement() {
     return new CLElement()
   }
@@ -86,7 +86,7 @@ class CLElement {
     var el = document.getElementById(this.id_)
     if (el == null) {
       //el = document.createElement(this.getTag())
-      console.log(`ELEMENT ${id}: tag is ${this.tag_.value}`)
+      console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
       el = document.createElement(this.tag_)
       document.body.appendChild(el)
       el.id = id

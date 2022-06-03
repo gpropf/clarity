@@ -56,6 +56,10 @@ namespace clarity
       domElement.call<void>("setAttribute", attr, value);
     }
 
+    // void addEventListener(const string eventName, const string callbackId) {      
+    //   jsval_.call<void>("addEventListenerById", eventName, callbackId);
+    // }
+
     void valueUpdated()
     {
       switch (this->anyvalPtrType_)
@@ -89,6 +93,8 @@ namespace clarity
     }
 
     static map<string, WebElement *> globalMap;
+    static map<string, void (*)()> callbackMap;
+
 
     string getTag() const { return tag_; }
     void setTag(string tag)
@@ -114,6 +120,7 @@ namespace clarity
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
     static void updateVal(string id) { globalMap[id]->valueUpdated(); }
     static WebElement &getCLElementById(string id) { return *(globalMap[id]); }
+    static void runCallbackById(string id) { callbackMap[id](); }
 
   private:
     vector<WebElement> children_;
