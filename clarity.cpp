@@ -20,19 +20,10 @@ using namespace emscripten;
 namespace clarity
 {
 
-  
-
-
   class WebElement
   {
   public:
-    enum class Tag : int
-    {
-      Div,
-      Button,
-      Input
-    };
-
+    
     enum class CppType : int
     {
       Int,
@@ -42,26 +33,27 @@ namespace clarity
     };
 
     //===========
-    //ValueElement() {}
+    // ValueElement() {}
 
     WebElement(string id, string tag) {}
 
-    WebElement(const string tag, string id, const CppType anyvalPtrType) : tag_(tag),
-                                                                                     id_(id),
-                                                                                     anyvalPtrType_(anyvalPtrType)
+    WebElement(const string tag, const string id, const CppType anyvalPtrType) : tag_(tag),
+                                                                                 id_(id),
+                                                                                 anyvalPtrType_(anyvalPtrType)
 
     {
       val CLContext = val::global("CLElement");
       jsval_ = CLContext.new_();
       jsval_.set("cpptype", val(anyvalPtrType));
       jsval_.set("tag", val(tag));
-      
       jsval_.set("id", val(id));
 
-      
       WebElement::globalMap[id] = this;
-      //_jsval.set("anyval", val(_anyvalPtr));
-      //_jsval.set("owner", val(this));
+    }
+
+    void setAttribute(const string attr, const string value) {
+      val domElement = jsval_["domElement"];
+      domElement.call<void>("setAttribute", attr, value);
     }
 
     void valueUpdated()
@@ -82,7 +74,7 @@ namespace clarity
         break;
       case CppType::NoData:
         //*reinterpret_cast<float *>(anyvalPtr_) = this->jsval_["anyval"].as<float>();
-        cout << "C++ side: New NoData Value: " << endl;
+        cout << "C++ side: This element contains no data." << endl;
         break;
       default:
         break;
@@ -134,21 +126,17 @@ namespace clarity
 
   EMSCRIPTEN_BINDINGS(WebElement)
   {
-    class_<WebElement>("CLElement_CPP")
+    class_<WebElement>("WebElement")
         .constructor<string, string, const WebElement::CppType>(allow_raw_pointers())
         .property("tag", &WebElement::getTag, &WebElement::setTag)
         .property("id", &WebElement::getId, &WebElement::setId)
         .property("anyvalPtrType", &WebElement::getAnyvalPtrType, &WebElement::setAnyvalPtrType)
-        //.property("anyvalPtr", &CLElement_CPP::getAnyvalPtr, &CLElement_CPP::setAnyvalPtr)
+        //.property("anyvalPtr", &WebElement::getAnyvalPtr, &WebElement::setAnyvalPtr)
         .function("valueUpdated", &WebElement::valueUpdated)
         .function("splicePtrs", &WebElement::splicePtrs, allow_raw_pointers())
         .class_function("getCLElementById", &WebElement::getCLElementById, allow_raw_pointers())
-        .class_function("updateVal", &WebElement::updateVal, allow_raw_pointers());
-    enum_<WebElement::Tag>("CLElement_CPPTag")
-        .value("Div", WebElement::Tag::Div)
-        .value("Button", WebElement::Tag::Button)
-        .value("Input", WebElement::Tag::Input);
-    enum_<WebElement::CppType>("CLElement_CPPCppType")
+        .class_function("updateVal", &WebElement::updateVal, allow_raw_pointers());    
+    enum_<WebElement::CppType>("WebElementCppType")
         .value("Int", WebElement::CppType::Int)
         .value("Float", WebElement::CppType::Float)
         .value("String", WebElement::CppType::String)
@@ -173,7 +161,7 @@ class ToyControl : public clarity::WebElement
 {
 
 public:
-  ToyControl(string id, string tag): WebElement(id, tag)
+  ToyControl(string id, string tag) : WebElement(id, tag)
   {
 
     clarity::WebElement *mainDiv_ = new clarity::WebElement("div", "mainDiv_", CppType::NoData);
@@ -181,23 +169,18 @@ public:
     clarity::WebElement *inputB_ = new clarity::WebElement("input", "inputB_", CppType::Float);
     clarity::WebElement *applyButton_ = new clarity::WebElement("button", "applyButton_", CppType::NoData);
     inputA_->setAnyvalPtrType(CppType::Float);
-    inputA_->setTag("div");
-    inputB_->setAnyvalPtrType(CppType::Float);
-    inputB_->setTag("div");
-    // mainDiv_->setAnyvalPtrType(CppType::NoData);
+    inputA_->setAttribute("type", "text");
+    inputB_->setAnyvalPtrType(CppType::Int);
+    inputB_->setAttribute("type", "text");
     mainDiv_->appendChild(*inputA_);
     mainDiv_->appendChild(*inputB_);
     mainDiv_->appendChild(*applyButton_);
-
-    // testinput->setId("tc_delta");
-
-    // CLElement_CPP::globalMap["tc_delta"] = testinput;
   }
 };
 
 int main()
 {
-  // CLElement_CPP::translators[CLElement_CPP::CPP_Type::INT] = [](CLElement_CPP& cle) { cle.anyvalPtr_};
+  // WebElement::translators[WebElement::CPP_Type::INT] = [](WebElement& cle) { cle.anyvalPtr_};
   val CLContext = val::global("CLElement");
   if (CLContext.as<bool>())
   {
@@ -213,7 +196,7 @@ int main()
   ToyModel tm = ToyModel(0, 1.5);
   ToyControl tc = ToyControl("tc1", "div");
 
-  printf("Everything should be set!\n");
+  printf("Setup complete!\n");
 
   return 0;
 }
