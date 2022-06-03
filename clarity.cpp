@@ -46,20 +46,20 @@ namespace clarity
 
     WebElement(string id, string tag) {}
 
-    WebElement(const Tag tag, string type, string id, const CppType anyvalPtrType) : _tag(tag),
-                                                                                     _type(type),
-                                                                                     _id(id),
-                                                                                     _anyvalPtrType(anyvalPtrType)
+    WebElement(const Tag tag, string type, string id, const CppType anyvalPtrType) : tag_(tag),
+                                                                                     type_(type),
+                                                                                     id_(id),
+                                                                                     anyvalPtrType_(anyvalPtrType)
 
     {
       val CLContext = val::global("CLElement");
-      _jsval = CLContext.new_();
-      _jsval.set("cpptype", val(anyvalPtrType));
-      _jsval.set("tag", val(tag));
-      _jsval.set("type", val(type));
-      _jsval.set("id", val(id));
+      jsval_ = CLContext.new_();
+      jsval_.set("cpptype", val(anyvalPtrType));
+      jsval_.set("tag", val(tag));
+      jsval_.set("type", val(type));
+      jsval_.set("id", val(id));
 
-      _default_id = _id;
+      
       WebElement::globalMap[id] = this;
       //_jsval.set("anyval", val(_anyvalPtr));
       //_jsval.set("owner", val(this));
@@ -67,22 +67,22 @@ namespace clarity
 
     void valueUpdated()
     {
-      switch (this->_anyvalPtrType)
+      switch (this->anyvalPtrType_)
       {
       case CppType::Int:
-        *reinterpret_cast<int *>(_anyvalPtr) = this->_jsval["anyval"].as<int>();
-        cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(_anyvalPtr) << endl;
+        *reinterpret_cast<int *>(anyvalPtr_) = this->jsval_["anyval"].as<int>();
+        cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(anyvalPtr_) << endl;
         break;
       case CppType::Float:
-        *reinterpret_cast<float *>(_anyvalPtr) = this->_jsval["anyval"].as<float>();
-        cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(_anyvalPtr) << endl;
+        *reinterpret_cast<float *>(anyvalPtr_) = this->jsval_["anyval"].as<float>();
+        cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(anyvalPtr_) << endl;
         break;
       case CppType::String:
-        //*reinterpret_cast<float *>(_anyvalPtr) = this->_jsval["anyval"].as<float>();
+        //*reinterpret_cast<float *>(anyvalPtr_) = this->jsval_["anyval"].as<float>();
         cout << "C++ side: New String Value: " << endl;
         break;
       case CppType::NoData:
-        //*reinterpret_cast<float *>(_anyvalPtr) = this->_jsval["anyval"].as<float>();
+        //*reinterpret_cast<float *>(anyvalPtr_) = this->jsval_["anyval"].as<float>();
         cout << "C++ side: New NoData Value: " << endl;
         break;
       default:
@@ -92,49 +92,49 @@ namespace clarity
 
     bool appendChild(WebElement &child)
     {
-      _children.push_back(child);
-      _jsval.call<void>("appendChild", child.getJsval());
+      children_.push_back(child);
+      jsval_.call<void>("appendChild", child.getJsval());
       return true; // FIXME: need to check for duplicate ids.
     }
 
     static map<string, WebElement *> globalMap;
 
-    Tag getTag() const { return _tag; }
+    Tag getTag() const { return tag_; }
     void setTag(Tag tag)
     {
-      _tag = tag;
-      _jsval.set("tag", tag);
+      tag_ = tag;
+      jsval_.set("tag", tag);
     }
-    void setParent(WebElement *parent) { this->_parent = parent; }
-    WebElement *getParent() { return this->_parent; }
-    string getId() const { return _id; }
-    void setId(string id) { _id = id; }
+    void setParent(WebElement *parent) { this->parent_ = parent; }
+    WebElement *getParent() { return this->parent_; }
+    string getId() const { return id_; }
+    void setId(string id) { id_ = id; }
 
-    val getJsval() const { return _jsval; }
-    void setJsval(val jsval) { _jsval = jsval; }
-    void *getAnyvalPtr() const { return _anyvalPtr; }
-    void setAnyvalPtr(void *valptr) { _anyvalPtr = valptr; }
-    CppType getAnyvalPtrType() const { return _anyvalPtrType; }
+    val getJsval() const { return jsval_; }
+    void setJsval(val jsval) { jsval_ = jsval; }
+    void *getAnyvalPtr() const { return anyvalPtr_; }
+    void setAnyvalPtr(void *valptr) { anyvalPtr_ = valptr; }
+    CppType getAnyvalPtrType() const { return anyvalPtrType_; }
     void setAnyvalPtrType(CppType cppType)
     {
-      _anyvalPtrType = cppType;
-      _jsval.set("cpptype", cppType);
+      anyvalPtrType_ = cppType;
+      jsval_.set("cpptype", cppType);
     }
-    void splicePtrs(void *worldValuePtr) { _anyvalPtr = worldValuePtr; }
+    void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
     static void updateVal(string id) { globalMap[id]->valueUpdated(); }
     static WebElement &getCLElementById(string id) { return *(globalMap[id]); }
 
   private:
-    vector<WebElement> _children;
-    WebElement *_parent;
-    Tag _tag, _default_tag; // This is the HTML tag
+    vector<WebElement> children_;
+    WebElement *parent_;
+    Tag tag_;
 
-    string _id, _default_id;
-    string _type, _default_type; // This is the 'type' attribute in the HTML tag, NOT the data type.
+    string id_;
+    string type_; // This is the 'type' attribute in the HTML tag, NOT the data type.
 
-    CppType _anyvalPtrType; // c++ Data type
-    void *_anyvalPtr;       // pointer to actual data
-    val _jsval = val::global("CLElement");
+    CppType anyvalPtrType_; // c++ Data type
+    void *anyvalPtr_;       // pointer to actual data
+    val jsval_ = val::global("CLElement");
   };
 
   EMSCRIPTEN_BINDINGS(WebElement)
@@ -202,7 +202,7 @@ public:
 
 int main()
 {
-  // CLElement_CPP::translators[CLElement_CPP::CPP_Type::INT] = [](CLElement_CPP& cle) { cle._anyvalPtr};
+  // CLElement_CPP::translators[CLElement_CPP::CPP_Type::INT] = [](CLElement_CPP& cle) { cle.anyvalPtr_};
   val CLContext = val::global("CLElement");
   if (CLContext.as<bool>())
   {
