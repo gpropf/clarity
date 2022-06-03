@@ -24,6 +24,9 @@ class CLElement {
   }
 
   //object.freeze(CPP_Type);
+  ggg(bar) {
+    console.log("BAR: " + bar + "\n");
+  }
 
   appendChild(child) {
     this.domElement.appendChild(child.domElement);
@@ -104,6 +107,10 @@ class CLElement {
         Module.WebElement.updateVal(outerThis.id_)
       })
     }
+  }
+
+  addEventListenerById(eventName, id) {
+    this.domElement_.addEventListener(eventName, (e) => { Module.WebElement.runCallbackById(id); })
   }
 
   get id() {

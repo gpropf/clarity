@@ -1,6 +1,9 @@
 
 #include <stdio.h>
 #include <iostream>
+//#include <cstdlib>
+#include <unistd.h>
+
 //#include <vector>
 #include <map>
 #include <emscripten.h>
@@ -23,7 +26,6 @@ namespace clarity
   class WebElement
   {
   public:
-    
     enum class CppType : int
     {
       Int,
@@ -51,13 +53,14 @@ namespace clarity
       WebElement::globalMap[id] = this;
     }
 
-    void setAttribute(const string attr, const string value) {
+    void setAttribute(const string attr, const string value)
+    {
       val domElement = jsval_["domElement"];
       domElement.call<void>("setAttribute", attr, value);
     }
 
-    // void addEventListener(const string eventName, const string callbackId) {      
-    //   jsval_.call<void>("addEventListenerById", eventName, callbackId);
+    // void addEventListener(const string eventName, const string callbackId) {
+    //   jsval_.call<void>("addCallbackById", eventName, callbackId);
     // }
 
     void valueUpdated()
@@ -92,9 +95,16 @@ namespace clarity
       return true; // FIXME: need to check for duplicate ids.
     }
 
-    static map<string, WebElement *> globalMap;
-    static map<string, void (*)()> callbackMap;
+    void addEventListenerById(const string &eventName, const string &callbackId)
+    {
+      // jsval_.call<void>("ggg", 6);
+      // jsval_.set("k", 100);
+      jsval_.call<void>("addEventListenerById", eventName, callbackId);
+      // jsval_.call<void>("addEventListenerById", eventName, callbackId);
+    }
 
+    static map<string, WebElement *> globalMap;
+    static map<string, std::function<void()>> callbackMap;
 
     string getTag() const { return tag_; }
     void setTag(string tag)
@@ -142,7 +152,8 @@ namespace clarity
         .function("valueUpdated", &WebElement::valueUpdated)
         .function("splicePtrs", &WebElement::splicePtrs, allow_raw_pointers())
         .class_function("getCLElementById", &WebElement::getCLElementById, allow_raw_pointers())
-        .class_function("updateVal", &WebElement::updateVal, allow_raw_pointers());    
+        .class_function("updateVal", &WebElement::updateVal, allow_raw_pointers())
+        .class_function("runCallbackById", &WebElement::runCallbackById, allow_raw_pointers());
     enum_<WebElement::CppType>("WebElementCppType")
         .value("Int", WebElement::CppType::Int)
         .value("Float", WebElement::CppType::Float)
@@ -154,14 +165,26 @@ namespace clarity
 class ToyModel
 {
 public:
+  void printState()
+  {
+    cout << "s = " << s_ << ", delta = " << delta_ << ", i = " << i_ << endl;
+  }
+
   void iterate()
   {
     s_ += delta_;
+    printState();
   }
-  ToyModel(float s, float delta) : s_(s), delta_(delta) {}
+  ToyModel(double s, double delta, int i) : s_(s), delta_(delta), i_(i)
+  {
+    s_ = s;
+    delta_ = delta;
+    printState();
+  }
 
 private:
-  float s_, delta_;
+  double s_, delta_;
+  int i_;
 };
 
 class ToyControl : public clarity::WebElement
@@ -171,10 +194,10 @@ public:
   ToyControl(string id, string tag) : WebElement(id, tag)
   {
 
-    clarity::WebElement *mainDiv_ = new clarity::WebElement("div", "mainDiv_", CppType::NoData);
-    clarity::WebElement *inputA_ = new clarity::WebElement("input", "inputA_", CppType::Float);
-    clarity::WebElement *inputB_ = new clarity::WebElement("input", "inputB_", CppType::Float);
-    clarity::WebElement *applyButton_ = new clarity::WebElement("button", "applyButton_", CppType::NoData);
+    mainDiv_ = new clarity::WebElement("div", "mainDiv_", CppType::NoData);
+    inputA_ = new clarity::WebElement("input", "inputA_", CppType::Float);
+    inputB_ = new clarity::WebElement("input", "inputB_", CppType::Float);
+    applyButton_ = new clarity::WebElement("button", "applyButton_", CppType::NoData);
     inputA_->setAnyvalPtrType(CppType::Float);
     inputA_->setAttribute("type", "text");
     inputB_->setAnyvalPtrType(CppType::Int);
@@ -182,7 +205,14 @@ public:
     mainDiv_->appendChild(*inputA_);
     mainDiv_->appendChild(*inputB_);
     mainDiv_->appendChild(*applyButton_);
+
+    // applyButton_->addEventListenerById("click", "updateModel");
   }
+
+  clarity::WebElement *mainDiv_;
+  clarity::WebElement *inputA_;
+  clarity::WebElement *inputB_;
+  clarity::WebElement *applyButton_;
 };
 
 int main()
@@ -198,12 +228,23 @@ int main()
     return -1;
   }
   // testinput->splicePtrs((int *)&(delta));
-
+  int a = 7;
   // World * worldPtr = new ToyClass();
-  ToyModel tm = ToyModel(0, 1.5);
+  ToyModel tm = ToyModel(double(0), double(1.5), a);
   ToyControl tc = ToyControl("tc1", "div");
 
-  printf("Setup complete!\n");
+  
 
+  tc.applyButton_->addEventListenerById("click", "updateModel");
+  clarity::WebElement::callbackMap["updateModel"] = [&]
+  {
+    cout << "BUTTTON PRESSED!\n";
+    cout << "a = " << a <<"\n";
+    tm.iterate(); };
+
+  printf("Setup complete!\n");
+  // while(true) {
+  //   usleep(1000);
+  // }
   return 0;
 }
