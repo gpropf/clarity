@@ -46,8 +46,7 @@ namespace clarity
 
     WebElement(string id, string tag) {}
 
-    WebElement(const Tag tag, string type, string id, const CppType anyvalPtrType) : tag_(tag),
-                                                                                     type_(type),
+    WebElement(const string tag, string id, const CppType anyvalPtrType) : tag_(tag),
                                                                                      id_(id),
                                                                                      anyvalPtrType_(anyvalPtrType)
 
@@ -56,7 +55,7 @@ namespace clarity
       jsval_ = CLContext.new_();
       jsval_.set("cpptype", val(anyvalPtrType));
       jsval_.set("tag", val(tag));
-      jsval_.set("type", val(type));
+      
       jsval_.set("id", val(id));
 
       
@@ -99,8 +98,8 @@ namespace clarity
 
     static map<string, WebElement *> globalMap;
 
-    Tag getTag() const { return tag_; }
-    void setTag(Tag tag)
+    string getTag() const { return tag_; }
+    void setTag(string tag)
     {
       tag_ = tag;
       jsval_.set("tag", tag);
@@ -127,11 +126,7 @@ namespace clarity
   private:
     vector<WebElement> children_;
     WebElement *parent_;
-    Tag tag_;
-
-    string id_;
-    string type_; // This is the 'type' attribute in the HTML tag, NOT the data type.
-
+    string tag_, id_;
     CppType anyvalPtrType_; // c++ Data type
     void *anyvalPtr_;       // pointer to actual data
     val jsval_ = val::global("CLElement");
@@ -140,7 +135,7 @@ namespace clarity
   EMSCRIPTEN_BINDINGS(WebElement)
   {
     class_<WebElement>("CLElement_CPP")
-        .constructor<WebElement::Tag, string, string, const WebElement::CppType>(allow_raw_pointers())
+        .constructor<string, string, const WebElement::CppType>(allow_raw_pointers())
         .property("tag", &WebElement::getTag, &WebElement::setTag)
         .property("id", &WebElement::getId, &WebElement::setId)
         .property("anyvalPtrType", &WebElement::getAnyvalPtrType, &WebElement::setAnyvalPtrType)
@@ -181,14 +176,14 @@ public:
   ToyControl(string id, string tag): WebElement(id, tag)
   {
 
-    clarity::WebElement *mainDiv_ = new clarity::WebElement(clarity::WebElement::Tag::Div, "", "mainDiv_", CppType::NoData);
-    clarity::WebElement *inputA_ = new clarity::WebElement(clarity::WebElement::Tag::Input, "text", "inputA_", CppType::Float);
-    clarity::WebElement *inputB_ = new clarity::WebElement(clarity::WebElement::Tag::Input, "text", "inputB_", CppType::Float);
-    clarity::WebElement *applyButton_ = new clarity::WebElement(clarity::WebElement::Tag::Button, "", "applyButton_", CppType::NoData);
+    clarity::WebElement *mainDiv_ = new clarity::WebElement("div", "mainDiv_", CppType::NoData);
+    clarity::WebElement *inputA_ = new clarity::WebElement("input", "inputA_", CppType::Float);
+    clarity::WebElement *inputB_ = new clarity::WebElement("input", "inputB_", CppType::Float);
+    clarity::WebElement *applyButton_ = new clarity::WebElement("button", "applyButton_", CppType::NoData);
     inputA_->setAnyvalPtrType(CppType::Float);
-    inputA_->setTag(Tag::Div);
+    inputA_->setTag("div");
     inputB_->setAnyvalPtrType(CppType::Float);
-    inputB_->setTag(Tag::Div);
+    inputB_->setTag("div");
     // mainDiv_->setAnyvalPtrType(CppType::NoData);
     mainDiv_->appendChild(*inputA_);
     mainDiv_->appendChild(*inputB_);

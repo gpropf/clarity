@@ -102,7 +102,7 @@ class CLElement {
     if (el == null) {
       //el = document.createElement(this.getTag())
       console.log(`ELEMENT ${id}: tag is ${this._tag.value}`)
-      el = document.createElement(this.translateTag())
+      el = document.createElement(this._tag)
       document.body.appendChild(el)
       el.id = id
       el.type = this._type
@@ -110,7 +110,7 @@ class CLElement {
     }
     this._domElement = el
     
-    if (this._tag == Module.CLElement_CPPTag.Input) {
+    if (this._tag == "input") {
       var outerThis = this;
       this._domElement.addEventListener('change', function (e) {
         outerThis._anyval = outerThis.jsToCPPVal(outerThis._domElement.value)
