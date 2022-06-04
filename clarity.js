@@ -16,8 +16,10 @@ class CLElement {
         return parseInt(jsval)
       case Module.WebElementCppType.Float:
         return parseFloat(jsval)
+      case Module.WebElementCppType.Double:
+        return parseFloat(jsval)
       case Module.WebElementCppType.NoData:
-        return null;
+        return null
       default:
         return jsval
     }
@@ -25,13 +27,13 @@ class CLElement {
 
   //object.freeze(CPP_Type);
   ggg(bar) {
-    console.log("BAR: " + bar + "\n");
+    console.log('BAR: ' + bar + '\n')
   }
 
   appendChild(child) {
-    this.domElement.appendChild(child.domElement);
+    this.domElement.appendChild(child.domElement)
   }
-  
+
   createCLElement() {
     return new CLElement()
   }
@@ -94,12 +96,11 @@ class CLElement {
       document.body.appendChild(el)
       el.id = id
       el.type = this.type_
-      
     }
     this.domElement_ = el
-    
-    if (this.tag_ == "input") {
-      var outerThis = this;
+
+    if (this.tag_ == 'input') {
+      var outerThis = this
       this.domElement_.addEventListener('change', function (e) {
         outerThis.anyval_ = outerThis.jsToCPPVal(outerThis.domElement_.value)
         console.log(`${outerThis.id}: JS value is ${outerThis.anyval_}\n`)
@@ -110,12 +111,14 @@ class CLElement {
   }
 
   addEventListenerById(eventName, id) {
-    this.domElement_.addEventListener(eventName, (e) => { Module.WebElement.runCallbackById(id); })
+    this.domElement_.addEventListener(eventName, (e) => {
+      Module.WebElement.runCallbackById(id)
+    })
   }
 
   get id() {
-    return this.id_;
-  }  
+    return this.id_
+  }
 }
 
 window.CLElement = CLElement
