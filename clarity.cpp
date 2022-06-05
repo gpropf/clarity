@@ -55,46 +55,125 @@ namespace clarity
       WebElement::globalMap[id] = this;
     }
 
-    void setAttribute(const string attr, const string value)
+    void setAttribute(const string attr, const val value)
     {
       val domElement = jsval_["domElement"];
       domElement.call<void>("setAttribute", attr, value);
-    }    
+    }
 
-    void valueUpdated()
+    void updateView()
     {
-      if (anyvalPtr_ == nullptr) return;
+      val domElement = this->jsval_["domElement"];
+      if (anyvalPtr_ == nullptr)
+        return;
+      switch (this->anyvalPtrType_)
+      {
+      case CppType::Int:
+        domElement.set("value", val(*reinterpret_cast<int *>(anyvalPtr_)));
+
+        // cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(anyvalPtr_) << endl;
+        // return this->jsval_["anyval"];
+        break;
+      case CppType::Float:
+        domElement.set("value", val(*reinterpret_cast<float *>(anyvalPtr_)));
+        cout << "updateView: C++ side: New Float Value: " << *reinterpret_cast<float *>(anyvalPtr_) << endl;
+        // return this->jsval_["anyval"];
+        break;
+      case CppType::Double:
+        domElement.set("value", val(*reinterpret_cast<double *>(anyvalPtr_)));
+        cout << "updateView: C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
+        // return this->jsval_["anyval"];
+        break;
+      case CppType::String:
+        domElement.set("value", val(*reinterpret_cast<string *>(anyvalPtr_)));
+        cout << "updateView: C++ side: New String Value: " << endl;
+        // return this->jsval_["anyval"];
+        break;
+      case CppType::NoData:
+        //*reinterpret_cast<float *>(anyvalPtr_) = this->jsval_["anyval"].as<float>();
+        cout << "updateView: C++ side: This element contains no data." << endl;
+        // return this->jsval_["anyval"];
+        break;
+      default:
+        cout << "updateView: C++ side: Unknown data type!!" << endl;
+        // return this->jsval_["anyval"];
+        break;
+      }
+    }
+
+    val valueUpdated()
+    {
+      if (anyvalPtr_ == nullptr)
+        return this->jsval_["anyval"];
       switch (this->anyvalPtrType_)
       {
       case CppType::Int:
         *reinterpret_cast<int *>(anyvalPtr_) = this->jsval_["anyval"].as<int>();
         cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(anyvalPtr_) << endl;
+        // return this->jsval_["anyval"];
         break;
       case CppType::Float:
         *reinterpret_cast<float *>(anyvalPtr_) = this->jsval_["anyval"].as<float>();
         cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(anyvalPtr_) << endl;
+        // return this->jsval_["anyval"];
         break;
       case CppType::Double:
         *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
         cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
+        // return this->jsval_["anyval"];
         break;
       case CppType::String:
         //*reinterpret_cast<float *>(anyvalPtr_) = this->jsval_["anyval"].as<float>();
         cout << "C++ side: New String Value: " << endl;
+        // return this->jsval_["anyval"];
         break;
       case CppType::NoData:
         //*reinterpret_cast<float *>(anyvalPtr_) = this->jsval_["anyval"].as<float>();
         cout << "C++ side: This element contains no data." << endl;
+        // return this->jsval_["anyval"];
         break;
       default:
+        // return this->jsval_["anyval"];
         break;
       }
+      return this->jsval_["anyval"];
+    }
+
+    val getTypedJSval() const
+    {
+      switch (this->anyvalPtrType_)
+      {
+      case CppType::Int:
+        return val(*reinterpret_cast<float *>(anyvalPtr_));
+        break;
+      case CppType::Float:
+        return val(*reinterpret_cast<float *>(anyvalPtr_));
+        break;
+      case CppType::Double:
+        return val(*reinterpret_cast<double *>(anyvalPtr_));
+        break;
+      case CppType::String:
+        return val(*reinterpret_cast<string *>(anyvalPtr_));
+        break;
+      case CppType::NoData:
+        return val(nullptr);
+        break;
+      default:
+        return val(nullptr);
+        break;
+      }
+    }
+
+    val getDomElementVal()
+    {
+      val domElement = jsval_["domElement"];
+      return domElement["value"];
     }
 
     bool appendChild(WebElement &child)
     {
       children_.push_back(child);
-      jsval_.call<void>("appendChild", child.getJsval());
+      jsval_.call<void>("appendChild", child.getJSval());
       return true; // FIXME: need to check for duplicate ids.
     }
 
@@ -119,7 +198,7 @@ namespace clarity
     WebElement *getParent() { return this->parent_; }
     string getId() const { return id_; }
     void setId(string id) { id_ = id; }
-    val getJsval() const { return jsval_; }
+    val getJSval() const { return jsval_; }
     void setJsval(val jsval) { jsval_ = jsval; }
     void *getAnyvalPtr() const { return anyvalPtr_; }
     void setAnyvalPtr(void *valptr) { anyvalPtr_ = valptr; }
@@ -130,11 +209,22 @@ namespace clarity
       jsval_.set("cpptype", cppType);
     }
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
-    static void updateVal(string id) { globalMap[id]->valueUpdated(); }
+    static val updateVal(string id) { return globalMap[id]->valueUpdated(); }
     static WebElement &getCLElementById(string id) { return *(globalMap[id]); }
     static void runCallbackById(string id) { callbackMap[id](); }
+    static void recordCurrentDataValues()
+    {
+      for (const auto &kv : globalMap)
+      {
+        // kv.second->setAttribute("currentVal", *(new val("Foo")));
+        // cout << "ID: " << kv.first << endl;
+        WebElement *wel = globalMap[kv.first];
+        // wel->getDomElementVal();
+        // wel->getTypedJSval();
+      }
+    }
 
-  private:
+  //private:
     vector<WebElement> children_;
     WebElement *parent_;
     string tag_, id_;
@@ -149,12 +239,13 @@ namespace clarity
         .constructor<string, string, const WebElement::CppType>(allow_raw_pointers())
         .property("tag", &WebElement::getTag, &WebElement::setTag)
         .property("id", &WebElement::getId, &WebElement::setId)
-        .property("anyvalPtrType", &WebElement::getAnyvalPtrType, &WebElement::setAnyvalPtrType)        
+        .property("anyvalPtrType", &WebElement::getAnyvalPtrType, &WebElement::setAnyvalPtrType)
         .function("valueUpdated", &WebElement::valueUpdated)
         .function("splicePtrs", &WebElement::splicePtrs, allow_raw_pointers())
         .class_function("getCLElementById", &WebElement::getCLElementById, allow_raw_pointers())
         .class_function("updateVal", &WebElement::updateVal, allow_raw_pointers())
-        .class_function("runCallbackById", &WebElement::runCallbackById, allow_raw_pointers());
+        .class_function("runCallbackById", &WebElement::runCallbackById, allow_raw_pointers())
+        .class_function("recordCurrentDataValues", &WebElement::recordCurrentDataValues, allow_raw_pointers());
     enum_<WebElement::CppType>("WebElementCppType")
         .value("Int", WebElement::CppType::Int)
         .value("Float", WebElement::CppType::Float)
@@ -170,20 +261,24 @@ public:
   void printState() const
   {
     cout << "s = " << s_ << ", delta = " << delta_ << endl;
+    cout << "addr(s) = " << &s_ << endl;
   }
 
-   void iterate()  {
+  void iterate()
+  {
     s_ += delta_;
+    delta_ *= 0.95;
+    // clarity::WebElement::recordCurrentDataValues();
     printState();
   }
   ToyModel(double s, double delta) : s_(s), delta_(delta)
-  {    
+  {
     printState();
   }
 
-//private:
+  // private:
   double s_, delta_;
-  //int i_;
+  // int i_;
 };
 
 class ToyControl : public clarity::WebElement
@@ -196,13 +291,13 @@ public:
     inputA_ = new clarity::WebElement("input", "inputA_", CppType::Double);
     inputB_ = new clarity::WebElement("input", "inputB_", CppType::Double);
     applyButton_ = new clarity::WebElement("button", "applyButton_", CppType::NoData);
-    inputA_->setAnyvalPtrType(CppType::Double);
-    inputA_->setAttribute("type", "text");
-    inputB_->setAnyvalPtrType(CppType::Double);
-    inputB_->setAttribute("type", "text");
+    // inputA_->setAnyvalPtrType(CppType::Double);
+    inputA_->setAttribute("type", val("text"));
+    // inputB_->setAnyvalPtrType(CppType::Double);
+    inputB_->setAttribute("type", val("text"));
     mainDiv_->appendChild(*inputA_);
     mainDiv_->appendChild(*inputB_);
-    mainDiv_->appendChild(*applyButton_);   
+    mainDiv_->appendChild(*applyButton_);
   }
   clarity::WebElement *mainDiv_;
   clarity::WebElement *inputA_;
@@ -222,18 +317,25 @@ int main()
   {
     return -1;
   }
-  
-  ToyControl * tc = new ToyControl("tc1", "div");
-  ToyModel * tmptr = new ToyModel(0,1);
-  
+
+  ToyControl *tc = new ToyControl("tc1", "div");
+  ToyModel *tm = new ToyModel(0, 1);
+
   clarity::WebElement::callbackMap["updateModel"] = [=]
   {
     cout << "BUTTTON PRESSED!\n";
     //cout << "a = " << a <<"\n";
-    tmptr->iterate(); };
+    clarity::WebElement::recordCurrentDataValues();
+    tm->iterate();
+    cout << "tm->s_ = " << tm->s_ << endl;
+    cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->anyvalPtr_ << endl;
+    //tc->inputB_->jsval_.set("onChangeActive", false);
+    tc->inputB_->updateView();
+    tc->inputA_->updateView();
+    };
 
-  tc->inputA_->splicePtrs(&tmptr->delta_);
-  tc->inputB_->splicePtrs(&tmptr->s_);
+  tc->inputA_->splicePtrs(&tm->delta_);
+  tc->inputB_->splicePtrs(&tm->s_);
   tc->applyButton_->addEventListenerById("click", "updateModel");
   printf("Setup complete!\n");
   // while(true) {

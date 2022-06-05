@@ -26,9 +26,6 @@ class CLElement {
   }
 
   //object.freeze(CPP_Type);
-  ggg(bar) {
-    console.log('BAR: ' + bar + '\n')
-  }
 
   appendChild(child) {
     this.domElement.appendChild(child.domElement)
@@ -82,6 +79,10 @@ class CLElement {
     return this.domElement_
   }
 
+  // set onChangeActive(onChangeActive) {
+  //   this.onChangeActive_ = onChangeActive;
+  // }
+
   set id(id) {
     //this.owner_ = Module.WebElement.getCLElementById[id]
     this.id_ = id
@@ -98,14 +99,21 @@ class CLElement {
       el.type = this.type_
     }
     this.domElement_ = el
+    //this.onChangeActive_ = true
 
     if (this.tag_ == 'input') {
       var outerThis = this
       this.domElement_.addEventListener('change', function (e) {
+        // if (outerThis.onChangeActive_ == false) {
+        //   outerThis.onChangeActive_ = true
+        //   console.log('onchange callback deactivated!')
+        //   return
+        // }
         outerThis.anyval_ = outerThis.jsToCPPVal(outerThis.domElement_.value)
         console.log(`${outerThis.id}: JS value is ${outerThis.anyval_}\n`)
         console.log('Javascript onchange callback called')
-        Module.WebElement.updateVal(outerThis.id_)
+        var oldval = Module.WebElement.updateVal(outerThis.id_)
+        //outerThis['oldval'] = oldval;
       })
     }
   }

@@ -1,6 +1,6 @@
 
 CC		= em++
-CFLAGS	= -s TOTAL_MEMORY=1900mb --bind -std=c++14
+CFLAGS	= -s TOTAL_MEMORY=1900mb --bind -std=c++17
 JSOUT	= clarity_embind.js
 CPPIN	= clarity.cpp
 
