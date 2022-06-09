@@ -198,17 +198,17 @@ namespace clarity
     static val updateVal(string id) { return globalMap[id]->updateModel(); }
     static WebElement &getCLElementById(string id) { return *(globalMap[id]); }
     static void runCallbackById(string id) { callbackMap[id](); }
-    static void recordCurrentDataValues()
-    {
-      for (const auto &kv : globalMap)
-      {
-        // kv.second->setAttribute("currentVal", *(new val("Foo")));
-        // cout << "ID: " << kv.first << endl;
-        WebElement *wel = globalMap[kv.first];
-        // wel->getDomElementVal();
-        // wel->getTypedJSval();
-      }
-    }
+    // static void recordCurrentDataValues()
+    // {
+    //   for (const auto &kv : globalMap)
+    //   {
+    //     // kv.second->setAttribute("currentVal", *(new val("Foo")));
+    //     // cout << "ID: " << kv.first << endl;
+    //     WebElement *wel = globalMap[kv.first];
+    //     // wel->getDomElementVal();
+    //     // wel->getTypedJSval();
+    //   }
+    // }
 
     // private:
     vector<WebElement> children_;
@@ -230,8 +230,8 @@ namespace clarity
         .function("splicePtrs", &WebElement::splicePtrs, allow_raw_pointers())
         .class_function("getCLElementById", &WebElement::getCLElementById, allow_raw_pointers())
         .class_function("updateVal", &WebElement::updateVal, allow_raw_pointers())
-        .class_function("runCallbackById", &WebElement::runCallbackById, allow_raw_pointers())
-        .class_function("recordCurrentDataValues", &WebElement::recordCurrentDataValues, allow_raw_pointers());
+        .class_function("runCallbackById", &WebElement::runCallbackById, allow_raw_pointers());
+        //.class_function("recordCurrentDataValues", &WebElement::recordCurrentDataValues, allow_raw_pointers());
     enum_<WebElement::CppType>("WebElementCppType")
         .value("Int", WebElement::CppType::Int)
         .value("Float", WebElement::CppType::Float)
@@ -311,7 +311,7 @@ int main()
   {
     cout << "BUTTTON PRESSED!\n";
     // cout << "a = " << a <<"\n";
-    clarity::WebElement::recordCurrentDataValues();
+    //clarity::WebElement::recordCurrentDataValues();
     tm->iterate();
     cout << "tm->s_ = " << tm->s_ << endl;
     cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->anyvalPtr_ << endl;
