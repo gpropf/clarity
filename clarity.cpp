@@ -22,7 +22,13 @@ using namespace emscripten;
 // Run with 'python3 -m http.server 8000'
 namespace clarity
 {
-
+  /**
+   * @brief The project's central class. Describes an element with push/pull behavior to syncronize a data model and
+   * a web view. WebElements can contain others and complex web controls can be built up in a hierarchal fashion. The class is
+   * not necessarily homologous to JavaScript Dom elements but the "mirror" class CLElement is currently used to store
+   * a JS Dom element and retain other state on the JS side.
+   *
+   */
   class WebElement
   {
   public:
@@ -35,6 +41,15 @@ namespace clarity
       NoData
     };
 
+  private:
+    vector<WebElement> children_;
+    WebElement *parent_;
+    string tag_, id_;
+    CppType anyvalPtrType_; // c++ Data type
+    void *anyvalPtr_;       // pointer to actual data
+    val jsval_ = val::global("CLElement");
+
+  public:
     //===========
     // ValueElement() {}
 
@@ -78,16 +93,16 @@ namespace clarity
         break;
       case CppType::Double:
         domElement.set("value", val(*reinterpret_cast<double *>(anyvalPtr_)));
-        //cout << "updateView: C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
+        // cout << "updateView: C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
         break;
       case CppType::String:
         domElement.set("value", val(*reinterpret_cast<string *>(anyvalPtr_)));
-        //cout << "updateView: C++ side: New String Value: " << endl;
+        // cout << "updateView: C++ side: New String Value: " << endl;
         break;
-      case CppType::NoData:        
-        //cout << "updateView: C++ side: This element contains no data." << endl;        
+      case CppType::NoData:
+        // cout << "updateView: C++ side: This element contains no data." << endl;
       default:
-        //cout << "updateView: C++ side: Unknown data type!!" << endl;
+        // cout << "updateView: C++ side: Unknown data type!!" << endl;
         break;
       }
     }
@@ -100,26 +115,26 @@ namespace clarity
       {
       case CppType::Int:
         *reinterpret_cast<int *>(anyvalPtr_) = this->jsval_["anyval"].as<int>();
-        cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(anyvalPtr_) << endl;        
+        cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(anyvalPtr_) << endl;
         break;
       case CppType::Float:
         *reinterpret_cast<float *>(anyvalPtr_) = this->jsval_["anyval"].as<float>();
-        cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(anyvalPtr_) << endl;        
+        cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(anyvalPtr_) << endl;
         break;
       case CppType::Double:
         *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
-        cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;        
+        cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
         break;
       case CppType::String:
         //*reinterpret_cast<float *>(anyvalPtr_) = this->jsval_["anyval"].as<float>();
-        cout << "C++ side: New String Value: " << endl;        
+        cout << "C++ side: New String Value: " << endl;
         break;
       case CppType::NoData:
         //*reinterpret_cast<float *>(anyvalPtr_) = this->jsval_["anyval"].as<float>();
-        cout << "C++ side: This element contains no data." << endl;        
+        cout << "C++ side: This element contains no data." << endl;
         break;
       default:
-        
+
         break;
       }
       return this->jsval_["anyval"];
@@ -209,14 +224,6 @@ namespace clarity
     //     // wel->getTypedJSval();
     //   }
     // }
-
-    // private:
-    vector<WebElement> children_;
-    WebElement *parent_;
-    string tag_, id_;
-    CppType anyvalPtrType_; // c++ Data type
-    void *anyvalPtr_;       // pointer to actual data
-    val jsval_ = val::global("CLElement");
   };
 
   EMSCRIPTEN_BINDINGS(WebElement)
@@ -231,7 +238,7 @@ namespace clarity
         .class_function("getCLElementById", &WebElement::getCLElementById, allow_raw_pointers())
         .class_function("updateVal", &WebElement::updateVal, allow_raw_pointers())
         .class_function("runCallbackById", &WebElement::runCallbackById, allow_raw_pointers());
-        //.class_function("recordCurrentDataValues", &WebElement::recordCurrentDataValues, allow_raw_pointers());
+    //.class_function("recordCurrentDataValues", &WebElement::recordCurrentDataValues, allow_raw_pointers());
     enum_<WebElement::CppType>("WebElementCppType")
         .value("Int", WebElement::CppType::Int)
         .value("Float", WebElement::CppType::Float)
@@ -311,10 +318,10 @@ int main()
   {
     cout << "BUTTTON PRESSED!\n";
     // cout << "a = " << a <<"\n";
-    //clarity::WebElement::recordCurrentDataValues();
+    // clarity::WebElement::recordCurrentDataValues();
     tm->iterate();
     cout << "tm->s_ = " << tm->s_ << endl;
-    cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->anyvalPtr_ << endl;
+    cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
     // tc->inputB_->jsval_.set("onChangeActive", false);
     tc->inputB_->updateView();
     tc->inputA_->updateView();
