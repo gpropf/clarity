@@ -44,7 +44,7 @@ namespace clarity
   private:
     vector<WebElement> children_;
     WebElement *parent_;
-    string tag_, id_;
+    const string tag_, id_;
     CppType anyvalPtrType_; // c++ Data type
     void *anyvalPtr_;       // pointer to actual data
     val jsval_ = val::global("CLElement");
@@ -53,9 +53,9 @@ namespace clarity
     //===========
     // ValueElement() {}
 
-    WebElement(string id, string tag) : id_(id), tag_(tag) {}
+    WebElement(const string &id, const string &tag) : id_(id), tag_(tag) {}
 
-    WebElement(const string id, const string tag, const CppType anyvalPtrType) : tag_(tag),
+    WebElement(const string &id, const string &tag, const CppType anyvalPtrType) : tag_(tag),
                                                                                  id_(id),
                                                                                  anyvalPtrType_(anyvalPtrType)
 
@@ -70,7 +70,7 @@ namespace clarity
       WebElement::globalMap[id] = this;
     }
 
-    void setAttribute(const string attr, const val value)
+    void setAttribute(const string &attr, const val &value)
     {
       val domElement = jsval_["domElement"];
       domElement.call<void>("setAttribute", attr, value);
@@ -165,7 +165,7 @@ namespace clarity
       }
     }
 
-    val getDomElementVal()
+    val getDomElementVal() const
     {
       val domElement = jsval_["domElement"];
       return domElement["value"];
@@ -190,15 +190,10 @@ namespace clarity
     static map<string, std::function<void()>> callbackMap;
 
     string getTag() const { return tag_; }
-    void setTag(string tag)
-    {
-      tag_ = tag;
-      jsval_.set("tag", tag);
-    }
     void setParent(WebElement *parent) { this->parent_ = parent; }
-    WebElement *getParent() { return this->parent_; }
+    WebElement *getParent() const { return this->parent_; }
     string getId() const { return id_; }
-    void setId(string id) { id_ = id; }
+    //void setId(string id) { id_ = id; }
     val getJSval() const { return jsval_; }
     void setJsval(val jsval) { jsval_ = jsval; }
     void *getAnyvalPtr() const { return anyvalPtr_; }
@@ -210,9 +205,9 @@ namespace clarity
       jsval_.set("cpptype", cppType);
     }
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
-    static val updateVal(string id) { return globalMap[id]->updateModel(); }
-    static WebElement &getCLElementById(string id) { return *(globalMap[id]); }
-    static void runCallbackById(string id) { callbackMap[id](); }
+    static val updateVal(const string &id) { return globalMap[id]->updateModel(); }
+    static WebElement &getCLElementById(const string &id) { return *(globalMap[id]); }
+    static void runCallbackById(const string &id) { callbackMap[id](); }
     // static void recordCurrentDataValues()
     // {
     //   for (const auto &kv : globalMap)
@@ -230,8 +225,8 @@ namespace clarity
   {
     class_<WebElement>("WebElement")
         .constructor<string, string, const WebElement::CppType>(allow_raw_pointers())
-        .property("tag", &WebElement::getTag, &WebElement::setTag)
-        .property("id", &WebElement::getId, &WebElement::setId)
+        .property("tag", &WebElement::getTag)
+        .property("id", &WebElement::getId)
         .property("anyvalPtrType", &WebElement::getAnyvalPtrType, &WebElement::setAnyvalPtrType)
         .function("valueUpdated", &WebElement::updateModel)
         .function("splicePtrs", &WebElement::splicePtrs, allow_raw_pointers())
