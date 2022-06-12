@@ -32,32 +32,51 @@ namespace clarity
   class WebElement
   {
   public:
+
+  /**
+   * @brief Supported C++ types for WebElements.
+   * 
+   */
     enum class CppType : int
     {
       Int,
       Float,
       Double,
       String,
-      NoData
+      NoData /// Used for things like div that hold no data.
     };
 
   private:
     vector<WebElement> children_;
     WebElement *parent_;
     const string tag_, id_;
-    CppType anyvalPtrType_; // c++ Data type
+    CppType anyvalPtrType_; // C++ Data type
     void *anyvalPtr_;       // pointer to actual data
     val jsval_ = val::global("CLElement");
+    const bool isAttributeOfParent_;
 
   public:
     //===========
     // ValueElement() {}
 
-    WebElement(const string &id, const string &tag) : id_(id), tag_(tag) {}
+    WebElement(const string &id, const string &tag, const bool isAttributeOfParent = false) : id_(id),
+                                                                                               tag_(tag),
+                                                                                               isAttributeOfParent_ (isAttributeOfParent) {}
 
-    WebElement(const string &id, const string &tag, const CppType anyvalPtrType) : tag_(tag),
-                                                                                 id_(id),
-                                                                                 anyvalPtrType_(anyvalPtrType)
+    /**
+     * @brief Construct a new Web Element object
+     * 
+     * @param id Unique identifier
+     * @param tag HTML tag of this element
+     * @param anyvalPtrType C++ type of data contained within
+     * @param isAttributeOfParent Some WEs represent actual DOM children of their parent and others are simply attributes
+     */
+    WebElement(const string &id, const string &tag, const CppType anyvalPtrType, const bool isAttributeOfParent = false) : tag_(tag),
+                                                                                   id_(id),
+                                                                                   anyvalPtrType_(anyvalPtrType),
+                                                                                   isAttributeOfParent_ (isAttributeOfParent)
+                                                                                   
+                                                                                   
 
     {
       val CLContext = val::global("CLElement");
@@ -193,7 +212,7 @@ namespace clarity
     void setParent(WebElement *parent) { this->parent_ = parent; }
     WebElement *getParent() const { return this->parent_; }
     string getId() const { return id_; }
-    //void setId(string id) { id_ = id; }
+    // void setId(string id) { id_ = id; }
     val getJSval() const { return jsval_; }
     void setJsval(val jsval) { jsval_ = jsval; }
     void *getAnyvalPtr() const { return anyvalPtr_; }
