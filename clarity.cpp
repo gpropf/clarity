@@ -270,7 +270,9 @@ public:
     cout << "addr(s) = " << &s_ << endl;
   }
 
-  void update()
+  void update() {}
+
+  void iterate()
   {
     s_ += delta_;
     delta_ *= 0.95;    
@@ -332,7 +334,7 @@ int main()
   clarity::WebElement::callbackMap["updateModel"] = [=]
   {
     cout << "BUTTTON PRESSED!\n";    
-    tm->update();
+    tm->iterate();
     cout << "tm->s_ = " << tm->s_ << endl;
     cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;    
     tc->inputB_->update();
