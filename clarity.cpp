@@ -29,13 +29,13 @@ namespace clarity
    * views. Has only the update method. Typically a model or view being
    * updated will trigger the update of it corresponding element. Models
    * are always paired with views and vice versa.
-   * 
+   *
    */
   class UpdateAble
   {
   public:
     virtual void update() = 0; /// Perform a single update
-  };  
+  };
 
   /**
    * @brief The project's central class. Describes an element with push/pull behavior to syncronize a data model and
@@ -44,7 +44,7 @@ namespace clarity
    * a JS Dom element and retain other state on the JS side.
    *
    */
-  class WebElement: public UpdateAble
+  class WebElement : public UpdateAble
   {
   public:
     /**
@@ -109,7 +109,7 @@ namespace clarity
 
     /**
      * @brief Update the view from the model
-     * 
+     *
      */
     void update()
     {
@@ -119,19 +119,19 @@ namespace clarity
       switch (this->anyvalPtrType_)
       {
       case CppType::Int:
-        domElement.set("value", val(*reinterpret_cast<int *>(anyvalPtr_)));        
+        domElement.set("value", val(*reinterpret_cast<int *>(anyvalPtr_)));
         break;
       case CppType::Float:
-        domElement.set("value", val(*reinterpret_cast<float *>(anyvalPtr_)));        
+        domElement.set("value", val(*reinterpret_cast<float *>(anyvalPtr_)));
         break;
       case CppType::Double:
-        domElement.set("value", val(*reinterpret_cast<double *>(anyvalPtr_)));        
+        domElement.set("value", val(*reinterpret_cast<double *>(anyvalPtr_)));
         break;
       case CppType::String:
-        domElement.set("value", val(*reinterpret_cast<string *>(anyvalPtr_)));        
+        domElement.set("value", val(*reinterpret_cast<string *>(anyvalPtr_)));
         break;
-      case CppType::NoData:        
-      default:        
+      case CppType::NoData:
+      default:
         break;
       }
     }
@@ -155,10 +155,10 @@ namespace clarity
         *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
         cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
         break;
-      case CppType::String:        
+      case CppType::String:
         cout << "C++ side: New String Value: " << endl;
         break;
-      case CppType::NoData:        
+      case CppType::NoData:
         cout << "C++ side: This element contains no data." << endl;
         break;
       default:
@@ -207,12 +207,13 @@ namespace clarity
     }
 
     void addEventListenerById(const string &eventName, const string &callbackId)
-    {      
-      jsval_.call<void>("addEventListenerById", eventName, callbackId);     
+    {
+      jsval_.call<void>("addEventListenerById", eventName, callbackId);
     }
 
     static map<string, WebElement *> globalMap;
     static map<string, std::function<void()>> callbackMap;
+    
 
     string getTag() const { return tag_; }
     void setParent(WebElement *parent) { this->parent_ = parent; }
@@ -232,7 +233,7 @@ namespace clarity
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
     static val updateVal(const string &id) { return globalMap[id]->updateModel(); }
     static WebElement &getCLElementById(const string &id) { return *(globalMap[id]); }
-    static void runCallbackById(const string &id) { callbackMap[id](); }    
+    static void runCallbackById(const string &id) { callbackMap[id](); }
   };
 
   EMSCRIPTEN_BINDINGS(WebElement)
@@ -259,9 +260,9 @@ namespace clarity
 /**
  * @brief A simple model that just changes its internal state over time to
  * act as a testbed for the Clarity library.
- * 
+ *
  */
-class ToyModel: public clarity::UpdateAble
+class ToyModel : public clarity::UpdateAble
 {
 public:
   void printState() const
@@ -275,7 +276,7 @@ public:
   void iterate()
   {
     s_ += delta_;
-    delta_ *= 0.95;    
+    delta_ *= 0.95;
     printState();
   }
 
@@ -291,7 +292,7 @@ public:
 
 /**
  * @brief A simble example of a complex control made up of simpler ones.
- * 
+ *
  */
 class ToyControl : public clarity::WebElement
 {
@@ -302,8 +303,8 @@ public:
     mainDiv_ = new clarity::WebElement("mainDiv_", "div", CppType::NoData);
     inputA_ = new clarity::WebElement("inputA_", "input", CppType::Double);
     inputB_ = new clarity::WebElement("inputB_", "input", CppType::Double);
-    applyButton_ = new clarity::WebElement("applyButton_", "button", CppType::NoData);    
-    inputA_->setAttribute("type", val("text"));    
+    applyButton_ = new clarity::WebElement("applyButton_", "button", CppType::NoData);
+    inputA_->setAttribute("type", val("text"));
     inputB_->setAttribute("type", val("text"));
     mainDiv_->appendChild(*inputA_);
     mainDiv_->appendChild(*inputB_);
@@ -315,6 +316,9 @@ public:
   clarity::WebElement *inputB_;
   clarity::WebElement *applyButton_;
 };
+
+map<string, clarity::WebElement *> clarity::WebElement::globalMap;
+map<string, std::function<void()>> clarity::WebElement::callbackMap;
 
 int main()
 {  
@@ -333,10 +337,10 @@ int main()
 
   clarity::WebElement::callbackMap["updateModel"] = [=]
   {
-    cout << "BUTTTON PRESSED!\n";    
+    cout << "BUTTTON PRESSED!\n";
     tm->iterate();
     cout << "tm->s_ = " << tm->s_ << endl;
-    cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;    
+    cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
     tc->inputB_->update();
     tc->inputA_->update();
   };
@@ -345,6 +349,6 @@ int main()
   tc->inputB_->splicePtrs(&tm->s_);
   tc->applyButton_->addEventListenerById("click", "updateModel");
   printf("Setup complete!\n");
-  
+
   return 0;
 }
