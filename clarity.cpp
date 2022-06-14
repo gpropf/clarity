@@ -31,11 +31,11 @@ namespace clarity
    * are always paired with views and vice versa.
    *
    */
-  class UpdateAble
-  {
-  public:
-    virtual void update() = 0; /// Perform a single update
-  };
+  // class UpdateAble
+  // {
+  // public:
+  //   virtual void update() = 0; /// Perform a single update
+  // };
 
   /**
    * @brief The project's central class. Describes an element with push/pull behavior to syncronize a data model and
@@ -44,7 +44,7 @@ namespace clarity
    * a JS Dom element and retain other state on the JS side.
    *
    */
-  class WebElement : public UpdateAble
+  class WebElement //: public UpdateAble
   {
   public:
     /**
@@ -262,7 +262,7 @@ namespace clarity
  * act as a testbed for the Clarity library.
  *
  */
-class ToyModel : public clarity::UpdateAble
+class ToyModel //: public clarity::UpdateAble
 {
 public:
   void printState() const
