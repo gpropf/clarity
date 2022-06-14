@@ -79,6 +79,15 @@ class CLElement {
     return this.domElement_
   }
 
+  set name(name) {
+    this.name_ = name;
+    this.domElement_.setAttribute(name, name);
+  }
+
+  get name() {
+    return this.domElement_.name;
+  }
+
   // set onChangeActive(onChangeActive) {
   //   this.onChangeActive_ = onChangeActive;
   // }

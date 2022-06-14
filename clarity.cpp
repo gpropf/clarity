@@ -37,6 +37,14 @@ namespace clarity
   //   virtual void update() = 0; /// Perform a single update
   // };
 
+  class TicketMachine
+  {
+    int id_ = 0;
+
+  public:
+    const int getNext() { return ++id_; }
+  };
+
   /**
    * @brief The project's central class. Describes an element with push/pull behavior to syncronize a data model and
    * a web view. WebElements can contain others and complex web controls can be built up in a hierarchal fashion. The class is
@@ -63,19 +71,21 @@ namespace clarity
   private:
     vector<WebElement> children_;
     WebElement *parent_;
-    const string tag_, id_;
+    // string tag_, name_;
+    string tag_, name_;
     CppType anyvalPtrType_; // C++ Data type
     void *anyvalPtr_;       // pointer to actual data
     val jsval_ = val::global("CLElement");
     const bool isAttributeOfParent_;
+    int id_;
 
   public:
     //===========
     // ValueElement() {}
 
-    WebElement(const string &id, const string &tag, const bool isAttributeOfParent = false) : id_(id),
-                                                                                              tag_(tag),
-                                                                                              isAttributeOfParent_(isAttributeOfParent) {}
+    // WebElement(const string &name, const string &tag, const bool isAttributeOfParent = false) : name_(name),
+    //                                                                                           tag_(tag),
+    //                                                                                           isAttributeOfParent_(isAttributeOfParent) {}
 
     /**
      * @brief Construct a new Web Element object
@@ -85,20 +95,22 @@ namespace clarity
      * @param anyvalPtrType C++ type of data contained within
      * @param isAttributeOfParent Some WEs represent actual DOM children of their parent and others are simply attributes
      */
-    WebElement(const string &id, const string &tag, const CppType anyvalPtrType, const bool isAttributeOfParent = false) : tag_(tag),
-                                                                                                                           id_(id),
-                                                                                                                           anyvalPtrType_(anyvalPtrType),
-                                                                                                                           isAttributeOfParent_(isAttributeOfParent)
+    WebElement(const string &name, const string &tag, const CppType anyvalPtrType, const bool isAttributeOfParent = false) : tag_(tag),
+                                                                                                                             name_(name),
+                                                                                                                             anyvalPtrType_(anyvalPtrType),
+                                                                                                                             isAttributeOfParent_(isAttributeOfParent)
 
     {
       val CLContext = val::global("CLElement");
+      id_ = tm.getNext();
       jsval_ = CLContext.new_();
       jsval_.set("cpptype", val(anyvalPtrType));
       jsval_.set("tag", val(tag));
-      jsval_.set("id", val(id));
+      jsval_.set("id", val(id_));
+      jsval_.set("name", val(name_));
       anyvalPtr_ = nullptr;
 
-      WebElement::globalMap[id] = this;
+      WebElement::switchboard[id_] = this;
     }
 
     void setAttribute(const string &attr, const val &value)
@@ -210,15 +222,14 @@ namespace clarity
     {
       jsval_.call<void>("addEventListenerById", eventName, callbackId);
     }
-
-    static map<string, WebElement *> globalMap;
+    //=====================
+    static map<const int, WebElement *> switchboard;
     static map<string, std::function<void()>> callbackMap;
-    
 
     string getTag() const { return tag_; }
     void setParent(WebElement *parent) { this->parent_ = parent; }
     WebElement *getParent() const { return this->parent_; }
-    string getId() const { return id_; }
+    string getId() const { return name_; }
     // void setId(string id) { id_ = id; }
     val getJSval() const { return jsval_; }
     void setJsval(val jsval) { jsval_ = jsval; }
@@ -231,8 +242,9 @@ namespace clarity
       jsval_.set("cpptype", cppType);
     }
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
-    static val updateVal(const string &id) { return globalMap[id]->updateModel(); }
-    static WebElement &getCLElementById(const string &id) { return *(globalMap[id]); }
+    static TicketMachine tm;
+    static val updateVal(const int id) { return switchboard[id]->updateModel(); }
+    static WebElement &getCLElementById(const int id) { return *(switchboard[id]); }
     static void runCallbackById(const string &id) { callbackMap[id](); }
   };
 
@@ -298,7 +310,7 @@ class ToyControl : public clarity::WebElement
 {
 
 public:
-  ToyControl(string id, string tag) : WebElement(tag, id)
+  ToyControl(const string &name, const string &tag, const CppType anyvalPtrType) : WebElement(name, tag, anyvalPtrType)
   {
     mainDiv_ = new clarity::WebElement("mainDiv_", "div", CppType::NoData);
     inputA_ = new clarity::WebElement("inputA_", "input", CppType::Double);
@@ -317,11 +329,12 @@ public:
   clarity::WebElement *applyButton_;
 };
 
-map<string, clarity::WebElement *> clarity::WebElement::globalMap;
+map<const int, clarity::WebElement *> clarity::WebElement::switchboard;
 map<string, std::function<void()>> clarity::WebElement::callbackMap;
+clarity::TicketMachine clarity::WebElement::tm;
 
 int main()
-{  
+{
   val CLContext = val::global("CLElement");
   if (CLContext.as<bool>())
   {
@@ -332,7 +345,7 @@ int main()
     return -1;
   }
 
-  ToyControl *tc = new ToyControl("tc1", "div");
+  ToyControl *tc = new ToyControl("tc1", "div", clarity::WebElement::CppType::NoData);
   ToyModel *tm = new ToyModel(0, 1);
 
   clarity::WebElement::callbackMap["updateModel"] = [=]
