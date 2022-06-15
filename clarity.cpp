@@ -312,19 +312,24 @@ class ToyControl : public clarity::WebElement
 public:
   ToyControl(const string &name, const string &tag, const CppType anyvalPtrType) : WebElement(name, tag, anyvalPtrType)
   {
-    mainDiv_ = new clarity::WebElement("mainDiv_", "div", CppType::NoData);
+    //mainDiv_ = new clarity::WebElement("mainDiv_", "div", CppType::NoData);
     inputA_ = new clarity::WebElement("inputA_", "input", CppType::Double);
     inputB_ = new clarity::WebElement("inputB_", "input", CppType::Double);
+    sliderA_ = new clarity::WebElement("sliderA_", "input", CppType::Double);
     applyButton_ = new clarity::WebElement("applyButton_", "button", CppType::NoData);
     inputA_->setAttribute("type", val("text"));
     inputB_->setAttribute("type", val("text"));
-    mainDiv_->appendChild(*inputA_);
-    mainDiv_->appendChild(*inputB_);
-    mainDiv_->appendChild(*applyButton_);
+    sliderA_->setAttribute("type", val("range"));
+    this->appendChild(*inputA_);
+    this->appendChild(*inputB_);
+    this->appendChild(*applyButton_);
+    this->appendChild(*sliderA_);
+    //this->appendChild(*mainDiv_);
   }
 
   clarity::WebElement *mainDiv_;
   clarity::WebElement *inputA_;
+  clarity::WebElement *sliderA_;
   clarity::WebElement *inputB_;
   clarity::WebElement *applyButton_;
 };
@@ -356,10 +361,13 @@ int main()
     cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
     tc->inputB_->update();
     tc->inputA_->update();
+    tc->sliderA_->update();
   };
 
   tc->inputA_->splicePtrs(&tm->delta_);
   tc->inputB_->splicePtrs(&tm->s_);
+  tc->sliderA_->splicePtrs(&tm->s_);
+  tc->sliderA_->addEventListenerById("change", "updateModel");
   tc->applyButton_->addEventListenerById("click", "updateModel");
   printf("Setup complete!\n");
 

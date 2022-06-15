@@ -81,7 +81,7 @@ class CLElement {
 
   set name(name) {
     this.name_ = name;
-    this.domElement_.setAttribute(name, name);
+    this.domElement_.setAttribute("name", name);
   }
 
   get name() {
