@@ -123,7 +123,7 @@ namespace clarity
      * @brief Update the view from the model
      *
      */
-    void update()
+    void updateViewFromModel()
     {
       val domElement = this->jsval_["domElement"];
       if (anyvalPtr_ == nullptr)
@@ -148,7 +148,7 @@ namespace clarity
       }
     }
 
-    val updateModel()
+    val updateModelFromView()
     {
       if (anyvalPtr_ == nullptr)
         return this->jsval_["anyval"];
@@ -243,7 +243,7 @@ namespace clarity
     }
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
     static TicketMachine tm;
-    static val updateVal(const int id) { return switchboard[id]->updateModel(); }
+    static val updateModelFromViewById(const int id) { return switchboard[id]->updateModelFromView(); }
     static WebElement &getCLElementById(const int id) { return *(switchboard[id]); }
     static void runCallbackById(const string &id) { callbackMap[id](); }
   };
@@ -255,10 +255,10 @@ namespace clarity
         .property("tag", &WebElement::getTag)
         .property("id", &WebElement::getId)
         .property("anyvalPtrType", &WebElement::getAnyvalPtrType, &WebElement::setAnyvalPtrType)
-        .function("valueUpdated", &WebElement::updateModel)
+        .function("valueUpdated", &WebElement::updateModelFromView)
         .function("splicePtrs", &WebElement::splicePtrs, allow_raw_pointers())
         .class_function("getCLElementById", &WebElement::getCLElementById, allow_raw_pointers())
-        .class_function("updateVal", &WebElement::updateVal, allow_raw_pointers())
+        .class_function("updateModelFromViewById", &WebElement::updateModelFromViewById, allow_raw_pointers())
         .class_function("runCallbackById", &WebElement::runCallbackById, allow_raw_pointers());
     enum_<WebElement::CppType>("WebElementCppType")
         .value("Int", WebElement::CppType::Int)
@@ -353,22 +353,22 @@ int main()
   ToyControl *tc = new ToyControl("tc1", "div", clarity::WebElement::CppType::NoData);
   ToyModel *tm = new ToyModel(0, 1);
 
-  clarity::WebElement::callbackMap["updateModel"] = [=]
+  clarity::WebElement::callbackMap["updateModelFromView"] = [=]
   {
     cout << "BUTTTON PRESSED!\n";
     tm->iterate();
     cout << "tm->s_ = " << tm->s_ << endl;
     cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
-    tc->inputB_->update();
-    tc->inputA_->update();
-    tc->sliderA_->update();
+    tc->inputB_->updateViewFromModel();
+    tc->inputA_->updateViewFromModel();
+    tc->sliderA_->updateViewFromModel();
   };
 
   tc->inputA_->splicePtrs(&tm->delta_);
   tc->inputB_->splicePtrs(&tm->s_);
   tc->sliderA_->splicePtrs(&tm->s_);
-  tc->sliderA_->addEventListenerById("change", "updateModel");
-  tc->applyButton_->addEventListenerById("click", "updateModel");
+  tc->sliderA_->addEventListenerById("change", "updateModelFromView");
+  tc->applyButton_->addEventListenerById("click", "updateModelFromView");
   printf("Setup complete!\n");
 
   return 0;
