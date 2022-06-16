@@ -255,7 +255,7 @@ namespace clarity
         .property("tag", &WebElement::getTag)
         .property("id", &WebElement::getId)
         .property("anyvalPtrType", &WebElement::getAnyvalPtrType, &WebElement::setAnyvalPtrType)
-        .function("valueUpdated", &WebElement::updateModelFromView)
+        .function("updateModelFromView", &WebElement::updateModelFromView)
         .function("splicePtrs", &WebElement::splicePtrs, allow_raw_pointers())
         .class_function("getCLElementById", &WebElement::getCLElementById, allow_raw_pointers())
         .class_function("updateModelFromViewById", &WebElement::updateModelFromViewById, allow_raw_pointers())
