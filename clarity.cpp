@@ -58,6 +58,8 @@ namespace clarity
   class BoundElement
   {
     virtual void updateViewFromModel() = 0;
+
+  protected:
     string boundField;
   };
 
@@ -81,7 +83,7 @@ namespace clarity
    * a JS Dom element and retain other state on the JS side.
    *
    */
-  class WebElement //: public BoundElement
+  class WebElement : public BoundElement
   {
   public:
     /**
@@ -108,6 +110,9 @@ namespace clarity
     const bool isAttributeOfParent_;
     int id_;
 
+  
+    
+
   public:
     /**
      * @brief Construct a new Web Element object
@@ -131,6 +136,7 @@ namespace clarity
       jsval_.set("id", val(id_));
       jsval_.set("name", val(name_));
       anyvalPtr_ = nullptr;
+      boundField = "value";
 
       WebElement::switchboard[id_] = this;
     }
@@ -153,16 +159,16 @@ namespace clarity
       switch (this->anyvalPtrType_)
       {
       case CppType::Int:
-        domElement.set("value", val(*reinterpret_cast<int *>(anyvalPtr_)));
+        domElement.set(boundField, val(*reinterpret_cast<int *>(anyvalPtr_)));
         break;
       case CppType::Float:
-        domElement.set("value", val(*reinterpret_cast<float *>(anyvalPtr_)));
+        domElement.set(boundField, val(*reinterpret_cast<float *>(anyvalPtr_)));
         break;
       case CppType::Double:
-        domElement.set("value", val(*reinterpret_cast<double *>(anyvalPtr_)));
+        domElement.set(boundField, val(*reinterpret_cast<double *>(anyvalPtr_)));
         break;
       case CppType::String:
-        domElement.set("value", val(*reinterpret_cast<string *>(anyvalPtr_)));
+        domElement.set(boundField, val(*reinterpret_cast<string *>(anyvalPtr_)));
         break;
       case CppType::NoData:
       default:
@@ -249,8 +255,9 @@ namespace clarity
   class ButtonElement : public WebElement
   {
   public:
-    ButtonElement(const string &name, const string &tag, const CppType anyvalPtrType, const bool isAttributeOfParent = false):
-     WebElement(name, tag, anyvalPtrType, isAttributeOfParent) {}
+    ButtonElement(const string &name, const string &tag, const CppType anyvalPtrType, const bool isAttributeOfParent = false) : WebElement(name, tag, anyvalPtrType, isAttributeOfParent) {
+      boundField = "textContent";
+    }
   };
 
   EMSCRIPTEN_BINDINGS(WebElement)
@@ -369,7 +376,8 @@ int main()
 
   ToyControl *tc = new ToyControl("tc1", "div", clarity::WebElement::CppType::NoData);
   ToyModel *tm = new ToyModel(0, 1);
-  string buttonText = string("CLICK ME!");
+  string * buttonText = new string("CLICK ME!");
+  
 
   clarity::WebElement::callbackMap["updateModelFromView"] = [=]
   {
@@ -386,11 +394,12 @@ int main()
   tc->inputA_->splicePtrs(&tm->delta_);
   tc->inputB_->splicePtrs(&tm->s_);
   tc->sliderA_->splicePtrs(&tm->s_);
-  tc->applyButton_->splicePtrs(&buttonText);
+  tc->applyButton_->splicePtrs(buttonText);
   tc->sliderA_->addEventListenerById("change", "updateModelFromView");
   tc->applyButton_->addEventListenerById("click", "updateModelFromView");
 
   printf("Setup complete!\n");
+  clarity::WebElement::runCallbackById("updateModelFromView");
 
   return 0;
 }
