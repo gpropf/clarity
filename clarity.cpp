@@ -37,12 +37,41 @@ namespace clarity
   //   virtual void update() = 0; /// Perform a single update
   // };
 
+  /**
+   * @brief Hands out (presumably) unique int ids with a simply incrementing counter.
+   *
+   */
   class TicketMachine
   {
+  private:
     int id_ = 0;
 
   public:
     const int getNext() { return ++id_; }
+  };
+
+  /**
+   * @brief Base class for all viewable elements that can take on a value controlled from a model.
+   * WebElement and AttributeElement should descend from this.
+   *
+   */
+  class BoundElement
+  {
+    virtual void updateViewFromModel() = 0;
+  };
+
+
+  /**
+   * @brief Represents an attribute of another element such as bgcolor.
+   * This is not necessarily a dom element that we control though it may be.
+   * 
+   */
+  class AttributeElement : public BoundElement
+  {
+    void updateViewFromModel()
+    {
+      // FIXME: fill in method
+    }
   };
 
   /**
@@ -52,7 +81,7 @@ namespace clarity
    * a JS Dom element and retain other state on the JS side.
    *
    */
-  class WebElement //: public UpdateAble
+  class WebElement : public BoundElement
   {
   public:
     /**
@@ -80,13 +109,6 @@ namespace clarity
     int id_;
 
   public:
-    //===========
-    // ValueElement() {}
-
-    // WebElement(const string &name, const string &tag, const bool isAttributeOfParent = false) : name_(name),
-    //                                                                                           tag_(tag),
-    //                                                                                           isAttributeOfParent_(isAttributeOfParent) {}
-
     /**
      * @brief Construct a new Web Element object
      *
@@ -178,31 +200,6 @@ namespace clarity
       }
 
       return this->jsval_["anyval"];
-    }
-
-    val getTypedJSval() const
-    {
-      switch (this->anyvalPtrType_)
-      {
-      case CppType::Int:
-        return val(*reinterpret_cast<float *>(anyvalPtr_));
-        break;
-      case CppType::Float:
-        return val(*reinterpret_cast<float *>(anyvalPtr_));
-        break;
-      case CppType::Double:
-        return val(*reinterpret_cast<double *>(anyvalPtr_));
-        break;
-      case CppType::String:
-        return val(*reinterpret_cast<string *>(anyvalPtr_));
-        break;
-      case CppType::NoData:
-        return val(nullptr);
-        break;
-      default:
-        return val(nullptr);
-        break;
-      }
     }
 
     val getDomElementVal() const
@@ -312,7 +309,7 @@ class ToyControl : public clarity::WebElement
 public:
   ToyControl(const string &name, const string &tag, const CppType anyvalPtrType) : WebElement(name, tag, anyvalPtrType)
   {
-    //mainDiv_ = new clarity::WebElement("mainDiv_", "div", CppType::NoData);
+    // mainDiv_ = new clarity::WebElement("mainDiv_", "div", CppType::NoData);
     inputA_ = new clarity::WebElement("inputA_", "input", CppType::Double);
     inputB_ = new clarity::WebElement("inputB_", "input", CppType::Double);
     sliderA_ = new clarity::WebElement("sliderA_", "input", CppType::Double);
@@ -324,7 +321,7 @@ public:
     this->appendChild(*inputB_);
     this->appendChild(*applyButton_);
     this->appendChild(*sliderA_);
-    //this->appendChild(*mainDiv_);
+    // this->appendChild(*mainDiv_);
   }
 
   clarity::WebElement *mainDiv_;
@@ -334,7 +331,19 @@ public:
   clarity::WebElement *applyButton_;
 };
 
+/**
+ * @brief switchboard is where a map of all the WebElements is stored so that
+ * they can be found by their id numbers.
+ *
+ */
 map<const int, clarity::WebElement *> clarity::WebElement::switchboard;
+
+/**
+ * @brief callbackMap holds C++ functions that can be triggered from JS
+ * when events like a button press or timer tick require modification of
+ * the C++ model state.
+ *
+ */
 map<string, std::function<void()>> clarity::WebElement::callbackMap;
 clarity::TicketMachine clarity::WebElement::tm;
 
