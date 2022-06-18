@@ -58,13 +58,13 @@ namespace clarity
   class BoundElement
   {
     virtual void updateViewFromModel() = 0;
+    string boundField;
   };
-
 
   /**
    * @brief Represents an attribute of another element such as bgcolor.
    * This is not necessarily a dom element that we control though it may be.
-   * 
+   *
    */
   class AttributeElement : public BoundElement
   {
@@ -81,7 +81,7 @@ namespace clarity
    * a JS Dom element and retain other state on the JS side.
    *
    */
-  class WebElement : public BoundElement
+  class WebElement //: public BoundElement
   {
   public:
     /**
@@ -190,7 +190,8 @@ namespace clarity
         cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
         break;
       case CppType::String:
-        cout << "C++ side: New String Value: " << endl;
+        *reinterpret_cast<string *>(anyvalPtr_) = this->jsval_["anyval"].as<string>();
+        cout << "C++ side: New String Value: " << *reinterpret_cast<string *>(anyvalPtr_) << endl;
         break;
       case CppType::NoData:
         cout << "C++ side: This element contains no data." << endl;
@@ -243,6 +244,13 @@ namespace clarity
     static val updateModelFromViewById(const int id) { return switchboard[id]->updateModelFromView(); }
     static WebElement &getCLElementById(const int id) { return *(switchboard[id]); }
     static void runCallbackById(const string &id) { callbackMap[id](); }
+  };
+
+  class ButtonElement : public WebElement
+  {
+  public:
+    ButtonElement(const string &name, const string &tag, const CppType anyvalPtrType, const bool isAttributeOfParent = false):
+     WebElement(name, tag, anyvalPtrType, isAttributeOfParent) {}
   };
 
   EMSCRIPTEN_BINDINGS(WebElement)
@@ -313,7 +321,7 @@ public:
     inputA_ = new clarity::WebElement("inputA_", "input", CppType::Double);
     inputB_ = new clarity::WebElement("inputB_", "input", CppType::Double);
     sliderA_ = new clarity::WebElement("sliderA_", "input", CppType::Double);
-    applyButton_ = new clarity::WebElement("applyButton_", "button", CppType::NoData);
+    applyButton_ = new clarity::ButtonElement("applyButton_", "button", CppType::String);
     inputA_->setAttribute("type", val("text"));
     inputB_->setAttribute("type", val("text"));
     sliderA_->setAttribute("type", val("range"));
@@ -361,6 +369,7 @@ int main()
 
   ToyControl *tc = new ToyControl("tc1", "div", clarity::WebElement::CppType::NoData);
   ToyModel *tm = new ToyModel(0, 1);
+  string buttonText = string("CLICK ME!");
 
   clarity::WebElement::callbackMap["updateModelFromView"] = [=]
   {
@@ -371,13 +380,16 @@ int main()
     tc->inputB_->updateViewFromModel();
     tc->inputA_->updateViewFromModel();
     tc->sliderA_->updateViewFromModel();
+    tc->applyButton_->updateViewFromModel();
   };
 
   tc->inputA_->splicePtrs(&tm->delta_);
   tc->inputB_->splicePtrs(&tm->s_);
   tc->sliderA_->splicePtrs(&tm->s_);
+  tc->applyButton_->splicePtrs(&buttonText);
   tc->sliderA_->addEventListenerById("change", "updateModelFromView");
   tc->applyButton_->addEventListenerById("click", "updateModelFromView");
+
   printf("Setup complete!\n");
 
   return 0;
