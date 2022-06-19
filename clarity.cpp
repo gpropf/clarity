@@ -150,6 +150,7 @@ namespace clarity
      */
     void updateViewFromModel()
     {
+      cout << "STARTING: updateViewFromModel for " << this->name_ << "\n";
       val domElement = this->jsval_["domElement"];
       for (auto child : children_)
       {
@@ -157,7 +158,11 @@ namespace clarity
       }
 
       if (anyvalPtr_ == nullptr)
+      {
+        cout << "ENDING: updateViewFromModel for " << this->name_ << " because anyvalPtr_ == nullptr\n";
         return;
+      }
+
       switch (this->anyvalPtrType_)
       {
       case CppType::Int:
@@ -167,7 +172,9 @@ namespace clarity
         domElement.set(boundField, val(*reinterpret_cast<float *>(anyvalPtr_)));
         break;
       case CppType::Double:
+        //domElement.set(boundField, val(*reinterpret_cast<double *>(anyvalPtr_)));
         domElement.set(boundField, val(*reinterpret_cast<double *>(anyvalPtr_)));
+        //jsval_.set("anyval", val(*reinterpret_cast<double *>(anyvalPtr_)));
         break;
       case CppType::String:
         domElement.set(boundField, val(*reinterpret_cast<string *>(anyvalPtr_)));
@@ -176,30 +183,40 @@ namespace clarity
       default:
         break;
       }
+      cout << "ENDING: updateViewFromModel for " << this->name_ << "\n";
     }
 
-    val updateModelFromView()
+    void updateModelFromView()
     {
+      cout << "STARTING: updateModelFromView for " << this->name_ << "\n";
+      for (auto child : children_)
+      {
+        child->updateModelFromView();
+      }
 
       if (anyvalPtr_ == nullptr)
-        return this->jsval_["anyval"];
+      {
+        cout << "ENDING: updateModelFromView for " << this->name_ << " because anyvalPtr_ == nullptr\n";
+        return;// this->jsval_["anyval"];
+      }
 
       switch (this->anyvalPtrType_)
       {
       case CppType::Int:
-        *reinterpret_cast<int *>(anyvalPtr_) = this->jsval_["anyval"].as<int>();
+        *reinterpret_cast<int *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", getDomElementVal());
         cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(anyvalPtr_) << endl;
         break;
       case CppType::Float:
-        *reinterpret_cast<float *>(anyvalPtr_) = this->jsval_["anyval"].as<float>();
+        *reinterpret_cast<float *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", getDomElementVal());
         cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(anyvalPtr_) << endl;
         break;
       case CppType::Double:
-        *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
+        //*reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
+        *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_.call<double>("jsToCPPVal", getDomElementVal());
         cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
         break;
       case CppType::String:
-        *reinterpret_cast<string *>(anyvalPtr_) = this->jsval_["anyval"].as<string>();
+        //*reinterpret_cast<string *>(anyvalPtr_) = this->jsval_["anyval"].as<string>();
         cout << "C++ side: New String Value: " << *reinterpret_cast<string *>(anyvalPtr_) << endl;
         break;
       case CppType::NoData:
@@ -208,8 +225,8 @@ namespace clarity
       default:
         break;
       }
-
-      return this->jsval_["anyval"];
+      cout << "ENDING: updateModelFromView for " << this->name_ << "\n";
+      return;// this->jsval_["anyval"];
     }
 
     val getDomElementVal() const
@@ -250,7 +267,7 @@ namespace clarity
     }
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
     static TicketMachine tm;
-    static val updateModelFromViewById(const int id) { return switchboard[id]->updateModelFromView(); }
+    static void updateModelFromViewById(const int id) { switchboard[id]->updateModelFromView(); }
     static WebElement &getCLElementById(const int id) { return *(switchboard[id]); }
     static void runCallbackById(const string &id) { callbackMap[id](); }
   };
@@ -295,8 +312,8 @@ class ToyModel //: public clarity::UpdateAble
 public:
   void printState() const
   {
-    cout << "s = " << s_ << ", delta = " << delta_ << endl;
-    cout << "addr(s) = " << &s_ << endl;
+    cout << "MODEL STATE: s = " << s_ << ", delta = " << delta_ << endl;
+    // cout << "addr(s) = " << &s_ << endl;
   }
 
   void update() {}
@@ -384,33 +401,31 @@ int main()
 
   clarity::WebElement::callbackMap["iterateModel"] = [=]
   {
-    cout << "ITERATE!\n";
+    cout << "callbackMap[\"iterateModel\"]\n";
     tm->iterate();
-    cout << "tm->s_ = " << tm->s_ << endl;
-    cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
-    // tc->inputB_->updateViewFromModel();
-    // tc->inputA_->updateViewFromModel();
-    // tc->sliderA_->updateViewFromModel();
-    // tc->applyButton_->updateViewFromModel();
-    //tc->updateViewFromModel();
+    tm->printState();
+    // cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
+    //  tc->inputB_->updateViewFromModel();
+    //  tc->inputA_->updateViewFromModel();
+    //  tc->sliderA_->updateViewFromModel();
+    //  tc->applyButton_->updateViewFromModel();
+    //  tc->updateViewFromModel();
     tc->updateViewFromModel();
-     tc->updateModelFromView();
-    
+    tc->updateModelFromView();
   };
 
   clarity::WebElement::callbackMap["syncModelView"] = [=]
   {
-    cout << "updateViewFromModel\n";
-    //tm->iterate();
-    cout << "tm->s_ = " << tm->s_ << endl;
-    cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
-    // tc->inputB_->updateViewFromModel();
-    // tc->inputA_->updateViewFromModel();
-    // tc->sliderA_->updateViewFromModel();
-    // tc->applyButton_->updateViewFromModel();
-     tc->updateModelFromView();
+    cout << "callbackMap[\"syncModelView\"]\n";
+    tm->printState();
+    // cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
+    //  tc->inputB_->updateViewFromModel();
+    //  tc->inputA_->updateViewFromModel();
+    //  tc->sliderA_->updateViewFromModel();
+    //  tc->applyButton_->updateViewFromModel();
+    tc->updateModelFromView();
     tc->updateViewFromModel();
-  };  
+  };
 
   tc->inputA_->splicePtrs(&tm->delta_);
   tc->inputB_->splicePtrs(&tm->s_);
