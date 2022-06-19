@@ -100,7 +100,7 @@ namespace clarity
     };
 
   private:
-    vector<WebElement> children_;
+    vector<WebElement *> children_;
     WebElement *parent_;
     // string tag_, name_;
     string tag_, name_;
@@ -109,9 +109,6 @@ namespace clarity
     val jsval_ = val::global("CLElement");
     const bool isAttributeOfParent_;
     int id_;
-
-  
-    
 
   public:
     /**
@@ -154,6 +151,11 @@ namespace clarity
     void updateViewFromModel()
     {
       val domElement = this->jsval_["domElement"];
+      for (auto child : children_)
+      {
+        child->updateViewFromModel();
+      }
+
       if (anyvalPtr_ == nullptr)
         return;
       switch (this->anyvalPtrType_)
@@ -178,6 +180,7 @@ namespace clarity
 
     val updateModelFromView()
     {
+
       if (anyvalPtr_ == nullptr)
         return this->jsval_["anyval"];
 
@@ -215,10 +218,10 @@ namespace clarity
       return domElement["value"];
     }
 
-    bool appendChild(WebElement &child)
+    bool appendChild(WebElement *child)
     {
       children_.push_back(child);
-      jsval_.call<void>("appendChild", child.getJSval());
+      jsval_.call<void>("appendChild", child->getJSval());
       return true; // FIXME: need to check for duplicate ids.
     }
 
@@ -255,7 +258,8 @@ namespace clarity
   class ButtonElement : public WebElement
   {
   public:
-    ButtonElement(const string &name, const string &tag, const CppType anyvalPtrType, const bool isAttributeOfParent = false) : WebElement(name, tag, anyvalPtrType, isAttributeOfParent) {
+    ButtonElement(const string &name, const string &tag, const CppType anyvalPtrType, const bool isAttributeOfParent = false) : WebElement(name, tag, anyvalPtrType, isAttributeOfParent)
+    {
       boundField = "textContent";
     }
   };
@@ -332,10 +336,10 @@ public:
     inputA_->setAttribute("type", val("text"));
     inputB_->setAttribute("type", val("text"));
     sliderA_->setAttribute("type", val("range"));
-    this->appendChild(*inputA_);
-    this->appendChild(*inputB_);
-    this->appendChild(*applyButton_);
-    this->appendChild(*sliderA_);
+    this->appendChild(inputA_);
+    this->appendChild(inputB_);
+    this->appendChild(applyButton_);
+    this->appendChild(sliderA_);
     // this->appendChild(*mainDiv_);
   }
 
@@ -376,30 +380,60 @@ int main()
 
   ToyControl *tc = new ToyControl("tc1", "div", clarity::WebElement::CppType::NoData);
   ToyModel *tm = new ToyModel(0, 1);
-  string * buttonText = new string("CLICK ME!");
-  
+  string *buttonText = new string("CLICK ME!");
 
-  clarity::WebElement::callbackMap["updateModelFromView"] = [=]
+  clarity::WebElement::callbackMap["iterateModel"] = [=]
   {
-    cout << "BUTTTON PRESSED!\n";
+    cout << "ITERATE!\n";
     tm->iterate();
     cout << "tm->s_ = " << tm->s_ << endl;
     cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
-    tc->inputB_->updateViewFromModel();
-    tc->inputA_->updateViewFromModel();
-    tc->sliderA_->updateViewFromModel();
-    tc->applyButton_->updateViewFromModel();
+    // tc->inputB_->updateViewFromModel();
+    // tc->inputA_->updateViewFromModel();
+    // tc->sliderA_->updateViewFromModel();
+    // tc->applyButton_->updateViewFromModel();
+    //tc->updateViewFromModel();
+     tc->updateModelFromView();
+    tc->updateViewFromModel();
   };
+
+  clarity::WebElement::callbackMap["syncModelView"] = [=]
+  {
+    cout << "updateViewFromModel\n";
+    //tm->iterate();
+    cout << "tm->s_ = " << tm->s_ << endl;
+    cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
+    // tc->inputB_->updateViewFromModel();
+    // tc->inputA_->updateViewFromModel();
+    // tc->sliderA_->updateViewFromModel();
+    // tc->applyButton_->updateViewFromModel();
+     tc->updateModelFromView();
+    tc->updateViewFromModel();
+  };
+
+  // clarity::WebElement::callbackMap["updateModelFromView"] = [=]
+  // {
+  //   cout << "updateModelFromView!\n";
+  //   //tm->iterate();
+  //   cout << "tm->s_ = " << tm->s_ << endl;
+  //   cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
+  //   // tc->inputB_->updateViewFromModel();
+  //   // tc->inputA_->updateViewFromModel();
+  //   // tc->sliderA_->updateViewFromModel();
+  //   // tc->applyButton_->updateViewFromModel();
+  //   tc->updateModelFromView();
+  // };
 
   tc->inputA_->splicePtrs(&tm->delta_);
   tc->inputB_->splicePtrs(&tm->s_);
   tc->sliderA_->splicePtrs(&tm->s_);
   tc->applyButton_->splicePtrs(buttonText);
-  tc->sliderA_->addEventListenerById("change", "updateModelFromView");
-  tc->applyButton_->addEventListenerById("click", "updateModelFromView");
+  tc->sliderA_->addEventListenerById("change", "syncModelView");
+  tc->applyButton_->addEventListenerById("click", "iterateModel");
 
+  tc->updateViewFromModel();
   printf("Setup complete!\n");
-  clarity::WebElement::runCallbackById("updateModelFromView");
+  // clarity::WebElement::runCallbackById("updateModelFromView");
 
   return 0;
 }
