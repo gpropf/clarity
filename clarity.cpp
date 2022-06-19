@@ -393,8 +393,9 @@ int main()
     // tc->sliderA_->updateViewFromModel();
     // tc->applyButton_->updateViewFromModel();
     //tc->updateViewFromModel();
-     tc->updateModelFromView();
     tc->updateViewFromModel();
+     tc->updateModelFromView();
+    
   };
 
   clarity::WebElement::callbackMap["syncModelView"] = [=]
@@ -409,20 +410,7 @@ int main()
     // tc->applyButton_->updateViewFromModel();
      tc->updateModelFromView();
     tc->updateViewFromModel();
-  };
-
-  // clarity::WebElement::callbackMap["updateModelFromView"] = [=]
-  // {
-  //   cout << "updateModelFromView!\n";
-  //   //tm->iterate();
-  //   cout << "tm->s_ = " << tm->s_ << endl;
-  //   cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
-  //   // tc->inputB_->updateViewFromModel();
-  //   // tc->inputA_->updateViewFromModel();
-  //   // tc->sliderA_->updateViewFromModel();
-  //   // tc->applyButton_->updateViewFromModel();
-  //   tc->updateModelFromView();
-  // };
+  };  
 
   tc->inputA_->splicePtrs(&tm->delta_);
   tc->inputB_->splicePtrs(&tm->s_);
