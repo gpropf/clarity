@@ -216,7 +216,7 @@ namespace clarity
         cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
         break;
       case CppType::String:
-        //*reinterpret_cast<string *>(anyvalPtr_) = this->jsval_["anyval"].as<string>();
+        *reinterpret_cast<string *>(anyvalPtr_) = this->jsval_.call<string>("jsToCPPVal", getDomElementVal());
         cout << "C++ side: New String Value: " << *reinterpret_cast<string *>(anyvalPtr_) << endl;
         break;
       case CppType::NoData:
@@ -232,7 +232,7 @@ namespace clarity
     val getDomElementVal() const
     {
       val domElement = jsval_["domElement"];
-      return domElement["value"];
+      return domElement[boundField];
     }
 
     bool appendChild(WebElement *child)

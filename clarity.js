@@ -122,7 +122,7 @@ class CLElement {
         //outerThis.anyval_ = outerThis.jsToCPPVal(outerThis.domElement_.value)
         //console.log(`${outerThis.id}: JS value is ${outerThis.anyval_}\n`)
         console.log('Javascript onchange callback called')
-        var oldval = Module.WebElement.updateModelFromViewById(outerThis.id_)
+        Module.WebElement.updateModelFromViewById(outerThis.id_)
         //outerThis['oldval'] = oldval;
       })
     }
