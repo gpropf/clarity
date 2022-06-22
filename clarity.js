@@ -1,9 +1,3 @@
-//dom-proxy.js
-
-// function gv(element_name, attribute_name) {
-//     var el: window.document.getElementById(element_name);
-//     return parseInt(el[attribute_name]);
-// }
 
 // Run with 'python3 -m http.server 8000'
 
@@ -67,14 +61,6 @@ class CLElement {
     this.type_ = type
   }
 
-  // get anyval() {
-  //   return this.anyval_
-  // }
-
-  // set anyval(anyval) {
-  //   this.anyval_ = anyval
-  // }
-
   get domElement() {
     return this.domElement_
   }
@@ -88,42 +74,24 @@ class CLElement {
     return this.domElement_.name;
   }
 
-  // set onChangeActive(onChangeActive) {
-  //   this.onChangeActive_ = onChangeActive;
-  // }
-
-  set id(id) {
-    //this.owner_ = Module.WebElement.getCLElementById[id]
-    this.id_ = id
-    //console.log(`jsToCPPVal: ${this.jsToCPPVal('1.3')}`)
-    //this.owner_ = Module.WebElement.getCLElementById(id);
+  set id(id) {   
+    this.id_ = id    
     console.log(`ID ${id} being set by C++ constructor.`)
     var el = document.getElementById(this.id_)
-    if (el == null) {
-      //el = document.createElement(this.getTag())
+    if (el == null) {      
       console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
       el = document.createElement(this.tag_)
       document.body.appendChild(el)
       el.id = id
       el.type = this.type_
     }
-    this.domElement_ = el
-    //this.onChangeActive_ = true
+    this.domElement_ = el    
 
     if (this.tag_ == 'input') {
       var outerThis = this
-      this.domElement_.addEventListener('change', function (e) {
-        // if (outerThis.onChangeActive_ == false) {
-        //   outerThis.onChangeActive_ = true
-        //   console.log('onchange callback deactivated!')
-        //   return
-        // }
-        
-        //outerThis.anyval_ = outerThis.jsToCPPVal(outerThis.domElement_.value)
-        //console.log(`${outerThis.id}: JS value is ${outerThis.anyval_}\n`)
+      this.domElement_.addEventListener('change', function (e) {        
         console.log('Javascript onchange callback called')
-        Module.WebElement.updateModelFromViewById(outerThis.id_)
-        //outerThis['oldval'] = oldval;
+        Module.WebElement.updateModelFromViewById(outerThis.id_)        
       })
     }
   }

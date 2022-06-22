@@ -403,13 +403,7 @@ int main()
   {
     cout << "callbackMap[\"iterateModel\"]\n";
     tm->iterate();
-    tm->printState();
-    // cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
-    //  tc->inputB_->updateViewFromModel();
-    //  tc->inputA_->updateViewFromModel();
-    //  tc->sliderA_->updateViewFromModel();
-    //  tc->applyButton_->updateViewFromModel();
-    //  tc->updateViewFromModel();
+    tm->printState();   
     tc->updateViewFromModel();
     tc->updateModelFromView();
   };
@@ -417,12 +411,7 @@ int main()
   clarity::WebElement::callbackMap["syncModelView"] = [=]
   {
     cout << "callbackMap[\"syncModelView\"]\n";
-    tm->printState();
-    // cout << "addr(tc->inputB_->anyvalPtr_) = " << tc->inputB_->getAnyvalPtr() << endl;
-    //  tc->inputB_->updateViewFromModel();
-    //  tc->inputA_->updateViewFromModel();
-    //  tc->sliderA_->updateViewFromModel();
-    //  tc->applyButton_->updateViewFromModel();
+    tm->printState();    
     tc->updateModelFromView();
     tc->updateViewFromModel();
   };
@@ -436,7 +425,5 @@ int main()
 
   tc->updateViewFromModel();
   printf("Setup complete!\n");
-  // clarity::WebElement::runCallbackById("updateModelFromView");
-
   return 0;
 }
