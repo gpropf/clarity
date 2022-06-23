@@ -51,20 +51,16 @@ namespace clarity
   };
 
   /**
-   * @brief Base class for all viewable elements that can take on a value controlled from a model.
-   * WebElement and AttributeElement should descend from this.
+   * @brief Base class for all nodes.
    *
    */
   class ControlNetworkNode
   {
-    virtual void updateViewFromModel() = 0;
-    virtual void updatePeers() = 0;
-
-  protected:
-    string boundField;
-    vector<shared_ptr<ControlNetworkNode>> peers;
-
   public:
+    /**
+     * @brief Supported C++ types for WebElements.
+     *
+     */
     enum class CppType : int
     {
       Int,
@@ -73,23 +69,38 @@ namespace clarity
       String,
       NoData /// Used for things like div that hold no data.
     };
-  };
 
-  /**
-   * @brief Represents an attribute of another element such as bgcolor.
-   * This is not necessarily a dom element that we control though it may be.
-   *
-   */
-  class AttributeElement : public ControlNetworkNode
-  {
+    virtual void updateViewFromModel() = 0;
+    virtual void updatePeers() = 0;
 
-    void updatePeers() {} // FIXME
+  protected:
+    static TicketMachine tm;
 
-    void updateViewFromModel()
+    ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
     {
-      // FIXME: fill in method
+      id_ = tm.getNext();
     }
+    CppType anyvalPtrType_; // C++ Data type
+    void *anyvalPtr_;       // pointer to actual data
+    string boundField_;
+    int id_;
+    vector<ControlNetworkNode *> peers_;
   };
+
+  class WebNode : public ControlNetworkNode
+  {
+    // WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType)
+    // {
+    //   // id_ = tm.getNext();
+    protected:
+    WebNode(const CppType anyvalPtrType): ControlNetworkNode(anyvalPtrType) {}
+
+    // }
+  };
+
+  // WebNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
+
+  // };
 
   /**
    * @brief The project's central class. Describes an element with push/pull behavior to syncronize a data model and
@@ -98,26 +109,22 @@ namespace clarity
    * a JS Dom element and retain other state on the JS side.
    *
    */
-  class WebNode : public ControlNetworkNode
+  class WebElemNode : public WebNode
   {
   public:
-    /**
-     * @brief Supported C++ types for WebElements.
-     *
-     */
-
     void updatePeers() {} // FIXME
 
   private:
-    vector<WebNode *> children_;
-    WebNode *parent_;
+    vector<WebElemNode *> children_;
+    WebElemNode *parent_;
     // string tag_, name_;
     string tag_, name_;
-    CppType anyvalPtrType_; // C++ Data type
-    void *anyvalPtr_;       // pointer to actual data
+
     val jsval_ = val::global("CLElement");
-    const bool isAttributeOfParent_;
-    int id_;
+
+protected:
+WebElemNode(const CppType anyvalPtrType): WebNode(anyvalPtrType) {}
+
 
   public:
     /**
@@ -128,24 +135,23 @@ namespace clarity
      * @param anyvalPtrType C++ type of data contained within
      * @param isAttributeOfParent Some WEs represent actual DOM children of their parent and others are simply attributes
      */
-    WebNode(const string &name, const string &tag, const CppType anyvalPtrType,
-            const bool isAttributeOfParent = false) : tag_(tag),
-                                                      name_(name),
-                                                      anyvalPtrType_(anyvalPtrType),
-                                                      isAttributeOfParent_(isAttributeOfParent)
+    WebElemNode(const string &name, const string &tag,
+                const CppType anyvalPtrType) : tag_(tag),
+                                               name_(name),
+                                               WebNode(anyvalPtrType)
 
     {
       val CLContext = val::global("CLElement");
-      id_ = tm.getNext();
+
       jsval_ = CLContext.new_();
       jsval_.set("cpptype", val(anyvalPtrType));
       jsval_.set("tag", val(tag));
       jsval_.set("id", val(id_));
       jsval_.set("name", val(name_));
       anyvalPtr_ = nullptr;
-      boundField = "value";
+      boundField_ = "value";
 
-      WebNode::switchboard[id_] = this;
+      WebElemNode::switchboard[id_] = this;
     }
 
     void setAttribute(const string &attr, const val &value)
@@ -176,18 +182,18 @@ namespace clarity
       switch (this->anyvalPtrType_)
       {
       case CppType::Int:
-        domElement.set(boundField, val(*reinterpret_cast<int *>(anyvalPtr_)));
+        domElement.set(boundField_, val(*reinterpret_cast<int *>(anyvalPtr_)));
         break;
       case CppType::Float:
-        domElement.set(boundField, val(*reinterpret_cast<float *>(anyvalPtr_)));
+        domElement.set(boundField_, val(*reinterpret_cast<float *>(anyvalPtr_)));
         break;
       case CppType::Double:
         // domElement.set(boundField, val(*reinterpret_cast<double *>(anyvalPtr_)));
-        domElement.set(boundField, val(*reinterpret_cast<double *>(anyvalPtr_)));
+        domElement.set(boundField_, val(*reinterpret_cast<double *>(anyvalPtr_)));
         // jsval_.set("anyval", val(*reinterpret_cast<double *>(anyvalPtr_)));
         break;
       case CppType::String:
-        domElement.set(boundField, val(*reinterpret_cast<string *>(anyvalPtr_)));
+        domElement.set(boundField_, val(*reinterpret_cast<string *>(anyvalPtr_)));
         break;
       case CppType::NoData:
       default:
@@ -242,10 +248,10 @@ namespace clarity
     val getDomElementVal() const
     {
       val domElement = jsval_["domElement"];
-      return domElement[boundField];
+      return domElement[boundField_];
     }
 
-    bool appendChild(WebNode *child)
+    bool appendChild(WebElemNode *child)
     {
       children_.push_back(child);
       jsval_.call<void>("appendChild", child->getJSval());
@@ -257,12 +263,12 @@ namespace clarity
       jsval_.call<void>("addEventListenerById", eventName, callbackId);
     }
     //=====================
-    static map<const int, WebNode *> switchboard;
+    static map<const int, WebElemNode *> switchboard;
     static map<string, std::function<void()>> callbackMap;
 
     string getTag() const { return tag_; }
-    void setParent(WebNode *parent) { this->parent_ = parent; }
-    WebNode *getParent() const { return this->parent_; }
+    void setParent(WebElemNode *parent) { this->parent_ = parent; }
+    WebElemNode *getParent() const { return this->parent_; }
     string getId() const { return name_; }
     // void setId(string id) { id_ = id; }
     val getJSval() const { return jsval_; }
@@ -276,33 +282,60 @@ namespace clarity
       jsval_.set("cpptype", cppType);
     }
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
-    static TicketMachine tm;
+
     static void updateModelFromViewById(const int id) { switchboard[id]->updateModelFromView(); }
-    static WebNode &getCLElementById(const int id) { return *(switchboard[id]); }
+    static WebElemNode &getCLElementById(const int id) { return *(switchboard[id]); }
     static void runCallbackById(const string &id) { callbackMap[id](); }
   };
 
-  class ButtonElement : public WebNode
+  // class WebElemNode : public WebElemNode
+  // {
+
+  //   void updatePeers() {} // FIXME
+
+  //   void updateViewFromModel()
+  //   {
+  //     // FIXME: fill in method
+  //   }
+  // };
+
+  /**
+   * @brief Represents an attribute of another element such as bgcolor.
+   * This is not necessarily a dom element that we control though it may be.
+   *
+   */
+  class WebAttrNode : public WebElemNode
   {
-  public:
-    ButtonElement(const string &name, const string &tag, const CppType anyvalPtrType, const bool isAttributeOfParent = false) : WebNode(name, tag, anyvalPtrType, isAttributeOfParent)
+
+    void updatePeers() {} // FIXME
+
+    void updateViewFromModel()
     {
-      boundField = "textContent";
+      // FIXME: fill in method
     }
   };
 
-  EMSCRIPTEN_BINDINGS(WebNode)
+  class ButtonElement : public WebElemNode
   {
-    class_<WebNode>("WebElement")
+  public:
+    ButtonElement(const string &name, const string &tag, const CppType anyvalPtrType) : WebElemNode(name, tag, anyvalPtrType)
+    {
+      boundField_ = "textContent";
+    }
+  };
+
+  EMSCRIPTEN_BINDINGS(WebElemNode)
+  {
+    class_<WebElemNode>("WebElement")
         .constructor<string, string, const ControlNetworkNode::CppType>(allow_raw_pointers())
-        .property("tag", &WebNode::getTag)
-        .property("id", &WebNode::getId)
-        .property("anyvalPtrType", &WebNode::getAnyvalPtrType, &WebNode::setAnyvalPtrType)
-        .function("updateModelFromView", &WebNode::updateModelFromView)
-        .function("splicePtrs", &WebNode::splicePtrs, allow_raw_pointers())
-        .class_function("getCLElementById", &WebNode::getCLElementById, allow_raw_pointers())
-        .class_function("updateModelFromViewById", &WebNode::updateModelFromViewById, allow_raw_pointers())
-        .class_function("runCallbackById", &WebNode::runCallbackById, allow_raw_pointers());
+        .property("tag", &WebElemNode::getTag)
+        .property("id", &WebElemNode::getId)
+        .property("anyvalPtrType", &WebElemNode::getAnyvalPtrType, &WebElemNode::setAnyvalPtrType)
+        .function("updateModelFromView", &WebElemNode::updateModelFromView)
+        .function("splicePtrs", &WebElemNode::splicePtrs, allow_raw_pointers())
+        .class_function("getCLElementById", &WebElemNode::getCLElementById, allow_raw_pointers())
+        .class_function("updateModelFromViewById", &WebElemNode::updateModelFromViewById, allow_raw_pointers())
+        .class_function("runCallbackById", &WebElemNode::runCallbackById, allow_raw_pointers());
     enum_<ControlNetworkNode::CppType>("WebElementCppType")
         .value("Int", ControlNetworkNode::CppType::Int)
         .value("Float", ControlNetworkNode::CppType::Float)
@@ -349,16 +382,16 @@ public:
  * @brief A simble example of a complex control made up of simpler ones.
  *
  */
-class ToyControl : public clarity::WebNode
+class ToyControl : public clarity::WebElemNode
 {
 
 public:
-  ToyControl(const string &name, const string &tag, const CppType anyvalPtrType) : WebNode(name, tag, anyvalPtrType)
+  ToyControl(const string &name, const string &tag, const CppType anyvalPtrType) : WebElemNode(name, tag, anyvalPtrType)
   {
     // mainDiv_ = new clarity::WebElement("mainDiv_", "div", CppType::NoData);
-    inputA_ = new clarity::WebNode("inputA_", "input", CppType::Double);
-    inputB_ = new clarity::WebNode("inputB_", "input", CppType::Double);
-    sliderA_ = new clarity::WebNode("sliderA_", "input", CppType::Double);
+    inputA_ = new clarity::WebElemNode("inputA_", "input", CppType::Double);
+    inputB_ = new clarity::WebElemNode("inputB_", "input", CppType::Double);
+    sliderA_ = new clarity::WebElemNode("sliderA_", "input", CppType::Double);
     applyButton_ = new clarity::ButtonElement("applyButton_", "button", CppType::String);
     inputA_->setAttribute("type", val("text"));
     inputB_->setAttribute("type", val("text"));
@@ -370,11 +403,11 @@ public:
     // this->appendChild(*mainDiv_);
   }
 
-  clarity::WebNode *mainDiv_;
-  clarity::WebNode *inputA_;
-  clarity::WebNode *sliderA_;
-  clarity::WebNode *inputB_;
-  clarity::WebNode *applyButton_;
+  clarity::WebElemNode *mainDiv_;
+  clarity::WebElemNode *inputA_;
+  clarity::WebElemNode *sliderA_;
+  clarity::WebElemNode *inputB_;
+  clarity::WebElemNode *applyButton_;
 };
 
 /**
@@ -382,7 +415,7 @@ public:
  * they can be found by their id numbers.
  *
  */
-map<const int, clarity::WebNode *> clarity::WebNode::switchboard;
+map<const int, clarity::WebElemNode *> clarity::WebElemNode::switchboard;
 
 /**
  * @brief callbackMap holds C++ functions that can be triggered from JS
@@ -390,8 +423,8 @@ map<const int, clarity::WebNode *> clarity::WebNode::switchboard;
  * the C++ model state.
  *
  */
-map<string, std::function<void()>> clarity::WebNode::callbackMap;
-clarity::TicketMachine clarity::WebNode::tm;
+map<string, std::function<void()>> clarity::WebElemNode::callbackMap;
+clarity::TicketMachine clarity::ControlNetworkNode::tm;
 
 int main()
 {
@@ -409,7 +442,7 @@ int main()
   ToyModel *tm = new ToyModel(0, 1);
   string *buttonText = new string("CLICK ME!");
 
-  clarity::WebNode::callbackMap["iterateModel"] = [=]
+  clarity::WebElemNode::callbackMap["iterateModel"] = [=]
   {
     cout << "callbackMap[\"iterateModel\"]\n";
     tm->iterate();
@@ -418,7 +451,7 @@ int main()
     tc->updateModelFromView();
   };
 
-  clarity::WebNode::callbackMap["syncModelView"] = [=]
+  clarity::WebElemNode::callbackMap["syncModelView"] = [=]
   {
     cout << "callbackMap[\"syncModelView\"]\n";
     tm->printState();
