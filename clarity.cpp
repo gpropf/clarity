@@ -72,6 +72,10 @@ namespace clarity
 
     virtual void updateViewFromModel() = 0;
     virtual void updatePeers() = 0;
+    void addPeer(ControlNetworkNode *peer)
+    {
+      peers_.push_back(peer);
+    }
 
   protected:
     static TicketMachine tm;
@@ -87,14 +91,22 @@ namespace clarity
     vector<ControlNetworkNode *> peers_;
   };
 
+  class ModelNode : public ControlNetworkNode
+  {
+    void updateViewFromModel() {}
+    virtual void updatePeers() {}
+  };
+
   class WebNode : public ControlNetworkNode
   {
     // WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType)
     // {
     //   // id_ = tm.getNext();
-    protected:
-    WebNode(const CppType anyvalPtrType): ControlNetworkNode(anyvalPtrType) {}
-
+  protected:
+    WebNode *parent_;
+    WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
+    void setParent(WebNode *parent) { this->parent_ = parent; }
+    WebNode *getParent() const { return this->parent_; }
     // }
   };
 
@@ -114,17 +126,16 @@ namespace clarity
   public:
     void updatePeers() {} // FIXME
 
-  private:
+  protected:
     vector<WebElemNode *> children_;
-    WebElemNode *parent_;
+
     // string tag_, name_;
     string tag_, name_;
 
     val jsval_ = val::global("CLElement");
 
-protected:
-WebElemNode(const CppType anyvalPtrType): WebNode(anyvalPtrType) {}
-
+  protected:
+    WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {}
 
   public:
     /**
@@ -267,8 +278,7 @@ WebElemNode(const CppType anyvalPtrType): WebNode(anyvalPtrType) {}
     static map<string, std::function<void()>> callbackMap;
 
     string getTag() const { return tag_; }
-    void setParent(WebElemNode *parent) { this->parent_ = parent; }
-    WebElemNode *getParent() const { return this->parent_; }
+
     string getId() const { return name_; }
     // void setId(string id) { id_ = id; }
     val getJSval() const { return jsval_; }
