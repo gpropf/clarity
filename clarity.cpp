@@ -31,11 +31,6 @@ namespace clarity
    * are always paired with views and vice versa.
    *
    */
-  // class UpdateAble
-  // {
-  // public:
-  //   virtual void update() = 0; /// Perform a single update
-  // };
 
   /**
    * @brief Hands out (presumably) unique int ids with a simply incrementing counter.
@@ -47,7 +42,7 @@ namespace clarity
     int id_ = 0;
 
   public:
-    const int getNext() { return ++id_; }
+    inline const int getNext() { return ++id_; }
   };
 
   /**
@@ -61,6 +56,13 @@ namespace clarity
      * @brief Supported C++ types for WebElements.
      *
      */
+
+    template <typename T>
+    static val cpp2js(void *valptr)
+    {
+      return val(*reinterpret_cast<T *>(valptr));
+    }
+
     enum class CppType : int
     {
       Int,
@@ -75,6 +77,7 @@ namespace clarity
     void addPeer(ControlNetworkNode *peer)
     {
       peers_.push_back(peer);
+      peer->addPeer(this);
     }
 
   protected:
@@ -86,7 +89,7 @@ namespace clarity
     }
     CppType anyvalPtrType_; // C++ Data type
     void *anyvalPtr_;       // pointer to actual data
-    string boundField_;
+    val jsval_ = val::global("CLElement");
     int id_;
     vector<ControlNetworkNode *> peers_;
   };
@@ -104,9 +107,17 @@ namespace clarity
     //   // id_ = tm.getNext();
   protected:
     WebNode *parent_;
+    string boundField_;
+
     WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
+    val getDomElementVal() const
+    {
+      val domElement = jsval_["domElement"];
+      return domElement[boundField_];
+    }
     void setParent(WebNode *parent) { this->parent_ = parent; }
     WebNode *getParent() const { return this->parent_; }
+
     // }
   };
 
@@ -131,8 +142,6 @@ namespace clarity
 
     // string tag_, name_;
     string tag_, name_;
-
-    val jsval_ = val::global("CLElement");
 
   protected:
     WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {}
@@ -193,18 +202,18 @@ namespace clarity
       switch (this->anyvalPtrType_)
       {
       case CppType::Int:
-        domElement.set(boundField_, val(*reinterpret_cast<int *>(anyvalPtr_)));
+        domElement.set(boundField_, val(cpp2js<int>(anyvalPtr_)));
         break;
       case CppType::Float:
-        domElement.set(boundField_, val(*reinterpret_cast<float *>(anyvalPtr_)));
+        domElement.set(boundField_, val(cpp2js<float>(anyvalPtr_)));
         break;
       case CppType::Double:
         // domElement.set(boundField, val(*reinterpret_cast<double *>(anyvalPtr_)));
-        domElement.set(boundField_, val(*reinterpret_cast<double *>(anyvalPtr_)));
+        domElement.set(boundField_, val(cpp2js<double>(anyvalPtr_)));
         // jsval_.set("anyval", val(*reinterpret_cast<double *>(anyvalPtr_)));
         break;
       case CppType::String:
-        domElement.set(boundField_, val(*reinterpret_cast<string *>(anyvalPtr_)));
+        domElement.set(boundField_, val(cpp2js<string>(anyvalPtr_)));
         break;
       case CppType::NoData:
       default:
@@ -254,12 +263,6 @@ namespace clarity
       }
       cout << "ENDING: updateModelFromView for " << this->name_ << "\n";
       return; // this->jsval_["anyval"];
-    }
-
-    val getDomElementVal() const
-    {
-      val domElement = jsval_["domElement"];
-      return domElement[boundField_];
     }
 
     bool appendChild(WebElemNode *child)
@@ -314,7 +317,7 @@ namespace clarity
    * This is not necessarily a dom element that we control though it may be.
    *
    */
-  class WebAttrNode : public WebElemNode
+  class WebAttrNode : public WebNode
   {
 
     void updatePeers() {} // FIXME
