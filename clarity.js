@@ -91,6 +91,7 @@ class CLElement {
       var outerThis = this
       this.domElement_.addEventListener('change', function (e) {        
         console.log('Javascript onchange callback called')
+        //outerThis.printState()
         Module.WebElement.updateModelFromViewById(outerThis.id_)        
       })
     }
@@ -104,6 +105,10 @@ class CLElement {
 
   get id() {
     return this.id_
+  }
+
+  printState() {
+    console.log(`FOR ID: ${this.id}, THIS VAL = ${this.val}`);
   }
 }
 

@@ -52,10 +52,32 @@ namespace clarity
   class ControlNetworkNode
   {
   public:
+    void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
+    virtual void printState() const { jsval_.call<void>("printState"); }
     /**
      * @brief Supported C++ types for WebElements.
      *
      */
+    enum class CppType : int
+    {
+      Int,
+      Float,
+      Double,
+      String,
+      NoData /// Used for things like div that hold no data.
+    };
+
+    ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
+    {
+      id_ = tm.getNext();
+      //
+    }
+
+    ControlNetworkNode(void *anyvalPtr) : anyvalPtr_(anyvalPtr)
+    {
+      id_ = tm.getNext();
+      //
+    }
 
     template <typename T>
     static val cpp2js(void *valptr)
@@ -90,31 +112,30 @@ namespace clarity
       }
     }
 
-    enum class CppType : int
-    {
-      Int,
-      Float,
-      Double,
-      String,
-      NoData /// Used for things like div that hold no data.
-    };
-
     virtual void updateViewFromModel() = 0;
     virtual void updatePeers() = 0;
-    void addPeer(ControlNetworkNode *peer)
+
+    void pushValToPeer(ControlNetworkNode *peer)
     {
+      val domElement = peer->jsval_["domElement"];
+      //peer->jsval_.set("val", this->jsval_["val"]);
+      domElement.set("value", val(77));
+    }
+
+    void addPeer(ControlNetworkNode *peer, bool alreadyAdded = false)
+    {
+
       peers_.push_back(peer);
-      peer->addPeer(this);
+      if (alreadyAdded)
+      {
+        return;
+      }
+      peer->addPeer(this, true);
     }
 
   protected:
     static TicketMachine tm;
 
-    ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
-    {
-      id_ = tm.getNext();
-      //
-    }
     // val CLContext = val::global("CLElement");
     val jsval_ = val::global("CLElement").new_();
     CppType anyvalPtrType_; // C++ Data type
@@ -126,6 +147,9 @@ namespace clarity
 
   class ModelNode : public ControlNetworkNode
   {
+  public:
+    ModelNode(void *anyvalPtr) : ControlNetworkNode(anyvalPtr) {}
+    ModelNode(CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
     void updateViewFromModel() {}
     virtual void updatePeers() {}
 
@@ -169,6 +193,8 @@ namespace clarity
 
   class WebNode : public ControlNetworkNode
   {
+  public:
+    WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
     // WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType)
     // {
     //   // id_ = tm.getNext();
@@ -176,7 +202,6 @@ namespace clarity
     WebNode *parent_;
     string boundField_;
 
-    WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
     val getDomElementVal() const
     {
       val domElement = jsval_["domElement"];
@@ -203,15 +228,13 @@ namespace clarity
   {
   public:
     void updatePeers() {} // FIXME
+    WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {}
 
   protected:
     vector<WebElemNode *> children_;
 
     // string tag_, name_;
     string tag_, name_;
-
-  protected:
-    WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {}
 
   public:
     /**
@@ -359,7 +382,6 @@ namespace clarity
       anyvalPtrType_ = cppType;
       jsval_.set("cpptype", cppType);
     }
-    void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
 
     static void updateModelFromViewById(const int id) { switchboard[id]->updateModelFromView(); }
     static WebElemNode &getCLElementById(const int id) { return *(switchboard[id]); }
@@ -423,7 +445,6 @@ public:
   void printState() const
   {
     cout << "MODEL STATE: s = " << s_ << ", delta = " << delta_ << endl;
-    // cout << "addr(s) = " << &s_ << endl;
   }
 
   void update() {}
@@ -505,6 +526,15 @@ int main()
     return -1;
   }
 
+  double *n = new double(11);
+  clarity::ModelNode *nm = new clarity::ModelNode(clarity::ControlNetworkNode::CppType::Double);
+  nm->splicePtrs(n);
+  clarity::WebElemNode *ncntr = new clarity::WebElemNode("numerator", "input",
+                                                         clarity::ControlNetworkNode::CppType::Double);
+  ncntr->setAttribute("type", val("text"));
+  nm->addPeer(ncntr);
+  ncntr->addEventListenerById("change", "printNetworkState");
+
   ToyControl *tc = new ToyControl("tc1", "div", clarity::ControlNetworkNode::CppType::NoData);
   ToyModel *tm = new ToyModel(0, 1);
   string *buttonText = new string("CLICK ME!");
@@ -524,6 +554,13 @@ int main()
     tm->printState();
     tc->updateModelFromView();
     tc->updateViewFromModel();
+  };
+
+  clarity::WebElemNode::callbackMap["printNetworkState"] = [=]
+  {
+    cout << "callbackMap[\"printNetworkState\"]\n";
+    nm->pushValToPeer(ncntr);
+    ncntr->printState();
   };
 
   tc->inputA_->splicePtrs(&tm->delta_);
