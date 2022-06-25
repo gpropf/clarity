@@ -63,6 +63,33 @@ namespace clarity
       return val(*reinterpret_cast<T *>(valptr));
     }
 
+    val cpp2js(void *valptr)
+    {
+      if (anyvalPtr_ == nullptr)
+      {
+        return val(NULL);
+      }
+      switch (this->anyvalPtrType_)
+      {
+      case CppType::Int:
+        return val(cpp2js<int>(anyvalPtr_));
+        break;
+      case CppType::Float:
+        return val(cpp2js<float>(anyvalPtr_));
+        break;
+      case CppType::Double:
+        return val(cpp2js<double>(anyvalPtr_));
+        break;
+      case CppType::String:
+        return val(cpp2js<string>(anyvalPtr_));
+        break;
+      case CppType::NoData:
+      default:
+        return val(NULL);
+        break;
+      }
+    }
+
     enum class CppType : int
     {
       Int,
@@ -86,10 +113,13 @@ namespace clarity
     ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
     {
       id_ = tm.getNext();
+      //
     }
+    // val CLContext = val::global("CLElement");
+    val jsval_ = val::global("CLElement").new_();
     CppType anyvalPtrType_; // C++ Data type
     void *anyvalPtr_;       // pointer to actual data
-    val jsval_ = val::global("CLElement");
+
     int id_;
     vector<ControlNetworkNode *> peers_;
   };
@@ -98,6 +128,43 @@ namespace clarity
   {
     void updateViewFromModel() {}
     virtual void updatePeers() {}
+
+    void js2cpp(val jsval)
+    {
+      if (anyvalPtr_ == nullptr)
+      {
+        // cout << "ENDING: updateModelFromView for " << this->name_ << " because anyvalPtr_ == nullptr\n";
+        return; // this->jsval_["anyval"];
+      }
+
+      switch (this->anyvalPtrType_)
+      {
+      case CppType::Int:
+        *reinterpret_cast<int *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", jsval);
+        cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(anyvalPtr_) << endl;
+        break;
+      case CppType::Float:
+        *reinterpret_cast<float *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", jsval);
+        cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(anyvalPtr_) << endl;
+        break;
+      case CppType::Double:
+        //*reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
+        *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_.call<double>("jsToCPPVal", jsval);
+        cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
+        break;
+      case CppType::String:
+        *reinterpret_cast<string *>(anyvalPtr_) = this->jsval_.call<string>("jsToCPPVal", jsval);
+        cout << "C++ side: New String Value: " << *reinterpret_cast<string *>(anyvalPtr_) << endl;
+        break;
+      case CppType::NoData:
+        cout << "C++ side: This element contains no data." << endl;
+        break;
+      default:
+        break;
+      }
+
+      return; // this->jsval_["anyval"];
+    }
   };
 
   class WebNode : public ControlNetworkNode
@@ -150,10 +217,10 @@ namespace clarity
     /**
      * @brief Construct a new Web Element object
      *
-     * @param id Unique identifier
+     * @param name String name of element, may be empty.
      * @param tag HTML tag of this element
      * @param anyvalPtrType C++ type of data contained within
-     * @param isAttributeOfParent Some WEs represent actual DOM children of their parent and others are simply attributes
+     *
      */
     WebElemNode(const string &name, const string &tag,
                 const CppType anyvalPtrType) : tag_(tag),
@@ -161,9 +228,7 @@ namespace clarity
                                                WebNode(anyvalPtrType)
 
     {
-      val CLContext = val::global("CLElement");
 
-      jsval_ = CLContext.new_();
       jsval_.set("cpptype", val(anyvalPtrType));
       jsval_.set("tag", val(tag));
       jsval_.set("id", val(id_));
@@ -300,17 +365,6 @@ namespace clarity
     static WebElemNode &getCLElementById(const int id) { return *(switchboard[id]); }
     static void runCallbackById(const string &id) { callbackMap[id](); }
   };
-
-  // class WebElemNode : public WebElemNode
-  // {
-
-  //   void updatePeers() {} // FIXME
-
-  //   void updateViewFromModel()
-  //   {
-  //     // FIXME: fill in method
-  //   }
-  // };
 
   /**
    * @brief Represents an attribute of another element such as bgcolor.
