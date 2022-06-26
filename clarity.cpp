@@ -70,12 +70,15 @@ namespace clarity
     ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
     {
       id_ = tm.getNext();
+      jsval_.set("cpptype", val(anyvalPtrType));
+      // jsval_.set("id", val(id_));
       //
     }
 
     ControlNetworkNode(void *anyvalPtr) : anyvalPtr_(anyvalPtr)
     {
       id_ = tm.getNext();
+      // jsval_.set("id", val(id_));
       //
     }
 
@@ -85,19 +88,46 @@ namespace clarity
       return val(*reinterpret_cast<T *>(valptr));
     }
 
-        virtual void updateViewFromModel() = 0;
+    virtual void updateViewFromModel() = 0;
     virtual void updatePeers() = 0;
     virtual void setVal(const val &inval) = 0;
     virtual val getVal() const = 0;
 
-    //virtual void pushValToPeer(ControlNetworkNode *peer) = 0;
-    // {
-    //   val domElement = peer->jsval_["domElement"];
-    //   // peer->jsval_.set("val", this->jsval_["val"]);
-    //   //domElement.set(peer->bound);
-    // }
+    virtual void pushValToPeer(ControlNetworkNode *peer)
+    {
+      val internalVal = getVal();
+      // cout << "Internal val is ";
+      // jsval_.call<void>("printToConsole", internalVal);
+      // cout << "Value is type ";
+      // jsval_.call<void>("printType", internalVal);
+      // cout << endl;
+      peer->setVal(internalVal);
+      peer->pushValToPeers(this);
+    }
 
-    void addPeer(ControlNetworkNode *peer, bool alreadyAdded = false)
+    virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr)
+    {
+      if (excludedPeer == nullptr)
+      {
+        for (auto peer : peers_)
+        {
+          pushValToPeer(peer);
+        }
+      }
+      else
+      {
+        for (auto peer : peers_)
+        {
+          if (peer != excludedPeer)
+          {
+            pushValToPeer(peer);
+          }
+        }
+      }
+    }
+
+    void
+    addPeer(ControlNetworkNode *peer, bool alreadyAdded = false)
     {
 
       peers_.push_back(peer);
@@ -154,14 +184,6 @@ namespace clarity
         return val(NULL);
         break;
       }
-    }
-
-
-
-   
-
-    virtual void pushValToPeer(ControlNetworkNode *peer) {
-      peer->setVal(getVal());
     }
 
     void setVal(const val &inval)
@@ -289,12 +311,11 @@ namespace clarity
       domElement.call<void>("setAttribute", attr, value);
     }
 
-virtual val getVal() const
+    virtual val getVal() const
     {
       val domElement = jsval_["domElement"];
       return domElement[boundField_];
     }
-
 
     /**
      * @brief Update the view from the model
@@ -388,9 +409,9 @@ virtual val getVal() const
       return true; // FIXME: need to check for duplicate ids.
     }
 
-    void addEventListenerById(const string &eventName, const string &callbackId)
+    void addEventListenerByName(const string &eventName, const string &callbackName)
     {
-      jsval_.call<void>("addEventListenerById", eventName, callbackId);
+      jsval_.call<void>("addEventListenerById", eventName, callbackName);
     }
     //=====================
     static map<const int, WebElemNode *> switchboard;
@@ -554,14 +575,25 @@ int main()
     return -1;
   }
 
+  int *i = new int(100);
   double *n = new double(11);
   clarity::ModelNode *nm = new clarity::ModelNode(clarity::ControlNetworkNode::CppType::Double);
   nm->splicePtrs(n);
+  clarity::WebElemNode *ratioDiv = new clarity::WebElemNode("ratio", "div",
+                                                            clarity::ControlNetworkNode::CppType::NoData);
   clarity::WebElemNode *ncntr = new clarity::WebElemNode("numerator", "input",
                                                          clarity::ControlNetworkNode::CppType::Double);
+  clarity::WebElemNode *nslider = new clarity::WebElemNode("numerator", "input",
+                                                           clarity::ControlNetworkNode::CppType::Double);
+  nslider->setAttribute("type", val("range"));
+  ratioDiv->appendChild(ncntr);
+  ratioDiv->appendChild(nslider);
+
   ncntr->setAttribute("type", val("text"));
   nm->addPeer(ncntr);
-  ncntr->addEventListenerById("change", "printNetworkState");
+  nm->addPeer(nslider);
+  ncntr->addEventListenerByName("change", "printNetworkState");
+  ncntr->addEventListenerByName("change", "printNetworkState");
 
   ToyControl *tc = new ToyControl("tc1", "div", clarity::ControlNetworkNode::CppType::NoData);
   ToyModel *tm = new ToyModel(0, 1);
@@ -587,7 +619,7 @@ int main()
   clarity::WebElemNode::callbackMap["printNetworkState"] = [=]
   {
     cout << "callbackMap[\"printNetworkState\"]\n";
-    nm->pushValToPeer(ncntr);
+    ncntr->pushValToPeers();
     ncntr->printState();
   };
 
@@ -595,8 +627,8 @@ int main()
   tc->inputB_->splicePtrs(&tm->s_);
   tc->sliderA_->splicePtrs(&tm->s_);
   tc->applyButton_->splicePtrs(buttonText);
-  tc->sliderA_->addEventListenerById("change", "syncModelView");
-  tc->applyButton_->addEventListenerById("click", "iterateModel");
+  tc->sliderA_->addEventListenerByName("change", "syncModelView");
+  tc->applyButton_->addEventListenerByName("click", "iterateModel");
 
   tc->updateViewFromModel();
   printf("Setup complete!\n");

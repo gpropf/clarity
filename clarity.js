@@ -110,6 +110,15 @@ class CLElement {
   printState() {
     console.log(`CNN: FOR ID: ${this.id}, THIS VAL = ${this.domElement_.value}`);
   }
+
+  printToConsole(v) {
+    console.log(v)
+  }
+
+  printType(v) {
+    console.log(typeof(v));
+  }
+
 }
 
 window.CLElement = CLElement
