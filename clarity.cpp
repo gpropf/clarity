@@ -54,6 +54,12 @@ namespace clarity
   public:
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
     virtual void printState() const { jsval_.call<void>("printState"); }
+    static ControlNetworkNode &getCLElementById(const int id) { return *(switchboard[id]); }
+    virtual void updateModelFromView() {}
+    static void updateModelFromViewById(const int id)
+    { // switchboard[id]->updateModelFromView();
+    }
+
     /**
      * @brief Supported C++ types for WebElements.
      *
@@ -73,6 +79,7 @@ namespace clarity
       jsval_.set("cpptype", val(anyvalPtrType));
       // jsval_.set("id", val(id_));
       //
+      ControlNetworkNode::switchboard[id_] = this;
     }
 
     ControlNetworkNode(void *anyvalPtr) : anyvalPtr_(anyvalPtr)
@@ -80,6 +87,7 @@ namespace clarity
       id_ = tm.getNext();
       // jsval_.set("id", val(id_));
       //
+      ControlNetworkNode::switchboard[id_] = this;
     }
 
     template <typename T>
@@ -88,10 +96,12 @@ namespace clarity
       return val(*reinterpret_cast<T *>(valptr));
     }
 
-    virtual void updateViewFromModel() = 0;
-    virtual void updatePeers() = 0;
-    virtual void setVal(const val &inval) = 0;
-    virtual val getVal() const = 0;
+    virtual void updateViewFromModel() {}
+    virtual void updatePeers() {}
+    virtual void setVal(const val &inval)
+    {
+      jsval_.set("val", inval);
+    }
 
     virtual void pushValToPeer(ControlNetworkNode *peer)
     {
@@ -139,8 +149,12 @@ namespace clarity
     }
 
   protected:
+    virtual val getVal() const
+    {
+      return jsval_["val"];
+    }
     static TicketMachine tm;
-
+    static map<const int, ControlNetworkNode *> switchboard;
     // val CLContext = val::global("CLElement");
     val jsval_ = val::global("CLElement").new_();
     val nodeVal = val(NULL);
@@ -158,6 +172,7 @@ namespace clarity
     ModelNode(CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
     void updateViewFromModel() {}
     virtual void updatePeers() {}
+    virtual void updateModelFromView() {}
 
     virtual val getVal() const
     {
@@ -186,7 +201,7 @@ namespace clarity
       }
     }
 
-    void setVal(const val &inval)
+    virtual void setVal(const val &inval)
     {
 
       nodeVal = inval;
@@ -359,7 +374,7 @@ namespace clarity
       cout << "ENDING: updateViewFromModel for " << this->name_ << "\n";
     }
 
-    void updateModelFromView()
+    virtual void updateModelFromView()
     {
       cout << "STARTING: updateModelFromView for " << this->name_ << "\n";
       for (auto child : children_)
@@ -414,7 +429,7 @@ namespace clarity
       jsval_.call<void>("addEventListenerById", eventName, callbackName);
     }
     //=====================
-    static map<const int, WebElemNode *> switchboard;
+    // static map<const int, WebElemNode *> switchboard;
     static map<string, std::function<void()>> callbackMap;
 
     string getTag() const { return tag_; }
@@ -433,7 +448,7 @@ namespace clarity
     }
 
     static void updateModelFromViewById(const int id) { switchboard[id]->updateModelFromView(); }
-    static WebElemNode &getCLElementById(const int id) { return *(switchboard[id]); }
+    // static WebElemNode &getCLElementById(const int id) { return *(switchboard[id]); }
     static void runCallbackById(const string &id) { callbackMap[id](); }
   };
 
@@ -552,7 +567,8 @@ public:
  * they can be found by their id numbers.
  *
  */
-map<const int, clarity::WebElemNode *> clarity::WebElemNode::switchboard;
+// map<const int, clarity::WebElemNode *> clarity::WebElemNode::switchboard;
+map<const int, clarity::ControlNetworkNode *> clarity::ControlNetworkNode::switchboard;
 
 /**
  * @brief callbackMap holds C++ functions that can be triggered from JS
