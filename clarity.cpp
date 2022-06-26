@@ -85,7 +85,51 @@ namespace clarity
       return val(*reinterpret_cast<T *>(valptr));
     }
 
-    val cpp2js(void *valptr)
+        virtual void updateViewFromModel() = 0;
+    virtual void updatePeers() = 0;
+    virtual void setVal(const val &inval) = 0;
+    virtual val getVal() const = 0;
+
+    //virtual void pushValToPeer(ControlNetworkNode *peer) = 0;
+    // {
+    //   val domElement = peer->jsval_["domElement"];
+    //   // peer->jsval_.set("val", this->jsval_["val"]);
+    //   //domElement.set(peer->bound);
+    // }
+
+    void addPeer(ControlNetworkNode *peer, bool alreadyAdded = false)
+    {
+
+      peers_.push_back(peer);
+      if (alreadyAdded)
+      {
+        return;
+      }
+      peer->addPeer(this, true);
+    }
+
+  protected:
+    static TicketMachine tm;
+
+    // val CLContext = val::global("CLElement");
+    val jsval_ = val::global("CLElement").new_();
+    val nodeVal = val(NULL);
+    CppType anyvalPtrType_; // C++ Data type
+    void *anyvalPtr_;       // pointer to actual data
+
+    int id_;
+    vector<ControlNetworkNode *> peers_;
+  };
+
+  class ModelNode : public ControlNetworkNode
+  {
+  public:
+    ModelNode(void *anyvalPtr) : ControlNetworkNode(anyvalPtr) {}
+    ModelNode(CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
+    void updateViewFromModel() {}
+    virtual void updatePeers() {}
+
+    virtual val getVal() const
     {
       if (anyvalPtr_ == nullptr)
       {
@@ -112,49 +156,19 @@ namespace clarity
       }
     }
 
-    virtual void updateViewFromModel() = 0;
-    virtual void updatePeers() = 0;
 
-    void pushValToPeer(ControlNetworkNode *peer)
-    {
-      val domElement = peer->jsval_["domElement"];
-      //peer->jsval_.set("val", this->jsval_["val"]);
-      domElement.set("value", val(77));
+
+   
+
+    virtual void pushValToPeer(ControlNetworkNode *peer) {
+      peer->setVal(getVal());
     }
 
-    void addPeer(ControlNetworkNode *peer, bool alreadyAdded = false)
+    void setVal(const val &inval)
     {
 
-      peers_.push_back(peer);
-      if (alreadyAdded)
-      {
-        return;
-      }
-      peer->addPeer(this, true);
-    }
+      nodeVal = inval;
 
-  protected:
-    static TicketMachine tm;
-
-    // val CLContext = val::global("CLElement");
-    val jsval_ = val::global("CLElement").new_();
-    CppType anyvalPtrType_; // C++ Data type
-    void *anyvalPtr_;       // pointer to actual data
-
-    int id_;
-    vector<ControlNetworkNode *> peers_;
-  };
-
-  class ModelNode : public ControlNetworkNode
-  {
-  public:
-    ModelNode(void *anyvalPtr) : ControlNetworkNode(anyvalPtr) {}
-    ModelNode(CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
-    void updateViewFromModel() {}
-    virtual void updatePeers() {}
-
-    void js2cpp(val jsval)
-    {
       if (anyvalPtr_ == nullptr)
       {
         // cout << "ENDING: updateModelFromView for " << this->name_ << " because anyvalPtr_ == nullptr\n";
@@ -164,20 +178,20 @@ namespace clarity
       switch (this->anyvalPtrType_)
       {
       case CppType::Int:
-        *reinterpret_cast<int *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", jsval);
+        *reinterpret_cast<int *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", inval);
         cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(anyvalPtr_) << endl;
         break;
       case CppType::Float:
-        *reinterpret_cast<float *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", jsval);
+        *reinterpret_cast<float *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", inval);
         cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(anyvalPtr_) << endl;
         break;
       case CppType::Double:
         //*reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
-        *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_.call<double>("jsToCPPVal", jsval);
+        *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_.call<double>("jsToCPPVal", inval);
         cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
         break;
       case CppType::String:
-        *reinterpret_cast<string *>(anyvalPtr_) = this->jsval_.call<string>("jsToCPPVal", jsval);
+        *reinterpret_cast<string *>(anyvalPtr_) = this->jsval_.call<string>("jsToCPPVal", inval);
         cout << "C++ side: New String Value: " << *reinterpret_cast<string *>(anyvalPtr_) << endl;
         break;
       case CppType::NoData:
@@ -202,11 +216,18 @@ namespace clarity
     WebNode *parent_;
     string boundField_;
 
-    val getDomElementVal() const
+    virtual val getVal() const
     {
       val domElement = jsval_["domElement"];
       return domElement[boundField_];
     }
+
+    void setVal(const val &inval)
+    {
+      val domElement = jsval_["domElement"];
+      domElement.set(boundField_, inval);
+    }
+
     void setParent(WebNode *parent) { this->parent_ = parent; }
     WebNode *getParent() const { return this->parent_; }
 
@@ -268,6 +289,13 @@ namespace clarity
       domElement.call<void>("setAttribute", attr, value);
     }
 
+virtual val getVal() const
+    {
+      val domElement = jsval_["domElement"];
+      return domElement[boundField_];
+    }
+
+
     /**
      * @brief Update the view from the model
      *
@@ -327,20 +355,20 @@ namespace clarity
       switch (this->anyvalPtrType_)
       {
       case CppType::Int:
-        *reinterpret_cast<int *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", getDomElementVal());
+        *reinterpret_cast<int *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", getVal());
         cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(anyvalPtr_) << endl;
         break;
       case CppType::Float:
-        *reinterpret_cast<float *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", getDomElementVal());
+        *reinterpret_cast<float *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", getVal());
         cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(anyvalPtr_) << endl;
         break;
       case CppType::Double:
         //*reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
-        *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_.call<double>("jsToCPPVal", getDomElementVal());
+        *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_.call<double>("jsToCPPVal", getVal());
         cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
         break;
       case CppType::String:
-        *reinterpret_cast<string *>(anyvalPtr_) = this->jsval_.call<string>("jsToCPPVal", getDomElementVal());
+        *reinterpret_cast<string *>(anyvalPtr_) = this->jsval_.call<string>("jsToCPPVal", getVal());
         cout << "C++ side: New String Value: " << *reinterpret_cast<string *>(anyvalPtr_) << endl;
         break;
       case CppType::NoData:

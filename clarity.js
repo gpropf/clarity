@@ -108,7 +108,7 @@ class CLElement {
   }
 
   printState() {
-    console.log(`FOR ID: ${this.id}, THIS VAL = ${this.val}`);
+    console.log(`CNN: FOR ID: ${this.id}, THIS VAL = ${this.domElement_.value}`);
   }
 }
 
