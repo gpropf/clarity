@@ -52,12 +52,32 @@ namespace clarity
   class ControlNetworkNode
   {
   public:
+    virtual val getVal() const
+    {
+      return jsval_["val"];
+    }
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
     virtual void printState() const { jsval_.call<void>("printState"); }
-    static ControlNetworkNode &getCLElementById(const int id) { return *(switchboard[id]); }
+    static ControlNetworkNode * getCLElementById(const int id) { return switchboard[id]; }
     virtual void updateModelFromView() {}
     static void updateModelFromViewById(const int id)
     { // switchboard[id]->updateModelFromView();
+    }
+
+    static void markNodeDirtyById(int id) { switchboard[id]->clean = false;}
+
+    static void pushValToPeersById(int id)
+    {
+      cout << "CALLED pushValToPeersById for id " << id << "\n\n";
+      ControlNetworkNode * cnn = getCLElementById(id);
+      cnn->pushValToPeers(cnn);
+    }
+
+    void toggleClean()
+    {
+
+      cout << "TOGGLECLEAN, oldstate: " << clean << " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ID = " << id_ << " \n\n\n";
+      clean = !clean;
     }
 
     /**
@@ -100,23 +120,34 @@ namespace clarity
     virtual void updatePeers() {}
     virtual void setVal(const val &inval)
     {
-      jsval_.set("val", inval);
+      // jsval_.set("val", inval);
+      cout << "Marking node " << id_ << " as dirty.\n\n";
+      clean = false;
     }
 
     virtual void pushValToPeer(ControlNetworkNode *peer)
     {
+      cout << "pushValToPeer called with peer id = " << peer->id_ << "\n";
+      if (clean)
+      {
+        cout << "Node " << id_ << " is clean, should return.\n";
+        //return;
+      }
       val internalVal = getVal();
-      // cout << "Internal val is ";
-      // jsval_.call<void>("printToConsole", internalVal);
-      // cout << "Value is type ";
-      // jsval_.call<void>("printType", internalVal);
-      // cout << endl;
+      cout << "Internal val is ";
+      jsval_.call<void>("printToConsole", internalVal);
+      cout << "Value is type ";
+      jsval_.call<void>("printType", internalVal);
+       cout << endl;
       peer->setVal(internalVal);
       peer->pushValToPeers(this);
+      clean = true;
     }
 
     virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr)
+
     {
+      cout << "pushValToPeers called for id = " << id_ << "\n";
       if (excludedPeer == nullptr)
       {
         for (auto peer : peers_)
@@ -149,10 +180,7 @@ namespace clarity
     }
 
   protected:
-    virtual val getVal() const
-    {
-      return jsval_["val"];
-    }
+    bool clean = true;
     static TicketMachine tm;
     static map<const int, ControlNetworkNode *> switchboard;
     // val CLContext = val::global("CLElement");
@@ -176,6 +204,7 @@ namespace clarity
 
     virtual val getVal() const
     {
+      cout << "GETVAL called for ModelNode!\n\n";
       if (anyvalPtr_ == nullptr)
       {
         return val(NULL);
@@ -203,7 +232,7 @@ namespace clarity
 
     virtual void setVal(const val &inval)
     {
-
+      ControlNetworkNode::setVal(inval);
       nodeVal = inval;
 
       if (anyvalPtr_ == nullptr)
@@ -246,21 +275,40 @@ namespace clarity
   {
   public:
     WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
-    // WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType)
-    // {
-    //   // id_ = tm.getNext();
+    virtual val getVal() const
+    {
+      cout << "GETVAL called for WebNode!\n\n";
+      val domElement = jsval_["domElement"];
+      string valueText = domElement[boundField_].as<string>();
+
+      switch (this->anyvalPtrType_)
+      {
+      case CppType::Int:
+        return val(stoi(valueText));
+        break;
+      case CppType::Float:
+        return val(stof(valueText));
+        break;
+      case CppType::Double:
+        return val(stod(valueText));
+        break;
+      case CppType::String:
+        return val(valueText);
+        break;
+      case CppType::NoData:
+      default:
+        return val(NULL);
+        break;
+      }
+    }
+
   protected:
     WebNode *parent_;
     string boundField_;
 
-    virtual val getVal() const
-    {
-      val domElement = jsval_["domElement"];
-      return domElement[boundField_];
-    }
-
     void setVal(const val &inval)
     {
+      ControlNetworkNode::setVal(inval);
       val domElement = jsval_["domElement"];
       domElement.set(boundField_, inval);
     }
@@ -285,7 +333,7 @@ namespace clarity
   class WebElemNode : public WebNode
   {
   public:
-    void updatePeers() {} // FIXME
+    
     WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {}
 
   protected:
@@ -317,7 +365,7 @@ namespace clarity
       anyvalPtr_ = nullptr;
       boundField_ = "value";
 
-      WebElemNode::switchboard[id_] = this;
+      ControlNetworkNode::switchboard[id_] = this;
     }
 
     void setAttribute(const string &attr, const val &value)
@@ -326,11 +374,11 @@ namespace clarity
       domElement.call<void>("setAttribute", attr, value);
     }
 
-    virtual val getVal() const
-    {
-      val domElement = jsval_["domElement"];
-      return domElement[boundField_];
-    }
+    // virtual val getVal() const
+    // {
+    //   val domElement = jsval_["domElement"];
+    //   return domElement[boundField_];
+    // }
 
     /**
      * @brief Update the view from the model
@@ -479,6 +527,14 @@ namespace clarity
 
   EMSCRIPTEN_BINDINGS(WebElemNode)
   {
+    class_<ControlNetworkNode>("ControlNetworkNode")
+        .function("toggleClean", &ControlNetworkNode::toggleClean, allow_raw_pointers())
+        .function("pushValToPeers", &ControlNetworkNode::pushValToPeers, allow_raw_pointers())
+        .function("getVal", &ControlNetworkNode::getVal, allow_raw_pointers())
+        .class_function("pushValToPeersById", &ControlNetworkNode::pushValToPeersById, allow_raw_pointers())
+        .class_function("getCLElementById", &ControlNetworkNode::getCLElementById, allow_raw_pointers())
+        .class_function("markNodeDirtyById", &ControlNetworkNode::markNodeDirtyById, allow_raw_pointers());
+
     class_<WebElemNode>("WebElement")
         .constructor<string, string, const ControlNetworkNode::CppType>(allow_raw_pointers())
         .property("tag", &WebElemNode::getTag)
@@ -486,9 +542,10 @@ namespace clarity
         .property("anyvalPtrType", &WebElemNode::getAnyvalPtrType, &WebElemNode::setAnyvalPtrType)
         .function("updateModelFromView", &WebElemNode::updateModelFromView)
         .function("splicePtrs", &WebElemNode::splicePtrs, allow_raw_pointers())
-        .class_function("getCLElementById", &WebElemNode::getCLElementById, allow_raw_pointers())
+        
         .class_function("updateModelFromViewById", &WebElemNode::updateModelFromViewById, allow_raw_pointers())
         .class_function("runCallbackById", &WebElemNode::runCallbackById, allow_raw_pointers());
+
     enum_<ControlNetworkNode::CppType>("WebElementCppType")
         .value("Int", ControlNetworkNode::CppType::Int)
         .value("Float", ControlNetworkNode::CppType::Float)
@@ -609,7 +666,7 @@ int main()
   nm->addPeer(ncntr);
   nm->addPeer(nslider);
   ncntr->addEventListenerByName("change", "printNetworkState");
-  ncntr->addEventListenerByName("change", "printNetworkState");
+  nslider->addEventListenerByName("change", "printNetworkState");
 
   ToyControl *tc = new ToyControl("tc1", "div", clarity::ControlNetworkNode::CppType::NoData);
   ToyModel *tm = new ToyModel(0, 1);
@@ -635,7 +692,9 @@ int main()
   clarity::WebElemNode::callbackMap["printNetworkState"] = [=]
   {
     cout << "callbackMap[\"printNetworkState\"]\n";
-    ncntr->pushValToPeers();
+    // ncntr->toggleClean();
+    // ncntr->pushValToPeers();
+    // nslider->pushValToPeers();
     ncntr->printState();
   };
 

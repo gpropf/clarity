@@ -92,7 +92,9 @@ class CLElement {
       this.domElement_.addEventListener('change', function (e) {        
         console.log('Javascript onchange callback called')
         //outerThis.printState()
-        Module.WebElement.updateModelFromViewById(outerThis.id_)        
+        Module.WebElement.updateModelFromViewById(outerThis.id_) 
+        Module.ControlNetworkNode.pushValToPeersById(outerThis.id_)
+        Module.ControlNetworkNode.markNodeDirtyById(outerThis.id_)
       })
     }
   }
