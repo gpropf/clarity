@@ -54,28 +54,39 @@ namespace clarity
   public:
     virtual val getVal() const
     {
-      return jsval_["val"];
+      printNodeStats("getVal()");
+      return val(NULL);
     }
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
     virtual void printState() const { jsval_.call<void>("printState"); }
-    static ControlNetworkNode * getCLElementById(const int id) { return switchboard[id]; }
+    static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
     virtual void updateModelFromView() {}
     static void updateModelFromViewById(const int id)
     { // switchboard[id]->updateModelFromView();
     }
 
-    static void markNodeDirtyById(int id) { switchboard[id]->clean = false;}
+    virtual string nodeStats() const
+    {
+      string s = "Node id: " + to_string(id_) + ", Node type: " + typeid(*this).name() + "\n";
+      return s;
+    }
+
+    virtual void printNodeStats(const string &prefix = "") const
+    {
+      cout << prefix << " " << nodeStats();
+    }
+
+    static void markNodeDirtyById(int id) { switchboard[id]->clean = false; }
 
     static void pushValToPeersById(int id)
-    {
-      cout << "CALLED pushValToPeersById for id " << id << "\n\n";
-      ControlNetworkNode * cnn = getCLElementById(id);
+    {      
+      ControlNetworkNode *cnn = getCLElementById(id);
+      cnn->printNodeStats("pushValToPeersById()");
       cnn->pushValToPeers(cnn);
     }
 
     void toggleClean()
     {
-
       cout << "TOGGLECLEAN, oldstate: " << clean << " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ID = " << id_ << " \n\n\n";
       clean = !clean;
     }
@@ -96,9 +107,7 @@ namespace clarity
     ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
     {
       id_ = tm.getNext();
-      jsval_.set("cpptype", val(anyvalPtrType));
-      // jsval_.set("id", val(id_));
-      //
+      jsval_.set("cpptype", val(anyvalPtrType));      
       ControlNetworkNode::switchboard[id_] = this;
     }
 
@@ -120,25 +129,24 @@ namespace clarity
     virtual void updatePeers() {}
     virtual void setVal(const val &inval)
     {
-      // jsval_.set("val", inval);
       cout << "Marking node " << id_ << " as dirty.\n\n";
       clean = false;
     }
 
     virtual void pushValToPeer(ControlNetworkNode *peer)
     {
-      cout << "pushValToPeer called with peer id = " << peer->id_ << "\n";
+      printNodeStats("pushValToPeer()");
       if (clean)
       {
         cout << "Node " << id_ << " is clean, should return.\n";
-        //return;
+        // return;
       }
       val internalVal = getVal();
       cout << "Internal val is ";
       jsval_.call<void>("printToConsole", internalVal);
       cout << "Value is type ";
       jsval_.call<void>("printType", internalVal);
-       cout << endl;
+      cout << endl;
       peer->setVal(internalVal);
       peer->pushValToPeers(this);
       clean = true;
@@ -147,7 +155,7 @@ namespace clarity
     virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr)
 
     {
-      cout << "pushValToPeers called for id = " << id_ << "\n";
+      printNodeStats("pushValToPeers()");
       if (excludedPeer == nullptr)
       {
         for (auto peer : peers_)
@@ -204,7 +212,8 @@ namespace clarity
 
     virtual val getVal() const
     {
-      cout << "GETVAL called for ModelNode!\n\n";
+      ControlNetworkNode::getVal();
+      // cout << "GETVAL called for ModelNode!\n\n";
       if (anyvalPtr_ == nullptr)
       {
         return val(NULL);
@@ -277,7 +286,8 @@ namespace clarity
     WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
     virtual val getVal() const
     {
-      cout << "GETVAL called for WebNode!\n\n";
+      ControlNetworkNode::getVal();
+      // cout << "GETVAL called for WebNode!\n\n";
       val domElement = jsval_["domElement"];
       string valueText = domElement[boundField_].as<string>();
 
@@ -305,6 +315,7 @@ namespace clarity
   protected:
     WebNode *parent_;
     string boundField_;
+    string stringId = "";
 
     void setVal(const val &inval)
     {
@@ -333,7 +344,6 @@ namespace clarity
   class WebElemNode : public WebNode
   {
   public:
-    
     WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {}
 
   protected:
@@ -373,12 +383,6 @@ namespace clarity
       val domElement = jsval_["domElement"];
       domElement.call<void>("setAttribute", attr, value);
     }
-
-    // virtual val getVal() const
-    // {
-    //   val domElement = jsval_["domElement"];
-    //   return domElement[boundField_];
-    // }
 
     /**
      * @brief Update the view from the model
@@ -514,6 +518,13 @@ namespace clarity
     {
       // FIXME: fill in method
     }
+
+    void setVal(const val &inval)
+    {
+      ControlNetworkNode::setVal(inval);
+      val domElement = jsval_["domElement"];
+      domElement.set(boundField_, inval);
+    }
   };
 
   class ButtonElement : public WebElemNode
@@ -542,7 +553,7 @@ namespace clarity
         .property("anyvalPtrType", &WebElemNode::getAnyvalPtrType, &WebElemNode::setAnyvalPtrType)
         .function("updateModelFromView", &WebElemNode::updateModelFromView)
         .function("splicePtrs", &WebElemNode::splicePtrs, allow_raw_pointers())
-        
+
         .class_function("updateModelFromViewById", &WebElemNode::updateModelFromViewById, allow_raw_pointers())
         .class_function("runCallbackById", &WebElemNode::runCallbackById, allow_raw_pointers());
 
