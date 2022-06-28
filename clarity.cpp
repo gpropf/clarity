@@ -194,7 +194,7 @@ namespace clarity
 
   protected:
     bool clean = true;
-    string *stringId;
+    
     static TicketMachine tm;
     static map<const int, ControlNetworkNode *> switchboard;
     // val CLContext = val::global("CLElement");
@@ -320,7 +320,7 @@ namespace clarity
 
   protected:
     string boundField_;
-    string stringId_ = "";
+    
 
     void setVal(const val &inval)
     {
@@ -356,6 +356,7 @@ namespace clarity
 
     // string tag_, name_;
     string tag_, name_;
+    string stringId_;
 
   public:
     /**
