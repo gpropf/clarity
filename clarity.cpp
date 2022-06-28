@@ -45,6 +45,8 @@ namespace clarity
     inline const int getNext() { return ++id_; }
   };
 
+  class WebElemNode;
+
   class WebNode;
 
   /**
@@ -81,7 +83,7 @@ namespace clarity
       cout << prefix << " " << nodeStats();
     }
 
-    static void markNodeDirtyById(int id) { switchboard[id]->clean = false; }
+    static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
 
     static void pushValToPeersById(int id)
     {
@@ -92,8 +94,8 @@ namespace clarity
 
     void toggleClean()
     {
-      cout << "TOGGLECLEAN, oldstate: " << clean << " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ID = " << id_ << " \n\n\n";
-      clean = !clean;
+      cout << "TOGGLECLEAN, oldstate: " << clean_ << " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ID = " << id_ << " \n\n\n";
+      clean_ = !clean_;
     }
 
     /**
@@ -108,6 +110,8 @@ namespace clarity
       String,
       NoData /// Used for things like div that hold no data.
     };
+
+    ControlNetworkNode(WebElemNode * parent): parent_(parent) {}
 
     ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
     {
@@ -135,13 +139,13 @@ namespace clarity
     virtual void setVal(const val &inval)
     {
       cout << "Marking node " << id_ << " as dirty.\n\n";
-      clean = false;
+      clean_ = false;
     }
 
     virtual void pushValToPeer(ControlNetworkNode *peer)
     {
       printNodeStats("pushValToPeer()");
-      if (clean)
+      if (clean_)
       {
         cout << "Node " << id_ << " is clean, should return.\n";
         // return;
@@ -154,7 +158,7 @@ namespace clarity
       cout << endl;
       peer->setVal(internalVal);
       peer->pushValToPeers(this);
-      clean = true;
+      clean_ = true;
     }
 
     virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr)
@@ -193,7 +197,7 @@ namespace clarity
     }
 
   protected:
-    bool clean = true;
+    bool clean_ = true;
     
     static TicketMachine tm;
     static map<const int, ControlNetworkNode *> switchboard;
@@ -202,7 +206,7 @@ namespace clarity
     val nodeVal = val(NULL);
     CppType anyvalPtrType_; // C++ Data type
     void *anyvalPtr_;       // pointer to actual data
-    WebNode *parent_;
+    WebElemNode *parent_;
     int id_;
     vector<ControlNetworkNode *> peers_;
   };
@@ -329,8 +333,8 @@ namespace clarity
       domElement.set(boundField_, inval);
     }
 
-    void setParent(WebNode *parent) { this->parent_ = parent; }
-    WebNode *getParent() const { return this->parent_; }
+    void setParent(WebElemNode *parent) { this->parent_ = parent; }
+    WebElemNode *getParent() const { return this->parent_; }
 
     // }
   };
@@ -519,6 +523,10 @@ namespace clarity
   {
 
     void updatePeers() {} // FIXME
+
+    WebAttrNode(const CppType anyvalPtrType, WebElemNode * parent ): WebNode(anyvalPtrType) {
+      parent_ = parent;
+    }
 
     void updateViewFromModel()
     {
