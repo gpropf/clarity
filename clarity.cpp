@@ -45,6 +45,8 @@ namespace clarity
     inline const int getNext() { return ++id_; }
   };
 
+  class WebNode;
+
   /**
    * @brief Base class for all nodes.
    *
@@ -57,6 +59,9 @@ namespace clarity
       printNodeStats("getVal()");
       return val(NULL);
     }
+
+    val getJSval() const { return jsval_; }
+
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
     virtual void printState() const { jsval_.call<void>("printState"); }
     static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
@@ -79,7 +84,7 @@ namespace clarity
     static void markNodeDirtyById(int id) { switchboard[id]->clean = false; }
 
     static void pushValToPeersById(int id)
-    {      
+    {
       ControlNetworkNode *cnn = getCLElementById(id);
       cnn->printNodeStats("pushValToPeersById()");
       cnn->pushValToPeers(cnn);
@@ -107,7 +112,7 @@ namespace clarity
     ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
     {
       id_ = tm.getNext();
-      jsval_.set("cpptype", val(anyvalPtrType));      
+      jsval_.set("cpptype", val(anyvalPtrType));
       ControlNetworkNode::switchboard[id_] = this;
     }
 
@@ -189,6 +194,7 @@ namespace clarity
 
   protected:
     bool clean = true;
+    string *stringId;
     static TicketMachine tm;
     static map<const int, ControlNetworkNode *> switchboard;
     // val CLContext = val::global("CLElement");
@@ -196,7 +202,7 @@ namespace clarity
     val nodeVal = val(NULL);
     CppType anyvalPtrType_; // C++ Data type
     void *anyvalPtr_;       // pointer to actual data
-
+    WebNode *parent_;
     int id_;
     vector<ControlNetworkNode *> peers_;
   };
@@ -313,9 +319,8 @@ namespace clarity
     }
 
   protected:
-    WebNode *parent_;
     string boundField_;
-    string stringId = "";
+    string stringId_ = "";
 
     void setVal(const val &inval)
     {
@@ -347,7 +352,7 @@ namespace clarity
     WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {}
 
   protected:
-    vector<WebElemNode *> children_;
+    vector<ControlNetworkNode *> children_;
 
     // string tag_, name_;
     string tag_, name_;
@@ -469,7 +474,7 @@ namespace clarity
       return; // this->jsval_["anyval"];
     }
 
-    bool appendChild(WebElemNode *child)
+    bool appendChild(WebNode *child)
     {
       children_.push_back(child);
       jsval_.call<void>("appendChild", child->getJSval());
@@ -488,7 +493,7 @@ namespace clarity
 
     string getId() const { return name_; }
     // void setId(string id) { id_ = id; }
-    val getJSval() const { return jsval_; }
+
     void setJsval(val jsval) { jsval_ = jsval; }
     void *getAnyvalPtr() const { return anyvalPtr_; }
     void setAnyvalPtr(void *valptr) { anyvalPtr_ = valptr; }
@@ -523,7 +528,7 @@ namespace clarity
     {
       ControlNetworkNode::setVal(inval);
       val domElement = jsval_["domElement"];
-      domElement.set(boundField_, inval);
+      domElement.call<void>("setAttribute", boundField_, inval);
     }
   };
 
