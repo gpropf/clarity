@@ -111,7 +111,7 @@ namespace clarity
       NoData /// Used for things like div that hold no data.
     };
 
-    ControlNetworkNode(WebElemNode * parent): parent_(parent) {}
+    ControlNetworkNode(WebElemNode *parent) : parent_(parent) {}
 
     ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
     {
@@ -198,7 +198,7 @@ namespace clarity
 
   protected:
     bool clean_ = true;
-    
+
     static TicketMachine tm;
     static map<const int, ControlNetworkNode *> switchboard;
     // val CLContext = val::global("CLElement");
@@ -324,7 +324,6 @@ namespace clarity
 
   protected:
     string boundField_;
-    
 
     void setVal(const val &inval)
     {
@@ -524,7 +523,8 @@ namespace clarity
 
     void updatePeers() {} // FIXME
 
-    WebAttrNode(const CppType anyvalPtrType, WebElemNode * parent ): WebNode(anyvalPtrType) {
+    WebAttrNode(const CppType anyvalPtrType, WebElemNode *parent) : WebNode(anyvalPtrType)
+    {
       parent_ = parent;
     }
 
@@ -677,22 +677,39 @@ int main()
   double *n = new double(11);
   clarity::ModelNode *nm = new clarity::ModelNode(clarity::ControlNetworkNode::CppType::Double);
   nm->splicePtrs(n);
-  clarity::WebElemNode *ratioDiv = new clarity::WebElemNode("ratio", "div",
+  clarity::WebElemNode *ratioDiv = new clarity::WebElemNode("ratiofoo", "div",
                                                             clarity::ControlNetworkNode::CppType::NoData);
   clarity::WebElemNode *ncntr = new clarity::WebElemNode("numerator", "input",
                                                          clarity::ControlNetworkNode::CppType::Double);
   clarity::WebElemNode *nslider = new clarity::WebElemNode("numerator", "input",
                                                            clarity::ControlNetworkNode::CppType::Double);
+  clarity::WebElemNode *svgarea = new clarity::WebElemNode("svgarea", "svg", clarity::ControlNetworkNode::CppType::NoData);
+  clarity::WebElemNode *cir1 = new clarity::WebElemNode("cir1", "circle", clarity::ControlNetworkNode::CppType::Double);
+
+  //<circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
+  svgarea->setAttribute("xmlns", val("http://www.w3.org/2000/svg"));
+  svgarea->setAttribute("width", val("200px"));
+  svgarea->setAttribute("height", val("200px"));
+  svgarea->setAttribute("viewBox", val("0 0 200 200"));
+  svgarea->setAttribute("xmlns:xlink", val("http://www.w3.org/1999/xlink"));
+  svgarea->setAttribute("style", val("border: 1px solid black"));
+  cir1->setAttribute("cx", val(100));
+  cir1->setAttribute("cy", val(100));
+  cir1->setAttribute("stroke", val("green"));
+  cir1->setAttribute("stroke-width", val(4));
+  cir1->setAttribute("r", val(80));
+
   nslider->setAttribute("type", val("range"));
   ratioDiv->appendChild(ncntr);
   ratioDiv->appendChild(nslider);
-
+  
+  svgarea->appendChild(cir1);
   ncntr->setAttribute("type", val("text"));
   nm->addPeer(ncntr);
   nm->addPeer(nslider);
   ncntr->addEventListenerByName("change", "printNetworkState");
   nslider->addEventListenerByName("change", "printNetworkState");
-
+//ratioDiv->appendChild(svgarea);
   ToyControl *tc = new ToyControl("tc1", "div", clarity::ControlNetworkNode::CppType::NoData);
   ToyModel *tm = new ToyModel(0, 1);
   string *buttonText = new string("CLICK ME!");

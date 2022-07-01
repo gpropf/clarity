@@ -20,7 +20,7 @@ class CLElement {
   }
 
   //object.freeze(CPP_Type);
-
+ 
   appendChild(child) {
     this.domElement.appendChild(child.domElement)
   }
