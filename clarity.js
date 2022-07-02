@@ -2,6 +2,11 @@
 // Run with 'python3 -m http.server 8000'
 
 class CLElement {
+
+
+
+
+
   constructor() {}
 
   jsToCPPVal(jsval) {
@@ -67,7 +72,7 @@ class CLElement {
 
   set name(name) {
     this.name_ = name;
-    this.domElement_.setAttribute("name", name);
+    //this.domElement_.setAttribute("name", name);
   }
 
   get name() {
@@ -78,13 +83,29 @@ class CLElement {
     this.id_ = id    
     console.log(`ID ${id} being set by C++ constructor.`)
     var el = document.getElementById(this.id_)
-    if (el == null) {      
-      console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
-      el = document.createElement(this.tag_)
-      document.body.appendChild(el)
-      el.id = id
-      el.type = this.type_
+    if (el == null) {
+      el = document.getElementById(this.name_)
+      if (el == null) {
+        console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
+        if (this.tag_ == "svg" || this.tag_ == "circle") {
+          el = document.createElementNS("http://www.w3.org/2000/svg", this.tag_)
+        }
+        else {
+          el = document.createElement(this.tag_)
+        }
+        
+        document.body.appendChild(el) 
+        // Without this it seems the elements vanish. The idea is that you append them later to
+        // their actual parents using a call in C++ to the appendChild method.
+  
+        el.id = id
+        el.type = this.type_
+      }
     }
+    
+    
+    
+  
     this.domElement_ = el    
 
     if (this.tag_ == 'input') {

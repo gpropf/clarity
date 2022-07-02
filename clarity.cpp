@@ -379,8 +379,9 @@ namespace clarity
 
       jsval_.set("cpptype", val(anyvalPtrType));
       jsval_.set("tag", val(tag));
-      jsval_.set("id", val(id_));
       jsval_.set("name", val(name_));
+      jsval_.set("id", val(id_));
+      
       anyvalPtr_ = nullptr;
       boundField_ = "value";
 
@@ -677,7 +678,7 @@ int main()
   double *n = new double(11);
   clarity::ModelNode *nm = new clarity::ModelNode(clarity::ControlNetworkNode::CppType::Double);
   nm->splicePtrs(n);
-  clarity::WebElemNode *ratioDiv = new clarity::WebElemNode("ratiofoo", "div",
+  clarity::WebElemNode *ratioDiv = new clarity::WebElemNode("maindiv", "div",
                                                             clarity::ControlNetworkNode::CppType::NoData);
   clarity::WebElemNode *ncntr = new clarity::WebElemNode("numerator", "input",
                                                          clarity::ControlNetworkNode::CppType::Double);
@@ -687,11 +688,11 @@ int main()
   clarity::WebElemNode *cir1 = new clarity::WebElemNode("cir1", "circle", clarity::ControlNetworkNode::CppType::Double);
 
   //<circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
-  svgarea->setAttribute("xmlns", val("http://www.w3.org/2000/svg"));
-  svgarea->setAttribute("width", val("200px"));
-  svgarea->setAttribute("height", val("200px"));
+  //svgarea->setAttribute("xmlns", val("http://www.w3.org/2000/svg"));
+  svgarea->setAttribute("width", val("300"));
+  svgarea->setAttribute("height", val("200"));
   svgarea->setAttribute("viewBox", val("0 0 200 200"));
-  svgarea->setAttribute("xmlns:xlink", val("http://www.w3.org/1999/xlink"));
+  //svgarea->setAttribute("xmlns:xlink", val("http://www.w3.org/1999/xlink"));
   svgarea->setAttribute("style", val("border: 1px solid black"));
   cir1->setAttribute("cx", val(100));
   cir1->setAttribute("cy", val(100));
@@ -702,14 +703,14 @@ int main()
   nslider->setAttribute("type", val("range"));
   ratioDiv->appendChild(ncntr);
   ratioDiv->appendChild(nslider);
-  
+
   svgarea->appendChild(cir1);
   ncntr->setAttribute("type", val("text"));
   nm->addPeer(ncntr);
   nm->addPeer(nslider);
   ncntr->addEventListenerByName("change", "printNetworkState");
   nslider->addEventListenerByName("change", "printNetworkState");
-//ratioDiv->appendChild(svgarea);
+  ratioDiv->appendChild(svgarea);
   ToyControl *tc = new ToyControl("tc1", "div", clarity::ControlNetworkNode::CppType::NoData);
   ToyModel *tm = new ToyModel(0, 1);
   string *buttonText = new string("CLICK ME!");
