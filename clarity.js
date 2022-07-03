@@ -7,7 +7,7 @@ class CLElement {
 
 
 
-  constructor() {}
+  constructor() { }
 
   jsToCPPVal(jsval) {
     switch (this.cpptype_) {
@@ -25,7 +25,7 @@ class CLElement {
   }
 
   //object.freeze(CPP_Type);
- 
+
   appendChild(child) {
     this.domElement.appendChild(child.domElement)
   }
@@ -94,8 +94,8 @@ class CLElement {
     return el
   }
 
-  set id(id) {   
-    this.id_ = id    
+  set id(id) {
+    this.id_ = id
     console.log(`ID ${id} being set by C++ constructor.`)
     var el = document.getElementById(this.id_)
     if (el == null) {
@@ -103,27 +103,23 @@ class CLElement {
       if (el == null) {
         console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
         el = this.createDOMElement()
-        
-        document.body.appendChild(el) 
+
+        document.body.appendChild(el)
         // Without this it seems the elements vanish. The idea is that you append them later to
         // their actual parents using a call in C++ to the appendChild method.
-  
+
         el.id = id
         el.type = this.type_
       }
     }
-    
-    
-    
-  
-    this.domElement_ = el    
+    this.domElement_ = el
 
     if (this.tag_ == 'input') {
       var outerThis = this
-      this.domElement_.addEventListener('change', function (e) {        
+      this.domElement_.addEventListener('change', function (e) {
         console.log('Javascript onchange callback called')
         //outerThis.printState()
-        Module.WebElement.updateModelFromViewById(outerThis.id_) 
+        Module.WebElement.updateModelFromViewById(outerThis.id_)
         Module.ControlNetworkNode.pushValToPeersById(outerThis.id_)
         Module.ControlNetworkNode.markNodeDirtyById(outerThis.id_)
       })
@@ -149,9 +145,16 @@ class CLElement {
   }
 
   printType(v) {
-    console.log(typeof(v));
+    console.log(typeof (v));
   }
 
+}
+
+//let myVar = setInterval(myTimer, 1000);
+function myTimer() {
+  const d = new Date();
+  console.log(d.toLocaleTimeString())
+  Module.WebElement.runCallbackById("tick")
 }
 
 window.CLElement = CLElement

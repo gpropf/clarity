@@ -747,11 +747,17 @@ int main()
 
   clarity::WebElemNode::callbackMap["printNetworkState"] = [=]
   {
-    cout << "callbackMap[\"printNetworkState\"]\n";
-    // ncntr->toggleClean();
-    // ncntr->pushValToPeers();
-    // nslider->pushValToPeers();
-    ncntr->printState();
+    cout << "callbackMap[\"printNetworkState\"]\n";    
+    //ncntr->printState();
+    
+  };
+
+  clarity::WebElemNode::callbackMap["tick"] = [=]
+  {
+    cout << "callbackMap[\"tick\"]\n";  
+    (*n)++;
+    nm->pushValToPeers(nm);  
+    //ncntr->printState();
   };
 
   tc->inputA_->splicePtrs(&tm->delta_);
