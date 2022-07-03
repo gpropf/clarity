@@ -56,6 +56,9 @@ namespace clarity
   class ControlNetworkNode
   {
   public:
+    void setParent(ControlNetworkNode *parent) { this->parent_ = parent; }
+    ControlNetworkNode *getParent() const { return this->parent_; }
+
     virtual val getVal() const
     {
       printNodeStats("getVal()");
@@ -111,7 +114,7 @@ namespace clarity
       NoData /// Used for things like div that hold no data.
     };
 
-    ControlNetworkNode(WebElemNode *parent) : parent_(parent) {}
+    ControlNetworkNode(ControlNetworkNode *parent) : parent_(parent) {}
 
     ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
     {
@@ -206,7 +209,7 @@ namespace clarity
     val nodeVal = val(NULL);
     CppType anyvalPtrType_; // C++ Data type
     void *anyvalPtr_;       // pointer to actual data
-    WebElemNode *parent_;
+    ControlNetworkNode *parent_;
     int id_;
     vector<ControlNetworkNode *> peers_;
   };
@@ -332,9 +335,6 @@ namespace clarity
       domElement.set(boundField_, inval);
     }
 
-    void setParent(WebElemNode *parent) { this->parent_ = parent; }
-    WebElemNode *getParent() const { return this->parent_; }
-
     // }
   };
 
@@ -381,7 +381,7 @@ namespace clarity
       jsval_.set("tag", val(tag));
       jsval_.set("name", val(name_));
       jsval_.set("id", val(id_));
-      
+
       anyvalPtr_ = nullptr;
       boundField_ = "value";
 
@@ -521,12 +521,21 @@ namespace clarity
    */
   class WebAttrNode : public WebNode
   {
+  protected:
+    string attributeName_;
 
+  public:
     void updatePeers() {} // FIXME
 
-    WebAttrNode(const CppType anyvalPtrType, WebElemNode *parent) : WebNode(anyvalPtrType)
+    WebAttrNode(const string &attributeName, const CppType anyvalPtrType,
+                ControlNetworkNode *parent) : attributeName_(attributeName),
+                                              WebNode(anyvalPtrType)
     {
       parent_ = parent;
+      boundField_ = attributeName;
+      val parentDomelement = parent_->getJSval()["domElement"];
+      // bool cln = parent->clean_;
+      jsval_.set("domElement", parentDomelement);
     }
 
     void updateViewFromModel()
@@ -534,7 +543,7 @@ namespace clarity
       // FIXME: fill in method
     }
 
-    void setVal(const val &inval)
+    virtual void setVal(const val &inval)
     {
       ControlNetworkNode::setVal(inval);
       val domElement = jsval_["domElement"];
@@ -687,18 +696,22 @@ int main()
   clarity::WebElemNode *svgarea = new clarity::WebElemNode("svgarea", "svg", clarity::ControlNetworkNode::CppType::NoData);
   clarity::WebElemNode *cir1 = new clarity::WebElemNode("cir1", "circle", clarity::ControlNetworkNode::CppType::Double);
 
+  clarity::WebAttrNode *cir1Radius = new clarity::WebAttrNode("r", clarity::ControlNetworkNode::CppType::Double, cir1);
+
   //<circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
-  //svgarea->setAttribute("xmlns", val("http://www.w3.org/2000/svg"));
+  // svgarea->setAttribute("xmlns", val("http://www.w3.org/2000/svg"));
   svgarea->setAttribute("width", val("300"));
   svgarea->setAttribute("height", val("200"));
   svgarea->setAttribute("viewBox", val("0 0 200 200"));
-  //svgarea->setAttribute("xmlns:xlink", val("http://www.w3.org/1999/xlink"));
+  // svgarea->setAttribute("xmlns:xlink", val("http://www.w3.org/1999/xlink"));
   svgarea->setAttribute("style", val("border: 1px solid black"));
   cir1->setAttribute("cx", val(100));
   cir1->setAttribute("cy", val(100));
   cir1->setAttribute("stroke", val("green"));
+  cir1->setAttribute("fill", val("lightblue"));
   cir1->setAttribute("stroke-width", val(4));
   cir1->setAttribute("r", val(80));
+  nm->addPeer(cir1Radius);
 
   nslider->setAttribute("type", val("range"));
   ratioDiv->appendChild(ncntr);

@@ -70,6 +70,10 @@ class CLElement {
     return this.domElement_
   }
 
+  set domElement(domElement) {
+    this.domElement_ = domElement
+  }
+
   set name(name) {
     this.name_ = name;
     //this.domElement_.setAttribute("name", name);
@@ -77,6 +81,17 @@ class CLElement {
 
   get name() {
     return this.domElement_.name;
+  }
+
+  createDOMElement() {
+    var el
+    if (this.tag_ == "svg" || this.tag_ == "circle") {
+      el = document.createElementNS("http://www.w3.org/2000/svg", this.tag_)
+    }
+    else {
+      el = document.createElement(this.tag_)
+    }
+    return el
   }
 
   set id(id) {   
@@ -87,12 +102,7 @@ class CLElement {
       el = document.getElementById(this.name_)
       if (el == null) {
         console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
-        if (this.tag_ == "svg" || this.tag_ == "circle") {
-          el = document.createElementNS("http://www.w3.org/2000/svg", this.tag_)
-        }
-        else {
-          el = document.createElement(this.tag_)
-        }
+        el = this.createDOMElement()
         
         document.body.appendChild(el) 
         // Without this it seems the elements vanish. The idea is that you append them later to
