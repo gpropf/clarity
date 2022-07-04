@@ -595,7 +595,7 @@ namespace clarity
  * act as a testbed for the Clarity library.
  *
  */
-class ToyModel //: public clarity::UpdateAble
+class NukeModel //: public clarity::UpdateAble
 {
 public:
   void printState() const
@@ -612,7 +612,7 @@ public:
     printState();
   }
 
-  ToyModel(double s, double delta) : s_(s), delta_(delta)
+  NukeModel(double s, double delta) : s_(s), delta_(delta)
   {
     printState();
   }
@@ -626,11 +626,11 @@ public:
  * @brief A simble example of a complex control made up of simpler ones.
  *
  */
-class ToyControl : public clarity::WebElemNode
+class NukeControl : public clarity::WebElemNode
 {
 
 public:
-  ToyControl(const string &name, const string &tag, const CppType anyvalPtrType) : WebElemNode(name, tag, anyvalPtrType)
+  NukeControl(const string &name, const string &tag, const CppType anyvalPtrType) : WebElemNode(name, tag, anyvalPtrType)
   {
     // mainDiv_ = new clarity::WebElement("mainDiv_", "div", CppType::NoData);
     inputA_ = new clarity::WebElemNode("inputA_", "input", CppType::Double);
@@ -724,8 +724,8 @@ int main()
   ncntr->addEventListenerByName("change", "printNetworkState");
   nslider->addEventListenerByName("change", "printNetworkState");
   ratioDiv->appendChild(svgarea);
-  ToyControl *tc = new ToyControl("tc1", "div", clarity::ControlNetworkNode::CppType::NoData);
-  ToyModel *tm = new ToyModel(0, 1);
+  NukeControl *tc = new NukeControl("tc1", "div", clarity::ControlNetworkNode::CppType::NoData);
+  NukeModel *tm = new NukeModel(0, 1);
   string *buttonText = new string("CLICK ME!");
 
   clarity::WebElemNode::callbackMap["iterateModel"] = [=]

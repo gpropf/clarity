@@ -7,7 +7,7 @@ CC		= em++
 CFLAGS	=  -lembind -std=c++17 -g3 -gsource-map -gseparate-dwarf
 # --source-map-base smap_
 JSOUT	= clarity_embind.js
-CPPIN	= models.cpp
+CPPIN	= nuke.cpp
 
 
 clarity: clarity.cpp clarity.html clarity.hpp

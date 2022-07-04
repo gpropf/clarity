@@ -65,10 +65,8 @@ namespace clarity
     void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
     virtual void printState() const { jsval_.call<void>("printState"); }
     static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
-    virtual void updateModelFromView() {}
-    static void updateModelFromViewById(const int id)
-    { // switchboard[id]->updateModelFromView();
-    }
+    // virtual void updateModelFromView() {}
+    // static void updateModelFromViewById(const int id) {}
 
     virtual string nodeStats() const
     {
@@ -132,7 +130,7 @@ namespace clarity
       return val(*reinterpret_cast<T *>(valptr));
     }
 
-    virtual void updateViewFromModel() {}
+    // virtual void updateViewFromModel() {}
     virtual void updatePeers() {}
     virtual void setVal(const val &inval)
     {
@@ -214,9 +212,9 @@ namespace clarity
   public:
     ModelNode(void *anyvalPtr) : ControlNetworkNode(anyvalPtr) {}
     ModelNode(CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
-    void updateViewFromModel() {}
+    // void updateViewFromModel() {}
     virtual void updatePeers() {}
-    virtual void updateModelFromView() {}
+    // virtual void updateModelFromView() {}
 
     virtual val getVal() const
     {
@@ -254,8 +252,7 @@ namespace clarity
 
       if (anyvalPtr_ == nullptr)
       {
-        // cout << "ENDING: updateModelFromView for " << this->name_ << " because anyvalPtr_ == nullptr\n";
-        return; // this->jsval_["anyval"];
+        return;
       }
 
       switch (this->anyvalPtrType_)
@@ -393,6 +390,7 @@ namespace clarity
      * @brief Update the view from the model
      *
      */
+    /*
     void updateViewFromModel()
     {
       cout << "STARTING: updateViewFromModel for " << this->name_ << "\n";
@@ -429,8 +427,8 @@ namespace clarity
         break;
       }
       cout << "ENDING: updateViewFromModel for " << this->name_ << "\n";
-    }
-
+    } */
+    /*
     virtual void updateModelFromView()
     {
       cout << "STARTING: updateModelFromView for " << this->name_ << "\n";
@@ -456,7 +454,7 @@ namespace clarity
         cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(anyvalPtr_) << endl;
         break;
       case CppType::Double:
-        //*reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
+        *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
         *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_.call<double>("jsToCPPVal", getVal());
         cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
         break;
@@ -472,7 +470,7 @@ namespace clarity
       }
       cout << "ENDING: updateModelFromView for " << this->name_ << "\n";
       return; // this->jsval_["anyval"];
-    }
+    } */
 
     bool appendChild(WebNode *child)
     {
@@ -504,7 +502,7 @@ namespace clarity
       jsval_.set("cpptype", cppType);
     }
 
-    static void updateModelFromViewById(const int id) { switchboard[id]->updateModelFromView(); }
+    // static void updateModelFromViewById(const int id) { switchboard[id]->updateModelFromView(); }
     // static WebElemNode &getCLElementById(const int id) { return *(switchboard[id]); }
     static void runCallbackById(const string &id) { callbackMap[id](); }
   };
@@ -533,10 +531,10 @@ namespace clarity
       jsval_.set("domElement", parentDomelement);
     }
 
-    void updateViewFromModel()
-    {
-      // FIXME: fill in method
-    }
+    // void updateViewFromModel()
+    // {
+    //   // FIXME: fill in method
+    // }
 
     virtual void setVal(const val &inval)
     {
@@ -570,10 +568,10 @@ namespace clarity
         .property("tag", &WebElemNode::getTag)
         .property("id", &WebElemNode::getId)
         .property("anyvalPtrType", &WebElemNode::getAnyvalPtrType, &WebElemNode::setAnyvalPtrType)
-        .function("updateModelFromView", &WebElemNode::updateModelFromView)
+        //.function("updateModelFromView", &WebElemNode::updateModelFromView)
         .function("splicePtrs", &WebElemNode::splicePtrs, allow_raw_pointers())
 
-        .class_function("updateModelFromViewById", &WebElemNode::updateModelFromViewById, allow_raw_pointers())
+        //.class_function("updateModelFromViewById", &WebElemNode::updateModelFromViewById, allow_raw_pointers())
         .class_function("runCallbackById", &WebElemNode::runCallbackById, allow_raw_pointers());
 
     enum_<ControlNetworkNode::CppType>("WebElementCppType")
@@ -584,3 +582,20 @@ namespace clarity
         .value("NoData", ControlNetworkNode::CppType::NoData);
   }
 }
+
+/**
+ * @brief switchboard is where a map of all the WebElements is stored so that
+ * they can be found by their id numbers.
+ *
+ */
+// map<const int, clarity::WebElemNode *> clarity::WebElemNode::switchboard;
+map<const int, clarity::ControlNetworkNode *> clarity::ControlNetworkNode::switchboard;
+
+/**
+ * @brief callbackMap holds C++ functions that can be triggered from JS
+ * when events like a button press or timer tick require modification of
+ * the C++ model state.
+ *
+ */
+map<string, std::function<void()>> clarity::WebElemNode::callbackMap;
+clarity::TicketMachine clarity::ControlNetworkNode::tm;

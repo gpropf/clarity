@@ -1,11 +1,10 @@
 #include "clarity.hpp"
 
 /**
- * @brief A simple model that just changes its internal state over time to
- * act as a testbed for the Clarity library.
+ * @brief A simple model of a nuclear power plant.
  *
  */
-class ToyModel //: public clarity::UpdateAble
+class NukeModel //: public clarity::UpdateAble
 {
 public:
   void printState() const
@@ -22,7 +21,7 @@ public:
     printState();
   }
 
-  ToyModel(double s, double delta) : s_(s), delta_(delta)
+  NukeModel(double s, double delta) : s_(s), delta_(delta)
   {
     printState();
   }
@@ -33,16 +32,15 @@ public:
 };
 
 /**
- * @brief A simble example of a complex control made up of simpler ones.
+ * @brief Control Panel for the nuclear power plant
  *
  */
-class ToyControl : public clarity::WebElemNode
+class NukeControl : public clarity::WebElemNode
 {
 
 public:
-  ToyControl(const string &name, const string &tag, const CppType anyvalPtrType) : WebElemNode(name, tag, anyvalPtrType)
-  {
-    // mainDiv_ = new clarity::WebElement("mainDiv_", "div", CppType::NoData);
+  NukeControl(const string &name, const string &tag, const CppType anyvalPtrType) : WebElemNode(name, tag, anyvalPtrType)
+  {    
     inputA_ = new clarity::WebElemNode("inputA_", "input", CppType::Double);
     inputB_ = new clarity::WebElemNode("inputB_", "input", CppType::Double);
     sliderA_ = new clarity::WebElemNode("sliderA_", "input", CppType::Double);
@@ -53,8 +51,7 @@ public:
     this->appendChild(inputA_);
     this->appendChild(inputB_);
     this->appendChild(applyButton_);
-    this->appendChild(sliderA_);
-    // this->appendChild(*mainDiv_);
+    this->appendChild(sliderA_);   
   }
 
   clarity::WebElemNode *mainDiv_;
@@ -63,23 +60,6 @@ public:
   clarity::WebElemNode *inputB_;
   clarity::WebElemNode *applyButton_;
 };
-
-/**
- * @brief switchboard is where a map of all the WebElements is stored so that
- * they can be found by their id numbers.
- *
- */
-// map<const int, clarity::WebElemNode *> clarity::WebElemNode::switchboard;
-map<const int, clarity::ControlNetworkNode *> clarity::ControlNetworkNode::switchboard;
-
-/**
- * @brief callbackMap holds C++ functions that can be triggered from JS
- * when events like a button press or timer tick require modification of
- * the C++ model state.
- *
- */
-map<string, std::function<void()>> clarity::WebElemNode::callbackMap;
-clarity::TicketMachine clarity::ControlNetworkNode::tm;
 
 int main()
 {
@@ -93,7 +73,6 @@ int main()
     return -1;
   }
 
-  int *i = new int(100);
   double *n = new double(11);
   clarity::ModelNode *nm = new clarity::ModelNode(clarity::ControlNetworkNode::CppType::Double);
   nm->splicePtrs(n);
@@ -103,17 +82,17 @@ int main()
                                                          clarity::ControlNetworkNode::CppType::Double);
   clarity::WebElemNode *nslider = new clarity::WebElemNode("numerator", "input",
                                                            clarity::ControlNetworkNode::CppType::Double);
-  clarity::WebElemNode *svgarea = new clarity::WebElemNode("svgarea", "svg", clarity::ControlNetworkNode::CppType::NoData);
-  clarity::WebElemNode *cir1 = new clarity::WebElemNode("cir1", "circle", clarity::ControlNetworkNode::CppType::Double);
+  clarity::WebElemNode *svgarea = new clarity::WebElemNode("svgarea", "svg",
+                                                           clarity::ControlNetworkNode::CppType::NoData);
+  clarity::WebElemNode *cir1 = new clarity::WebElemNode("cir1", "circle",
+                                                        clarity::ControlNetworkNode::CppType::Double);
 
-  clarity::WebAttrNode *cir1Radius = new clarity::WebAttrNode("r", clarity::ControlNetworkNode::CppType::Double, cir1);
+  clarity::WebAttrNode *cir1Radius = new clarity::WebAttrNode("r",
+                                                              clarity::ControlNetworkNode::CppType::Double, cir1);
 
-  //<circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" />
-  // svgarea->setAttribute("xmlns", val("http://www.w3.org/2000/svg"));
   svgarea->setAttribute("width", val("300"));
   svgarea->setAttribute("height", val("200"));
   svgarea->setAttribute("viewBox", val("0 0 200 200"));
-  // svgarea->setAttribute("xmlns:xlink", val("http://www.w3.org/1999/xlink"));
   svgarea->setAttribute("style", val("border: 1px solid black"));
   cir1->setAttribute("cx", val(100));
   cir1->setAttribute("cy", val(100));
@@ -122,11 +101,9 @@ int main()
   cir1->setAttribute("stroke-width", val(4));
   cir1->setAttribute("r", val(80));
   nm->addPeer(cir1Radius);
-
   nslider->setAttribute("type", val("range"));
   ratioDiv->appendChild(ncntr);
   ratioDiv->appendChild(nslider);
-
   svgarea->appendChild(cir1);
   ncntr->setAttribute("type", val("text"));
   nm->addPeer(ncntr);
@@ -134,8 +111,8 @@ int main()
   ncntr->addEventListenerByName("change", "printNetworkState");
   nslider->addEventListenerByName("change", "printNetworkState");
   ratioDiv->appendChild(svgarea);
-  ToyControl *tc = new ToyControl("tc1", "div", clarity::ControlNetworkNode::CppType::NoData);
-  ToyModel *tm = new ToyModel(0, 1);
+  NukeControl *tc = new NukeControl("tc1", "div", clarity::ControlNetworkNode::CppType::NoData);
+  NukeModel *tm = new NukeModel(0, 1);
   string *buttonText = new string("CLICK ME!");
 
   clarity::WebElemNode::callbackMap["iterateModel"] = [=]
@@ -143,31 +120,28 @@ int main()
     cout << "callbackMap[\"iterateModel\"]\n";
     tm->iterate();
     tm->printState();
-    tc->updateViewFromModel();
-    tc->updateModelFromView();
+    // tc->updateViewFromModel();
+    // tc->updateModelFromView();
   };
 
   clarity::WebElemNode::callbackMap["syncModelView"] = [=]
   {
     cout << "callbackMap[\"syncModelView\"]\n";
     tm->printState();
-    tc->updateModelFromView();
-    tc->updateViewFromModel();
+    //tc->updateModelFromView();
+    //tc->updateViewFromModel();
   };
 
   clarity::WebElemNode::callbackMap["printNetworkState"] = [=]
   {
-    cout << "callbackMap[\"printNetworkState\"]\n";    
-    //ncntr->printState();
-    
+    cout << "callbackMap[\"printNetworkState\"]\n";
   };
 
   clarity::WebElemNode::callbackMap["tick"] = [=]
   {
-    cout << "callbackMap[\"tick\"]\n";  
+    cout << "callbackMap[\"tick\"]\n";
     (*n)++;
-    nm->pushValToPeers(nm);  
-    //ncntr->printState();
+    nm->pushValToPeers(nm);    
   };
 
   tc->inputA_->splicePtrs(&tm->delta_);
@@ -177,7 +151,7 @@ int main()
   tc->sliderA_->addEventListenerByName("change", "syncModelView");
   tc->applyButton_->addEventListenerByName("click", "iterateModel");
 
-  tc->updateViewFromModel();
+  //tc->updateViewFromModel();
   printf("Setup complete!\n");
   return 0;
 }
