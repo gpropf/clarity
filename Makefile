@@ -1,16 +1,17 @@
 
 ENV		= DEMANGLE_SUPPORT=1 
-#EMCC_DEBUG=1
-
+#EMCC_DEBUG=1 TOTAL_MEMORY=1900mb
+# -gsource-map --source-map-base .
+# --source-map-base=http://127.0.0.1
 CC		= em++
-CFLAGS	= -s TOTAL_MEMORY=1900mb --bind -std=c++17 -gsource-map
+CFLAGS	=  -lembind -std=c++17 -g3 -gsource-map -gseparate-dwarf
 # --source-map-base smap_
 JSOUT	= clarity_embind.js
-CPPIN	= clarity.cpp
+CPPIN	= models.cpp
 
 
-clarity: clarity.cpp clarity.html
-	$(ENV) $(CC) $(CFLAGS) -o $(JSOUT) $(CPPIN)
+clarity: clarity.cpp clarity.html clarity.hpp
+	$(ENV) $(CC) $(CPPIN) $(CFLAGS) -o $(JSOUT)
 
 
 docs: clarity.doxyconfig
