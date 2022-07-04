@@ -73,7 +73,7 @@ int main()
     return -1;
   }
 
-  double *n = new double(11);
+  double *n = new double(33);
   clarity::ModelNode *nm = new clarity::ModelNode(clarity::ControlNetworkNode::CppType::Double);
   nm->splicePtrs(n);
   clarity::WebElemNode *ratioDiv = new clarity::WebElemNode("maindiv", "div",
@@ -114,6 +114,7 @@ int main()
   NukeControl *tc = new NukeControl("tc1", "div", clarity::ControlNetworkNode::CppType::NoData);
   NukeModel *tm = new NukeModel(0, 1);
   string *buttonText = new string("CLICK ME!");
+  nm->pushValToPeers(nm);
 
   clarity::WebElemNode::callbackMap["iterateModel"] = [=]
   {
