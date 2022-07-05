@@ -1,65 +1,94 @@
-#include "clarity.hpp"
+
+//#include "clarity.hpp"
+#include "nuke.hpp"
+
+using clarity::ControlNetworkNode;
+using clarity::WebElemNode;
+using std::string;
+
+
+EMSCRIPTEN_BINDINGS(clarity)
+  {
+    class_<ControlNetworkNode>("ControlNetworkNode")
+        .function("toggleClean", &ControlNetworkNode::toggleClean, allow_raw_pointers())
+        .function("pushValToPeers", &ControlNetworkNode::pushValToPeers, allow_raw_pointers())
+        .function("getVal", &ControlNetworkNode::getVal, allow_raw_pointers())
+        .class_function("pushValToPeersById", &ControlNetworkNode::pushValToPeersById, allow_raw_pointers())
+        .class_function("getCLElementById", &ControlNetworkNode::getCLElementById, allow_raw_pointers())
+        .class_function("markNodeDirtyById", &ControlNetworkNode::markNodeDirtyById, allow_raw_pointers());
+
+    
+
+    enum_<ControlNetworkNode::CppType>("WebElementCppType")
+        .value("Int", ControlNetworkNode::CppType::Int)
+        .value("Float", ControlNetworkNode::CppType::Float)
+        .value("Double", ControlNetworkNode::CppType::Double)
+        .value("String", ControlNetworkNode::CppType::String)
+        .value("NoData", ControlNetworkNode::CppType::NoData);
+  }
+
+
+  EMSCRIPTEN_BINDINGS(WebElemNode)
+  {
+    
+
+    class_<WebElemNode>("WebElement")
+        .constructor<string, string, const ControlNetworkNode::CppType>(allow_raw_pointers())
+        .property("tag", &WebElemNode::getTag)
+       .property("id", &WebElemNode::getId)
+        .property("anyvalPtrType", &WebElemNode::getAnyvalPtrType, &WebElemNode::setAnyvalPtrType)
+        //.function("updateModelFromView", &WebElemNode::updateModelFromView)
+        .function("splicePtrs", &WebElemNode::splicePtrs, allow_raw_pointers())
+
+        //.class_function("updateModelFromViewById", &WebElemNode::updateModelFromViewById, allow_raw_pointers())
+        .class_function("runCallbackById", &WebElemNode::runCallbackById, allow_raw_pointers());
+
+    
+  }
+
+
+
+NukeControl::NukeControl(const string &name, const string &tag, clarity::ControlNetworkNode::CppType anyvalPtrType) 
+: clarity::WebElemNode(name, tag, anyvalPtrType)
+{
+  inputA_ = new clarity::WebElemNode("inputA_", "input", CppType::Double);
+  inputB_ = new clarity::WebElemNode("inputB_", "input", CppType::Double);
+  sliderA_ = new clarity::WebElemNode("sliderA_", "input", CppType::Double);
+  applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::ControlNetworkNode::CppType::String);
+  inputA_->setAttribute("type", val("text"));
+  inputB_->setAttribute("type", val("text"));
+  sliderA_->setAttribute("type", val("range"));
+  this->appendChild(inputA_);
+  this->appendChild(inputB_);
+  this->appendChild(applyButton_);
+  this->appendChild(sliderA_);
+}
+
+// clarity::WebElemNode *mainDiv_;
+// clarity::WebElemNode *inputA_;
+// clarity::WebElemNode *sliderA_;
+// clarity::WebElemNode *inputB_;
+// clarity::WebElemNode *applyButton_;
+
 
 /**
- * @brief A simple model of a nuclear power plant.
+ * @brief switchboard is where a map of all the WebElements is stored so that
+ * they can be found by their id numbers.
  *
  */
-class NukeModel //: public clarity::UpdateAble
-{
-public:
-  void printState() const
-  {
-    cout << "MODEL STATE: s = " << s_ << ", delta = " << delta_ << endl;
-  }
-
-  void update() {}
-
-  void iterate()
-  {
-    s_ += delta_;
-    delta_ *= 0.95;
-    printState();
-  }
-
-  NukeModel(double s, double delta) : s_(s), delta_(delta)
-  {
-    printState();
-  }
-
-  // private:
-  double s_, delta_;
-  // int i_;
-};
+// map<const int, clarity::WebElemNode *> clarity::WebElemNode::switchboard;
+map<const int, clarity::ControlNetworkNode *> clarity::ControlNetworkNode::switchboard;
 
 /**
- * @brief Control Panel for the nuclear power plant
+ * @brief callbackMap holds C++ functions that can be triggered from JS
+ * when events like a button press or timer tick require modification of
+ * the C++ model state.
  *
  */
-class NukeControl : public clarity::WebElemNode
-{
+map<string, std::function<void()>> clarity::WebElemNode::callbackMap;
+clarity::TicketMachine clarity::ControlNetworkNode::tm;
 
-public:
-  NukeControl(const string &name, const string &tag, const CppType anyvalPtrType) : WebElemNode(name, tag, anyvalPtrType)
-  {    
-    inputA_ = new clarity::WebElemNode("inputA_", "input", CppType::Double);
-    inputB_ = new clarity::WebElemNode("inputB_", "input", CppType::Double);
-    sliderA_ = new clarity::WebElemNode("sliderA_", "input", CppType::Double);
-    applyButton_ = new clarity::ButtonElement("applyButton_", "button", CppType::String);
-    inputA_->setAttribute("type", val("text"));
-    inputB_->setAttribute("type", val("text"));
-    sliderA_->setAttribute("type", val("range"));
-    this->appendChild(inputA_);
-    this->appendChild(inputB_);
-    this->appendChild(applyButton_);
-    this->appendChild(sliderA_);   
-  }
 
-  clarity::WebElemNode *mainDiv_;
-  clarity::WebElemNode *inputA_;
-  clarity::WebElemNode *sliderA_;
-  clarity::WebElemNode *inputB_;
-  clarity::WebElemNode *applyButton_;
-};
 
 int main()
 {
@@ -113,7 +142,7 @@ int main()
   ratioDiv->appendChild(svgarea);
   NukeControl *tc = new NukeControl("tc1", "div", clarity::ControlNetworkNode::CppType::NoData);
   NukeModel *tm = new NukeModel(0, 1);
-  string *buttonText = new string("CLICK ME!");
+  std::string *buttonText = new std::string("CLICK ME!");
   nm->pushValToPeers(nm);
 
   clarity::WebElemNode::callbackMap["iterateModel"] = [=]
@@ -129,8 +158,8 @@ int main()
   {
     cout << "callbackMap[\"syncModelView\"]\n";
     tm->printState();
-    //tc->updateModelFromView();
-    //tc->updateViewFromModel();
+    // tc->updateModelFromView();
+    // tc->updateViewFromModel();
   };
 
   clarity::WebElemNode::callbackMap["printNetworkState"] = [=]
@@ -142,7 +171,7 @@ int main()
   {
     cout << "callbackMap[\"tick\"]\n";
     (*n)++;
-    nm->pushValToPeers(nm);    
+    nm->pushValToPeers(nm);
   };
 
   tc->inputA_->splicePtrs(&tm->delta_);
@@ -152,7 +181,7 @@ int main()
   tc->sliderA_->addEventListenerByName("change", "syncModelView");
   tc->applyButton_->addEventListenerByName("click", "iterateModel");
 
-  //tc->updateViewFromModel();
+  // tc->updateViewFromModel();
   printf("Setup complete!\n");
   return 0;
 }

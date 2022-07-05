@@ -1,3 +1,6 @@
+#ifndef clarity_hpp
+#define clarity_hpp
+
 
 #include <stdio.h>
 #include <iostream>
@@ -40,7 +43,7 @@ namespace clarity
     inline const int getNext() { return ++id_; }
   };
 
-  class WebElemNode;
+  //class WebElemNode;
 
   class WebNode;
 
@@ -341,172 +344,7 @@ namespace clarity
    * a JS Dom element and retain other state on the JS side.
    *
    */
-  class WebElemNode : public WebNode
-  {
-  public:
-    WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {}
-
-  protected:
-    vector<ControlNetworkNode *> children_;
-
-    // string tag_, name_;
-    string tag_, name_;
-    string stringId_;
-
-  public:
-    /**
-     * @brief Construct a new Web Element object
-     *
-     * @param name String name of element, may be empty.
-     * @param tag HTML tag of this element
-     * @param anyvalPtrType C++ type of data contained within
-     *
-     */
-    WebElemNode(const string &name, const string &tag,
-                const CppType anyvalPtrType) : tag_(tag),
-                                               name_(name),
-                                               WebNode(anyvalPtrType)
-
-    {
-
-      jsval_.set("cpptype", val(anyvalPtrType));
-      jsval_.set("tag", val(tag));
-      jsval_.set("name", val(name_));
-      jsval_.set("id", val(id_));
-
-      anyvalPtr_ = nullptr;
-      boundField_ = "value";
-
-      ControlNetworkNode::switchboard[id_] = this;
-    }
-
-    void setAttribute(const string &attr, const val &value)
-    {
-      val domElement = jsval_["domElement"];
-      domElement.call<void>("setAttribute", attr, value);
-    }
-
-    /**
-     * @brief Update the view from the model
-     *
-     */
-    /*
-    void updateViewFromModel()
-    {
-      cout << "STARTING: updateViewFromModel for " << this->name_ << "\n";
-      val domElement = this->jsval_["domElement"];
-      for (auto child : children_)
-      {
-        child->updateViewFromModel();
-      }
-
-      if (anyvalPtr_ == nullptr)
-      {
-        cout << "ENDING: updateViewFromModel for " << this->name_ << " because anyvalPtr_ == nullptr\n";
-        return;
-      }
-
-      switch (this->anyvalPtrType_)
-      {
-      case CppType::Int:
-        domElement.set(boundField_, val(cpp2js<int>(anyvalPtr_)));
-        break;
-      case CppType::Float:
-        domElement.set(boundField_, val(cpp2js<float>(anyvalPtr_)));
-        break;
-      case CppType::Double:
-        // domElement.set(boundField, val(*reinterpret_cast<double *>(anyvalPtr_)));
-        domElement.set(boundField_, val(cpp2js<double>(anyvalPtr_)));
-        // jsval_.set("anyval", val(*reinterpret_cast<double *>(anyvalPtr_)));
-        break;
-      case CppType::String:
-        domElement.set(boundField_, val(cpp2js<string>(anyvalPtr_)));
-        break;
-      case CppType::NoData:
-      default:
-        break;
-      }
-      cout << "ENDING: updateViewFromModel for " << this->name_ << "\n";
-    } */
-    /*
-    virtual void updateModelFromView()
-    {
-      cout << "STARTING: updateModelFromView for " << this->name_ << "\n";
-      for (auto child : children_)
-      {
-        child->updateModelFromView();
-      }
-
-      if (anyvalPtr_ == nullptr)
-      {
-        cout << "ENDING: updateModelFromView for " << this->name_ << " because anyvalPtr_ == nullptr\n";
-        return; // this->jsval_["anyval"];
-      }
-
-      switch (this->anyvalPtrType_)
-      {
-      case CppType::Int:
-        *reinterpret_cast<int *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", getVal());
-        cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(anyvalPtr_) << endl;
-        break;
-      case CppType::Float:
-        *reinterpret_cast<float *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", getVal());
-        cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(anyvalPtr_) << endl;
-        break;
-      case CppType::Double:
-        *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
-        *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_.call<double>("jsToCPPVal", getVal());
-        cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
-        break;
-      case CppType::String:
-        *reinterpret_cast<string *>(anyvalPtr_) = this->jsval_.call<string>("jsToCPPVal", getVal());
-        cout << "C++ side: New String Value: " << *reinterpret_cast<string *>(anyvalPtr_) << endl;
-        break;
-      case CppType::NoData:
-        cout << "C++ side: This element contains no data." << endl;
-        break;
-      default:
-        break;
-      }
-      cout << "ENDING: updateModelFromView for " << this->name_ << "\n";
-      return; // this->jsval_["anyval"];
-    } */
-
-    bool appendChild(WebNode *child)
-    {
-      children_.push_back(child);
-      jsval_.call<void>("appendChild", child->getJSval());
-      return true; // FIXME: need to check for duplicate ids.
-    }
-
-    void addEventListenerByName(const string &eventName, const string &callbackName)
-    {
-      jsval_.call<void>("addEventListenerById", eventName, callbackName);
-    }
-    //=====================
-    // static map<const int, WebElemNode *> switchboard;
-    static map<string, std::function<void()>> callbackMap;
-
-    string getTag() const { return tag_; }
-
-    string getId() const { return name_; }
-    // void setId(string id) { id_ = id; }
-
-    void setJsval(val jsval) { jsval_ = jsval; }
-    void *getAnyvalPtr() const { return anyvalPtr_; }
-    void setAnyvalPtr(void *valptr) { anyvalPtr_ = valptr; }
-    CppType getAnyvalPtrType() const { return anyvalPtrType_; }
-    void setAnyvalPtrType(CppType cppType)
-    {
-      anyvalPtrType_ = cppType;
-      jsval_.set("cpptype", cppType);
-    }
-
-    // static void updateModelFromViewById(const int id) { switchboard[id]->updateModelFromView(); }
-    // static WebElemNode &getCLElementById(const int id) { return *(switchboard[id]); }
-    static void runCallbackById(const string &id) { callbackMap[id](); }
-  };
-
+  
   /**
    * @brief Represents an attribute of another element such as bgcolor.
    * This is not necessarily a dom element that we control though it may be.
@@ -544,58 +382,29 @@ namespace clarity
     }
   };
 
-  class ButtonElement : public WebElemNode
-  {
-  public:
-    ButtonElement(const string &name, const string &tag, const CppType anyvalPtrType) : WebElemNode(name, tag, anyvalPtrType)
-    {
-      boundField_ = "textContent";
-    }
-  };
+  
 
-  EMSCRIPTEN_BINDINGS(WebElemNode)
-  {
-    class_<ControlNetworkNode>("ControlNetworkNode")
-        .function("toggleClean", &ControlNetworkNode::toggleClean, allow_raw_pointers())
-        .function("pushValToPeers", &ControlNetworkNode::pushValToPeers, allow_raw_pointers())
-        .function("getVal", &ControlNetworkNode::getVal, allow_raw_pointers())
-        .class_function("pushValToPeersById", &ControlNetworkNode::pushValToPeersById, allow_raw_pointers())
-        .class_function("getCLElementById", &ControlNetworkNode::getCLElementById, allow_raw_pointers())
-        .class_function("markNodeDirtyById", &ControlNetworkNode::markNodeDirtyById, allow_raw_pointers());
+  // EMSCRIPTEN_BINDINGS(clarity)
+  // {
+  //   class_<ControlNetworkNode>("ControlNetworkNode")
+  //       .function("toggleClean", &ControlNetworkNode::toggleClean, allow_raw_pointers())
+  //       .function("pushValToPeers", &ControlNetworkNode::pushValToPeers, allow_raw_pointers())
+  //       .function("getVal", &ControlNetworkNode::getVal, allow_raw_pointers())
+  //       .class_function("pushValToPeersById", &ControlNetworkNode::pushValToPeersById, allow_raw_pointers())
+  //       .class_function("getCLElementById", &ControlNetworkNode::getCLElementById, allow_raw_pointers())
+  //       .class_function("markNodeDirtyById", &ControlNetworkNode::markNodeDirtyById, allow_raw_pointers());
 
-    class_<WebElemNode>("WebElement")
-        .constructor<string, string, const ControlNetworkNode::CppType>(allow_raw_pointers())
-        .property("tag", &WebElemNode::getTag)
-        .property("id", &WebElemNode::getId)
-        .property("anyvalPtrType", &WebElemNode::getAnyvalPtrType, &WebElemNode::setAnyvalPtrType)
-        //.function("updateModelFromView", &WebElemNode::updateModelFromView)
-        .function("splicePtrs", &WebElemNode::splicePtrs, allow_raw_pointers())
+    
 
-        //.class_function("updateModelFromViewById", &WebElemNode::updateModelFromViewById, allow_raw_pointers())
-        .class_function("runCallbackById", &WebElemNode::runCallbackById, allow_raw_pointers());
-
-    enum_<ControlNetworkNode::CppType>("WebElementCppType")
-        .value("Int", ControlNetworkNode::CppType::Int)
-        .value("Float", ControlNetworkNode::CppType::Float)
-        .value("Double", ControlNetworkNode::CppType::Double)
-        .value("String", ControlNetworkNode::CppType::String)
-        .value("NoData", ControlNetworkNode::CppType::NoData);
-  }
+  //   enum_<ControlNetworkNode::CppType>("WebElementCppType")
+  //       .value("Int", ControlNetworkNode::CppType::Int)
+  //       .value("Float", ControlNetworkNode::CppType::Float)
+  //       .value("Double", ControlNetworkNode::CppType::Double)
+  //       .value("String", ControlNetworkNode::CppType::String)
+  //       .value("NoData", ControlNetworkNode::CppType::NoData);
+  // }
 }
 
-/**
- * @brief switchboard is where a map of all the WebElements is stored so that
- * they can be found by their id numbers.
- *
- */
-// map<const int, clarity::WebElemNode *> clarity::WebElemNode::switchboard;
-map<const int, clarity::ControlNetworkNode *> clarity::ControlNetworkNode::switchboard;
 
-/**
- * @brief callbackMap holds C++ functions that can be triggered from JS
- * when events like a button press or timer tick require modification of
- * the C++ model state.
- *
- */
-map<string, std::function<void()>> clarity::WebElemNode::callbackMap;
-clarity::TicketMachine clarity::ControlNetworkNode::tm;
+
+#endif

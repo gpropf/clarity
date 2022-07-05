@@ -4,14 +4,19 @@ ENV		= DEMANGLE_SUPPORT=1 EMCC_DEBUG=1
 # -gsource-map --source-map-base .
 # --source-map-base=http://127.0.0.1
 CC		= emcc
-CFLAGS	=  -lembind -std=c++17 -g3 -gsource-map --source-map-base=file:///home/greg/repos/mgrid
+CFLAGS	=  -std=c++17 -g3 -gsource-map -c
 # --source-map-base smap_ -gseparate-dwarf
 JSOUT	= clarity_embind.js
-CPPIN	= nuke.cpp
+CPPIN	= clarity.cpp ButtonElement.cpp WebElemNode.cpp nuke.cpp
 
 
 clarity: clarity.cpp clarity.html clarity.hpp
-	$(ENV) $(CC) $(CPPIN) $(CFLAGS) -o $(JSOUT)
+	rm -f libclr.a
+	$(ENV) $(CC) $(CPPIN) $(CFLAGS)
+	emar rcs libclr.a clarity.o ButtonElement.o WebElemNode.o
+	emcc -lembind nuke.o libclr.a -o $(JSOUT)
+	
+# -o $(JSOUT)
 
 
 docs: clarity.doxyconfig
@@ -19,7 +24,7 @@ docs: clarity.doxyconfig
 
 
 clean:
-	rm *.o
+	rm *.o *.wasm *.wasm.map *.a
 
 
 all: clarity docs
