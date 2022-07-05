@@ -24,7 +24,7 @@ docs: clarity.doxyconfig
 
 
 clean:
-	rm *.o *.wasm *.wasm.map *.a
+	rm -f *.o *.wasm *.wasm.map *.a $(JSOUT)
 
 
 all: clarity docs
