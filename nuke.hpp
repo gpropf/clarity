@@ -10,6 +10,9 @@
 #include "ButtonElement.hpp"
 
 
+using namespace clarity;
+using CppType = clarity::ControlNetworkNode::CppType;
+
 /**
  * @brief A simple model of a nuclear power plant.
  *
@@ -31,15 +34,29 @@ public:
     printState();
   }
 
-  NukeModel(double s, double delta) : s_(s), delta_(delta)
-  {
-    printState();
-  }
+  NukeModel(double s, double delta);
+  
 
-  private:
+private:
   friend class NukeControl;
   double s_, delta_;
+
+  double controlRodSetting_;
+  double coreTemp_;
+  double coreToWaterHeatingConstant_;
+  double waterTemp_;
+  double turbineRPM_;
+  double turbineInertia_;
+  double powerOutput_;
+  double totalPowerOutput_;
+
   
+  //::ModelNode;
+
+  ModelNode *controlRodSettingNode_;
+
+  vector<double> fuelQuality_;
+
   // int i_;
 };
 
@@ -52,11 +69,12 @@ class NukeControl : public clarity::WebElemNode
 
 public:
   NukeControl(const std::string &name, const std::string &tag, const CppType anyvalPtrType);
-
+  NukeControl(const std::string &name, const std::string &tag, const CppType anyvalPtrType, NukeModel &nm);
   string *buttonText_;
   clarity::WebElemNode *mainDiv_;
   clarity::WebElemNode *applyButton_;
   clarity::ModelNode *buttonModel_;
+  clarity::WebElemNode *controlRodSetting_;
 };
 
 #endif

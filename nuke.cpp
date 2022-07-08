@@ -39,6 +39,14 @@ EMSCRIPTEN_BINDINGS(WebElemNode)
       .class_function("runCallbackById", &WebElemNode::runCallbackById, allow_raw_pointers());
 }
 
+NukeModel::NukeModel(double s, double delta): s_(s), delta_(delta)
+{
+    printState();
+    controlRodSetting_ = 0.5;
+    controlRodSettingNode_ = new ModelNode(CppType::Double);
+    controlRodSettingNode_->splicePtrs(&controlRodSetting_);
+  }
+
 NukeControl::NukeControl(const string &name, const string &tag, clarity::ControlNetworkNode::CppType anyvalPtrType)
     : clarity::WebElemNode(name, tag, anyvalPtrType)
 {
@@ -51,6 +59,17 @@ NukeControl::NukeControl(const string &name, const string &tag, clarity::Control
   applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::ControlNetworkNode::CppType::String);
 
   mainDiv_->appendChild(applyButton_);
+}
+
+NukeControl::NukeControl(const string &name, const string &tag,
+                         clarity::ControlNetworkNode::CppType anyvalPtrType, NukeModel &nm)
+    : NukeControl(name, tag, anyvalPtrType)
+{
+
+  controlRodSetting_ = new clarity::WebElemNode("controlRodSetting_", "input",
+                                                clarity::ControlNetworkNode::CppType::Double);
+  nm.controlRodSettingNode_->addPeer(controlRodSetting_);
+  nm.controlRodSettingNode_->pushValToPeers(nm.controlRodSettingNode_);
 }
 
 /**
@@ -98,8 +117,9 @@ int main()
 
   clarity::WebAttrNode *cir1Radius = new clarity::WebAttrNode("r",
                                                               clarity::ControlNetworkNode::CppType::Double, cir1);
-
-  NukeControl *nc = new NukeControl("nuke_control", "div", clarity::ControlNetworkNode::CppType::NoData);
+  NukeModel *nmod = new NukeModel(1, 5);
+  NukeControl *nc = new NukeControl("nuke_control", "div",
+                                    clarity::ControlNetworkNode::CppType::NoData, *nmod);
   // nc->applyButton_ = new clarity::ButtonElement("nuke_button", "button", clarity::ControlNetworkNode::CppType::String);
   svgarea->setAttribute("width", val("300"));
   svgarea->setAttribute("height", val("200"));
@@ -133,9 +153,6 @@ int main()
   nc->buttonModel_->pushValToPeers(nc->buttonModel_);
 
   nm->pushValToPeers(nm);
-
-
-  
 
   clarity::WebElemNode::callbackMap["iterateModel"] = [=]
   {
