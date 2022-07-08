@@ -3,10 +3,6 @@
 
 class CLElement {
 
-
-
-
-
   constructor() { }
 
   jsToCPPVal(jsval) {
