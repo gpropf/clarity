@@ -2,6 +2,8 @@
 #define WebAttrNode_hpp
 
 #include "clarity.hpp"
+#include "WebNode.hpp"
+
 
 namespace clarity {
 

@@ -1,5 +1,5 @@
 
-ENV		= DEMANGLE_SUPPORT=1 EMCC_DEBUG=1
+ENV		= DEMANGLE_SUPPORT=1 EMCC_DEBUG=1 TOTAL_MEMORY=1900mb
 #EMCC_DEBUG=1 TOTAL_MEMORY=1900mb
 # -gsource-map --source-map-base .
 # --source-map-base=http://127.0.0.1
@@ -10,7 +10,7 @@ JSOUT	= clarity_embind.js
 # CPPIN	= clarity.cpp ButtonElement.cpp WebElemNode.cpp nuke.cpp
 LIBCLR_IN = clarity.cpp ButtonElement.cpp WebElemNode.cpp WebAttrNode.cpp WebNode.cpp ModelNode.cpp ControlNetworkNode.cpp
 AR 		= emar
-FRAMEWORK_DEPS = clarity.js clarity.html
+FRAMEWORK_DEPS = clarity.js clarity.html Makefile
 
 # %.cpp : %.hpp
 

@@ -2,8 +2,13 @@
 #define nuke_hpp
 
 #include "clarity.hpp"
+#include "ControlNetworkNode.hpp"
+#include "ModelNode.hpp"
+#include "WebNode.hpp"
 #include "WebElemNode.hpp"
+#include "WebAttrNode.hpp"
 #include "ButtonElement.hpp"
+
 /**
  * @brief A simple model of a nuclear power plant.
  *
@@ -44,13 +49,11 @@ class NukeControl : public clarity::WebElemNode
 
 public:
   NukeControl(const std::string &name, const std::string &tag, const CppType anyvalPtrType);
-  
 
+  string *buttonText_;
   clarity::WebElemNode *mainDiv_;
-  clarity::WebElemNode *inputA_;
-  clarity::WebElemNode *sliderA_;
-  clarity::WebElemNode *inputB_;
   clarity::WebElemNode *applyButton_;
+  clarity::ModelNode *buttonModel_;
 };
 
 #endif

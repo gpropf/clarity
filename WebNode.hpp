@@ -2,6 +2,9 @@
 #define WebNode_hpp
 
 #include "clarity.hpp"
+#include "ControlNetworkNode.hpp"
+
+
 
 namespace clarity { 
     

@@ -2,6 +2,7 @@
 #define WebElemNode_hpp
 
 #include "clarity.hpp"
+#include "WebNode.hpp"
 
 namespace clarity {
 
