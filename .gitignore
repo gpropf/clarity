@@ -6,4 +6,6 @@ html/
 junk/
 latex/
 work_shit/
+*.o
+*.a
 

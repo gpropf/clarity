@@ -1,7 +1,6 @@
 #ifndef clarity_hpp
 #define clarity_hpp
 
-
 #include <stdio.h>
 #include <iostream>
 //#include <cstdlib>
@@ -43,7 +42,7 @@ namespace clarity
     inline const int getNext() { return ++id_; }
   };
 
-  //class WebElemNode;
+  // class WebElemNode;
 
   class WebNode;
 
@@ -210,6 +209,17 @@ namespace clarity
     vector<ControlNetworkNode *> peers_;
   };
 
+  template <class In, class Out>
+  class ActiveLink
+  {
+    ControlNetworkNode *peer;
+    union ValueTransform
+    {
+      std::function<Out(In)> cppFunc;
+      val jsFunc;
+    };
+  };
+
   class ModelNode : public ControlNetworkNode
   {
   public:
@@ -344,7 +354,7 @@ namespace clarity
    * a JS Dom element and retain other state on the JS side.
    *
    */
-  
+
   /**
    * @brief Represents an attribute of another element such as bgcolor.
    * This is not necessarily a dom element that we control though it may be.
@@ -382,8 +392,6 @@ namespace clarity
     }
   };
 
-  
-
   // EMSCRIPTEN_BINDINGS(clarity)
   // {
   //   class_<ControlNetworkNode>("ControlNetworkNode")
@@ -394,8 +402,6 @@ namespace clarity
   //       .class_function("getCLElementById", &ControlNetworkNode::getCLElementById, allow_raw_pointers())
   //       .class_function("markNodeDirtyById", &ControlNetworkNode::markNodeDirtyById, allow_raw_pointers());
 
-    
-
   //   enum_<ControlNetworkNode::CppType>("WebElementCppType")
   //       .value("Int", ControlNetworkNode::CppType::Int)
   //       .value("Float", ControlNetworkNode::CppType::Float)
@@ -404,7 +410,5 @@ namespace clarity
   //       .value("NoData", ControlNetworkNode::CppType::NoData);
   // }
 }
-
-
 
 #endif
