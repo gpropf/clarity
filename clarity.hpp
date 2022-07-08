@@ -3,10 +3,8 @@
 
 #include <stdio.h>
 #include <iostream>
-//#include <cstdlib>
 #include <unistd.h>
 
-//#include <vector>
 #include <map>
 #include <emscripten.h>
 #include <emscripten/val.h>
@@ -45,20 +43,7 @@ namespace clarity
 
   public:
     inline const int getNext() { return ++id_; }
-  };  
-
-  class ControlNetworkNode;
-
-  template <class T>
-  class ActiveLink
-  {
-    ControlNetworkNode *peer;
-    union ValueTransform
-    {
-      T multiplier;
-      val jsFunc;
-    };
-  };  
+  };     
 }
 
 #endif
