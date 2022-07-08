@@ -9,6 +9,7 @@
 #include "WebAttrNode.hpp"
 #include "ButtonElement.hpp"
 
+
 /**
  * @brief A simple model of a nuclear power plant.
  *
@@ -35,8 +36,10 @@ public:
     printState();
   }
 
-  // private:
+  private:
+  friend class NukeControl;
   double s_, delta_;
+  
   // int i_;
 };
 

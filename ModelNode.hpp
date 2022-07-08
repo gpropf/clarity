@@ -5,8 +5,6 @@
 #include "clarity.hpp"
 #include "ControlNetworkNode.hpp"
 
-
-
 namespace clarity
 {
     class ModelNode : public ControlNetworkNode

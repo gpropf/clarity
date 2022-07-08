@@ -134,6 +134,9 @@ int main()
 
   nm->pushValToPeers(nm);
 
+
+  
+
   clarity::WebElemNode::callbackMap["iterateModel"] = [=]
   {
     cout << "callbackMap[\"iterateModel\"]\n";
