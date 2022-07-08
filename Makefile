@@ -8,7 +8,7 @@ CFLAGS	=  -std=c++17 -g3 -gsource-map
 # --source-map-base smap_ -gseparate-dwarf
 JSOUT	= clarity_embind.js
 # CPPIN	= clarity.cpp ButtonElement.cpp WebElemNode.cpp nuke.cpp
-LIBCLR_IN = clarity.cpp ButtonElement.cpp WebElemNode.cpp WebAttrNode.cpp WebNode.cpp
+LIBCLR_IN = clarity.cpp ButtonElement.cpp WebElemNode.cpp WebAttrNode.cpp WebNode.cpp ModelNode.cpp
 AR 		= emar
 FRAMEWORK_DEPS = clarity.js clarity.html
 
@@ -17,8 +17,8 @@ FRAMEWORK_DEPS = clarity.js clarity.html
 %.o : %.cpp %.hpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
 
-libclr.a: clarity.o ButtonElement.o WebElemNode.o WebAttrNode.o WebNode.o
-	$(AR) rcs libclr.a clarity.o ButtonElement.o WebElemNode.o WebAttrNode.o WebNode.o
+libclr.a: clarity.o ButtonElement.o WebElemNode.o WebAttrNode.o WebNode.o ModelNode.o
+	$(AR) rcs libclr.a clarity.o ButtonElement.o WebElemNode.o WebAttrNode.o WebNode.o ModelNode.o
 # clarity: clarity.cpp clarity.html clarity.hpp
 # 	rm -f libclr.a
 # 	$(ENV) $(CC) $(CPPIN) $(CFLAGS)
