@@ -8,6 +8,7 @@
 #include "WebElemNode.hpp"
 #include "WebAttrNode.hpp"
 #include "ButtonElement.hpp"
+#include "CompoundElement.hpp"
 
 
 using namespace clarity;
@@ -75,6 +76,7 @@ public:
   clarity::WebElemNode *applyButton_;
   clarity::ModelNode *buttonModel_;
   clarity::WebElemNode *controlRodSetting_;
+  clarity::CompoundElement *cpe_;
 };
 
 #endif

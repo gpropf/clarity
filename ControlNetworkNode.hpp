@@ -31,7 +31,8 @@ namespace clarity
         class ActiveLink
         {
             ControlNetworkNode *peer;
-            union ValueTransform
+            bool valueTransformIsConstant = true;
+            union valueTransform
             {
                 T multiplier;
                 val jsFunc;

@@ -8,9 +8,10 @@ CFLAGS	=  -std=c++17 -g3 -gsource-map
 # --source-map-base smap_ -gseparate-dwarf
 JSOUT	= clarity_embind.js
 # CPPIN	= clarity.cpp ButtonElement.cpp WebElemNode.cpp nuke.cpp
-LIBCLR_IN = clarity.cpp ButtonElement.cpp WebElemNode.cpp WebAttrNode.cpp WebNode.cpp ModelNode.cpp ControlNetworkNode.cpp
+LIBCLR_IN = clarity.cpp ButtonElement.cpp WebElemNode.cpp WebAttrNode.cpp WebNode.cpp \
+			ModelNode.cpp ControlNetworkNode.cpp CompoundElement.cpp
 LIBCLR_OBJS = clarity.o ButtonElement.o WebElemNode.o WebAttrNode.o WebNode.o \
- 			ModelNode.o ControlNetworkNode.o
+ 			ModelNode.o ControlNetworkNode.o CompoundElement.o
 AR 		= emar
 FRAMEWORK_DEPS = clarity.js clarity.html Makefile
 
