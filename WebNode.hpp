@@ -4,11 +4,10 @@
 #include "clarity.hpp"
 #include "ControlNetworkNode.hpp"
 
+namespace clarity
+{
 
-
-namespace clarity { 
-    
-    class WebNode : public ControlNetworkNode
+  class WebNode : public ControlNetworkNode
   {
   public:
     WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
@@ -41,8 +40,13 @@ namespace clarity {
     }
 
   protected:
-    string boundField_;
+    string boundField_;   
+    // inline void setAsProxyFor(clarity::WebNode *proxyiedElement)
+    // {
+    //   boundField_ = proxyiedElement->boundField_;
+    // }
 
+  public:
     void setVal(const val &inval)
     {
       ControlNetworkNode::setVal(inval);

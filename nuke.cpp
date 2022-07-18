@@ -51,11 +51,11 @@ NukeControl::NukeControl(const string &name, const string &tag, clarity::Control
     : clarity::WebElemNode(name, tag, anyvalPtrType)
 {
   mainDiv_ = new clarity::WebElemNode("nukediv", "div", clarity::ControlNetworkNode::CppType::NoData);
-  cpe_ = new clarity::CompoundElement("cpe", "div", clarity::ControlNetworkNode::CppType::Double);
+  //cpe_ = new clarity::CompoundElement("cpe", "div", clarity::ControlNetworkNode::CppType::Double);
   applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::ControlNetworkNode::CppType::String);
 
   mainDiv_->appendChild(applyButton_);
-  mainDiv_->appendChild(cpe_);
+  //mainDiv_->appendChild(cpe_);
 }
 
 NukeControl::NukeControl(const string &name, const string &tag,

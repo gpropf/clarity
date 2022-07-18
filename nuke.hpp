@@ -76,7 +76,7 @@ public:
   clarity::WebElemNode *applyButton_;
   clarity::ModelNode *buttonModel_;
   clarity::WebElemNode *controlRodSetting_;
-  clarity::CompoundElement *cpe_;
+  //clarity::CompoundElement *cpe_;
 };
 
 #endif

@@ -22,25 +22,12 @@ FRAMEWORK_DEPS = clarity.js clarity.html Makefile
 
 libclr.a: $(LIBCLR_OBJS)
 	$(AR) rcs libclr.a $(LIBCLR_OBJS)
-# clarity: clarity.cpp clarity.html clarity.hpp
-# 	rm -f libclr.a
-# 	$(ENV) $(CC) $(CPPIN) $(CFLAGS)
-# 	# emar rcs libclr.a clarity.o ButtonElement.o WebElemNode.o
-# 	emcc -lembind nuke.o libclr.a -o $(JSOUT)
 	
 nuke: nuke.o libclr.a
 	$(CC) -lembind nuke.o libclr.a -o $(JSOUT)
 
-# # -o $(JSOUT)
-
-# libclr.a: $(LIBCLR_IN)
-# 	$(ENV) $(CC) $(LIBCLR_IN) $(CFLAGS)
-
-# nuke: libclr.a
-# 	emar rcs libclr.a clarity.o ButtonElement.o WebElemNode.o
-
-# docs: clarity.doxyconfig
-# 	doxygen clarity.doxyconfig
+docs: clarity.doxyconfig
+	doxygen clarity.doxyconfig
 
 
 clean:

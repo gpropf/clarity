@@ -1,8 +1,8 @@
-#ifndef CompoundElement_hpp
-#define CompoundElement_hpp
+#ifndef LabelledInput_hpp
+#define LabelledInput_hpp
 
 //#include "clarity.hpp"
-#include "WebElemNode.hpp"
+#include "CompoundElement.hpp"
 
 namespace clarity
 {
@@ -11,25 +11,19 @@ namespace clarity
    * @brief Represents an element with multiple subelements and an outer "container" element.
    * Inspired by the idea of a labelled input field. The innerElement_ is used to store the
    * actual values so that getVal and setVal just become pass-thru methods that read and write
-   * to the innerElement_
-   *
+   * to the innerElement_.
+   * 
    */
-  class CompoundElement : public WebElemNode
+  class LabelledInput : public CompoundElement
 
   {
   protected:
-    CompoundElement(const string &name,
+    LabelledInput(const string &name,
                     const string &tag,
                     const CppType anyvalPtrType,
                     clarity::WebElemNode *innerElement);
-    CompoundElement(const string &name,
-                    const string &tag,
-                    const CppType anyvalPtrType);
-
-    
-
-    clarity::WebElemNode *outerElement_; // Container div
-    clarity::WebElemNode *innerElement_; // Holds the actual value
+    clarity::WebElemNode *outerElement_;
+    clarity::WebElemNode *innerElement_;
 
   public:
     virtual val getVal() const;
