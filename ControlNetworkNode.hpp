@@ -17,6 +17,22 @@ namespace clarity
      */
     class ControlNetworkNode
     {
+
+    public:
+
+        /**
+         * @brief Supported C++ types for WebElements.
+         *
+         */
+        enum class CppType : int
+        {
+            Int,
+            Float,
+            Double,
+            String,
+            NoData /// Used for things like div that hold no data.
+        };
+
         /**
          * @brief Represents the 'edges' in our control graph. The union contains either a JavaScript
          * function or a multiplier. In practice most control elements will only need a multiplier value
@@ -25,52 +41,42 @@ namespace clarity
          * all done in SI units but the user is more familiar with Imperial units. So computations can still
          * be done with Watts and meters but the user sees horsepower and feet.
          *
-         * @tparam T
+         *
          */
-        template <class T>
+
         class ActiveLink
         {
         protected:
-            ActiveLink(ControlNetworkNode *peer, T multiplier, val jsFunc,
-                       bool valueTransformIsConstant = true) : peer_(peer),
-                                                               valueTransformIsConstant_(valueTransformIsConstant)
+            void * multiplier;
+            ActiveLink(ControlNetworkNode *peer, void * multiplier,
+                       CppType cppType) : peer_(peer), multiplier_(multiplier), cppType_(cppType)
+                                                               
             {
-                if (valueTransformIsConstant_)
-                {
-                    valueTransform::multiplier_ = multiplier;
-                }
-                else
-                {
-                    valueTransform::jsFunc_ = jsFunc;
-                }
             }
             ControlNetworkNode *peer_;
-            bool valueTransformIsConstant_ = true;
-            union valueTransform
-            {
-                T multiplier_;
-                val jsFunc_;
-            };
-            valueTransform vt_;
+            void * multiplier_;
+            CppType cppType_;
 
-            ActiveLink<T> invert(ControlNetworkNode *owner, ActiveLink<T> al)
-            {
-                return ActiveLink<T>(owner, 1 / al.getMultiplier(),
-                                     al.getJsFunc(), al.getValueTransformIsConstant());
-            }
+           
+
+            // ActiveLink invert(ControlNetworkNode *owner, ActiveLink al)
+            // {
+            //     return ActiveLink(owner, 1 / al.getMultiplier(),
+            //                       al.getJsFunc(), al.getValueTransformIsConstant());
+            // }
 
         public:
-            inline T getMultiplier() { return vt_.multiplier_; }
-            inline bool getValueTransformIsConstant() { return valueTransformIsConstant_; }
-            inline val getJsFunc() { return vt_.jsFunc_; }
+            inline void * getMultiplier() { return multiplier_; }
+            //inline bool getValueTransformIsConstant() { return valueTransformIsConstant_; }
+            //inline val getJsFunc() { return vt_.jsFunc_; }
         };
 
-    public:
         void setParent(ControlNetworkNode *parent) { this->parent_ = parent; }
         ControlNetworkNode *getParent() const { return this->parent_; }
 
         virtual val getVal() const
         {
+            cout << "ControlNetworkNode::getVal()" << "\n";
             printNodeStats("getVal()");
             return val(NULL);
         }
@@ -103,23 +109,11 @@ namespace clarity
 
         void toggleClean()
         {
-            cout << "TOGGLECLEAN, oldstate: " << clean_ << " !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ID = " << id_ << " \n\n\n";
+            cout << "TOGGLECLEAN, oldstate: " << clean_ << " ID = " << id_ << " \n\n\n";
             clean_ = !clean_;
         }
 
-        /**
-         * @brief Supported C++ types for WebElements.
-         *
-         */
-        enum class CppType : int
-        {
-            Int,
-            Float,
-            Double,
-            String,
-            NoData /// Used for things like div that hold no data.
-        };
-
+        
         ControlNetworkNode()
         {
             id_ = tm.getNext();
@@ -128,12 +122,16 @@ namespace clarity
 
         ControlNetworkNode(const string &name) : name_(name) {}
 
-        ControlNetworkNode(const string &name, const CppType anyvalPtrType) : name_(name), anyvalPtrType_(anyvalPtrType) {}
+        ControlNetworkNode(const string &name, const CppType anyvalPtrType) : name_(name), anyvalPtrType_(anyvalPtrType) {
+            cout << "ControlNetworkNode(const string &name, const CppType anyvalPtrType): " << (int)anyvalPtrType << "\n";
+            jsval_.set("cpptype", val(anyvalPtrType));
+        }
 
         ControlNetworkNode(ControlNetworkNode *parent) : parent_(parent) {}
 
         ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
         {
+            cout << "ControlNetworkNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << "\n";
             id_ = tm.getNext();
             jsval_.set("cpptype", val(anyvalPtrType));
             ControlNetworkNode::switchboard[id_] = this;
@@ -214,7 +212,7 @@ namespace clarity
         }
 
         void
-        addALPeer(ControlNetworkNode::ActiveLink<void *> al, bool alreadyAdded = false)
+        addALPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false)
         {
 
             alpeers_.push_back(al);
@@ -237,7 +235,7 @@ namespace clarity
         int id_;
         string name_;
         vector<ControlNetworkNode *> peers_;
-        vector<ControlNetworkNode::ActiveLink<void *>> alpeers_;
+        vector<ControlNetworkNode::ActiveLink> alpeers_;
     };
 }
 #endif

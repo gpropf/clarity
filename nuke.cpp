@@ -56,9 +56,9 @@ NukeControl::NukeControl(const string &name, const string &tag,
 {
   mainDiv_ = new clarity::WebElemNode("nukediv", "div", clarity::ControlNetworkNode::CppType::NoData);
   coreToWaterHeatingConstant_ = new clarity::WebElemNode("coreToWaterHeatingConstant_", "input",
-                                                clarity::ControlNetworkNode::CppType::Double);
-  clarity::CompoundElement * cpe_ = new clarity::CompoundElement("cpe", "div",
-   clarity::ControlNetworkNode::CppType::Double, coreToWaterHeatingConstant_);
+                                                         clarity::ControlNetworkNode::CppType::Double);
+  clarity::CompoundElement *cpe_ = new clarity::CompoundElement("cpe", "div",
+                                                                clarity::ControlNetworkNode::CppType::Double, coreToWaterHeatingConstant_);
   applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::ControlNetworkNode::CppType::String);
 
   mainDiv_->appendChild(applyButton_);
@@ -123,6 +123,16 @@ int main()
 
   clarity::WebAttrNode *cir1Radius = new clarity::WebAttrNode("r",
                                                               clarity::ControlNetworkNode::CppType::Double, cir1);
+
+  double *d = new double(5.6);
+  clarity::WebElemNode *doubleTest = new clarity::WebElemNode("d-test", "input",
+                                                              clarity::ControlNetworkNode::CppType::Double);
+  doubleTest->setAnyvalPtrType(CppType::Double);
+  doubleTest->setAttribute("type", val("text"));
+  clarity::ModelNode *mdtest = new clarity::ModelNode(CppType::Double);
+  mdtest->splicePtrs(d);
+  mdtest->addPeer(doubleTest);
+  mdtest->pushValToPeers(mdtest);
   NukeModel *nmod = new NukeModel(1, 5);
   NukeControl *nc = new NukeControl("nuke_control", "div",
                                     clarity::ControlNetworkNode::CppType::NoData, *nmod);
@@ -141,6 +151,7 @@ int main()
   nslider->setAttribute("type", val("range"));
   maindiv->appendChild(ncntr);
   maindiv->appendChild(nslider);
+  maindiv->appendChild(doubleTest);
   maindiv->appendChild(nc);
   svgarea->appendChild(cir1);
   ncntr->setAttribute("type", val("text"));

@@ -10,35 +10,42 @@ namespace clarity
   class WebNode : public virtual ControlNetworkNode
   {
   public:
-
-  WebNode() : ControlNetworkNode() {}
+    WebNode() : ControlNetworkNode() {}
     WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
 
-    WebNode(const string &name,
-            const CppType anyvalPtrType) : ControlNetworkNode(name, anyvalPtrType) {}
-
-    virtual val getVal() const
+    WebNode(const string &name, const CppType anyvalPtrType) : ControlNetworkNode(name, anyvalPtrType)
     {
-      ControlNetworkNode::getVal();
-      // cout << "GETVAL called for WebNode!\n\n";
+
+      cout << "WebNode(const string &name, const CppType anyvalPtrType) : " << (int)anyvalPtrType << "\n";
+    }
+
+     val getVal() const
+    {
+      //ControlNetworkNode::getVal();
+      cout << "GETVAL called for WebNode, " << "id = " << id_ << "\n\n";
       val domElement = jsval_["domElement"];
       string valueText = domElement[boundField_].as<string>();
 
       switch (this->anyvalPtrType_)
       {
       case CppType::Int:
+        cout << "GETVAL Int for " << valueText << "\n\n";
         return val(stoi(valueText));
         break;
       case CppType::Float:
+        cout << "GETVAL Float\n\n";
         return val(stof(valueText));
         break;
       case CppType::Double:
+        cout << "GETVAL Double\n\n";
         return val(stod(valueText));
         break;
       case CppType::String:
+        cout << "GETVAL String\n\n";
         return val(valueText);
         break;
       case CppType::NoData:
+        cout << "GETVAL NoData\n\n";
       default:
         return val(NULL);
         break;

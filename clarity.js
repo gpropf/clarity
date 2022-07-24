@@ -6,14 +6,20 @@ class CLElement {
   constructor() { }
 
   jsToCPPVal(jsval) {
+    
     switch (this.cpptype_) {
+
       case Module.WebElementCppType.Int:
+        console.log("jsToCPPVal: Int")
         return parseInt(jsval)
       case Module.WebElementCppType.Float:
+        console.log("jsToCPPVal: Float")
         return parseFloat(jsval)
       case Module.WebElementCppType.Double:
+        console.log("jsToCPPVal: Double")
         return parseFloat(jsval)
       case Module.WebElementCppType.NoData:
+        console.log("jsToCPPVal: NoData")
         return null
       default:
         return jsval

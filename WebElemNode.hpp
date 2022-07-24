@@ -9,7 +9,9 @@ namespace clarity {
 class WebElemNode : public virtual WebNode
   {
   public:
-    WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {}
+    WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {
+      cout << "WebElemNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << "\n";
+    }
 
   protected:
     vector<ControlNetworkNode *> children_;
@@ -31,12 +33,14 @@ class WebElemNode : public virtual WebNode
                 const CppType anyvalPtrType) : WebNode(name, anyvalPtrType)
 
     {
+      cout << "WebElemNode(const string &name, const string &tag, const CppType anyvalPtrType): " << (int)anyvalPtrType << "\n";
       jsval_.set("cpptype", val(anyvalPtrType));
       jsval_.set("tag", val(tag));
       
       jsval_.set("id", val(id_));
       jsval_.set("name", val(name));
 
+      tag_ = tag;
       anyvalPtr_ = nullptr;
       boundField_ = "value";
 
