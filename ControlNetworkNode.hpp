@@ -30,13 +30,39 @@ namespace clarity
         template <class T>
         class ActiveLink
         {
-            ControlNetworkNode *peer;
-            bool valueTransformIsConstant = true;
+        protected:
+            ActiveLink(ControlNetworkNode *peer, T multiplier, val jsFunc,
+                       bool valueTransformIsConstant = true) : peer_(peer),
+                                                               valueTransformIsConstant_(valueTransformIsConstant)
+            {
+                if (valueTransformIsConstant_)
+                {
+                    valueTransform::multiplier_ = multiplier;
+                }
+                else
+                {
+                    valueTransform::jsFunc_ = jsFunc;
+                }
+            }
+            ControlNetworkNode *peer_;
+            bool valueTransformIsConstant_ = true;
             union valueTransform
             {
-                T multiplier;
-                val jsFunc;
+                T multiplier_;
+                val jsFunc_;
             };
+            valueTransform vt_;
+
+            ActiveLink<T> invert(ControlNetworkNode *owner, ActiveLink<T> al)
+            {
+                return ActiveLink<T>(owner, 1 / al.getMultiplier(),
+                                     al.getJsFunc(), al.getValueTransformIsConstant());
+            }
+
+        public:
+            inline T getMultiplier() { return vt_.multiplier_; }
+            inline bool getValueTransformIsConstant() { return valueTransformIsConstant_; }
+            inline val getJsFunc() { return vt_.jsFunc_; }
         };
 
     public:
@@ -187,6 +213,18 @@ namespace clarity
             peer->addPeer(this, true);
         }
 
+        void
+        addALPeer(ControlNetworkNode::ActiveLink<void *> al, bool alreadyAdded = false)
+        {
+
+            alpeers_.push_back(al);
+            if (alreadyAdded)
+            {
+                return;
+            }
+            // al.peer->addALPeer()
+        }
+
     protected:
         bool clean_ = true;
         static TicketMachine tm;
@@ -199,6 +237,7 @@ namespace clarity
         int id_;
         string name_;
         vector<ControlNetworkNode *> peers_;
+        vector<ControlNetworkNode::ActiveLink<void *>> alpeers_;
     };
 }
 #endif
