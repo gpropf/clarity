@@ -6,11 +6,13 @@
 
 namespace clarity {
 
-class WebElemNode : public virtual WebNode
+class WebElemNode : public  WebNode
   {
   public:
     WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {
-      cout << "WebElemNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << "\n";
+      if (name_ == "d-test") {
+      cout << "DTEST:WebElemNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << " id = " << id_ << "\n";
+      }
     }
 
   protected:
@@ -33,7 +35,10 @@ class WebElemNode : public virtual WebNode
                 const CppType anyvalPtrType) : WebNode(name, anyvalPtrType)
 
     {
-      cout << "WebElemNode(const string &name, const string &tag, const CppType anyvalPtrType): " << (int)anyvalPtrType << "\n";
+      cout << "WebElemNodeWebElemNode\n\n\n";
+      if (name == "d-test") {
+      cout << "DTEST:WebElemNode(const string &name, const string &tag, const CppType anyvalPtrType): " << (int)anyvalPtrType << " id = " << id_ << "\n";
+      }
       jsval_.set("cpptype", val(anyvalPtrType));
       jsval_.set("tag", val(tag));
       

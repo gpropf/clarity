@@ -19,7 +19,6 @@ namespace clarity
     {
 
     public:
-
         /**
          * @brief Supported C++ types for WebElements.
          *
@@ -47,17 +46,15 @@ namespace clarity
         class ActiveLink
         {
         protected:
-            void * multiplier;
-            ActiveLink(ControlNetworkNode *peer, void * multiplier,
+            void *multiplier;
+            ActiveLink(ControlNetworkNode *peer, void *multiplier,
                        CppType cppType) : peer_(peer), multiplier_(multiplier), cppType_(cppType)
-                                                               
+
             {
             }
             ControlNetworkNode *peer_;
-            void * multiplier_;
+            void *multiplier_;
             CppType cppType_;
-
-           
 
             // ActiveLink invert(ControlNetworkNode *owner, ActiveLink al)
             // {
@@ -66,9 +63,9 @@ namespace clarity
             // }
 
         public:
-            inline void * getMultiplier() { return multiplier_; }
-            //inline bool getValueTransformIsConstant() { return valueTransformIsConstant_; }
-            //inline val getJsFunc() { return vt_.jsFunc_; }
+            inline void *getMultiplier() { return multiplier_; }
+            // inline bool getValueTransformIsConstant() { return valueTransformIsConstant_; }
+            // inline val getJsFunc() { return vt_.jsFunc_; }
         };
 
         void setParent(ControlNetworkNode *parent) { this->parent_ = parent; }
@@ -76,7 +73,8 @@ namespace clarity
 
         virtual val getVal() const
         {
-            cout << "ControlNetworkNode::getVal()" << "\n";
+            cout << "ControlNetworkNode::getVal()"
+                 << "\n";
             printNodeStats("getVal()");
             return val(NULL);
         }
@@ -113,24 +111,51 @@ namespace clarity
             clean_ = !clean_;
         }
 
-        
         ControlNetworkNode()
         {
             id_ = tm.getNext();
             ControlNetworkNode::switchboard[id_] = this;
+            cout << "ControlNetworkNode(): Setting id to " << id_ << "\n";
         }
 
-        ControlNetworkNode(const string &name) : name_(name) {}
+        ControlNetworkNode(const string &name) : name_(name)
+        {
+            ControlNetworkNode();
+            if (name == "d-test")
+            {
+                cout << "DTEST:ControlNetworkNode(const string &name): id = " << id_ << "\n";
+            }
+        }
 
-        ControlNetworkNode(const string &name, const CppType anyvalPtrType) : name_(name), anyvalPtrType_(anyvalPtrType) {
-            cout << "ControlNetworkNode(const string &name, const CppType anyvalPtrType): " << (int)anyvalPtrType << "\n";
+        ControlNetworkNode(const string &name, const CppType anyvalPtrType)
+            : name_(name),
+              anyvalPtrType_(anyvalPtrType)
+        {
+            if (name == "d-test")
+            {
+                cout << "DTEST:Before " << (int)anyvalPtrType << " id = " << id_ << "\n";
+            }
+            ControlNetworkNode();
+            if (name == "d-test")
+            {
+                cout << "DTEST:After " << (int)anyvalPtrType << " id = " << id_ << "\n";
+            }
+            cout << "ControlNetworkNodeControlNetworkNode\n\n\n";
+            if (name == "d-test")
+            {
+                cout << "DTEST:ControlNetworkNode(const string &name, const CppType anyvalPtrType): " << (int)anyvalPtrType << " id = " << id_ << "\n";
+            }
             jsval_.set("cpptype", val(anyvalPtrType));
         }
 
-        ControlNetworkNode(ControlNetworkNode *parent) : parent_(parent) {}
+        ControlNetworkNode(ControlNetworkNode *parent) : parent_(parent)
+        {
+            ControlNetworkNode();
+        }
 
         ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
         {
+            ControlNetworkNode();
             cout << "ControlNetworkNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << "\n";
             id_ = tm.getNext();
             jsval_.set("cpptype", val(anyvalPtrType));
@@ -139,6 +164,7 @@ namespace clarity
 
         ControlNetworkNode(void *anyvalPtr) : anyvalPtr_(anyvalPtr)
         {
+            ControlNetworkNode();
             id_ = tm.getNext();
             ControlNetworkNode::switchboard[id_] = this;
         }

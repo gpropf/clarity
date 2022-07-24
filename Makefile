@@ -36,4 +36,4 @@ clean:
 realclean: clean
 	rm -f *.wasm *.wasm.map *.a $(JSOUT)
 
-all: clarity docs
+all: clarity docs nuke

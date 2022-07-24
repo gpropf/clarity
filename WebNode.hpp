@@ -11,18 +11,28 @@ namespace clarity
   {
   public:
     WebNode() : ControlNetworkNode() {}
-    WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
-
-    WebNode(const string &name, const CppType anyvalPtrType) : ControlNetworkNode(name, anyvalPtrType)
+    WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType)
     {
-
-      cout << "WebNode(const string &name, const CppType anyvalPtrType) : " << (int)anyvalPtrType << "\n";
+      if (name_ == "d-test")
+      {
+        cout << "DTEST:WebNode(const CppType anyvalPtrType):" << (int)anyvalPtrType << " id = " << id_ <<"\n";
+      }
     }
 
-     val getVal() const
+    WebNode(const string &name, const CppType anyvalPtrType) //: ControlNetworkNode(name, anyvalPtrType)
     {
-      //ControlNetworkNode::getVal();
-      cout << "GETVAL called for WebNode, " << "id = " << id_ << "\n\n";
+      ControlNetworkNode(name, anyvalPtrType);
+      if (name == "d-test")
+      {
+        cout << "DTEST:WebNode(const string &name, const CppType anyvalPtrType) : " << (int)anyvalPtrType << " id = " << id_ << "\n";
+      }
+    }
+
+    val getVal() const
+    {
+      // ControlNetworkNode::getVal();
+      cout << "GETVAL called for WebNode, "
+           << "id = " << id_ << "\n\n";
       val domElement = jsval_["domElement"];
       string valueText = domElement[boundField_].as<string>();
 
