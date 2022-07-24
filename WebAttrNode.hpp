@@ -13,7 +13,7 @@ namespace clarity {
    * This is not necessarily a dom element that we control though it may be.
    *
    */
-  class WebAttrNode : public WebNode
+  class WebAttrNode : public virtual WebNode
   {
   protected:
     string attributeName_;

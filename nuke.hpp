@@ -65,7 +65,7 @@ private:
  * @brief Control Panel for the nuclear power plant
  *
  */
-class NukeControl : public clarity::WebElemNode
+class NukeControl : public virtual clarity::WebElemNode
 {
 
 public:
@@ -76,7 +76,8 @@ public:
   clarity::WebElemNode *applyButton_;
   clarity::ModelNode *buttonModel_;
   clarity::WebElemNode *controlRodSetting_;
-  //clarity::CompoundElement *cpe_;
+  clarity::WebElemNode *coreToWaterHeatingConstantNode_;
+  clarity::CompoundElement *cpe_;
 };
 
 #endif

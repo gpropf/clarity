@@ -7,10 +7,16 @@
 namespace clarity
 {
 
-  class WebNode : public ControlNetworkNode
+  class WebNode : public virtual ControlNetworkNode
   {
   public:
+
+  WebNode() : ControlNetworkNode() {}
     WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
+
+    WebNode(const string &name,
+            const CppType anyvalPtrType) : ControlNetworkNode(name, anyvalPtrType) {}
+
     virtual val getVal() const
     {
       ControlNetworkNode::getVal();
@@ -40,7 +46,7 @@ namespace clarity
     }
 
   protected:
-    string boundField_;   
+    string boundField_;
     // inline void setAsProxyFor(clarity::WebNode *proxyiedElement)
     // {
     //   boundField_ = proxyiedElement->boundField_;

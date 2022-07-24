@@ -72,7 +72,10 @@ class CLElement {
 
   set name(name) {
     this.name_ = name;
-    //this.domElement_.setAttribute("name", name);
+    if (this.domElement_) {
+      this.domElement_.setAttribute("name", name);
+    }
+    //
   }
 
   get name() {

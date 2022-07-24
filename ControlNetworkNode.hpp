@@ -5,7 +5,7 @@
 
 namespace clarity
 {
-    
+
     /**
      * @brief The project's central class. Describes an element with push/pull behavior to syncronize a data model and
      * a web view. WebElements can contain others and complex web controls can be built up in a hierarchal fashion. The class is
@@ -94,6 +94,16 @@ namespace clarity
             NoData /// Used for things like div that hold no data.
         };
 
+        ControlNetworkNode()
+        {
+            id_ = tm.getNext();
+            ControlNetworkNode::switchboard[id_] = this;
+        }
+
+        ControlNetworkNode(const string &name) : name_(name) {}
+
+        ControlNetworkNode(const string &name, const CppType anyvalPtrType) : name_(name), anyvalPtrType_(anyvalPtrType) {}
+
         ControlNetworkNode(ControlNetworkNode *parent) : parent_(parent) {}
 
         ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
@@ -139,6 +149,7 @@ namespace clarity
             peer->setVal(internalVal);
             peer->pushValToPeers(this);
             clean_ = true;
+            string name_;
         }
 
         virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr)
@@ -186,6 +197,7 @@ namespace clarity
         void *anyvalPtr_;       // pointer to actual data
         ControlNetworkNode *parent_;
         int id_;
+        string name_;
         vector<ControlNetworkNode *> peers_;
     };
 }

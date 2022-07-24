@@ -17,7 +17,10 @@ namespace clarity
   class CompoundElement : public WebElemNode
 
   {
-  protected:
+  public:
+    virtual val getVal() const;
+    virtual void setVal(const val &inval);
+
     CompoundElement(const string &name,
                     const string &tag,
                     const CppType anyvalPtrType,
@@ -26,14 +29,9 @@ namespace clarity
                     const string &tag,
                     const CppType anyvalPtrType);
 
-    
-
+  protected:
     clarity::WebElemNode *outerElement_; // Container div
     clarity::WebElemNode *innerElement_; // Holds the actual value
-
-  public:
-    virtual val getVal() const;
-    virtual void setVal(const val &inval);
   };
 
 }

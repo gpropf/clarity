@@ -14,7 +14,7 @@ namespace clarity
    * to the innerElement_.
    * 
    */
-  class LabelledInput : public CompoundElement
+  class LabelledInput : public virtual CompoundElement
 
   {
   protected:

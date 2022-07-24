@@ -8,10 +8,11 @@ clarity::CompoundElement::CompoundElement(const string &name,
                                                                                 innerElement_(innerElement)
 {
   //boundField_ = "value";
+  this->appendChild(innerElement);
   outerElement_ = new clarity::WebElemNode(name, "div", CppType::NoData);
 };
 
-
+ 
 
 val clarity::CompoundElement::getVal() const
 {

@@ -39,23 +39,27 @@ EMSCRIPTEN_BINDINGS(WebElemNode)
       .class_function("runCallbackById", &WebElemNode::runCallbackById, allow_raw_pointers());
 }
 
-NukeModel::NukeModel(double s, double delta): s_(s), delta_(delta)
+NukeModel::NukeModel(double s, double delta) : s_(s), delta_(delta)
 {
-    printState();
-    controlRodSetting_ = 0.5;
-    controlRodSettingNode_ = new ModelNode(CppType::Double);
-    controlRodSettingNode_->splicePtrs(&controlRodSetting_);
-  }
+  printState();
+  controlRodSetting_ = 0.5;
+  controlRodSettingNode_ = new ModelNode(CppType::Double);
+  controlRodSettingNode_->splicePtrs(&controlRodSetting_);
+}
 
-NukeControl::NukeControl(const string &name, const string &tag, clarity::ControlNetworkNode::CppType anyvalPtrType)
+NukeControl::NukeControl(const string &name, const string &tag,
+                         clarity::ControlNetworkNode::CppType anyvalPtrType)
     : clarity::WebElemNode(name, tag, anyvalPtrType)
 {
   mainDiv_ = new clarity::WebElemNode("nukediv", "div", clarity::ControlNetworkNode::CppType::NoData);
-  //cpe_ = new clarity::CompoundElement("cpe", "div", clarity::ControlNetworkNode::CppType::Double);
+  coreToWaterHeatingConstantNode_ = new clarity::WebElemNode("coreToWaterHeatingConstant_", "input",
+                                                clarity::ControlNetworkNode::CppType::Double);
+  clarity::CompoundElement * cpe_ = new clarity::CompoundElement("cpe", "div",
+   clarity::ControlNetworkNode::CppType::Double, coreToWaterHeatingConstantNode_);
   applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::ControlNetworkNode::CppType::String);
 
   mainDiv_->appendChild(applyButton_);
-  //mainDiv_->appendChild(cpe_);
+  mainDiv_->appendChild(cpe_);
 }
 
 NukeControl::NukeControl(const string &name, const string &tag,

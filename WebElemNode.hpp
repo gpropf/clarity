@@ -6,7 +6,7 @@
 
 namespace clarity {
 
-class WebElemNode : public WebNode
+class WebElemNode : public virtual WebNode
   {
   public:
     WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {}
@@ -15,7 +15,7 @@ class WebElemNode : public WebNode
     vector<ControlNetworkNode *> children_;
 
     // string tag_, name_;
-    string tag_, name_;
+    string tag_; //, name_;
     string stringId_;
 
   public:
@@ -28,16 +28,14 @@ class WebElemNode : public WebNode
      *
      */
     WebElemNode(const string &name, const string &tag,
-                const CppType anyvalPtrType) : tag_(tag),
-                                               name_(name),
-                                               WebNode(anyvalPtrType)
+                const CppType anyvalPtrType) : WebNode(name, anyvalPtrType)
 
     {
-
       jsval_.set("cpptype", val(anyvalPtrType));
       jsval_.set("tag", val(tag));
-      jsval_.set("name", val(name_));
+      
       jsval_.set("id", val(id_));
+      jsval_.set("name", val(name));
 
       anyvalPtr_ = nullptr;
       boundField_ = "value";
