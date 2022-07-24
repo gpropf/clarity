@@ -55,6 +55,7 @@ private:
   //::ModelNode;
 
   ModelNode *controlRodSettingNode_;
+  ModelNode *coreToWaterHeatingConstantNode_;
 
   vector<double> fuelQuality_;
 
@@ -76,7 +77,7 @@ public:
   clarity::WebElemNode *applyButton_;
   clarity::ModelNode *buttonModel_;
   clarity::WebElemNode *controlRodSetting_;
-  clarity::WebElemNode *coreToWaterHeatingConstantNode_;
+  clarity::WebElemNode *coreToWaterHeatingConstant_;
   clarity::CompoundElement *cpe_;
 };
 

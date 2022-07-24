@@ -43,8 +43,11 @@ NukeModel::NukeModel(double s, double delta) : s_(s), delta_(delta)
 {
   printState();
   controlRodSetting_ = 0.5;
+  coreToWaterHeatingConstant_ = 1.0;
   controlRodSettingNode_ = new ModelNode(CppType::Double);
   controlRodSettingNode_->splicePtrs(&controlRodSetting_);
+  coreToWaterHeatingConstantNode_ = new ModelNode(CppType::Double);
+  coreToWaterHeatingConstantNode_->splicePtrs(&coreToWaterHeatingConstant_);
 }
 
 NukeControl::NukeControl(const string &name, const string &tag,
@@ -52,10 +55,10 @@ NukeControl::NukeControl(const string &name, const string &tag,
     : clarity::WebElemNode(name, tag, anyvalPtrType)
 {
   mainDiv_ = new clarity::WebElemNode("nukediv", "div", clarity::ControlNetworkNode::CppType::NoData);
-  coreToWaterHeatingConstantNode_ = new clarity::WebElemNode("coreToWaterHeatingConstant_", "input",
+  coreToWaterHeatingConstant_ = new clarity::WebElemNode("coreToWaterHeatingConstant_", "input",
                                                 clarity::ControlNetworkNode::CppType::Double);
   clarity::CompoundElement * cpe_ = new clarity::CompoundElement("cpe", "div",
-   clarity::ControlNetworkNode::CppType::Double, coreToWaterHeatingConstantNode_);
+   clarity::ControlNetworkNode::CppType::Double, coreToWaterHeatingConstant_);
   applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::ControlNetworkNode::CppType::String);
 
   mainDiv_->appendChild(applyButton_);
@@ -71,6 +74,8 @@ NukeControl::NukeControl(const string &name, const string &tag,
                                                 clarity::ControlNetworkNode::CppType::Double);
   nm.controlRodSettingNode_->addPeer(controlRodSetting_);
   nm.controlRodSettingNode_->pushValToPeers(nm.controlRodSettingNode_);
+  nm.coreToWaterHeatingConstantNode_->addPeer(coreToWaterHeatingConstant_);
+  nm.coreToWaterHeatingConstantNode_->pushValToPeers(nm.coreToWaterHeatingConstantNode_);
 }
 
 /**
