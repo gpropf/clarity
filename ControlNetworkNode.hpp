@@ -19,8 +19,6 @@ namespace clarity
     {
 
     public:
-        
-
         /**
          * @brief Represents the 'edges' in our control graph. The union contains either a JavaScript
          * function or a multiplier. In practice most control elements will only need a multiplier value
@@ -120,27 +118,14 @@ namespace clarity
             : name_(name),
               anyvalPtrType_(anyvalPtrType)
         {
-            if (name == "d-test")
-            {
-                cout << "DTEST:Before " << (int)anyvalPtrType << " id = " << id_ << "\n";
-            }
             ControlNetworkNode();
-            if (name == "d-test")
-            {
-                cout << "DTEST:After " << (int)anyvalPtrType << " id = " << id_ << "\n";
-            }
-            cout << "ControlNetworkNodeControlNetworkNode\n\n\n";
-            if (name == "d-test")
-            {
-                cout << "DTEST:ControlNetworkNode(const string &name, const CppType anyvalPtrType): " << (int)anyvalPtrType << " id = " << id_ << "\n";
-            }
             jsval_.set("cpptype", val(anyvalPtrType));
         }
 
-        ControlNetworkNode(ControlNetworkNode *parent) : parent_(parent)
-        {
-            ControlNetworkNode();
-        }
+        // ControlNetworkNode(ControlNetworkNode *parent) : parent_(parent)
+        // {
+        //     ControlNetworkNode();
+        // }
 
         ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
         {
