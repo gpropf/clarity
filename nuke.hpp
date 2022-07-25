@@ -12,7 +12,7 @@
 
 
 using namespace clarity;
-using CppType = clarity::ControlNetworkNode::CppType;
+//using CppType = clarity::CppType;
 
 /**
  * @brief A simple model of a nuclear power plant.
