@@ -18,6 +18,18 @@ using namespace emscripten;
 
 namespace clarity
 {
+  /**
+   * @brief Supported C++ types for WebElements.
+   *
+   */
+  enum class CppType : int
+  {
+    Int,
+    Float,
+    Double,
+    String,
+    NoData /// Used for things like div that hold no data.
+  };
 
   /**
    * @brief Interface class that should be implemented by all models and
@@ -28,7 +40,8 @@ namespace clarity
    * It's possible that this class is just OO cruft.
    *
    */
-  class Updateable {
+  class Updateable
+  {
     virtual void update() = 0;
   };
 
@@ -39,11 +52,19 @@ namespace clarity
   class TicketMachine
   {
   private:
-    int id_ = 0;
+    int id_ = 10;
 
   public:
     inline const int getNext() { return ++id_; }
-  };     
+  };
+
+  class DynamicValue
+  {
+  protected:
+    void *valptr = nullptr;
+    CppType cppT = CppType::NoData;
+  };
+
 }
 
 #endif

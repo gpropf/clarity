@@ -12,6 +12,7 @@ namespace clarity
     public:
         ModelNode(void *anyvalPtr) : ControlNetworkNode(anyvalPtr) {}
         ModelNode(CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
+        //ModelNode(void *anyvalPtr, CppType anyvalPtrType): ControlNetworkNode(anyvalPtr, anyvalPtrType) {}
         // void updateViewFromModel() {}
         virtual void updatePeers() {}
         // virtual void updateModelFromView() {}

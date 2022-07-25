@@ -7,25 +7,14 @@
 namespace clarity
 {
 
-  class WebNode : public virtual ControlNetworkNode
+  class WebNode : public ControlNetworkNode
   {
   public:
     WebNode() : ControlNetworkNode() {}
-    WebNode(const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType)
+    WebNode(const string& name, const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType)
     {
-      if (name_ == "d-test")
-      {
-        cout << "DTEST:WebNode(const CppType anyvalPtrType):" << (int)anyvalPtrType << " id = " << id_ <<"\n";
-      }
-    }
 
-    WebNode(const string &name, const CppType anyvalPtrType) //: ControlNetworkNode(name, anyvalPtrType)
-    {
-      ControlNetworkNode(name, anyvalPtrType);
-      if (name == "d-test")
-      {
-        cout << "DTEST:WebNode(const string &name, const CppType anyvalPtrType) : " << (int)anyvalPtrType << " id = " << id_ << "\n";
-      }
+      cout << "DTEST:WebNode(const CppType anyvalPtrType):" << (int)anyvalPtrType << " id = " << id_ << "\n";
     }
 
     val getVal() const

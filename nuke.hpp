@@ -66,7 +66,7 @@ private:
  * @brief Control Panel for the nuclear power plant
  *
  */
-class NukeControl : public virtual clarity::WebElemNode
+class NukeControl : public clarity::WebElemNode
 {
 
 public:

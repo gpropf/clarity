@@ -9,9 +9,9 @@ CFLAGS	=  -std=c++17 -g3 -gsource-map
 JSOUT	= clarity_embind.js
 # CPPIN	= clarity.cpp ButtonElement.cpp WebElemNode.cpp nuke.cpp
 LIBCLR_IN = clarity.cpp ButtonElement.cpp WebElemNode.cpp WebAttrNode.cpp WebNode.cpp \
-			ModelNode.cpp ControlNetworkNode.cpp CompoundElement.cpp
+			ModelNode.cpp ControlNetworkNode.cpp #CompoundElement.cpp
 LIBCLR_OBJS = clarity.o ButtonElement.o WebElemNode.o WebAttrNode.o WebNode.o \
- 			ModelNode.o ControlNetworkNode.o CompoundElement.o
+ 			ModelNode.o ControlNetworkNode.o #CompoundElement.o
 AR 		= emar
 FRAMEWORK_DEPS = clarity.js clarity.html Makefile
 
@@ -19,6 +19,9 @@ FRAMEWORK_DEPS = clarity.js clarity.html Makefile
 
 %.o : %.cpp %.hpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
+
+simpleTest: simpleTest.o libclr.a
+	$(CC) -lembind simpleTest.o libclr.a -o $(JSOUT)
 
 libclr.a: $(LIBCLR_OBJS)
 	$(AR) rcs libclr.a $(LIBCLR_OBJS)
@@ -29,11 +32,10 @@ nuke: nuke.o libclr.a
 docs: clarity.doxyconfig
 	doxygen clarity.doxyconfig
 
-
 clean:
 	rm -f *.o 
 
 realclean: clean
 	rm -f *.wasm *.wasm.map *.a $(JSOUT)
 
-all: clarity docs nuke
+all: clarity docs simpleTest nuke

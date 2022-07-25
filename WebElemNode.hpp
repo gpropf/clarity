@@ -4,17 +4,12 @@
 #include "clarity.hpp"
 #include "WebNode.hpp"
 
-namespace clarity {
+namespace clarity
+{
 
-class WebElemNode : public  WebNode
+  class WebElemNode : public  WebNode
   {
   public:
-    WebElemNode(const CppType anyvalPtrType) : WebNode(anyvalPtrType) {
-      if (name_ == "d-test") {
-      cout << "DTEST:WebElemNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << " id = " << id_ << "\n";
-      }
-    }
-
   protected:
     vector<ControlNetworkNode *> children_;
 
@@ -36,12 +31,12 @@ class WebElemNode : public  WebNode
 
     {
       cout << "WebElemNodeWebElemNode\n\n\n";
-      if (name == "d-test") {
+
       cout << "DTEST:WebElemNode(const string &name, const string &tag, const CppType anyvalPtrType): " << (int)anyvalPtrType << " id = " << id_ << "\n";
-      }
+
       jsval_.set("cpptype", val(anyvalPtrType));
       jsval_.set("tag", val(tag));
-      
+
       jsval_.set("id", val(id_));
       jsval_.set("name", val(name));
 
@@ -57,92 +52,6 @@ class WebElemNode : public  WebNode
       val domElement = jsval_["domElement"];
       domElement.call<void>("setAttribute", attr, value);
     }
-
-    /**
-     * @brief Update the view from the model
-     *
-     */
-    /*
-    void updateViewFromModel()
-    {
-      cout << "STARTING: updateViewFromModel for " << this->name_ << "\n";
-      val domElement = this->jsval_["domElement"];
-      for (auto child : children_)
-      {
-        child->updateViewFromModel();
-      }
-
-      if (anyvalPtr_ == nullptr)
-      {
-        cout << "ENDING: updateViewFromModel for " << this->name_ << " because anyvalPtr_ == nullptr\n";
-        return;
-      }
-
-      switch (this->anyvalPtrType_)
-      {
-      case CppType::Int:
-        domElement.set(boundField_, val(cpp2js<int>(anyvalPtr_)));
-        break;
-      case CppType::Float:
-        domElement.set(boundField_, val(cpp2js<float>(anyvalPtr_)));
-        break;
-      case CppType::Double:
-        // domElement.set(boundField, val(*reinterpret_cast<double *>(anyvalPtr_)));
-        domElement.set(boundField_, val(cpp2js<double>(anyvalPtr_)));
-        // jsval_.set("anyval", val(*reinterpret_cast<double *>(anyvalPtr_)));
-        break;
-      case CppType::String:
-        domElement.set(boundField_, val(cpp2js<string>(anyvalPtr_)));
-        break;
-      case CppType::NoData:
-      default:
-        break;
-      }
-      cout << "ENDING: updateViewFromModel for " << this->name_ << "\n";
-    } */
-    /*
-    virtual void updateModelFromView()
-    {
-      cout << "STARTING: updateModelFromView for " << this->name_ << "\n";
-      for (auto child : children_)
-      {
-        child->updateModelFromView();
-      }
-
-      if (anyvalPtr_ == nullptr)
-      {
-        cout << "ENDING: updateModelFromView for " << this->name_ << " because anyvalPtr_ == nullptr\n";
-        return; // this->jsval_["anyval"];
-      }
-
-      switch (this->anyvalPtrType_)
-      {
-      case CppType::Int:
-        *reinterpret_cast<int *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", getVal());
-        cout << "C++ side: New Int Value: " << *reinterpret_cast<int *>(anyvalPtr_) << endl;
-        break;
-      case CppType::Float:
-        *reinterpret_cast<float *>(anyvalPtr_) = this->jsval_.call<int>("jsToCPPVal", getVal());
-        cout << "C++ side: New Float Value: " << *reinterpret_cast<float *>(anyvalPtr_) << endl;
-        break;
-      case CppType::Double:
-        *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
-        *reinterpret_cast<double *>(anyvalPtr_) = this->jsval_.call<double>("jsToCPPVal", getVal());
-        cout << "C++ side: New Double Value: " << *reinterpret_cast<double *>(anyvalPtr_) << endl;
-        break;
-      case CppType::String:
-        *reinterpret_cast<string *>(anyvalPtr_) = this->jsval_.call<string>("jsToCPPVal", getVal());
-        cout << "C++ side: New String Value: " << *reinterpret_cast<string *>(anyvalPtr_) << endl;
-        break;
-      case CppType::NoData:
-        cout << "C++ side: This element contains no data." << endl;
-        break;
-      default:
-        break;
-      }
-      cout << "ENDING: updateModelFromView for " << this->name_ << "\n";
-      return; // this->jsval_["anyval"];
-    } */
 
     bool appendChild(WebNode *child)
     {
@@ -178,9 +87,6 @@ class WebElemNode : public  WebNode
     // static WebElemNode &getCLElementById(const int id) { return *(switchboard[id]); }
     static void runCallbackById(const string &id) { callbackMap[id](); }
   };
-
-
-
 
 }
 

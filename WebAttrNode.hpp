@@ -4,16 +4,15 @@
 #include "clarity.hpp"
 #include "WebNode.hpp"
 
+namespace clarity
+{
 
-namespace clarity {
-
-
-/**
+  /**
    * @brief Represents an attribute of another element such as bgcolor.
    * This is not necessarily a dom element that we control though it may be.
    *
    */
-  class WebAttrNode : public virtual WebNode
+  class WebAttrNode : public WebNode
   {
   protected:
     string attributeName_;
@@ -22,9 +21,9 @@ namespace clarity {
     void updatePeers() {} // FIXME
 
     WebAttrNode(const string &attributeName, const CppType anyvalPtrType,
-                ControlNetworkNode *parent) : attributeName_(attributeName),
-                                              WebNode(anyvalPtrType)
+                ControlNetworkNode *parent) 
     {
+      WebNode(attributeName, anyvalPtrType);
       parent_ = parent;
       boundField_ = attributeName;
       val parentDomelement = parent_->getJSval()["domElement"];
@@ -44,6 +43,6 @@ namespace clarity {
       domElement.call<void>("setAttribute", boundField_, inval);
     }
   };
-  
+
 }
 #endif

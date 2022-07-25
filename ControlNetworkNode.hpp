@@ -19,18 +19,7 @@ namespace clarity
     {
 
     public:
-        /**
-         * @brief Supported C++ types for WebElements.
-         *
-         */
-        enum class CppType : int
-        {
-            Int,
-            Float,
-            Double,
-            String,
-            NoData /// Used for things like div that hold no data.
-        };
+        
 
         /**
          * @brief Represents the 'edges' in our control graph. The union contains either a JavaScript
@@ -258,7 +247,7 @@ namespace clarity
         CppType anyvalPtrType_; // C++ Data type
         void *anyvalPtr_;       // pointer to actual data
         ControlNetworkNode *parent_;
-        int id_;
+        int id_ = 7;
         string name_;
         vector<ControlNetworkNode *> peers_;
         vector<ControlNetworkNode::ActiveLink> alpeers_;

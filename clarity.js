@@ -108,7 +108,7 @@ class CLElement {
       if (el == null) {
         console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
         el = this.createDOMElement()
-
+        alert("Child element id is " + id)
         document.body.appendChild(el)
         // Without this it seems the elements vanish. The idea is that you append them later to
         // their actual parents using a call in C++ to the appendChild method.
