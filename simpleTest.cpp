@@ -77,7 +77,7 @@ int main()
                                                          clarity::CppType::Double);
   ncntr->setAttribute("type", val("text"));
 
-  //maindiv->appendChild(ncntr);
+  maindiv->appendChild(ncntr);
   
   nm->addPeer(ncntr);
   

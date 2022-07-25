@@ -107,14 +107,14 @@ namespace clarity
             cout << "ControlNetworkNode(): Setting id to " << id_ << "\n";
         }
 
-        ControlNetworkNode(const string &name) : name_(name)
-        {
-            ControlNetworkNode();
-            if (name == "d-test")
-            {
-                cout << "DTEST:ControlNetworkNode(const string &name): id = " << id_ << "\n";
-            }
-        }
+        // ControlNetworkNode(const string &name) : name_(name)
+        // {
+        //     ControlNetworkNode();
+        //     if (name == "d-test")
+        //     {
+        //         cout << "DTEST:ControlNetworkNode(const string &name): id = " << id_ << "\n";
+        //     }
+        // }
 
         ControlNetworkNode(const string &name, const CppType anyvalPtrType)
             : name_(name),
