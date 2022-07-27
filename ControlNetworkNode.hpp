@@ -224,6 +224,7 @@ namespace clarity
         }
 
     protected:
+        DynamicValue dynval_;
         bool clean_ = true;
         static TicketMachine tm;
         static map<const int, ControlNetworkNode *> switchboard;

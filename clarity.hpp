@@ -61,8 +61,42 @@ namespace clarity
   class DynamicValue
   {
   protected:
-    void *valptr = nullptr;
-    CppType cppT = CppType::NoData;
+    void *valptr_ = nullptr;
+    CppType cpptype_ = CppType::NoData;
+
+  public:
+    DynamicValue()
+    {
+      cpptype_ = CppType::NoData;
+    }
+
+    DynamicValue(void *valptr, CppType cpptype) : valptr_(valptr), cpptype_(cpptype)
+    {
+    }
+
+    DynamicValue(int *ival)
+    {
+      valptr_ = ival;
+      cpptype_ = CppType::Int;
+    }
+
+    DynamicValue(float *ival)
+    {
+      valptr_ = ival;
+      cpptype_ = CppType::Float;
+    }
+
+    DynamicValue(double *ival)
+    {
+      valptr_ = ival;
+      cpptype_ = CppType::Double;
+    }
+
+    DynamicValue(string *ival)
+    {
+      valptr_ = ival;
+      cpptype_ = CppType::String;
+    }
   };
 
 }
