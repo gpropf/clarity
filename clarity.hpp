@@ -60,7 +60,9 @@ namespace clarity
 
   class DynamicValue
   {
-  protected:
+    
+  public:
+  
     void *valptr_ = nullptr;
     CppType cpptype_ = CppType::NoData;
 

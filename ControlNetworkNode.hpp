@@ -98,49 +98,41 @@ namespace clarity
             clean_ = !clean_;
         }
 
-        ControlNetworkNode()
+        void init()
         {
             id_ = tm.getNext();
             ControlNetworkNode::switchboard[id_] = this;
             cout << "ControlNetworkNode(): Setting id to " << id_ << "\n";
         }
 
-        // ControlNetworkNode(const string &name) : name_(name)
-        // {
-        //     ControlNetworkNode();
-        //     if (name == "d-test")
-        //     {
-        //         cout << "DTEST:ControlNetworkNode(const string &name): id = " << id_ << "\n";
-        //     }
-        // }
+        ControlNetworkNode()
+        {
+            init();
+        }
 
         ControlNetworkNode(const string &name, const CppType anyvalPtrType)
             : name_(name),
               anyvalPtrType_(anyvalPtrType)
         {
-            ControlNetworkNode();
+            init();
+            //ControlNetworkNode();
+            cout << "ControlNetworkNode(const string &name, const CppType anyvalPtrType): "
+                 << (int)anyvalPtrType << " ID = " << id_ << " \n";
             jsval_.set("cpptype", val(anyvalPtrType));
         }
 
-        // ControlNetworkNode(ControlNetworkNode *parent) : parent_(parent)
-        // {
-        //     ControlNetworkNode();
-        // }
+        ControlNetworkNode(const DynamicValue dynamicValue, const string &name = "") : dynamicValue_(dynamicValue), name_(name)
+        {
+        }
 
         ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
         {
-            ControlNetworkNode();
-            cout << "ControlNetworkNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << "\n";
-            id_ = tm.getNext();
+            //ControlNetworkNode();
+            init();
+            cout << "ControlNetworkNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << " ID = " << id_ << " \n";
+            // id_ = tm.getNext();
             jsval_.set("cpptype", val(anyvalPtrType));
-            ControlNetworkNode::switchboard[id_] = this;
-        }
-
-        ControlNetworkNode(void *anyvalPtr) : anyvalPtr_(anyvalPtr)
-        {
-            ControlNetworkNode();
-            id_ = tm.getNext();
-            ControlNetworkNode::switchboard[id_] = this;
+            // ControlNetworkNode::switchboard[id_] = this;
         }
 
         template <typename T>
@@ -224,7 +216,7 @@ namespace clarity
         }
 
     protected:
-        DynamicValue dynval_;
+        DynamicValue dynamicValue_;
         bool clean_ = true;
         static TicketMachine tm;
         static map<const int, ControlNetworkNode *> switchboard;
@@ -233,7 +225,7 @@ namespace clarity
         CppType anyvalPtrType_; // C++ Data type
         void *anyvalPtr_;       // pointer to actual data
         ControlNetworkNode *parent_;
-        int id_ = 7;
+        int id_ = 1000;
         string name_;
         vector<ControlNetworkNode *> peers_;
         vector<ControlNetworkNode::ActiveLink> alpeers_;

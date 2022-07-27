@@ -21,9 +21,9 @@ namespace clarity
     void updatePeers() {} // FIXME
 
     WebAttrNode(const string &attributeName, const CppType anyvalPtrType,
-                ControlNetworkNode *parent) 
+                ControlNetworkNode *parent) : WebNode(attributeName, anyvalPtrType)
     {
-      WebNode(attributeName, anyvalPtrType);
+      //WebNode(attributeName, anyvalPtrType);
       parent_ = parent;
       boundField_ = attributeName;
       val parentDomelement = parent_->getJSval()["domElement"];

@@ -11,7 +11,7 @@ namespace clarity
   {
   public:
     WebNode() : ControlNetworkNode() {}
-    WebNode(const string& name, const CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType)
+    WebNode(const string& name, const CppType anyvalPtrType) : ControlNetworkNode(name, anyvalPtrType)
     {
 
       cout << "DTEST:WebNode(const CppType anyvalPtrType):" << (int)anyvalPtrType << " id = " << id_ << "\n";

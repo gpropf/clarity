@@ -10,8 +10,15 @@ namespace clarity
     class ModelNode : public ControlNetworkNode
     {
     public:
-        ModelNode(void *anyvalPtr) : ControlNetworkNode(anyvalPtr) {}
+        //ModelNode(void *anyvalPtr) : ControlNetworkNode(anyvalPtr) {}
         ModelNode(CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
+        ModelNode(const DynamicValue dynamicValue, const string &name = ""):
+        ControlNetworkNode(dynamicValue, name)
+    
+        {
+            //ControlNetworkNode();
+            jsval_.set("cpptype", val(dynamicValue.cpptype_));
+        }
         //ModelNode(void *anyvalPtr, CppType anyvalPtrType): ControlNetworkNode(anyvalPtr, anyvalPtrType) {}
         // void updateViewFromModel() {}
         virtual void updatePeers() {}
