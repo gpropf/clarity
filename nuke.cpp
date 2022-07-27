@@ -57,12 +57,12 @@ NukeControl::NukeControl(const string &name, const string &tag,
   mainDiv_ = new clarity::WebElemNode("nukediv", "div", clarity::CppType::NoData);
   coreToWaterHeatingConstant_ = new clarity::WebElemNode("coreToWaterHeatingConstant_", "input",
                                                          clarity::CppType::Double);
-  //  clarity::CompoundElement *cpe_ = new clarity::CompoundElement("cpe", "div",
-  //                                                                clarity::CppType::Double, coreToWaterHeatingConstant_);
+  clarity::CompoundElement *cpe_ = new clarity::CompoundElement("cpe", "div",
+                                                                  clarity::CppType::Double, coreToWaterHeatingConstant_);
   applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::CppType::String);
 
   //mainDiv_->appendChild(applyButton_);
-  //mainDiv_->appendChild(cpe_);
+  mainDiv_->appendChild(cpe_);
 }
 
 NukeControl::NukeControl(const string &name, const string &tag,
