@@ -69,17 +69,33 @@ int main()
   }
 
   double *n = new double(55.9);
+  double *d = new double(3.14159);
+
+  DynamicValue dvd(d, CppType::Double);
+
   clarity::ModelNode *nm = new clarity::ModelNode(clarity::CppType::Double);
   nm->splicePtrs(n);
+
+  clarity::ModelNode *ddynm = new clarity::ModelNode(dvd);
+
   clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div",
                                                            clarity::CppType::NoData);
   clarity::WebElemNode *ncntr = new clarity::WebElemNode("n", "input",
                                                          clarity::CppType::Double);
+
+
+clarity::WebElemNode *dcntr = new clarity::WebElemNode("d", "input",
+                                                         clarity::CppType::Double);
+
   ncntr->setAttribute("type", val("text"));
+  dcntr->setAttribute("type", val("text"));
 
   maindiv->appendChild(ncntr);
+  maindiv->appendChild(dcntr);
   
   nm->addPeer(ncntr);
+  ddynm->addALPeer(ControlNetworkNode::ActiveLink(dcntr,7.3));
+  ddynm->pushDynValToPeers(ddynm);
   
   ncntr->addEventListenerByName("change", "printNetworkState");
   nm->pushValToPeers(nm);

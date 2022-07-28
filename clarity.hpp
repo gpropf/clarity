@@ -28,6 +28,7 @@ namespace clarity
     Float,
     Double,
     String,
+    JSFunc,
     NoData /// Used for things like div that hold no data.
   };
 
@@ -65,8 +66,7 @@ namespace clarity
   
     void *valptr_ = nullptr;
     CppType cpptype_ = CppType::NoData;
-
-  public:
+  
     DynamicValue()
     {
       cpptype_ = CppType::NoData;
@@ -99,6 +99,11 @@ namespace clarity
       valptr_ = ival;
       cpptype_ = CppType::String;
     }
+
+    // DynamicValue inverted() {
+
+    // }
+
   };
 
 }

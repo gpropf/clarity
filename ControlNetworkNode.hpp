@@ -32,13 +32,21 @@ namespace clarity
 
         class ActiveLink
         {
-        protected:
+        public:
             void *multiplier;
             ActiveLink(ControlNetworkNode *peer, void *multiplier,
                        CppType cppType) : peer_(peer), multiplier_(multiplier), cppType_(cppType)
 
             {
             }
+
+            ActiveLink(ControlNetworkNode *peer, double multiplier) : peer_(peer)
+
+            {
+                multiplier_ = new double(multiplier);
+                cppType_ = CppType::Double;
+            }
+
             ControlNetworkNode *peer_;
             void *multiplier_;
             CppType cppType_;
@@ -63,6 +71,14 @@ namespace clarity
             cout << "ControlNetworkNode::getVal()"
                  << "\n";
             printNodeStats("getVal()");
+            return val(NULL);
+        }
+
+        virtual val getDynVal() const
+        {
+            cout << "ControlNetworkNode::getDynVal()"
+                 << "\n";
+            printNodeStats("getDynVal()");
             return val(NULL);
         }
 
@@ -115,7 +131,7 @@ namespace clarity
               anyvalPtrType_(anyvalPtrType)
         {
             init();
-            //ControlNetworkNode();
+            // ControlNetworkNode();
             cout << "ControlNetworkNode(const string &name, const CppType anyvalPtrType): "
                  << (int)anyvalPtrType << " ID = " << id_ << " \n";
             jsval_.set("cpptype", val(anyvalPtrType));
@@ -127,7 +143,7 @@ namespace clarity
 
         ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
         {
-            //ControlNetworkNode();
+            // ControlNetworkNode();
             init();
             cout << "ControlNetworkNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << " ID = " << id_ << " \n";
             // id_ = tm.getNext();
@@ -143,6 +159,12 @@ namespace clarity
 
         virtual void updatePeers() {}
         virtual void setVal(const val &inval)
+        {
+            cout << "Marking node " << id_ << " as dirty.\n\n";
+            clean_ = false;
+        }
+
+        virtual void setDynVal(const val &inval)
         {
             cout << "Marking node " << id_ << " as dirty.\n\n";
             clean_ = false;
@@ -164,6 +186,26 @@ namespace clarity
             cout << endl;
             peer->setVal(internalVal);
             peer->pushValToPeers(this);
+            clean_ = true;
+            string name_;
+        }
+
+        virtual void pushDynValToPeer(ActiveLink &al)
+        {
+            printNodeStats("pushValToPeer()");
+            if (clean_)
+            {
+                cout << "Node " << id_ << " is clean, should return.\n";
+                return;
+            }
+            val internalVal = getDynVal();
+            cout << "Internal val is ";
+            jsval_.call<void>("printToConsole", internalVal);
+            cout << "Value is type ";
+            jsval_.call<void>("printType", internalVal);
+            cout << endl;
+            al.peer_->setDynVal(internalVal);
+            al.peer_->pushDynValToPeers(this);
             clean_ = true;
             string name_;
         }
@@ -190,6 +232,33 @@ namespace clarity
                 }
             }
         }
+
+        virtual void pushDynValToPeers(ControlNetworkNode *excludedPeer = nullptr)
+
+        {
+            printNodeStats("pushValToPeers()");
+            if (excludedPeer == nullptr)
+            {
+                for (auto peer : peers_)
+                {
+                    // pushDynValToPeer(peer); // FIXME
+                }
+            }
+            else
+            {
+                for (auto peer : peers_)
+                {
+                    if (peer != excludedPeer)
+                    {
+                        // FIXME: pushDynValToPeer(peer);
+                    }
+                }
+            }
+        }
+
+
+
+
 
         void
         addPeer(ControlNetworkNode *peer, bool alreadyAdded = false)

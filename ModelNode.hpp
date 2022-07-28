@@ -10,24 +10,25 @@ namespace clarity
     class ModelNode : public ControlNetworkNode
     {
     public:
-        //ModelNode(void *anyvalPtr) : ControlNetworkNode(anyvalPtr) {}
+        // ModelNode(void *anyvalPtr) : ControlNetworkNode(anyvalPtr) {}
         ModelNode(CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
-        ModelNode(const DynamicValue dynamicValue, const string &name = ""):
-        ControlNetworkNode(dynamicValue, name)
-    
+        ModelNode(const DynamicValue dynamicValue, const string &name = "") : ControlNetworkNode(dynamicValue, name)
         {
-            //ControlNetworkNode();
+            // ControlNetworkNode();
             jsval_.set("cpptype", val(dynamicValue.cpptype_));
         }
-        //ModelNode(void *anyvalPtr, CppType anyvalPtrType): ControlNetworkNode(anyvalPtr, anyvalPtrType) {}
-        // void updateViewFromModel() {}
+
+        
+
+        // ModelNode(void *anyvalPtr, CppType anyvalPtrType): ControlNetworkNode(anyvalPtr, anyvalPtrType) {}
+        //  void updateViewFromModel() {}
         virtual void updatePeers() {}
         // virtual void updateModelFromView() {}
 
         virtual val getVal() const
         {
-            //ControlNetworkNode::getVal();
-            // cout << "GETVAL called for ModelNode!\n\n";
+            // ControlNetworkNode::getVal();
+            //  cout << "GETVAL called for ModelNode!\n\n";
             if (anyvalPtr_ == nullptr)
             {
                 return val(NULL);
@@ -35,23 +36,23 @@ namespace clarity
             switch (this->anyvalPtrType_)
             {
             case CppType::Int:
-            cout << "GETVAL called for ModelNode! Int\n\n";
+                cout << "GETVAL called for ModelNode! Int\n\n";
                 return val(cpp2js<int>(anyvalPtr_));
                 break;
             case CppType::Float:
-            cout << "GETVAL called for ModelNode! Float\n\n";
+                cout << "GETVAL called for ModelNode! Float\n\n";
                 return val(cpp2js<float>(anyvalPtr_));
                 break;
             case CppType::Double:
-            cout << "GETVAL called for ModelNode! Double\n\n";
+                cout << "GETVAL called for ModelNode! Double\n\n";
                 return val(cpp2js<double>(anyvalPtr_));
                 break;
             case CppType::String:
-            cout << "GETVAL called for ModelNode! String\n\n";
+                cout << "GETVAL called for ModelNode! String\n\n";
                 return val(cpp2js<string>(anyvalPtr_));
                 break;
             case CppType::NoData:
-            cout << "GETVAL called for ModelNode! NoData\n\n";
+                cout << "GETVAL called for ModelNode! NoData\n\n";
             default:
                 return val(NULL);
                 break;
