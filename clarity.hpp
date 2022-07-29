@@ -61,12 +61,42 @@ namespace clarity
 
   class DynamicValue
   {
-    
+
   public:
-  
     void *valptr_ = nullptr;
     CppType cpptype_ = CppType::NoData;
-  
+
+    ~DynamicValue()
+    {
+      switch (cpptype_)
+      {
+        {
+        case CppType::Int:
+          delete reinterpret_cast<int *>(valptr_);
+          cout << "Destructor called for Double\n";
+          break;
+        case CppType::Float:
+          delete reinterpret_cast<float *>(valptr_);
+          cout << "Destructor called for Float\n";
+          break;
+        case CppType::Double:
+          //*reinterpret_cast<double *>(anyvalPtr_) = this->jsval_["anyval"].as<double>();
+          delete reinterpret_cast<double *>(valptr_);
+          cout << "Destructor called for Double\n";
+          break;
+        case CppType::String:
+          delete reinterpret_cast<string *>(valptr_);
+          cout << "Destructor called for String\n";
+          break;
+        case CppType::NoData:
+          cout << "Destructor called for NoData\n";
+          break;
+        default:
+          break;
+        }
+      }
+    }
+
     DynamicValue()
     {
       cpptype_ = CppType::NoData;
@@ -103,7 +133,6 @@ namespace clarity
     // DynamicValue inverted() {
 
     // }
-
   };
 
 }

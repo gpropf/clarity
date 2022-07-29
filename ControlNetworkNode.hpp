@@ -205,7 +205,7 @@ namespace clarity
             jsval_.call<void>("printType", internalVal);
             cout << endl;
             al.peer_->setDynVal(internalVal);
-            al.peer_->pushDynValToPeers(this);
+            al.peer_->pushDynValToPeers();
             clean_ = true;
             string name_;
         }
@@ -239,24 +239,22 @@ namespace clarity
             printNodeStats("pushValToPeers()");
             if (excludedPeer == nullptr)
             {
-                for (auto peer : peers_)
+                for (auto alpeer : alpeers_)
                 {
-                    // pushDynValToPeer(peer); // FIXME
+                    pushDynValToPeer(alpeer); // FIXME
                 }
             }
             else
             {
-                for (auto peer : peers_)
+                for (auto alpeer : alpeers_)
                 {
-                    if (peer != excludedPeer)
+                    if (alpeer.peer_ != excludedPeer)
                     {
-                        // FIXME: pushDynValToPeer(peer);
+                        pushDynValToPeer(alpeer);
                     }
                 }
             }
         }
-
-
 
 
 
