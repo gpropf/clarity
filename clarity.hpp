@@ -53,10 +53,15 @@ namespace clarity
   class TicketMachine
   {
   private:
-    int id_ = 10;
+    int id_ = 0;
 
   public:
     inline const int getNext() { return ++id_; }
+  };
+
+  class Invertable
+  {
+    virtual Invertable *inverted() = 0;
   };
 
   class DynamicValue
@@ -66,6 +71,43 @@ namespace clarity
     void *valptr_ = nullptr;
     CppType cpptype_ = CppType::NoData;
 
+    // DynamicValue operator*(const DynamicValue &y)
+    // {
+    //   //...
+    // }
+
+    DynamicValue *inverted()
+    {
+      switch (cpptype_)
+      {
+        {
+        case CppType::Int:
+          cout << "inverted called for Int, returning 0.\n";
+          return new DynamicValue((int)0);
+          break;
+        case CppType::Float:
+          cout << "inverted called for Float\n";
+          return nullptr;
+          break;
+        case CppType::Double:
+          cout << "inverted called for Double\n";
+          return new DynamicValue(1 / *reinterpret_cast<double *>(valptr_));
+          break;
+        case CppType::String:
+          cout << "inverted called for String\n";
+          return nullptr;
+          break;
+        case CppType::NoData:
+          cout << "inverted called for NoData\n";
+          return nullptr;
+          break;
+        default:
+          return nullptr;
+          break;
+        }
+      }
+    }
+
     ~DynamicValue()
     {
       switch (cpptype_)
@@ -73,7 +115,7 @@ namespace clarity
         {
         case CppType::Int:
           delete reinterpret_cast<int *>(valptr_);
-          cout << "Destructor called for Double\n";
+          cout << "Destructor called for Int\n";
           break;
         case CppType::Float:
           delete reinterpret_cast<float *>(valptr_);
@@ -112,6 +154,12 @@ namespace clarity
       cpptype_ = CppType::Int;
     }
 
+    DynamicValue(int ival)
+    {
+      valptr_ = new int(ival);
+      cpptype_ = CppType::Int;
+    }
+
     DynamicValue(float *ival)
     {
       valptr_ = ival;
@@ -121,6 +169,12 @@ namespace clarity
     DynamicValue(double *ival)
     {
       valptr_ = ival;
+      cpptype_ = CppType::Double;
+    }
+
+    DynamicValue(double dval)
+    {
+      valptr_ = new double(dval);
       cpptype_ = CppType::Double;
     }
 

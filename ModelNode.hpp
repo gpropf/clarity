@@ -11,14 +11,15 @@ namespace clarity
     {
     public:
         // ModelNode(void *anyvalPtr) : ControlNetworkNode(anyvalPtr) {}
-        ModelNode(CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType) {}
+        ModelNode(CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType)
+        {
+            cout << "ModelNode(CppType anyvalPtrType): " << (int)anyvalPtrType << " id = " << id_ << "\n";
+        }
         ModelNode(const DynamicValue dynamicValue, const string &name = "") : ControlNetworkNode(dynamicValue, name)
         {
-            // ControlNetworkNode();
+            cout << "ModelNode(const DynamicValue dynamicValue, const string &name = ):  id = " << id_ << "\n";
             jsval_.set("cpptype", val(dynamicValue.cpptype_));
         }
-
-        
 
         // ModelNode(void *anyvalPtr, CppType anyvalPtrType): ControlNetworkNode(anyvalPtr, anyvalPtrType) {}
         //  void updateViewFromModel() {}

@@ -30,26 +30,25 @@ namespace clarity
          *
          */
 
-        class ActiveLink
+        class ActiveLink //: public Invertable
         {
         public:
-            void *multiplier;
-            ActiveLink(ControlNetworkNode *peer, void *multiplier,
-                       CppType cppType) : peer_(peer), multiplier_(multiplier), cppType_(cppType)
+            
+            // ActiveLink(ControlNetworkNode *peer, void *multiplier,
+            //            CppType cppType) : peer_(peer), multiplier_(multiplier), cppType_(cppType)
+
+            // {
+            // }
+
+            ActiveLink(ControlNetworkNode *peer, DynamicValue multiplier)
+                : peer_(peer), multiplier_(multiplier)
 
             {
-            }
-
-            ActiveLink(ControlNetworkNode *peer, double multiplier) : peer_(peer)
-
-            {
-                multiplier_ = new double(multiplier);
-                cppType_ = CppType::Double;
             }
 
             ControlNetworkNode *peer_;
-            void *multiplier_;
-            CppType cppType_;
+
+            DynamicValue multiplier_;
 
             // ActiveLink invert(ControlNetworkNode *owner, ActiveLink al)
             // {
@@ -58,7 +57,7 @@ namespace clarity
             // }
 
         public:
-            inline void *getMultiplier() { return multiplier_; }
+           // inline void *getMultiplier() { return multiplier_; }
             // inline bool getValueTransformIsConstant() { return valueTransformIsConstant_; }
             // inline val getJsFunc() { return vt_.jsFunc_; }
         };
@@ -187,7 +186,6 @@ namespace clarity
             peer->setVal(internalVal);
             peer->pushValToPeers(this);
             clean_ = true;
-            string name_;
         }
 
         virtual void pushDynValToPeer(ActiveLink &al)
@@ -199,15 +197,14 @@ namespace clarity
                 return;
             }
             val internalVal = getDynVal();
-            cout << "Internal val is ";
-            jsval_.call<void>("printToConsole", internalVal);
-            cout << "Value is type ";
-            jsval_.call<void>("printType", internalVal);
-            cout << endl;
+            // cout << "Internal val is ";
+            // jsval_.call<void>("printToConsole", internalVal);
+            // cout << "Value is type ";
+            // jsval_.call<void>("printType", internalVal);
+            // cout << endl;
             al.peer_->setDynVal(internalVal);
-            al.peer_->pushDynValToPeers();
+            // al.peer_->pushDynValToPeers();
             clean_ = true;
-            string name_;
         }
 
         virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr)
@@ -256,8 +253,6 @@ namespace clarity
             }
         }
 
-
-
         void
         addPeer(ControlNetworkNode *peer, bool alreadyAdded = false)
         {
@@ -279,7 +274,7 @@ namespace clarity
             {
                 return;
             }
-            // al.peer->addALPeer()
+             //al.peer->addALPeer(new ActiveLink());
         }
 
     protected:
