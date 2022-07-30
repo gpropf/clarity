@@ -64,6 +64,13 @@ namespace clarity
     virtual Invertable *inverted() = 0;
   };
 
+  template <typename T>
+  class Dynval {
+    T * valptr;
+  };
+
+
+
   class DynamicValue
   {
 
