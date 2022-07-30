@@ -16,6 +16,13 @@ namespace clarity
         {
             cout << "ModelNode(CppType anyvalPtrType): " << (int)anyvalPtrType << " id = " << id_ << "\n";
         }
+
+        ModelNode(T *dynval) : dynval_(dynval)
+        {
+            //cout << "ModelNode(T * dynval)" << typeid(T) << " id = " << id_ << "\n";
+            cout << "ModelNode(T * dynval) id = " << id_ << "\n";
+        }
+
         // ModelNode(const DynamicValue dynamicValue, const string &name = "") : ControlNetworkNode(dynamicValue, name)
         // {
         //     cout << "ModelNode(const DynamicValue dynamicValue, const string &name = ):  id = " << id_ << "\n";
@@ -29,9 +36,10 @@ namespace clarity
 
         virtual val getVal() const
         {
+
             // ControlNetworkNode::getVal();
             //  cout << "GETVAL called for ModelNode!\n\n";
-            if (anyvalPtr_ == nullptr)
+            if (dynval_ == nullptr)
             {
                 return val(NULL);
             }
@@ -68,11 +76,6 @@ namespace clarity
         {
             ControlNetworkNode::setVal(inval);
             nodeVal = inval;
-
-            if (anyvalPtr_ == nullptr)
-            {
-                return;
-            }
 
             *reinterpret_cast<T *>(dynval_) = this->jsval_.template call<T>("jsToCPPVal", inval);
 

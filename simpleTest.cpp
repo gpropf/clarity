@@ -33,7 +33,7 @@ EMSCRIPTEN_BINDINGS(WebElemNode)
       .property("id", &WebElemNode::getId)
       .property("anyvalPtrType", &WebElemNode::getAnyvalPtrType, &WebElemNode::setAnyvalPtrType)
       //.function("updateModelFromView", &WebElemNode::updateModelFromView)
-      .function("splicePtrs", &WebElemNode::splicePtrs, allow_raw_pointers())
+      // .function("splicePtrs", &WebElemNode::splicePtrs, allow_raw_pointers())
 
       //.class_function("updateModelFromViewById", &WebElemNode::updateModelFromViewById, allow_raw_pointers())
       .class_function("runCallbackById", &WebElemNode::runCallbackById, allow_raw_pointers());
@@ -85,14 +85,14 @@ int main()
 
   double *n = new double(55.9);
   double *d = new double(3.14159);
-
+  int * di = new int(1);
   DynamicValue dvd(d, CppType::Double);
 
-  clarity::ModelNode<double> *nm = new clarity::ModelNode<double>(clarity::CppType::Double);
-  nm->splicePtrs(n);
+  clarity::ModelNode<double> *nm = new clarity::ModelNode<double>(n);
+  
 
-  clarity::ModelNode<int> *ddynm = new clarity::ModelNode<int>(clarity::CppType::Int);
-  ddynm->splicePtrs(d);
+  clarity::ModelNode<int> *ddynm = new clarity::ModelNode<int>(di);
+  
   clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div",
                                                            clarity::CppType::NoData);
   clarity::WebElemNode *ncntr = new clarity::WebElemNode("n", "input",

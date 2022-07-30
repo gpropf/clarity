@@ -83,7 +83,7 @@ namespace clarity
 
         val getJSval() const { return jsval_; }
 
-        void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
+        //void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
         virtual void printState() const { jsval_.call<void>("printState"); }
         static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
 
@@ -285,7 +285,7 @@ namespace clarity
         val jsval_ = val::global("CLElement").new_();
         val nodeVal = val(NULL);
         CppType anyvalPtrType_; // C++ Data type
-        void *anyvalPtr_;       // pointer to actual data
+        //void *anyvalPtr_;       // pointer to actual data
         ControlNetworkNode *parent_;
         int id_ = 1000;
         string name_;

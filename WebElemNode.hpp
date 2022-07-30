@@ -41,7 +41,7 @@ namespace clarity
       jsval_.set("name", val(name));
 
       tag_ = tag;
-      anyvalPtr_ = nullptr;
+      
       boundField_ = "value";
 
       ControlNetworkNode::switchboard[id_] = this;
@@ -74,8 +74,7 @@ namespace clarity
     // void setId(string id) { id_ = id; }
 
     void setJsval(val jsval) { jsval_ = jsval; }
-    void *getAnyvalPtr() const { return anyvalPtr_; }
-    void setAnyvalPtr(void *valptr) { anyvalPtr_ = valptr; }
+    
     CppType getAnyvalPtrType() const { return anyvalPtrType_; }
     void setAnyvalPtrType(CppType cppType)
     {
