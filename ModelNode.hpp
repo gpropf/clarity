@@ -19,8 +19,14 @@ namespace clarity
 
         ModelNode(T *dynval) : dynval_(dynval)
         {
-            //cout << "ModelNode(T * dynval)" << typeid(T) << " id = " << id_ << "\n";
-            cout << "ModelNode(T * dynval) id = " << id_ << "\n";
+            cout << "ModelNode(T * dynval)" << typeid(T).name() << " id = " << id_ << "\n";
+            //cout << "ModelNode(T * dynval) id = " << id_ << "\n";
+        }
+
+        ModelNode(T *dynval, CppType anyvalPtrType) : ControlNetworkNode(anyvalPtrType)
+        {
+            dynval_ = dynval;
+            cout << "ModelNode(T *dynval, CppType anyvalPtrType)" << typeid(T).name() << " id = " << id_ << "\n";
         }
 
         // ModelNode(const DynamicValue dynamicValue, const string &name = "") : ControlNetworkNode(dynamicValue, name)

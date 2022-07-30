@@ -33,7 +33,7 @@ EMSCRIPTEN_BINDINGS(WebElemNode)
       .property("id", &WebElemNode::getId)
       .property("anyvalPtrType", &WebElemNode::getAnyvalPtrType, &WebElemNode::setAnyvalPtrType)
       //.function("updateModelFromView", &WebElemNode::updateModelFromView)
-      .function("splicePtrs", &WebElemNode::splicePtrs, allow_raw_pointers())
+      //.function("splicePtrs", &WebElemNode::splicePtrs, allow_raw_pointers())
 
       //.class_function("updateModelFromViewById", &WebElemNode::updateModelFromViewById, allow_raw_pointers())
       .class_function("runCallbackById", &WebElemNode::runCallbackById, allow_raw_pointers());
@@ -44,10 +44,9 @@ NukeModel::NukeModel(double s, double delta) : s_(s), delta_(delta)
   printState();
   controlRodSetting_ = 0.5;
   coreToWaterHeatingConstant_ = 1.0;
-  controlRodSettingNode_ = new ModelNode(CppType::Double);
-  controlRodSettingNode_->splicePtrs(&controlRodSetting_);
-  coreToWaterHeatingConstantNode_ = new ModelNode(CppType::Double);
-  coreToWaterHeatingConstantNode_->splicePtrs(&coreToWaterHeatingConstant_);
+  controlRodSettingNode_ = new ModelNode<double>(&controlRodSetting_, CppType::Double);
+
+  coreToWaterHeatingConstantNode_ = new ModelNode<double>(&coreToWaterHeatingConstant_, CppType::Double);
 }
 
 NukeControl::NukeControl(const string &name, const string &tag,
@@ -58,10 +57,10 @@ NukeControl::NukeControl(const string &name, const string &tag,
   coreToWaterHeatingConstant_ = new clarity::WebElemNode("coreToWaterHeatingConstant_", "input",
                                                          clarity::CppType::Double);
   clarity::CompoundElement *cpe_ = new clarity::CompoundElement("cpe", "div",
-                                                                  clarity::CppType::Double, coreToWaterHeatingConstant_);
+                                                                clarity::CppType::Double, coreToWaterHeatingConstant_);
   applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::CppType::String);
 
-  //mainDiv_->appendChild(applyButton_);
+  // mainDiv_->appendChild(applyButton_);
   mainDiv_->appendChild(cpe_);
 }
 
@@ -108,8 +107,8 @@ int main()
   }
 
   double *n = new double(33);
-  clarity::ModelNode *nm = new clarity::ModelNode(clarity::CppType::Double);
-  nm->splicePtrs(n);
+  clarity::ModelNode<double> *nm = new clarity::ModelNode(n, clarity::CppType::Double);
+  //nm->splicePtrs(n);
   clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div",
                                                            clarity::CppType::NoData);
   clarity::WebElemNode *ncntr = new clarity::WebElemNode("numerator", "input",
@@ -127,10 +126,10 @@ int main()
   double *d = new double(5.6);
   clarity::WebElemNode *doubleTest = new clarity::WebElemNode("d-test", "input",
                                                               clarity::CppType::Double);
-  //doubleTest->setAnyvalPtrType(CppType::Double);
+  // doubleTest->setAnyvalPtrType(CppType::Double);
   doubleTest->setAttribute("type", val("text"));
-  clarity::ModelNode *mdtest = new clarity::ModelNode(CppType::Double);
-  mdtest->splicePtrs(d);
+  clarity::ModelNode<double> *mdtest = new clarity::ModelNode(d, CppType::Double);
+  
   mdtest->addPeer(doubleTest);
   mdtest->pushValToPeers(mdtest);
   NukeModel *nmod = new NukeModel(1, 5);
@@ -164,8 +163,8 @@ int main()
   std::string *buttonText = new std::string("CLICK ME!");
 
   nc->buttonText_ = new string("CLICK ME TOO!");
-  nc->buttonModel_ = new clarity::ModelNode(clarity::CppType::String);
-  nc->buttonModel_->splicePtrs(nc->buttonText_);
+  nc->buttonModel_ = new clarity::ModelNode<string>(nc->buttonText_, clarity::CppType::String);
+  
   nc->buttonModel_->addPeer(nc->applyButton_);
   nc->buttonModel_->pushValToPeers(nc->buttonModel_);
 
