@@ -70,7 +70,7 @@ namespace clarity
 
     string getTag() const { return tag_; }
 
-    string getId() const { return name_; }
+    int getId() const { return id_; }
     // void setId(string id) { id_ = id; }
 
     void setJsval(val jsval) { jsval_ = jsval; }

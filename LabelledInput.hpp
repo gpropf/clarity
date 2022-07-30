@@ -12,20 +12,19 @@ namespace clarity
    * Inspired by the idea of a labelled input field. The innerElement_ is used to store the
    * actual values so that getVal and setVal just become pass-thru methods that read and write
    * to the innerElement_.
-   * 
+   *
    */
-  class LabelledInput : public  CompoundElement
+  class LabelledInput : public CompoundElement
 
   {
   protected:
-    LabelledInput(const string &name,
-                    const string &tag,
-                    const CppType anyvalPtrType,
-                    clarity::WebElemNode *innerElement);
-    clarity::WebElemNode *outerElement_;
-    clarity::WebElemNode *innerElement_;
+    clarity::WebElemNode *label_;
 
   public:
+    LabelledInput(const string &name,
+                  const string &tag,
+                  const CppType anyvalPtrType,
+                  clarity::WebElemNode *innerElement);
     virtual val getVal() const;
     virtual void setVal(const val &inval);
   };

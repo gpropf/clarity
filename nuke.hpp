@@ -9,6 +9,7 @@
 #include "WebAttrNode.hpp"
 #include "ButtonElement.hpp"
 #include "CompoundElement.hpp"
+#include "LabelledInput.hpp"
 
 
 using namespace clarity;

@@ -56,8 +56,11 @@ NukeControl::NukeControl(const string &name, const string &tag,
   mainDiv_ = new clarity::WebElemNode("nukediv", "div", clarity::CppType::NoData);
   coreToWaterHeatingConstant_ = new clarity::WebElemNode("coreToWaterHeatingConstant_", "input",
                                                          clarity::CppType::Double);
-  clarity::CompoundElement *cpe_ = new clarity::CompoundElement("cpe", "div",
-                                                                clarity::CppType::Double, coreToWaterHeatingConstant_);
+  coreToWaterHeatingConstant_->setAttribute("type", val("text"));
+  clarity::LabelledInput *cpe_ = new clarity::LabelledInput("cpe_LabelledInput",
+                                                            "div",
+                                                            clarity::CppType::Double,
+                                                            coreToWaterHeatingConstant_);
   applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::CppType::String);
 
   // mainDiv_->appendChild(applyButton_);
@@ -108,7 +111,7 @@ int main()
 
   double *n = new double(33);
   clarity::ModelNode<double> *nm = new clarity::ModelNode(n, clarity::CppType::Double);
-  //nm->splicePtrs(n);
+  // nm->splicePtrs(n);
   clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div",
                                                            clarity::CppType::NoData);
   clarity::WebElemNode *ncntr = new clarity::WebElemNode("numerator", "input",
@@ -129,7 +132,7 @@ int main()
   // doubleTest->setAnyvalPtrType(CppType::Double);
   doubleTest->setAttribute("type", val("text"));
   clarity::ModelNode<double> *mdtest = new clarity::ModelNode(d, CppType::Double);
-  
+
   mdtest->addPeer(doubleTest);
   mdtest->pushValToPeers(mdtest);
   NukeModel *nmod = new NukeModel(1, 5);
@@ -164,7 +167,7 @@ int main()
 
   nc->buttonText_ = new string("CLICK ME TOO!");
   nc->buttonModel_ = new clarity::ModelNode<string>(nc->buttonText_, clarity::CppType::String);
-  
+
   nc->buttonModel_->addPeer(nc->applyButton_);
   nc->buttonModel_->pushValToPeers(nc->buttonModel_);
 

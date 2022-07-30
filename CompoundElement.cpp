@@ -4,7 +4,8 @@
 clarity::CompoundElement::CompoundElement(const string &name,
                                           const string &tag,
                                           const CppType anyvalPtrType,
-                                          clarity::WebElemNode *innerElement) : clarity::WebElemNode(name, tag, anyvalPtrType),
+                                          clarity::WebElemNode *innerElement)
+                                           : clarity::WebElemNode(name, tag, anyvalPtrType),
                                                                                 innerElement_(innerElement)
 {
   //boundField_ = "value";
