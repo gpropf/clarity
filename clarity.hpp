@@ -66,7 +66,20 @@ namespace clarity
 
   template <typename T>
   class Dynval {
-    T * valptr;
+    T * valptr_;
+
+    Dynval(T val) {
+      valptr_ = new T(val);
+    }
+
+    Dynval(T * valptr) {
+      valptr_ = valptr;
+    }
+
+    ~Dynval() {
+      delete valptr_;
+    }
+
   };
 
 
