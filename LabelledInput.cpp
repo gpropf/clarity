@@ -9,8 +9,10 @@ clarity::LabelledInput::LabelledInput(const string &name,
 {
   label_ = new clarity::WebElemNode("label_" + name, "label", clarity::CppType::String);
   label_->setAttribute("for", val(innerElement_->getId()));
+  label_->boundField_ = "innerHTML";
+  label_->setVal(val(name));
   cout << "LabelledInput constructor called! id = " << id_ << "\n";
-  outerElement_->appendChild(label_);
+  this->appendChild(label_);
 };
 
 val clarity::LabelledInput::getVal() const

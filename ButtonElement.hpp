@@ -5,12 +5,12 @@
 #include "WebElemNode.hpp"
 
 namespace clarity
-{ 
+{
 
   class ButtonElement : public WebElemNode
-  
+
   {
-    public:
+  public:
     ButtonElement(const string &name, const string &tag, const CppType anyvalPtrType);
   };
 

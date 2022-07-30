@@ -30,7 +30,7 @@ namespace clarity
                     const CppType anyvalPtrType);
 
   protected:
-    clarity::WebElemNode *outerElement_; // Container div
+    //clarity::WebElemNode *outerElement_; // Container div
     clarity::WebElemNode *innerElement_; // Holds the actual value
   };
 

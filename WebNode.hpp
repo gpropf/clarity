@@ -11,7 +11,7 @@ namespace clarity
   {
   public:
     WebNode() : ControlNetworkNode() {}
-    WebNode(const string& name, const CppType anyvalPtrType) : ControlNetworkNode(name, anyvalPtrType)
+    WebNode(const string &name, const CppType anyvalPtrType) : ControlNetworkNode(name, anyvalPtrType)
     {
 
       cout << "DTEST:WebNode(const CppType anyvalPtrType):" << (int)anyvalPtrType << " id = " << id_ << "\n";
@@ -52,13 +52,13 @@ namespace clarity
     }
 
   protected:
-    string boundField_;
     // inline void setAsProxyFor(clarity::WebNode *proxyiedElement)
     // {
     //   boundField_ = proxyiedElement->boundField_;
     // }
 
   public:
+    string boundField_;
     void setVal(const val &inval)
     {
       ControlNetworkNode::setVal(inval);

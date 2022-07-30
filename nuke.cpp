@@ -57,7 +57,7 @@ NukeControl::NukeControl(const string &name, const string &tag,
   coreToWaterHeatingConstant_ = new clarity::WebElemNode("coreToWaterHeatingConstant_", "input",
                                                          clarity::CppType::Double);
   coreToWaterHeatingConstant_->setAttribute("type", val("text"));
-  clarity::LabelledInput *cpe_ = new clarity::LabelledInput("cpe_LabelledInput",
+  clarity::LabelledInput *cpe_ = new clarity::LabelledInput("coreToWaterHeatingConstant_",
                                                             "div",
                                                             clarity::CppType::Double,
                                                             coreToWaterHeatingConstant_);
