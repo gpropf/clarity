@@ -65,24 +65,27 @@ namespace clarity
   };
 
   template <typename T>
-  class Dynval {
-    T * valptr_;
+  class Dynval
+  {
 
-    Dynval(T val) {
+    T *valptr_;
+
+  public:
+    Dynval(T val)
+    {
       valptr_ = new T(val);
     }
 
-    Dynval(T * valptr) {
+    Dynval(T *valptr)
+    {
       valptr_ = valptr;
     }
 
-    ~Dynval() {
+    ~Dynval()
+    {
       delete valptr_;
     }
-
   };
-
-
 
   class DynamicValue
   {

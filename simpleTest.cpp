@@ -56,8 +56,23 @@ map<const int, clarity::ControlNetworkNode *> clarity::ControlNetworkNode::switc
 map<string, std::function<void()>> clarity::WebElemNode::callbackMap;
 clarity::TicketMachine clarity::ControlNetworkNode::tm;
 
+
+
+
 int main()
 {
+
+  int i = 5;
+  float f = 9.4;
+
+  vector<TBase *> v;
+
+  Ttest<int> * tti =  new Ttest(&i);
+  Ttest<float> * ttf =  new Ttest(&f);
+
+  v.push_back(tti);
+  v.push_back(ttf);
+
   val CLContext = val::global("CLElement");
   if (CLContext.as<bool>())
   {
@@ -73,10 +88,10 @@ int main()
 
   DynamicValue dvd(d, CppType::Double);
 
-  clarity::ModelNode *nm = new clarity::ModelNode(clarity::CppType::Double);
+  clarity::ModelNode<double> *nm = new clarity::ModelNode<double>(clarity::CppType::Double);
   nm->splicePtrs(n);
 
-  clarity::ModelNode *ddynm = new clarity::ModelNode(clarity::CppType::Double);
+  clarity::ModelNode<int> *ddynm = new clarity::ModelNode<int>(clarity::CppType::Int);
   ddynm->splicePtrs(d);
   clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div",
                                                            clarity::CppType::NoData);

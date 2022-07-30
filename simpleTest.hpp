@@ -14,4 +14,20 @@
 using namespace clarity;
 //using CppType = clarity::ControlNetworkNode::CppType;
 
+struct TBase {
+
+    void * foo_;
+};
+
+template <typename T>
+struct Ttest : public TBase {
+Ttest(T * t) {
+    foo_ = t; 
+}
+
+};
+
+
+
+
 #endif

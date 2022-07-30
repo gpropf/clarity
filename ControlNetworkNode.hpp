@@ -136,9 +136,9 @@ namespace clarity
             jsval_.set("cpptype", val(anyvalPtrType));
         }
 
-        ControlNetworkNode(const DynamicValue dynamicValue, const string &name = "") : dynamicValue_(dynamicValue), name_(name)
-        {
-        }
+        // ControlNetworkNode(const DynamicValue dynamicValue, const string &name = "") : dynamicValue_(dynamicValue), name_(name)
+        // {
+        // }
 
         ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
         {
@@ -278,7 +278,7 @@ namespace clarity
         }
 
     protected:
-        DynamicValue dynamicValue_;
+       // DynamicValue dynamicValue_;
         bool clean_ = true;
         static TicketMachine tm;
         static map<const int, ControlNetworkNode *> switchboard;
