@@ -277,13 +277,11 @@ namespace clarity
              //al.peer->addALPeer(new ActiveLink());
         }
 
-    protected:
-       // DynamicValue dynamicValue_;
+    protected:       
         bool clean_ = true;
         static TicketMachine tm;
         static map<const int, ControlNetworkNode *> switchboard;
-        val jsval_ = val::global("CLElement").new_();
-        val nodeVal = val(NULL);
+        val jsval_ = val::global("CLElement").new_();        
         CppType anyvalPtrType_; // C++ Data type
         //void *anyvalPtr_;       // pointer to actual data
         ControlNetworkNode *parent_;
