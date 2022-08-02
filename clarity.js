@@ -1,6 +1,11 @@
 
 // Run with 'python3 -m http.server 8000'
 
+class Foo {
+  constructor() { }
+}
+
+
 class CLElement {
 
   constructor() { }
@@ -99,6 +104,31 @@ class CLElement {
     return el
   }
 
+  createDOMElement2(id, tag, cpptype, name="") {
+    this.id_ = id
+    this.tag_ = tag    
+    this.cpptype_ = cpptype
+    this.name_ = name
+
+    console.log(`ID ${id} from ticketMachine.`)
+    var el = document.getElementById(this.id_)
+    if (el == null) {
+      el = document.getElementById(this.name_)
+      if (el == null) {
+        console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
+        el = document.createElement(this.tag_)
+        //alert("Child element id is " + id)
+        document.body.appendChild(el)
+        // Without this it seems the elements vanish. The idea is that you append them later to
+        // their actual parents using a call in C++ to the appendChild method.
+
+        el.id = id
+        el.type = this.type_
+      }
+    }
+    this.domElement_ = el
+  }
+
   set id(id) {
     this.id_ = id
     console.log(`ID ${id} being set by C++ constructor.`)
@@ -163,3 +193,4 @@ function myTimer() {
 }
 
 window.CLElement = CLElement
+window.Foo = Foo
