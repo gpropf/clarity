@@ -93,7 +93,7 @@ class CLElement {
     return this.domElement_.name;
   }
 
-  createDOMElement() {
+  createDOMElementByTagType() {
     var el
     if (this.tag_ == "svg" || this.tag_ == "circle") {
       el = document.createElementNS("http://www.w3.org/2000/svg", this.tag_)
@@ -104,7 +104,7 @@ class CLElement {
     return el
   }
 
-  createDOMElement2(id, tag, cpptype, name="") {
+  createDOMElement(id, tag, cpptype, name="") {
     this.id_ = id
     this.tag_ = tag    
     this.cpptype_ = cpptype
@@ -116,28 +116,7 @@ class CLElement {
       el = document.getElementById(this.name_)
       if (el == null) {
         console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
-        el = document.createElement(this.tag_)
-        //alert("Child element id is " + id)
-        document.body.appendChild(el)
-        // Without this it seems the elements vanish. The idea is that you append them later to
-        // their actual parents using a call in C++ to the appendChild method.
-
-        el.id = id
-        el.type = this.type_
-      }
-    }
-    this.domElement_ = el
-  }
-
-  set id(id) {
-    this.id_ = id
-    console.log(`ID ${id} being set by C++ constructor.`)
-    var el = document.getElementById(this.id_)
-    if (el == null) {
-      el = document.getElementById(this.name_)
-      if (el == null) {
-        console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
-        el = this.createDOMElement()
+        el = this.createDOMElementByTagType()
         //alert("Child element id is " + id)
         document.body.appendChild(el)
         // Without this it seems the elements vanish. The idea is that you append them later to
@@ -159,6 +138,10 @@ class CLElement {
         Module.ControlNetworkNode.markNodeDirtyById(outerThis.id_)
       })
     }
+  }
+
+  set id(id) {
+    this.id_ = id    
   }
 
   addEventListenerById(eventName, id) {

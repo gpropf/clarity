@@ -28,22 +28,17 @@ namespace clarity
      */
     WebElemNode(const string &name, const string &tag,
                 const CppType anyvalPtrType) : WebNode(name, anyvalPtrType)
-
     {
-      cout << "WebElemNodeWebElemNode\n\n\n";
+      cout << "WebElemNode(const string &name, const string &tag, const CppType anyvalPtrType): " << (int)anyvalPtrType << " id = " << id_ << "\n";
 
-      cout << "DTEST:WebElemNode(const string &name, const string &tag, const CppType anyvalPtrType): " << (int)anyvalPtrType << " id = " << id_ << "\n";
+      // jsval_.set("cpptype", val(anyvalPtrType));
+      // jsval_.set("tag", val(tag));
+      // jsval_.set("id", val(id_));
+      // jsval_.set("name", val(name));
 
-      jsval_.set("cpptype", val(anyvalPtrType));
-      jsval_.set("tag", val(tag));
-
-      jsval_.set("id", val(id_));
-      jsval_.set("name", val(name));
-
-      tag_ = tag;
-      
+      jsval_.call<void>("createDOMElement", id_, tag, anyvalPtrType, name);
+      tag_ = tag;      
       boundField_ = "value";
-
       ControlNetworkNode::switchboard[id_] = this;
     }
 
