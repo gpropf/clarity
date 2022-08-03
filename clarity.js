@@ -1,9 +1,9 @@
 
 // Run with 'python3 -m http.server 8000'
 
-class Foo {
-  constructor() { }
-}
+// class Foo {
+//   constructor() { }
+// }
 
 
 class CLElement {
@@ -176,4 +176,4 @@ function myTimer() {
 }
 
 window.CLElement = CLElement
-window.Foo = Foo
+// window.Foo = Foo

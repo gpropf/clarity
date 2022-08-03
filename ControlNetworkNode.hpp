@@ -282,7 +282,7 @@ namespace clarity
         static TicketMachine tm;
         static map<const int, ControlNetworkNode *> switchboard;
         val jsval_ = val::global("CLElement").new_();   
-        val foo = val::global("Foo").new_();
+        //val foo = val::global("Foo").new_();
         CppType anyvalPtrType_; // C++ Data type
         //void *anyvalPtr_;       // pointer to actual data
         ControlNetworkNode *parent_;
