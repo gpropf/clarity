@@ -56,9 +56,6 @@ map<const int, clarity::ControlNetworkNode *> clarity::ControlNetworkNode::switc
 map<string, std::function<void()>> clarity::WebElemNode::callbackMap;
 clarity::TicketMachine clarity::ControlNetworkNode::tm;
 
-
-
-
 int main()
 {
 
@@ -67,8 +64,8 @@ int main()
 
   vector<TBase *> v;
 
-  Ttest<int> * tti =  new Ttest(&i);
-  Ttest<float> * ttf =  new Ttest(&f);
+  Ttest<int> *tti = new Ttest(&i);
+  Ttest<float> *ttf = new Ttest(&f);
 
   v.push_back(tti);
   v.push_back(ttf);
@@ -85,14 +82,13 @@ int main()
 
   double *n = new double(55.9);
   double *d = new double(3.14159);
-  int * di = new int(1);
+  double *dd = new double(2.5);
   DynamicValue dvd(d, CppType::Double);
 
   clarity::ModelNode<double> *nm = new clarity::ModelNode<double>(n);
-  
 
-  clarity::ModelNode<int> *ddynm = new clarity::ModelNode<int>(di);
-  
+  clarity::ModelNode<double> *ddynm = new clarity::ModelNode<double>(dd);
+
   clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div",
                                                            clarity::CppType::NoData);
   clarity::WebElemNode *ncntr = new clarity::WebElemNode("n", "input",
@@ -107,9 +103,9 @@ int main()
   maindiv->appendChild(dcntr);
 
   nm->addPeer(ncntr);
-  ddynm->addPeer(dcntr);
-  // ddynm->addALPeer(ControlNetworkNode::ActiveLink(dcntr, 7.3));
-  // ddynm->pushDynValToPeers(ddynm);
+  // ddynm->addPeer(dcntr);
+  ddynm->addALPeer(clarity::ControlNetworkNode::ActiveLink(dcntr, val(7.3)));
+  ddynm->pushValToPeersThruAL(ddynm);
 
   ncntr->addEventListenerByName("change", "printNetworkState");
   nm->pushValToPeers(nm);

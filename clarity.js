@@ -10,6 +10,11 @@ class CLElement {
 
   constructor() { }
 
+
+  multiplyValues(a,b) {
+    return a * b
+  }
+
   jsToCPPVal(jsval) {
     
     switch (this.cpptype_) {

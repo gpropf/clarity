@@ -29,37 +29,19 @@ namespace clarity
          *
          *
          */
-
+        
         class ActiveLink //: public Invertable
         {
         public:
-            
-            // ActiveLink(ControlNetworkNode *peer, void *multiplier,
-            //            CppType cppType) : peer_(peer), multiplier_(multiplier), cppType_(cppType)
 
-            // {
-            // }
-
-            ActiveLink(ControlNetworkNode *peer, DynamicValue multiplier)
+            ActiveLink(ControlNetworkNode *peer, val multiplier)
                 : peer_(peer), multiplier_(multiplier)
 
             {
             }
 
             ControlNetworkNode *peer_;
-
-            DynamicValue multiplier_;
-
-            // ActiveLink invert(ControlNetworkNode *owner, ActiveLink al)
-            // {
-            //     return ActiveLink(owner, 1 / al.getMultiplier(),
-            //                       al.getJsFunc(), al.getValueTransformIsConstant());
-            // }
-
-        public:
-           // inline void *getMultiplier() { return multiplier_; }
-            // inline bool getValueTransformIsConstant() { return valueTransformIsConstant_; }
-            // inline val getJsFunc() { return vt_.jsFunc_; }
+            val multiplier_;                  
         };
 
         void setParent(ControlNetworkNode *parent) { this->parent_ = parent; }
@@ -71,15 +53,7 @@ namespace clarity
                  << "\n";
             printNodeStats("getVal()");
             return val(NULL);
-        }
-
-        virtual val getDynVal() const
-        {
-            cout << "ControlNetworkNode::getDynVal()"
-                 << "\n";
-            printNodeStats("getDynVal()");
-            return val(NULL);
-        }
+        }        
 
         val getJSval() const { return jsval_; }
 
@@ -141,13 +115,10 @@ namespace clarity
         // }
 
         ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
-        {
-            // ControlNetworkNode();
+        {            
             init();
-            cout << "ControlNetworkNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << " ID = " << id_ << " \n";
-            // id_ = tm.getNext();
-            jsval_.set("cpptype", val(anyvalPtrType));
-            // ControlNetworkNode::switchboard[id_] = this;
+            cout << "ControlNetworkNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << " ID = " << id_ << " \n";            
+            jsval_.set("cpptype", val(anyvalPtrType));            
         }
 
         template <typename T>
@@ -161,13 +132,7 @@ namespace clarity
         {
             cout << "Marking node " << id_ << " as dirty.\n\n";
             clean_ = false;
-        }
-
-        virtual void setDynVal(const val &inval)
-        {
-            cout << "Marking node " << id_ << " as dirty.\n\n";
-            clean_ = false;
-        }
+        }        
 
         virtual void pushValToPeer(ControlNetworkNode *peer)
         {
@@ -188,22 +153,18 @@ namespace clarity
             clean_ = true;
         }
 
-        virtual void pushDynValToPeer(ActiveLink &al)
+        virtual void pushValToPeerThruAL(ActiveLink &al)
         {
-            printNodeStats("pushValToPeer()");
+            printNodeStats("pushValToPeerThruAL()");
             if (clean_)
             {
-                cout << "Node " << id_ << " is clean, should return.\n";
-                return;
+                cout << "Node " << id_ << " is clean.\n";
+                //return;
             }
-            val internalVal = getDynVal();
-            // cout << "Internal val is ";
-            // jsval_.call<void>("printToConsole", internalVal);
-            // cout << "Value is type ";
-            // jsval_.call<void>("printType", internalVal);
-            // cout << endl;
-            al.peer_->setDynVal(internalVal);
-            // al.peer_->pushDynValToPeers();
+            val internalVal = getVal();
+            val product = jsval_.call<val>("multiplyValues", internalVal, al.multiplier_);            
+            al.peer_->setVal(product);
+            cout << "PRODUCT: " << product.as<double>() << "\n";            
             clean_ = true;
         }
 
@@ -230,7 +191,7 @@ namespace clarity
             }
         }
 
-        virtual void pushDynValToPeers(ControlNetworkNode *excludedPeer = nullptr)
+        virtual void pushValToPeersThruAL(ControlNetworkNode *excludedPeer = nullptr)
 
         {
             printNodeStats("pushValToPeers()");
@@ -238,7 +199,7 @@ namespace clarity
             {
                 for (auto alpeer : alpeers_)
                 {
-                    pushDynValToPeer(alpeer); // FIXME
+                    pushValToPeerThruAL(alpeer); // FIXME
                 }
             }
             else
@@ -247,7 +208,7 @@ namespace clarity
                 {
                     if (alpeer.peer_ != excludedPeer)
                     {
-                        pushDynValToPeer(alpeer);
+                        pushValToPeerThruAL(alpeer);
                     }
                 }
             }
