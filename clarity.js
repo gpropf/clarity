@@ -11,12 +11,16 @@ class CLElement {
   constructor() { }
 
 
-  multiplyValues(a,b) {
+  multiplyValues(a, b) {
     return a * b
   }
 
+  invertValue(v) {
+    return 1 / v
+  }
+
   jsToCPPVal(jsval) {
-    
+
     switch (this.cpptype_) {
 
       case Module.WebElementCppType.Int:
@@ -109,9 +113,9 @@ class CLElement {
     return el
   }
 
-  createDOMElement(id, tag, cpptype, name="") {
+  createDOMElement(id, tag, cpptype, name = "") {
     this.id_ = id
-    this.tag_ = tag    
+    this.tag_ = tag
     this.cpptype_ = cpptype
     this.name_ = name
 
@@ -146,7 +150,7 @@ class CLElement {
   }
 
   set id(id) {
-    this.id_ = id    
+    this.id_ = id
   }
 
   addEventListenerById(eventName, id) {

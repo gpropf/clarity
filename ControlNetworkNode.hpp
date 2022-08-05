@@ -153,6 +153,7 @@ namespace clarity
             clean_ = true;
         }
 
+        
         virtual void pushValToPeerThruAL(ActiveLink &al)
         {
             printNodeStats("pushValToPeerThruAL()");
@@ -164,7 +165,7 @@ namespace clarity
             val internalVal = getVal();
             val product = jsval_.call<val>("multiplyValues", internalVal, al.multiplier_);            
             al.peer_->setVal(product);
-            cout << "PRODUCT: " << product.as<double>() << "\n";            
+            //cout << "PRODUCT: " << product.as<T>() << "\n";            
             clean_ = true;
         }
 
@@ -191,15 +192,15 @@ namespace clarity
             }
         }
 
+        
         virtual void pushValToPeersThruAL(ControlNetworkNode *excludedPeer = nullptr)
-
         {
-            printNodeStats("pushValToPeers()");
+            printNodeStats("pushValToPeersThruAL()");
             if (excludedPeer == nullptr)
             {
                 for (auto alpeer : alpeers_)
                 {
-                    pushValToPeerThruAL(alpeer); // FIXME
+                    pushValToPeerThruAL(alpeer);
                 }
             }
             else
@@ -235,7 +236,7 @@ namespace clarity
             {
                 return;
             }
-             //al.peer->addALPeer(new ActiveLink());
+            al.peer_->addALPeer(ActiveLink(this, jsval_.call<val>("invertValue",  al.multiplier_)));
         }
 
     protected:       
