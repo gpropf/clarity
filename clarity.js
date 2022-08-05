@@ -144,6 +144,7 @@ class CLElement {
         //outerThis.printState()
         //Module.WebElement.updateModelFromViewById(outerThis.id_)
         Module.ControlNetworkNode.pushValToPeersById(outerThis.id_)
+        Module.ControlNetworkNode.pushValToPeersThruALById(outerThis.id_)
         Module.ControlNetworkNode.markNodeDirtyById(outerThis.id_)
       })
     }

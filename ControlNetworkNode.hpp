@@ -81,6 +81,13 @@ namespace clarity
             cnn->pushValToPeers(cnn);
         }
 
+        static void pushValToPeersThruALById(int id)
+        {
+            ControlNetworkNode *cnn = getCLElementById(id);
+            cnn->printNodeStats("pushValToPeersThruALById()");
+            cnn->pushValToPeersThruAL(cnn);
+        }
+
         void toggleClean()
         {
             cout << "TOGGLECLEAN, oldstate: " << clean_ << " ID = " << id_ << " \n\n\n";
@@ -236,7 +243,7 @@ namespace clarity
             {
                 return;
             }
-            al.peer_->addALPeer(ActiveLink(this, jsval_.call<val>("invertValue",  al.multiplier_)));
+            al.peer_->addALPeer(ActiveLink(this, jsval_.call<val>("invertValue",  al.multiplier_)), true);
         }
 
     protected:       

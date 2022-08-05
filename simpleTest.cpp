@@ -11,8 +11,10 @@ EMSCRIPTEN_BINDINGS(clarity)
   class_<ControlNetworkNode>("ControlNetworkNode")
       .function("toggleClean", &ControlNetworkNode::toggleClean, allow_raw_pointers())
       .function("pushValToPeers", &ControlNetworkNode::pushValToPeers, allow_raw_pointers())
+      .function("pushValToPeersThruAL", &ControlNetworkNode::pushValToPeersThruAL, allow_raw_pointers())
       .function("getVal", &ControlNetworkNode::getVal, allow_raw_pointers())
       .class_function("pushValToPeersById", &ControlNetworkNode::pushValToPeersById, allow_raw_pointers())
+      .class_function("pushValToPeersThruALById", &ControlNetworkNode::pushValToPeersThruALById, allow_raw_pointers())
       .class_function("getCLElementById", &ControlNetworkNode::getCLElementById, allow_raw_pointers())
       .class_function("markNodeDirtyById", &ControlNetworkNode::markNodeDirtyById, allow_raw_pointers());
 
@@ -104,7 +106,7 @@ int main()
 
   nm->addPeer(ncntr);
   // ddynm->addPeer(dcntr);
-  ddynm->addALPeer(clarity::ControlNetworkNode::ActiveLink(dcntr, val(7.3)));
+  ddynm->addALPeer(clarity::ControlNetworkNode::ActiveLink(dcntr, val(10)));
   ddynm->pushValToPeersThruAL(ddynm);
 
   ncntr->addEventListenerByName("change", "printNetworkState");

@@ -45,6 +45,7 @@ namespace clarity
         {
             ControlNetworkNode::setVal(inval);
             *reinterpret_cast<T *>(dynval_) = this->jsval_.template call<T>("jsToCPPVal", inval);
+            cout << "ModelNode::setVal() value is: " << *reinterpret_cast<T *>(dynval_) << "\n";
         }
 
         T *dynval_;
