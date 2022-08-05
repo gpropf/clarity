@@ -104,13 +104,13 @@ int main()
   maindiv->appendChild(ncntr);
   maindiv->appendChild(dcntr);
 
-  nm->addPeer(ncntr);
+  nm->addALPeer(clarity::ControlNetworkNode::ActiveLink(ncntr, val(10)));
   // ddynm->addPeer(dcntr);
   ddynm->addALPeer(clarity::ControlNetworkNode::ActiveLink(dcntr, val(10)));
   ddynm->pushValToPeersThruAL(ddynm);
 
   ncntr->addEventListenerByName("change", "printNetworkState");
-  nm->pushValToPeers(nm);
+  nm->pushValToPeersThruAL(nm);
 
   clarity::WebElemNode::callbackMap["iterateModel"] = [=]
   {
