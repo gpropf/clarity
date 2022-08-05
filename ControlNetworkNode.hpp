@@ -33,7 +33,7 @@ namespace clarity
         class ActiveLink //: public Invertable
         {
         public:
-            ActiveLink(ControlNetworkNode *peer, val multiplier)
+            ActiveLink(ControlNetworkNode *peer, val multiplier = val(1))
                 : peer_(peer), multiplier_(multiplier)
 
             {
@@ -202,13 +202,19 @@ namespace clarity
             printNodeStats("pushValToPeersThruAL()");
             if (excludedPeer == nullptr)
             {
-                excludedPeer = this;
-            }
-            for (auto alpeer : alpeers_)
-            {
-                if (alpeer.peer_ != excludedPeer)
+                for (auto peer : peers_)
                 {
-                    pushValToPeerThruAL(alpeer);
+                    pushValToPeer(peer);
+                }
+            }
+            else
+            {
+                for (auto alpeer : alpeers_)
+                {
+                    if (alpeer.peer_ != excludedPeer)
+                    {
+                        pushValToPeerThruAL(alpeer);
+                    }
                 }
             }
         }
