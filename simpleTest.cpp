@@ -107,10 +107,10 @@ int main()
   nm->addALPeer(clarity::ControlNetworkNode::ActiveLink(ncntr, val(10)));
   // ddynm->addPeer(dcntr);
   ddynm->addALPeer(clarity::ControlNetworkNode::ActiveLink(dcntr, val(10)));
-  ddynm->pushValToPeersThruAL(ddynm);
+  ddynm->pushValToPeersThruAL();
 
   ncntr->addEventListenerByName("change", "printNetworkState");
-  nm->pushValToPeersThruAL(nm);
+  nm->pushValToPeersThruAL();
 
   clarity::WebElemNode::callbackMap["iterateModel"] = [=]
   {

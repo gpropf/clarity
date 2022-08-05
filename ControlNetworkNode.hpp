@@ -29,11 +29,10 @@ namespace clarity
          *
          *
          */
-        
+
         class ActiveLink //: public Invertable
         {
         public:
-
             ActiveLink(ControlNetworkNode *peer, val multiplier)
                 : peer_(peer), multiplier_(multiplier)
 
@@ -41,7 +40,7 @@ namespace clarity
             }
 
             ControlNetworkNode *peer_;
-            val multiplier_;                  
+            val multiplier_;
         };
 
         void setParent(ControlNetworkNode *parent) { this->parent_ = parent; }
@@ -53,11 +52,11 @@ namespace clarity
                  << "\n";
             printNodeStats("getVal()");
             return val(NULL);
-        }        
+        }
 
         val getJSval() const { return jsval_; }
 
-        //void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
+        // void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
         virtual void printState() const { jsval_.call<void>("printState"); }
         static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
 
@@ -122,10 +121,10 @@ namespace clarity
         // }
 
         ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
-        {            
+        {
             init();
-            cout << "ControlNetworkNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << " ID = " << id_ << " \n";            
-            jsval_.set("cpptype", val(anyvalPtrType));            
+            cout << "ControlNetworkNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << " ID = " << id_ << " \n";
+            jsval_.set("cpptype", val(anyvalPtrType));
         }
 
         template <typename T>
@@ -139,7 +138,7 @@ namespace clarity
         {
             cout << "Marking node " << id_ << " as dirty.\n\n";
             clean_ = false;
-        }        
+        }
 
         virtual void pushValToPeer(ControlNetworkNode *peer)
         {
@@ -160,19 +159,18 @@ namespace clarity
             clean_ = true;
         }
 
-        
         virtual void pushValToPeerThruAL(ActiveLink &al)
         {
             printNodeStats("pushValToPeerThruAL()");
             if (clean_)
             {
                 cout << "Node " << id_ << " is clean.\n";
-                //return;
+                // return;
             }
             val internalVal = getVal();
-            val product = jsval_.call<val>("multiplyValues", internalVal, al.multiplier_);            
+            val product = jsval_.call<val>("multiplyValues", internalVal, al.multiplier_);
             al.peer_->setVal(product);
-            //cout << "PRODUCT: " << product.as<T>() << "\n";            
+            // cout << "PRODUCT: " << product.as<T>() << "\n";
             clean_ = true;
         }
 
@@ -199,25 +197,18 @@ namespace clarity
             }
         }
 
-        
         virtual void pushValToPeersThruAL(ControlNetworkNode *excludedPeer = nullptr)
         {
             printNodeStats("pushValToPeersThruAL()");
             if (excludedPeer == nullptr)
             {
-                for (auto alpeer : alpeers_)
+                excludedPeer = this;
+            }
+            for (auto alpeer : alpeers_)
+            {
+                if (alpeer.peer_ != excludedPeer)
                 {
                     pushValToPeerThruAL(alpeer);
-                }
-            }
-            else
-            {
-                for (auto alpeer : alpeers_)
-                {
-                    if (alpeer.peer_ != excludedPeer)
-                    {
-                        pushValToPeerThruAL(alpeer);
-                    }
                 }
             }
         }
@@ -243,17 +234,17 @@ namespace clarity
             {
                 return;
             }
-            al.peer_->addALPeer(ActiveLink(this, jsval_.call<val>("invertValue",  al.multiplier_)), true);
+            al.peer_->addALPeer(ActiveLink(this, jsval_.call<val>("invertValue", al.multiplier_)), true);
         }
 
-    protected:       
+    protected:
         bool clean_ = true;
         static TicketMachine tm;
         static map<const int, ControlNetworkNode *> switchboard;
-        val jsval_ = val::global("CLElement").new_();   
-        //val foo = val::global("Foo").new_();
+        val jsval_ = val::global("CLElement").new_();
+        // val foo = val::global("Foo").new_();
         CppType anyvalPtrType_; // C++ Data type
-        //void *anyvalPtr_;       // pointer to actual data
+        // void *anyvalPtr_;       // pointer to actual data
         ControlNetworkNode *parent_;
         int id_ = 1000;
         string name_;
