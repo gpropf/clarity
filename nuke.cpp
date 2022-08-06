@@ -1,6 +1,7 @@
 
 //#include "clarity.hpp"
 #include "nuke.hpp"
+
 #include "embindings.hpp"
 
 NukeModel::NukeModel(double s, double delta) : s_(s), delta_(delta)
@@ -38,10 +39,10 @@ NukeControl::NukeControl(const string &name, const string &tag,
 
   controlRodSetting_ = new clarity::WebElemNode("controlRodSetting_", "input",
                                                 clarity::CppType::Double);
-  nm.controlRodSettingNode_->addALPeer(ActiveLink(controlRodSetting_));
-  nm.controlRodSettingNode_->pushValToPeersThruAL(nm.controlRodSettingNode_);
-  nm.coreToWaterHeatingConstantNode_->addALPeer(ActiveLink(coreToWaterHeatingConstant_, val(10)));
-  nm.coreToWaterHeatingConstantNode_->pushValToPeersThruAL(nm.coreToWaterHeatingConstantNode_);
+  nm.controlRodSettingNode_->addPeer(controlRodSetting_);
+  nm.controlRodSettingNode_->pushValToPeers(nm.controlRodSettingNode_);
+  nm.coreToWaterHeatingConstantNode_->addPeer(coreToWaterHeatingConstant_);
+  nm.coreToWaterHeatingConstantNode_->pushValToPeers(nm.coreToWaterHeatingConstantNode_);
 }
 
 /**
@@ -63,9 +64,6 @@ clarity::TicketMachine clarity::ControlNetworkNode::tm;
 
 int main()
 {
-  using ActiveLink = ControlNetworkNode::ActiveLink;
-
-
   val CLContext = val::global("CLElement");
   if (CLContext.as<bool>())
   {
@@ -78,7 +76,7 @@ int main()
 
   double *n = new double(33);
   clarity::ModelNode<double> *nm = new clarity::ModelNode(n, clarity::CppType::Double);
-  // nm->splicePtrs(n);
+
   clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div",
                                                            clarity::CppType::NoData);
   clarity::WebElemNode *ncntr = new clarity::WebElemNode("numerator", "input",
@@ -100,8 +98,8 @@ int main()
   doubleTest->setAttribute("type", val("text"));
   clarity::ModelNode<double> *mdtest = new clarity::ModelNode(d, CppType::Double);
 
-  mdtest->addALPeer(ActiveLink(doubleTest));
-  mdtest->pushValToPeersThruAL(mdtest);
+  //mdtest->addPeer(doubleTest);
+  //mdtest->pushValToPeers(mdtest);
   NukeModel *nmod = new NukeModel(1, 5);
   NukeControl *nc = new NukeControl("nuke_control", "div",
                                     clarity::CppType::NoData, *nmod);
@@ -116,7 +114,13 @@ int main()
   cir1->setAttribute("fill", val("lightblue"));
   cir1->setAttribute("stroke-width", val(4));
   cir1->setAttribute("r", val(80));
-  nm->addALPeer(ActiveLink(cir1Radius));
+
+  using ActiveLink = ControlNetworkNode::ActiveLink;
+
+  //nm->addPeer(cir1Radius);
+
+  nm->addALPeer(ActiveLink(cir1Radius, val(1)));
+
   nslider->setAttribute("type", val("range"));
   maindiv->appendChild(ncntr);
   maindiv->appendChild(nslider);
@@ -124,8 +128,12 @@ int main()
   maindiv->appendChild(nc);
   svgarea->appendChild(cir1);
   ncntr->setAttribute("type", val("text"));
-  nm->addALPeer(ActiveLink(ncntr));
-  nm->addALPeer(ActiveLink(nslider));
+
+  // nm->addPeer(ncntr);
+  nm->addALPeer(ActiveLink(ncntr, val(3)));
+  // nm->addPeer(nslider);
+  nm->addALPeer(ActiveLink(nslider, val(1)));
+
   ncntr->addEventListenerByName("change", "printNetworkState");
   nslider->addEventListenerByName("change", "printNetworkState");
   maindiv->appendChild(svgarea);
@@ -135,9 +143,10 @@ int main()
   nc->buttonText_ = new string("CLICK ME TOO!");
   nc->buttonModel_ = new clarity::ModelNode<string>(nc->buttonText_, clarity::CppType::String);
 
-  nc->buttonModel_->addPeer(nc->applyButton_);
-  nc->buttonModel_->pushValToPeersThruAL();
+  //nc->buttonModel_->addPeer(nc->applyButton_);
+  //nc->buttonModel_->pushValToPeers(nc->buttonModel_);
 
+  // nm->pushValToPeers(nm);
   nm->pushValToPeersThruAL(nm);
 
   clarity::WebElemNode::callbackMap["iterateModel"] = [=]
@@ -159,7 +168,7 @@ int main()
   {
     cout << "callbackMap[\"tick\"]\n";
     (*n)++;
-    nm->pushValToPeersThruAL(nm);
+    nm->pushValToPeers(nm);
   };
 
   printf("Setup complete!\n");

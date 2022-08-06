@@ -164,7 +164,7 @@ namespace clarity
             printNodeStats("pushValToPeerThruAL()");
             if (clean_)
             {
-                cout << "Node " << id_ << " is clean.\n";
+                cout << "pushValToPeerThruAL: Node " << id_ << " is clean.\n";
                 // return;
             }
             val internalVal = getVal();
@@ -197,22 +197,45 @@ namespace clarity
             }
         }
 
+        void printALPeers(string prefix = "")
+        {
+            for (auto alpeer : alpeers_)
+            {
+                cout << prefix << " printALPeers: id = " << id_ << ", ALPeer id = " << alpeer.peer_->id_ << "\n";
+            }
+        }
+
+        void setValOnALPeers(const val &inval)
+        {
+            for (auto alpeer : alpeers_)
+            {
+                val product = jsval_.call<val>("multiplyValues", inval, alpeer.multiplier_);
+                alpeer.peer_->setVal(product);
+               // alpeer.peer_->setVal(inval);
+            }
+        }
+
         virtual void pushValToPeersThruAL(ControlNetworkNode *excludedPeer = nullptr)
         {
             printNodeStats("pushValToPeersThruAL()");
             if (excludedPeer == nullptr)
             {
-                for (auto peer : peers_)
+                cout << "pushValToPeersThruAL(): excludedPeer == nullptr\n";
+                for (auto alpeer : alpeers_)
                 {
-                    pushValToPeer(peer);
+                    cout << "pushValToPeersThruAL(): alpeer.peer_.id_ = " << alpeer.peer_->id_ << "\n";
+                    pushValToPeerThruAL(alpeer);
                 }
             }
             else
             {
+                cout << "pushValToPeersThruAL(): excludedPeer != nullptr\n";
                 for (auto alpeer : alpeers_)
                 {
                     if (alpeer.peer_ != excludedPeer)
                     {
+                        cout << "pushValToPeersThruAL(): alpeer.peer_ != excludedPeer\n";
+
                         pushValToPeerThruAL(alpeer);
                     }
                 }

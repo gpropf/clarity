@@ -140,7 +140,7 @@ class CLElement {
     if (this.tag_ == 'input') {
       var outerThis = this
       this.domElement_.addEventListener('change', function (e) {
-        console.log('Javascript onchange callback called')
+        console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)
         //outerThis.printState()
         //Module.WebElement.updateModelFromViewById(outerThis.id_)
         //Module.ControlNetworkNode.pushValToPeersById(outerThis.id_)
