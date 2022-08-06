@@ -159,6 +159,11 @@ namespace clarity
             clean_ = true;
         }
 
+        // bool isType(emscripten::val value, const std::string &type)
+        // {
+        //     return (value.typeof().as<std::string>() == type);
+        // }
+
         virtual void pushValToPeerThruAL(ActiveLink &al)
         {
             printNodeStats("pushValToPeerThruAL()");
@@ -167,9 +172,18 @@ namespace clarity
                 cout << "pushValToPeerThruAL: Node " << id_ << " is clean.\n";
                 // return;
             }
+
             val internalVal = getVal();
-            val product = jsval_.call<val>("multiplyValues", internalVal, al.multiplier_);
-            al.peer_->setVal(product);
+
+            if (internalVal.isNumber())
+            {
+                val product = jsval_.call<val>("multiplyValues", internalVal, al.multiplier_);
+                al.peer_->setVal(product);
+            }
+            else {
+                al.peer_->setVal(internalVal);
+            }
+
             // cout << "PRODUCT: " << product.as<T>() << "\n";
             clean_ = true;
         }
@@ -211,7 +225,7 @@ namespace clarity
             {
                 val product = jsval_.call<val>("multiplyValues", inval, alpeer.multiplier_);
                 alpeer.peer_->setVal(product);
-               // alpeer.peer_->setVal(inval);
+                // alpeer.peer_->setVal(inval);
             }
         }
 

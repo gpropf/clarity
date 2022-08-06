@@ -74,7 +74,7 @@ int main()
     return -1;
   }
 
-  double *n = new double(33);
+  double *n = new double(5);
   clarity::ModelNode<double> *nm = new clarity::ModelNode(n, clarity::CppType::Double);
 
   clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div",
@@ -130,7 +130,7 @@ int main()
   ncntr->setAttribute("type", val("text"));
 
   // nm->addPeer(ncntr);
-  nm->addALPeer(ActiveLink(ncntr, val(3)));
+  nm->addALPeer(ActiveLink(ncntr, val(10)));
   // nm->addPeer(nslider);
   nm->addALPeer(ActiveLink(nslider, val(1)));
 
@@ -143,8 +143,8 @@ int main()
   nc->buttonText_ = new string("CLICK ME TOO!");
   nc->buttonModel_ = new clarity::ModelNode<string>(nc->buttonText_, clarity::CppType::String);
 
-  //nc->buttonModel_->addPeer(nc->applyButton_);
-  //nc->buttonModel_->pushValToPeers(nc->buttonModel_);
+  nc->buttonModel_->addALPeer(ActiveLink(nc->applyButton_));
+  nc->buttonModel_->pushValToPeersThruAL(nc->buttonModel_);
 
   // nm->pushValToPeers(nm);
   nm->pushValToPeersThruAL(nm);

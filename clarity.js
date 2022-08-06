@@ -18,6 +18,7 @@ class CLElement {
   invertValue(v) {
     return 1 / v
   }
+    
 
   jsToCPPVal(jsval) {
 
