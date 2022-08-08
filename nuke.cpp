@@ -168,7 +168,7 @@ int main()
   {
     cout << "callbackMap[\"tick\"]\n";
     (*n)++;
-    nm->pushValToPeers(nm);
+    nm->pushValToPeersThruAL(nm);
   };
 
   printf("Setup complete!\n");

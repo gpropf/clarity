@@ -18,7 +18,7 @@ class CLElement {
   invertValue(v) {
     return 1 / v
   }
-    
+
 
   jsToCPPVal(jsval) {
 
@@ -179,7 +179,7 @@ class CLElement {
 
 }
 
-//let myVar = setInterval(myTimer, 1000);
+// let myVar = setInterval(myTimer, 1000);
 function myTimer() {
   const d = new Date();
   console.log(d.toLocaleTimeString())
