@@ -51,7 +51,6 @@ private:
   double turbineInertia_;
   double powerOutput_;
   double totalPowerOutput_;
-
   
   //::ModelNode;
 
@@ -79,7 +78,7 @@ public:
   clarity::ModelNode<string> *buttonModel_;
   clarity::WebElemNode *controlRodSetting_;
   clarity::WebElemNode *coreToWaterHeatingConstant_;
-  clarity::CompoundElement *cpe_;
+  //clarity::CompoundElement *cpe_;
 };
 
 #endif

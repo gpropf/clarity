@@ -8,9 +8,8 @@ NukeModel::NukeModel(double s, double delta) : s_(s), delta_(delta)
 {
   printState();
   controlRodSetting_ = 0.5;
-  coreToWaterHeatingConstant_ = 1.0;
+  coreToWaterHeatingConstant_ = 2.0;
   controlRodSettingNode_ = new ModelNode<double>(&controlRodSetting_, CppType::Double);
-
   coreToWaterHeatingConstantNode_ = new ModelNode<double>(&coreToWaterHeatingConstant_, CppType::Double);
 }
 
@@ -22,14 +21,25 @@ NukeControl::NukeControl(const string &name, const string &tag,
   coreToWaterHeatingConstant_ = new clarity::WebElemNode("coreToWaterHeatingConstant_", "input",
                                                          clarity::CppType::Double);
   coreToWaterHeatingConstant_->setAttribute("type", val("text"));
-  clarity::LabelledInput *cpe_ = new clarity::LabelledInput("coreToWaterHeatingConstant_",
-                                                            "div",
-                                                            clarity::CppType::Double,
-                                                            coreToWaterHeatingConstant_);
+  clarity::LabelledInput *coreToWaterHeatingConstant = new clarity::LabelledInput("coreToWaterHeatingConstant_",
+                                                                                  "div",
+                                                                                  clarity::CppType::Double,
+                                                                                  coreToWaterHeatingConstant_);
+
+  controlRodSetting_ = new clarity::WebElemNode("controlRodSetting_", "input",
+                                                clarity::CppType::Double);
+  controlRodSetting_->setAttribute("type", val("text"));
+  clarity::LabelledInput *controlRodSetting = new clarity::LabelledInput("controlRodSetting_",
+                                                                         "div",
+                                                                         clarity::CppType::Double,
+                                                                         controlRodSetting_);
+
   applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::CppType::String);
 
   // mainDiv_->appendChild(applyButton_);
-  mainDiv_->appendChild(cpe_);
+  mainDiv_->appendChild(controlRodSetting);
+  mainDiv_->appendChild(coreToWaterHeatingConstant);
+  
 }
 
 NukeControl::NukeControl(const string &name, const string &tag,
@@ -37,12 +47,14 @@ NukeControl::NukeControl(const string &name, const string &tag,
     : NukeControl(name, tag, anyvalPtrType)
 {
 
-  controlRodSetting_ = new clarity::WebElemNode("controlRodSetting_", "input",
-                                                clarity::CppType::Double);
-  nm.controlRodSettingNode_->addPeer(controlRodSetting_);
-  nm.controlRodSettingNode_->pushValToPeers(nm.controlRodSettingNode_);
-  nm.coreToWaterHeatingConstantNode_->addPeer(coreToWaterHeatingConstant_);
-  nm.coreToWaterHeatingConstantNode_->pushValToPeers(nm.coreToWaterHeatingConstantNode_);
+  //controlRodSetting_ = new clarity::WebElemNode("controlRodSetting_", "input",
+  //                                              clarity::CppType::Double);
+  // nm.controlRodSettingNode_->addPeer(controlRodSetting_);
+  nm.controlRodSettingNode_->addALPeer(ActiveLink(controlRodSetting_, val(1)));
+  nm.controlRodSettingNode_->pushValToPeersThruAL(nm.controlRodSettingNode_);
+  // nm.coreToWaterHeatingConstantNode_->addPeer(coreToWaterHeatingConstant_);
+  nm.coreToWaterHeatingConstantNode_->addALPeer(ActiveLink(coreToWaterHeatingConstant_, val(1)));
+  nm.coreToWaterHeatingConstantNode_->pushValToPeersThruAL(nm.coreToWaterHeatingConstantNode_);
 }
 
 /**
@@ -98,8 +110,8 @@ int main()
   doubleTest->setAttribute("type", val("text"));
   clarity::ModelNode<double> *mdtest = new clarity::ModelNode(d, CppType::Double);
 
-  //mdtest->addPeer(doubleTest);
-  //mdtest->pushValToPeers(mdtest);
+  // mdtest->addPeer(doubleTest);
+  // mdtest->pushValToPeers(mdtest);
   NukeModel *nmod = new NukeModel(1, 5);
   NukeControl *nc = new NukeControl("nuke_control", "div",
                                     clarity::CppType::NoData, *nmod);
@@ -117,7 +129,7 @@ int main()
 
   using ActiveLink = ControlNetworkNode::ActiveLink;
 
-  //nm->addPeer(cir1Radius);
+  // nm->addPeer(cir1Radius);
 
   nm->addALPeer(ActiveLink(cir1Radius, val(1)));
 
