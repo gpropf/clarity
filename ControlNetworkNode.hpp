@@ -62,7 +62,7 @@ namespace clarity
 
         virtual string nodeStats() const
         {
-            string s = "Node id: " + to_string(id_) + ", Node type: " + typeid(*this).name() + "\n";
+            string s = "Node name: " + name_ + ", Node id: " + to_string(id_) + ", Node type: " + typeid(*this).name() + "\n";
             return s;
         }
 

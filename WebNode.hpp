@@ -20,31 +20,30 @@ namespace clarity
     val getVal() const
     {
       // ControlNetworkNode::getVal();
-      cout << "GETVAL called for WebNode, "
-           << "id = " << id_ << "\n\n";
+      printNodeStats("GETVAL");
       val domElement = jsval_["domElement"];
       string valueText = domElement[boundField_].as<string>();
 
       switch (this->anyvalPtrType_)
       {
       case CppType::Int:
-        cout << "GETVAL Int for " << valueText << "\n\n";
+        cout << "GETVAL Int: " << valueText << "\n";
         return val(stoi(valueText));
         break;
       case CppType::Float:
-        cout << "GETVAL Float\n\n";
+        cout << "GETVAL Float: " << valueText << "\n";
         return val(stof(valueText));
         break;
       case CppType::Double:
-        cout << "GETVAL Double\n\n";
+        cout << "GETVAL Double: " << valueText << "\n";
         return val(stod(valueText));
         break;
       case CppType::String:
-        cout << "GETVAL String\n\n";
+        cout << "GETVAL String: " << valueText << "\n";
         return val(valueText);
         break;
       case CppType::NoData:
-        cout << "GETVAL NoData\n\n";
+        cout << "GETVAL NoData\n";
       default:
         return val(NULL);
         break;
