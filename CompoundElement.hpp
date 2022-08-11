@@ -21,16 +21,22 @@ namespace clarity
     virtual val getVal() const;
     virtual void setVal(const val &inval);
 
-    CompoundElement(const string &name,
-                    const string &tag,
-                    const CppType anyvalPtrType,
-                    clarity::WebElemNode *innerElement);
+    // CompoundElement(const string &name,
+    //                 const string &tag,
+    //                 const CppType anyvalPtrType,
+    //                 clarity::WebElemNode *innerElement);
     CompoundElement(const string &name,
                     const string &tag,
                     const CppType anyvalPtrType);
+    CompoundElement(const string &tag,
+                    const CppType anyvalPtrType, const string &name = "");
+    CompoundElement(const string &name = "",
+                    const string &tag = "div",
+                    const CppType anyvalPtrType = CppType::NoData,
+                    clarity::WebElemNode *innerElement = nullptr);
 
   protected:
-    //clarity::WebElemNode *outerElement_; // Container div
+    // clarity::WebElemNode *outerElement_; // Container div
     clarity::WebElemNode *innerElement_; // Holds the actual value
   };
 

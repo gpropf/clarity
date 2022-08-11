@@ -9,6 +9,8 @@ NukeModel::NukeModel(double s, double delta) : s_(s), delta_(delta)
   printState();
   controlRodSetting_ = 0.5;
   coreToWaterHeatingConstant_ = 2.0;
+  turbineInertia_ = 1.4;
+  turbineInertiaNode_ = new ModelNode<double>(&turbineInertia_, CppType::Double);
   controlRodSettingNode_ = new ModelNode<double>(&controlRodSetting_, CppType::Double);
   coreToWaterHeatingConstantNode_ = new ModelNode<double>(&coreToWaterHeatingConstant_, CppType::Double);
 }
@@ -18,43 +20,39 @@ NukeControl::NukeControl(const string &name, const string &tag,
     : clarity::WebElemNode(name, tag, anyvalPtrType)
 {
   mainDiv_ = new clarity::WebElemNode("nukediv", "div", clarity::CppType::NoData);
-  coreToWaterHeatingConstant_ = new clarity::WebElemNode("coreToWaterHeatingConstant_", "input",
-                                                         clarity::CppType::Double);
-  coreToWaterHeatingConstant_->setAttribute("type", val("text"));
-  clarity::LabelledInput *coreToWaterHeatingConstant = new clarity::LabelledInput("coreToWaterHeatingConstant_",
-                                                                                  "div",
-                                                                                  clarity::CppType::Double,
-                                                                                  coreToWaterHeatingConstant_);
 
-  controlRodSetting_ = new clarity::WebElemNode("controlRodSetting_", "input",
-                                                clarity::CppType::Double);
+  coreToWaterHeatingConstant_ = new clarity::WebElemNode("coreToWaterHeatingConstant_", "input", clarity::CppType::Double);
+  coreToWaterHeatingConstant_->setAttribute("type", val("text"));
+  clarity::LabelledInput *coreToWaterHeatingConstant = new clarity::LabelledInput("coreToWaterHeatingConstant_", "div",
+                                                                                  clarity::CppType::Double, coreToWaterHeatingConstant_);
+
+  controlRodSetting_ = new clarity::WebElemNode("controlRodSetting_", "input", clarity::CppType::Double);
   controlRodSetting_->setAttribute("type", val("text"));
   clarity::LabelledInput *controlRodSetting = new clarity::LabelledInput("controlRodSetting_",
-                                                                         "div",
-                                                                         clarity::CppType::Double,
-                                                                         controlRodSetting_);
+                                                                         "div", clarity::CppType::Double, controlRodSetting_);
+
+  turbineInertia_ = new clarity::WebElemNode("turbineInertia_", "input", clarity::CppType::Double);
+  turbineInertia_->setAttribute("type", val("text"));
+  clarity::LabelledInput *turbineInertia = new clarity::LabelledInput("turbineInertia_",
+                                                                      "div", clarity::CppType::Double, turbineInertia_);
 
   applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::CppType::String);
-
   // mainDiv_->appendChild(applyButton_);
   mainDiv_->appendChild(controlRodSetting);
   mainDiv_->appendChild(coreToWaterHeatingConstant);
-  
+  mainDiv_->appendChild(turbineInertia);
 }
 
 NukeControl::NukeControl(const string &name, const string &tag,
                          clarity::CppType anyvalPtrType, NukeModel &nm)
     : NukeControl(name, tag, anyvalPtrType)
 {
-
-  //controlRodSetting_ = new clarity::WebElemNode("controlRodSetting_", "input",
-  //                                              clarity::CppType::Double);
-  // nm.controlRodSettingNode_->addPeer(controlRodSetting_);
   nm.controlRodSettingNode_->addALPeer(ActiveLink(controlRodSetting_, val(1)));
   nm.controlRodSettingNode_->pushValToPeersThruAL(nm.controlRodSettingNode_);
-  // nm.coreToWaterHeatingConstantNode_->addPeer(coreToWaterHeatingConstant_);
   nm.coreToWaterHeatingConstantNode_->addALPeer(ActiveLink(coreToWaterHeatingConstant_, val(1)));
   nm.coreToWaterHeatingConstantNode_->pushValToPeersThruAL(nm.coreToWaterHeatingConstantNode_);
+  nm.turbineInertiaNode_->addALPeer(ActiveLink(turbineInertia_, val(1)));
+  nm.turbineInertiaNode_->pushValToPeersThruAL(nm.turbineInertiaNode_);
 }
 
 /**
@@ -88,34 +86,18 @@ int main()
 
   double *n = new double(5);
   clarity::ModelNode<double> *nm = new clarity::ModelNode(n, clarity::CppType::Double);
-
-  clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div",
-                                                           clarity::CppType::NoData);
-  clarity::WebElemNode *ncntr = new clarity::WebElemNode("numerator", "input",
-                                                         clarity::CppType::Double);
-  clarity::WebElemNode *nslider = new clarity::WebElemNode("numerator", "input",
-                                                           clarity::CppType::Double);
-  clarity::WebElemNode *svgarea = new clarity::WebElemNode("svgarea", "svg",
-                                                           clarity::CppType::NoData);
-  clarity::WebElemNode *cir1 = new clarity::WebElemNode("cir1", "circle",
-                                                        clarity::CppType::Double);
-
-  clarity::WebAttrNode *cir1Radius = new clarity::WebAttrNode("r",
-                                                              clarity::CppType::Double, cir1);
-
+  clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div", clarity::CppType::NoData);
+  clarity::WebElemNode *ncntr = new clarity::WebElemNode("numerator", "input", clarity::CppType::Double);
+  clarity::WebElemNode *nslider = new clarity::WebElemNode("numerator", "input", clarity::CppType::Double);
+  clarity::WebElemNode *svgarea = new clarity::WebElemNode("svgarea", "svg", clarity::CppType::NoData);
+  clarity::WebElemNode *cir1 = new clarity::WebElemNode("cir1", "circle", clarity::CppType::Double);
+  clarity::WebAttrNode *cir1Radius = new clarity::WebAttrNode("r", clarity::CppType::Double, cir1);
   double *d = new double(5.6);
-  clarity::WebElemNode *doubleTest = new clarity::WebElemNode("d-test", "input",
-                                                              clarity::CppType::Double);
-  // doubleTest->setAnyvalPtrType(CppType::Double);
+  clarity::WebElemNode *doubleTest = new clarity::WebElemNode("d-test", "input", clarity::CppType::Double);
   doubleTest->setAttribute("type", val("text"));
   clarity::ModelNode<double> *mdtest = new clarity::ModelNode(d, CppType::Double);
-
-  // mdtest->addPeer(doubleTest);
-  // mdtest->pushValToPeers(mdtest);
   NukeModel *nmod = new NukeModel(1, 5);
-  NukeControl *nc = new NukeControl("nuke_control", "div",
-                                    clarity::CppType::NoData, *nmod);
-  // nc->applyButton_ = new clarity::ButtonElement("nuke_button", "button", clarity::CppType::String);
+  NukeControl *nc = new NukeControl("nuke_control", "div", clarity::CppType::NoData, *nmod);  
   svgarea->setAttribute("width", val("300"));
   svgarea->setAttribute("height", val("200"));
   svgarea->setAttribute("viewBox", val("0 0 200 200"));
@@ -127,12 +109,8 @@ int main()
   cir1->setAttribute("stroke-width", val(4));
   cir1->setAttribute("r", val(80));
 
-  using ActiveLink = ControlNetworkNode::ActiveLink;
-
-  // nm->addPeer(cir1Radius);
-
+  using ActiveLink = ControlNetworkNode::ActiveLink;  
   nm->addALPeer(ActiveLink(cir1Radius, val(1)));
-
   nslider->setAttribute("type", val("range"));
   maindiv->appendChild(ncntr);
   maindiv->appendChild(nslider);
@@ -140,10 +118,8 @@ int main()
   maindiv->appendChild(nc);
   svgarea->appendChild(cir1);
   ncntr->setAttribute("type", val("text"));
-
-  // nm->addPeer(ncntr);
-  nm->addALPeer(ActiveLink(ncntr, val(10)));
-  // nm->addPeer(nslider);
+  
+  nm->addALPeer(ActiveLink(ncntr, val(10)));  
   nm->addALPeer(ActiveLink(nslider, val(1)));
 
   ncntr->addEventListenerByName("change", "printNetworkState");
@@ -157,8 +133,7 @@ int main()
 
   nc->buttonModel_->addALPeer(ActiveLink(nc->applyButton_));
   nc->buttonModel_->pushValToPeersThruAL(nc->buttonModel_);
-
-  // nm->pushValToPeers(nm);
+  
   nm->pushValToPeersThruAL(nm);
 
   clarity::WebElemNode::callbackMap["iterateModel"] = [=]

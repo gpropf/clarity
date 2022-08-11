@@ -23,8 +23,13 @@ namespace clarity
   public:
     LabelledInput(const string &name,
                   const string &tag,
-                  const CppType anyvalPtrType,
+                  const CppType inputFieldType,
                   clarity::WebElemNode *innerElement);
+
+    LabelledInput(const string &name,
+                  const string &tag,
+                  const CppType inputFieldType);
+
     virtual val getVal() const;
     virtual void setVal(const val &inval);
   };
