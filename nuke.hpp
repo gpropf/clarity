@@ -10,6 +10,7 @@
 #include "ButtonElement.hpp"
 #include "CompoundElement.hpp"
 #include "LabelledInput.hpp"
+#include "CanvasElement.hpp"
 
 
 using namespace clarity;

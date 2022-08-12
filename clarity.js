@@ -114,7 +114,7 @@ class CLElement {
     return el
   }
 
-  createDOMElement(id, tag, cpptype, name = "") {
+  createDOMElement(id, tag, cpptype, name) {
     this.id_ = id
     this.tag_ = tag
     this.cpptype_ = cpptype
@@ -132,8 +132,9 @@ class CLElement {
         // Without this it seems the elements vanish. The idea is that you append them later to
         // their actual parents using a call in C++ to the appendChild method.
 
-        el.id = id
+        el.id = this.id_
         el.type = this.type_
+        el.name = this.name_
       }
     }
     this.domElement_ = el

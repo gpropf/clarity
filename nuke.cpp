@@ -38,6 +38,10 @@ NukeControl::NukeControl(const string &name, const string &tag,
 
   applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::CppType::String);
   // mainDiv_->appendChild(applyButton_);
+
+  clarity::CanvasElement *cvs = new clarity::CanvasElement(400, 300, string("cvs1"));
+
+  mainDiv_->appendChild(cvs);
   mainDiv_->appendChild(controlRodSetting);
   mainDiv_->appendChild(coreToWaterHeatingConstant);
   mainDiv_->appendChild(turbineInertia);
@@ -97,7 +101,7 @@ int main()
   doubleTest->setAttribute("type", val("text"));
   clarity::ModelNode<double> *mdtest = new clarity::ModelNode(d, CppType::Double);
   NukeModel *nmod = new NukeModel(1, 5);
-  NukeControl *nc = new NukeControl("nuke_control", "div", clarity::CppType::NoData, *nmod);  
+  NukeControl *nc = new NukeControl("nuke_control", "div", clarity::CppType::NoData, *nmod);
   svgarea->setAttribute("width", val("300"));
   svgarea->setAttribute("height", val("200"));
   svgarea->setAttribute("viewBox", val("0 0 200 200"));
@@ -109,7 +113,7 @@ int main()
   cir1->setAttribute("stroke-width", val(4));
   cir1->setAttribute("r", val(80));
 
-  using ActiveLink = ControlNetworkNode::ActiveLink;  
+  using ActiveLink = ControlNetworkNode::ActiveLink;
   nm->addALPeer(ActiveLink(cir1Radius, val(1)));
   nslider->setAttribute("type", val("range"));
   maindiv->appendChild(ncntr);
@@ -118,8 +122,8 @@ int main()
   maindiv->appendChild(nc);
   svgarea->appendChild(cir1);
   ncntr->setAttribute("type", val("text"));
-  
-  nm->addALPeer(ActiveLink(ncntr, val(10)));  
+
+  nm->addALPeer(ActiveLink(ncntr, val(10)));
   nm->addALPeer(ActiveLink(nslider, val(1)));
 
   ncntr->addEventListenerByName("change", "printNetworkState");
@@ -133,7 +137,7 @@ int main()
 
   nc->buttonModel_->addALPeer(ActiveLink(nc->applyButton_));
   nc->buttonModel_->pushValToPeersThruAL(nc->buttonModel_);
-  
+
   nm->pushValToPeersThruAL(nm);
 
   clarity::WebElemNode::callbackMap["iterateModel"] = [=]
