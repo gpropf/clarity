@@ -73,12 +73,12 @@ namespace clarity
 
         static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
 
-        static void pushValToPeersById(int id)
-        {
-            ControlNetworkNode *cnn = getCLElementById(id);
-            cnn->printNodeStats("pushValToPeersById()");
-            cnn->pushValToPeers(cnn);
-        }
+        // static void pushValToPeersById(int id)
+        // {
+        //     ControlNetworkNode *cnn = getCLElementById(id);
+        //     cnn->printNodeStats("pushValToPeersById()");
+        //     cnn->pushValToPeers(cnn);
+        // }
 
         static void pushValToPeersThruALById(int id)
         {
@@ -140,24 +140,24 @@ namespace clarity
             clean_ = false;
         }
 
-        virtual void pushValToPeer(ControlNetworkNode *peer)
-        {
-            printNodeStats("pushValToPeer()");
-            if (clean_)
-            {
-                cout << "Node " << id_ << " is clean, should return.\n";
-                // return;
-            }
-            val internalVal = getVal();
-            cout << "Internal val is ";
-            jsval_.call<void>("printToConsole", internalVal);
-            cout << "Value is type ";
-            jsval_.call<void>("printType", internalVal);
-            cout << endl;
-            peer->setVal(internalVal);
-            peer->pushValToPeers(this);
-            clean_ = true;
-        }
+        // virtual void pushValToPeer(ControlNetworkNode *peer)
+        // {
+        //     printNodeStats("pushValToPeer()");
+        //     if (clean_)
+        //     {
+        //         cout << "Node " << id_ << " is clean, should return.\n";
+        //         // return;
+        //     }
+        //     val internalVal = getVal();
+        //     cout << "Internal val is ";
+        //     jsval_.call<void>("printToConsole", internalVal);
+        //     cout << "Value is type ";
+        //     jsval_.call<void>("printType", internalVal);
+        //     cout << endl;
+        //     peer->setVal(internalVal);
+        //     peer->pushValToPeers(this);
+        //     clean_ = true;
+        // }
 
         // bool isType(emscripten::val value, const std::string &type)
         // {
@@ -188,28 +188,28 @@ namespace clarity
             clean_ = true;
         }
 
-        virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr)
+        // virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr)
 
-        {
-            printNodeStats("pushValToPeers()");
-            if (excludedPeer == nullptr)
-            {
-                for (auto peer : peers_)
-                {
-                    pushValToPeer(peer);
-                }
-            }
-            else
-            {
-                for (auto peer : peers_)
-                {
-                    if (peer != excludedPeer)
-                    {
-                        pushValToPeer(peer);
-                    }
-                }
-            }
-        }
+        // {
+        //     printNodeStats("pushValToPeers()");
+        //     if (excludedPeer == nullptr)
+        //     {
+        //         for (auto peer : peers_)
+        //         {
+        //             pushValToPeer(peer);
+        //         }
+        //     }
+        //     else
+        //     {
+        //         for (auto peer : peers_)
+        //         {
+        //             if (peer != excludedPeer)
+        //             {
+        //                 pushValToPeer(peer);
+        //             }
+        //         }
+        //     }
+        // }
 
         void printALPeers(string prefix = "")
         {
@@ -256,17 +256,17 @@ namespace clarity
             }
         }
 
-        void
-        addPeer(ControlNetworkNode *peer, bool alreadyAdded = false)
-        {
+        // void
+        // addPeer(ControlNetworkNode *peer, bool alreadyAdded = false)
+        // {
 
-            peers_.push_back(peer);
-            if (alreadyAdded)
-            {
-                return;
-            }
-            peer->addPeer(this, true);
-        }
+        //     peers_.push_back(peer);
+        //     if (alreadyAdded)
+        //     {
+        //         return;
+        //     }
+        //     peer->addPeer(this, true);
+        // }
 
         void
         addALPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false)
@@ -291,7 +291,7 @@ namespace clarity
         ControlNetworkNode *parent_;
         int id_ = 1000;
         string name_;
-        vector<ControlNetworkNode *> peers_;
+        //vector<ControlNetworkNode *> peers_;
         vector<ControlNetworkNode::ActiveLink> alpeers_;
     };
 }
