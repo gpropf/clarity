@@ -64,30 +64,7 @@ namespace clarity
     virtual Invertable *inverted() = 0;
   };
 
-  template <typename T>
-  class Dynval
-  {
-
-    T *valptr_;
-
-  public:
-    Dynval(T val)
-    {
-      valptr_ = new T(val);
-    }
-
-    Dynval(T *valptr)
-    {
-      valptr_ = valptr;
-    }
-
-    ~Dynval()
-    {
-      delete valptr_;
-    }
-  };
-
-  class DynamicValue
+    class DynamicValue
   {
 
   public:
