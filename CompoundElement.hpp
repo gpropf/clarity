@@ -1,7 +1,6 @@
 #ifndef CompoundElement_hpp
 #define CompoundElement_hpp
 
-//#include "clarity.hpp"
 #include "WebElemNode.hpp"
 
 namespace clarity
@@ -19,24 +18,21 @@ namespace clarity
   {
   public:
     virtual val getVal() const;
-    virtual void setVal(const val &inval);
-
-    // CompoundElement(const string &name,
-    //                 const string &tag,
-    //                 const CppType anyvalPtrType,
-    //                 clarity::WebElemNode *innerElement);
+    virtual void setVal(const val &inval);    
+    
     CompoundElement(const string &name,
                     const string &tag,
                     const CppType anyvalPtrType);
+
     CompoundElement(const string &tag,
                     const CppType anyvalPtrType, const string &name = "");
+
     CompoundElement(const string &name = "",
                     const string &tag = "div",
                     const CppType anyvalPtrType = CppType::NoData,
                     clarity::WebElemNode *innerElement = nullptr);
 
-  protected:
-    // clarity::WebElemNode *outerElement_; // Container div
+  protected:   
     clarity::WebElemNode *innerElement_; // Holds the actual value
   };
 
