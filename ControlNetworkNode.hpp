@@ -29,14 +29,21 @@ namespace clarity
         class ActiveLink //: public Invertable
         {
         public:
-            ActiveLink(ControlNetworkNode *peer, val multiplier = val(1))
-                : peer_(peer), multiplier_(multiplier)
+            ActiveLink(ControlNetworkNode *peer, val transformFn = val(1))
+                : peer_(peer), transformFn_(transformFn)
+
+            {
+            }
+
+            template <typename T> 
+            ActiveLink(ControlNetworkNode *peer, const T scalarConst)
+                : peer_(peer), transformFn_(val(scalarConst))
 
             {
             }
 
             ControlNetworkNode *peer_;
-            val multiplier_;
+            val transformFn_;
         };
 
         void setParent(ControlNetworkNode *parent) { this->parent_ = parent; }
@@ -133,7 +140,7 @@ namespace clarity
 
             if (internalVal.isNumber())
             {
-                val product = jsval_.call<val>("multiplyValues", internalVal, al.multiplier_);
+                val product = jsval_.call<val>("multiplyValues", internalVal, al.transformFn_);
                 al.peer_->setVal(product);
             }
             else {
@@ -155,7 +162,7 @@ namespace clarity
         {
             for (auto alpeer : alpeers_)
             {
-                val product = jsval_.call<val>("multiplyValues", inval, alpeer.multiplier_);
+                val product = jsval_.call<val>("multiplyValues", inval, alpeer.transformFn_);
                 alpeer.peer_->setVal(product);
                 // alpeer.peer_->setVal(inval);
             }
@@ -196,7 +203,7 @@ namespace clarity
             {
                 return;
             }
-            al.peer_->addALPeer(ActiveLink(this, jsval_.call<val>("invertValue", al.multiplier_)), true);
+            al.peer_->addALPeer(ActiveLink(this, jsval_.call<val>("invertValue", al.transformFn_)), true);
         }
 
     protected:

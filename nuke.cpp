@@ -123,7 +123,7 @@ int main()
   svgarea->appendChild(cir1);
   ncntr->setAttribute("type", val("text"));
 
-  nm->addALPeer(ActiveLink(ncntr, val(10)));
+  nm->addALPeer(ActiveLink(ncntr, 10));
   nm->addALPeer(ActiveLink(nslider, val(1)));
 
   ncntr->addEventListenerByName("change", "printNetworkState");
