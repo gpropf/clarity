@@ -1,7 +1,6 @@
 *.wasm
 .vscode/
 clarity_embind.js
-emsdk/
 html/
 junk/
 latex/
