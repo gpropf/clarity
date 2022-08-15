@@ -7,15 +7,10 @@ clarity::CompoundElement::CompoundElement(const string &name,
                                           clarity::WebElemNode *innerElement)
                                            : clarity::WebElemNode(name, tag, anyvalPtrType),
                                                                                 innerElement_(innerElement)
-{
-  //boundField_ = "value";
-  this->appendChild(innerElement);
-  
-  //outerElement_ = new clarity::WebElemNode(name, "div", CppType::NoData);
+{  
+  this->appendChild(innerElement);      
 };
-
  
-
 val clarity::CompoundElement::getVal() const
 {
   return innerElement_->getVal();
