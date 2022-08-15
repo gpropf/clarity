@@ -95,8 +95,7 @@ namespace clarity
             : name_(name),
               anyvalPtrType_(anyvalPtrType)
         {
-            init();
-            // ControlNetworkNode();
+            init();            
             cout << "ControlNetworkNode(const string &name, const CppType anyvalPtrType): "
                  << (int)anyvalPtrType << " ID = " << id_ << " \n";
             jsval_.set("cpptype", val(anyvalPtrType));
