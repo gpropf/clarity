@@ -5,11 +5,9 @@ using std::string;
 EMSCRIPTEN_BINDINGS(clarity)
 {
   class_<ControlNetworkNode>("ControlNetworkNode")
-      .function("toggleClean", &ControlNetworkNode::toggleClean, allow_raw_pointers())
-      //.function("pushValToPeers", &ControlNetworkNode::pushValToPeers, allow_raw_pointers())
+      .function("toggleClean", &ControlNetworkNode::toggleClean, allow_raw_pointers())      
       .function("pushValToPeersThruAL", &ControlNetworkNode::pushValToPeersThruAL, allow_raw_pointers())
-      .function("getVal", &ControlNetworkNode::getVal, allow_raw_pointers())
-      //.class_function("pushValToPeersById", &ControlNetworkNode::pushValToPeersById, allow_raw_pointers())
+      .function("getVal", &ControlNetworkNode::getVal, allow_raw_pointers())      
       .class_function("pushValToPeersThruALById", &ControlNetworkNode::pushValToPeersThruALById, allow_raw_pointers())
       .class_function("getCLElementById", &ControlNetworkNode::getCLElementById, allow_raw_pointers())
       .class_function("markNodeDirtyById", &ControlNetworkNode::markNodeDirtyById, allow_raw_pointers());
@@ -29,10 +27,6 @@ EMSCRIPTEN_BINDINGS(WebElemNode)
       .constructor<string, string, const CppType>(allow_raw_pointers())
       .property("tag", &WebElemNode::getTag)
       .property("id", &WebElemNode::getId)
-      .property("anyvalPtrType", &WebElemNode::getAnyvalPtrType, &WebElemNode::setAnyvalPtrType)
-      //.function("updateModelFromView", &WebElemNode::updateModelFromView)
-      // .function("splicePtrs", &WebElemNode::splicePtrs, allow_raw_pointers())
-
-      //.class_function("updateModelFromViewById", &WebElemNode::updateModelFromViewById, allow_raw_pointers())
+      .property("anyvalPtrType", &WebElemNode::getAnyvalPtrType, &WebElemNode::setAnyvalPtrType) 
       .class_function("runCallbackById", &WebElemNode::runCallbackById, allow_raw_pointers());
 }
