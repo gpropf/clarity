@@ -20,12 +20,8 @@ namespace clarity
 
     public:
         /**
-         * @brief Represents the 'edges' in our control graph. The union contains either a JavaScript
-         * function or a multiplier. In practice most control elements will only need a multiplier value
-         * to convert back and forth between some internal value in the model and the value displayed on
-         * the web. A good example might be writing a car engine simulator where the internal physics are
-         * all done in SI units but the user is more familiar with Imperial units. So computations can still
-         * be done with Watts and meters but the user sees horsepower and feet.
+         * @brief Represents the 'edges' in our control graph. These edges can be active and contain a JS value that can act as a transformation
+         * on the values moving between nodes.
          *
          *
          */
@@ -47,16 +43,13 @@ namespace clarity
         ControlNetworkNode *getParent() const { return this->parent_; }
 
         virtual val getVal() const
-        {
-            cout << "ControlNetworkNode::getVal()"
-                 << "\n";
+        {           
             printNodeStats("getVal()");
             return val(NULL);
         }
 
         val getJSval() const { return jsval_; }
-
-        // void splicePtrs(void *worldValuePtr) { anyvalPtr_ = worldValuePtr; }
+        
         virtual void printState() const { jsval_.call<void>("printState"); }
         static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
 
@@ -71,14 +64,7 @@ namespace clarity
             cout << prefix << " " << nodeStats();
         }
 
-        static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
-
-        // static void pushValToPeersById(int id)
-        // {
-        //     ControlNetworkNode *cnn = getCLElementById(id);
-        //     cnn->printNodeStats("pushValToPeersById()");
-        //     cnn->pushValToPeers(cnn);
-        // }
+        static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }        
 
         static void pushValToPeersThruALById(int id)
         {
@@ -114,11 +100,7 @@ namespace clarity
             cout << "ControlNetworkNode(const string &name, const CppType anyvalPtrType): "
                  << (int)anyvalPtrType << " ID = " << id_ << " \n";
             jsval_.set("cpptype", val(anyvalPtrType));
-        }
-
-        // ControlNetworkNode(const DynamicValue dynamicValue, const string &name = "") : dynamicValue_(dynamicValue), name_(name)
-        // {
-        // }
+        }       
 
         ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
         {
@@ -138,39 +120,14 @@ namespace clarity
         {
             cout << "Marking node " << id_ << " as dirty.\n\n";
             clean_ = false;
-        }
-
-        // virtual void pushValToPeer(ControlNetworkNode *peer)
-        // {
-        //     printNodeStats("pushValToPeer()");
-        //     if (clean_)
-        //     {
-        //         cout << "Node " << id_ << " is clean, should return.\n";
-        //         // return;
-        //     }
-        //     val internalVal = getVal();
-        //     cout << "Internal val is ";
-        //     jsval_.call<void>("printToConsole", internalVal);
-        //     cout << "Value is type ";
-        //     jsval_.call<void>("printType", internalVal);
-        //     cout << endl;
-        //     peer->setVal(internalVal);
-        //     peer->pushValToPeers(this);
-        //     clean_ = true;
-        // }
-
-        // bool isType(emscripten::val value, const std::string &type)
-        // {
-        //     return (value.typeof().as<std::string>() == type);
-        // }
+        }        
 
         virtual void pushValToPeerThruAL(ActiveLink &al)
         {
             printNodeStats("pushValToPeerThruAL()");
             if (clean_)
             {
-                cout << "pushValToPeerThruAL: Node " << id_ << " is clean.\n";
-                // return;
+                cout << "pushValToPeerThruAL: Node " << id_ << " is clean.\n";                
             }
 
             val internalVal = getVal();
@@ -184,32 +141,8 @@ namespace clarity
                 al.peer_->setVal(internalVal);
             }
 
-            // cout << "PRODUCT: " << product.as<T>() << "\n";
             clean_ = true;
-        }
-
-        // virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr)
-
-        // {
-        //     printNodeStats("pushValToPeers()");
-        //     if (excludedPeer == nullptr)
-        //     {
-        //         for (auto peer : peers_)
-        //         {
-        //             pushValToPeer(peer);
-        //         }
-        //     }
-        //     else
-        //     {
-        //         for (auto peer : peers_)
-        //         {
-        //             if (peer != excludedPeer)
-        //             {
-        //                 pushValToPeer(peer);
-        //             }
-        //         }
-        //     }
-        // }
+        }        
 
         void printALPeers(string prefix = "")
         {
@@ -256,22 +189,9 @@ namespace clarity
             }
         }
 
-        // void
-        // addPeer(ControlNetworkNode *peer, bool alreadyAdded = false)
-        // {
-
-        //     peers_.push_back(peer);
-        //     if (alreadyAdded)
-        //     {
-        //         return;
-        //     }
-        //     peer->addPeer(this, true);
-        // }
-
         void
         addALPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false)
         {
-
             alpeers_.push_back(al);
             if (alreadyAdded)
             {
@@ -284,14 +204,11 @@ namespace clarity
         bool clean_ = true;
         static TicketMachine tm;
         static map<const int, ControlNetworkNode *> switchboard;
-        val jsval_ = val::global("CLElement").new_();
-        // val foo = val::global("Foo").new_();
-        CppType anyvalPtrType_; // C++ Data type
-        // void *anyvalPtr_;       // pointer to actual data
+        val jsval_ = val::global("CLElement").new_();       
+        CppType anyvalPtrType_; // C++ Data type        
         ControlNetworkNode *parent_;
         int id_ = 1000;
-        string name_;
-        //vector<ControlNetworkNode *> peers_;
+        string name_;        
         vector<ControlNetworkNode::ActiveLink> alpeers_;
     };
 }
