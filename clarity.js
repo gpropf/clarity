@@ -1,15 +1,9 @@
 
 // Run with 'python3 -m http.server 8000'
 
-// class Foo {
-//   constructor() { }
-// }
-
-
 class CLElement {
 
   constructor() { }
-
 
   multiplyValues(a, b) {
     return a * b
@@ -40,7 +34,6 @@ class CLElement {
         return jsval
     }
   }
-
   //object.freeze(CPP_Type);
 
   appendChild(child) {
@@ -127,9 +120,8 @@ class CLElement {
       if (el == null) {
         console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
         el = this.createDOMElementByTagType()
-        //alert("Child element id is " + id)
         document.body.appendChild(el)
-        // Without this it seems the elements vanish. The idea is that you append them later to
+        // Without this the elements get garbage collected and vanish. The idea is that you append them later to
         // their actual parents using a call in C++ to the appendChild method.
 
         el.id = this.id_
@@ -142,10 +134,7 @@ class CLElement {
     if (this.tag_ == 'input') {
       var outerThis = this
       this.domElement_.addEventListener('change', function (e) {
-        console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)
-        //outerThis.printState()
-        //Module.WebElement.updateModelFromViewById(outerThis.id_)
-        //Module.ControlNetworkNode.pushValToPeersById(outerThis.id_)
+        console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)        
         Module.ControlNetworkNode.pushValToPeersThruALById(outerThis.id_)
         Module.ControlNetworkNode.markNodeDirtyById(outerThis.id_)
       })
@@ -188,4 +177,4 @@ function myTimer() {
 }
 
 window.CLElement = CLElement
-// window.Foo = Foo
+
