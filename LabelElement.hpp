@@ -1,7 +1,6 @@
 #ifndef LabelElement_hpp
 #define LabelElement_hpp
 
-//#include "clarity.hpp"
 #include "WebElemNode.hpp"
 
 namespace clarity

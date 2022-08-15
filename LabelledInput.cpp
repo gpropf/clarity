@@ -12,7 +12,7 @@ clarity::LabelledInput::LabelledInput(const string &name,
   label_->setAttribute("for", val(innerElement_->getId()));
   label_->boundField_ = "innerHTML";
   label_->setVal(val(name));
-  cout << "222222222222222222222 LabelledInput constructor called! id = " << id_ << "\n";
+  cout << "LabelledInput constructor called! id = " << id_ << "\n";
   this->appendChild(label_);
   printNodeStats("LabelledInput");
 }
@@ -21,7 +21,7 @@ clarity::LabelledInput::LabelledInput(const string &name,
               const string &inputFieldTag,
               const CppType inputFieldType)
 {
-  cout << "33333333333333333 clarity::LabelledInput: 1\n";
+  cout << "clarity::LabelledInput: 1\n";
   innerElement_ = new WebElemNode(name, inputFieldTag, inputFieldType);
   cout << "clarity::LabelledInput: 2\n";
   innerElement_->setAttribute("type", val("text"));
