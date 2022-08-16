@@ -88,6 +88,8 @@ int main()
     return -1;
   }
 
+  using ActiveLink = ControlNetworkNode::ActiveLink;
+
   double *n = new double(5);
   clarity::ModelNode<double> *nm = new clarity::ModelNode(n, clarity::CppType::Double);
   clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div", clarity::CppType::NoData);
@@ -96,10 +98,7 @@ int main()
   clarity::WebElemNode *svgarea = new clarity::WebElemNode("svgarea", "svg", clarity::CppType::NoData);
   clarity::WebElemNode *cir1 = new clarity::WebElemNode("cir1", "circle", clarity::CppType::Double);
   clarity::WebAttrNode *cir1Radius = new clarity::WebAttrNode("r", clarity::CppType::Double, cir1);
-  double *d = new double(5.6);
-  clarity::WebElemNode *doubleTest = new clarity::WebElemNode("d-test", "input", clarity::CppType::Double);
-  doubleTest->setAttribute("type", val("text"));
-  clarity::ModelNode<double> *mdtest = new clarity::ModelNode(d, CppType::Double);
+
   NukeModel *nmod = new NukeModel(1, 5);
   NukeControl *nc = new NukeControl("nuke_control", "div", clarity::CppType::NoData, *nmod);
   svgarea->setAttribute("width", val("300"));
@@ -113,12 +112,27 @@ int main()
   cir1->setAttribute("stroke-width", val(4));
   cir1->setAttribute("r", val(80));
 
-  using ActiveLink = ControlNetworkNode::ActiveLink;
   nm->addALPeer(ActiveLink(cir1Radius, val(1)));
+
+  // nm->addALPeer(ActiveLink(cir1TempColor, blackbody));
+
+  clarity::WebAttrNode *cir1TempColor = new clarity::WebAttrNode("fill", clarity::CppType::Double, cir1);
+  double *temp = new double(85);
+  clarity::WebElemNode *tempInput = new clarity::WebElemNode("temp", "input", clarity::CppType::Double);
+  tempInput->setAttribute("type", val("text"));
+  clarity::ModelNode<double> *tempModel = new clarity::ModelNode(temp, CppType::Double);
+
+  val CLE = val::global("CLElement");
+  val blackbody = CLE["blackbody"];
+  //cout << "Testing blackbody: " << CLE.call<val>("blackbody", 55) << "\n"; 
+  tempModel->addALPeer(ActiveLink(tempInput, 1));
+  tempModel->addALPeer(ActiveLink(cir1TempColor, blackbody));
+  tempModel->pushValToPeersThruAL(tempModel);
+
   nslider->setAttribute("type", val("range"));
   maindiv->appendChild(ncntr);
   maindiv->appendChild(nslider);
-  maindiv->appendChild(doubleTest);
+  maindiv->appendChild(tempInput);
   maindiv->appendChild(nc);
   svgarea->appendChild(cir1);
   ncntr->setAttribute("type", val("text"));

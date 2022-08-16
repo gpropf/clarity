@@ -13,13 +13,24 @@ class CLElement {
     return 1 / v
   }
 
-  static generateMultiplierFn(multiplier) {
+  static blackbody(temp) {
+    // return "#aa0ff9";
+    return `rgb(100,${temp},200)`
+  }
+
+  static generateTransformFn(multiplier) {
+    if (multiplier instanceof Function) {
+      console.log("Multiplier is function")
+      return multiplier;
+    }
     return (x) => x * multiplier;
   }
 
-  static applyTransformFn(f,v) {
-    if (!f) {alert("F is undefined!")}
-    return f.call(f, v);
+  static applyTransformFn(f, v) {
+    if (!f) { alert("F is undefined!") }
+    var r = f.call(f, v);
+    console.log("Value " + v + ", Transformed into " + r + " by function " + f.name);
+    return r;
   }
 
 
@@ -143,7 +154,7 @@ class CLElement {
     if (this.tag_ == 'input') {
       var outerThis = this
       this.domElement_.addEventListener('change', function (e) {
-        console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)        
+        console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)
         Module.ControlNetworkNode.pushValToPeersThruALById(outerThis.id_)
         Module.ControlNetworkNode.markNodeDirtyById(outerThis.id_)
       })

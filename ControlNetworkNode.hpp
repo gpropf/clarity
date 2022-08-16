@@ -36,7 +36,7 @@ namespace clarity
 
             {
                 CLElement_ = val::global("CLElement");
-                transformFn_ = CLElement_.call<val>("generateMultiplierFn", scalarConst_);
+                transformFn_ = CLElement_.call<val>("generateTransformFn", scalarConst_);
             }
 
             template <typename T>
@@ -45,7 +45,7 @@ namespace clarity
 
             {
                 CLElement_ = val::global("CLElement");
-                transformFn_ = CLElement_.call<val>("generateMultiplierFn", scalarConst_);
+                transformFn_ = CLElement_.call<val>("generateTransformFn", scalarConst_);
             }
 
             ControlNetworkNode *peer_;
