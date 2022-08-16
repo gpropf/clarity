@@ -108,7 +108,7 @@ int main()
   cir1->setAttribute("cx", val(100));
   cir1->setAttribute("cy", val(100));
   cir1->setAttribute("stroke", val("green"));
-  cir1->setAttribute("fill", val("lightblue"));
+  cir1->setAttribute("fill", val("rgb(50,99,77)"));
   cir1->setAttribute("stroke-width", val(4));
   cir1->setAttribute("r", val(80));
 
@@ -116,7 +116,7 @@ int main()
 
   // nm->addALPeer(ActiveLink(cir1TempColor, blackbody));
 
-  clarity::WebAttrNode *cir1TempColor = new clarity::WebAttrNode("fill", clarity::CppType::Double, cir1);
+  clarity::WebAttrNode *cir1TempColor = new clarity::WebAttrNode("fill", clarity::CppType::String, cir1);
   double *temp = new double(85);
   clarity::WebElemNode *tempInput = new clarity::WebElemNode("temp", "input", clarity::CppType::Double);
   tempInput->setAttribute("type", val("text"));
