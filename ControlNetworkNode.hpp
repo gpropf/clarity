@@ -128,8 +128,7 @@ namespace clarity
         {
             return val(*reinterpret_cast<T *>(valptr));
         }
-
-        virtual void updatePeers() {}
+        
         virtual void setVal(const val &inval)
         {
             cout << "Marking node " << id_ << " as dirty.\n\n";
@@ -169,15 +168,15 @@ namespace clarity
             }
         }
 
-        void setValOnALPeers(const val &inval)
-        {
-            for (auto alpeer : alpeers_)
-            {
-                val product = jsval_.call<val>("multiplyValues", inval, alpeer.scalarConst_);
-                alpeer.peer_->setVal(product);
-                // alpeer.peer_->setVal(inval);
-            }
-        }
+        // void setValOnALPeers(const val &inval)
+        // {
+        //     for (auto alpeer : alpeers_)
+        //     {
+        //         val product = jsval_.call<val>("multiplyValues", inval, alpeer.scalarConst_);
+        //         alpeer.peer_->setVal(product);
+        //         // alpeer.peer_->setVal(inval);
+        //     }
+        // }
 
         virtual void pushValToPeersThruAL(ControlNetworkNode *excludedPeer = nullptr)
         {

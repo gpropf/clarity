@@ -28,8 +28,6 @@ namespace clarity
             dynval_ = dynval;
             cout << "ModelNode(T *dynval, CppType anyvalPtrType)" << typeid(T).name() << " id = " << id_ << "\n";
         }
-       
-        virtual void updatePeers() {}        
 
         virtual val getVal() const
         {
@@ -45,8 +43,8 @@ namespace clarity
         {
             ControlNetworkNode::setVal(inval);
             *reinterpret_cast<T *>(dynval_) = this->jsval_.template call<T>("jsToCPPVal", inval);
-            cout << "ModelNode::setVal() value is: " << *reinterpret_cast<T *>(dynval_) << ", id = " << id_ << "\n";
-            setValOnALPeers(inval);
+            cout << "ModelNode::setVal() value is: " << *reinterpret_cast<T *>(dynval_) << ", id = " << id_ << "\n";            
+            pushValToPeersThruAL(this);
         }
 
         T *dynval_;

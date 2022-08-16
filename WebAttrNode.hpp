@@ -17,8 +17,7 @@ namespace clarity
   protected:
     string attributeName_;
 
-  public:
-    void updatePeers() {} // FIXME
+  public:    
 
     WebAttrNode(const string &attributeName, const CppType anyvalPtrType,
                 ControlNetworkNode *parent) : WebNode(attributeName, anyvalPtrType)
