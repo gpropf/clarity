@@ -29,20 +29,28 @@ namespace clarity
         class ActiveLink //: public Invertable
         {
         public:
-            ActiveLink(ControlNetworkNode *peer, val transformFn = val(1))
-                : peer_(peer), transformFn_(transformFn)
+              
+
+            ActiveLink(ControlNetworkNode *peer, val scalarConst = val(1))
+                : peer_(peer), scalarConst_(scalarConst)
 
             {
+                CLElement_ = val::global("CLElement");
+                transformFn_ = CLElement_.call<val>("generateMultiplierFn", scalarConst_);
             }
 
-            template <typename T> 
+            template <typename T>
             ActiveLink(ControlNetworkNode *peer, const T scalarConst)
-                : peer_(peer), transformFn_(val(scalarConst))
+                : peer_(peer), scalarConst_(val(scalarConst))
 
             {
+                CLElement_ = val::global("CLElement");
+                transformFn_ = CLElement_.call<val>("generateMultiplierFn", scalarConst_);
             }
 
             ControlNetworkNode *peer_;
+            val scalarConst_;
+            val CLElement_;
             val transformFn_;
         };
 
@@ -50,13 +58,13 @@ namespace clarity
         ControlNetworkNode *getParent() const { return this->parent_; }
 
         virtual val getVal() const
-        {           
+        {
             printNodeStats("getVal()");
             return val(NULL);
         }
 
         val getJSval() const { return jsval_; }
-        
+
         virtual void printState() const { jsval_.call<void>("printState"); }
         static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
 
@@ -71,7 +79,7 @@ namespace clarity
             cout << prefix << " " << nodeStats();
         }
 
-        static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }        
+        static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
 
         static void pushValToPeersThruALById(int id)
         {
@@ -102,11 +110,11 @@ namespace clarity
             : name_(name),
               anyvalPtrType_(anyvalPtrType)
         {
-            init();            
+            init();
             cout << "ControlNetworkNode(const string &name, const CppType anyvalPtrType): "
                  << (int)anyvalPtrType << " ID = " << id_ << " \n";
             jsval_.set("cpptype", val(anyvalPtrType));
-        }       
+        }
 
         ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
         {
@@ -126,29 +134,32 @@ namespace clarity
         {
             cout << "Marking node " << id_ << " as dirty.\n\n";
             clean_ = false;
-        }        
+        }
 
         virtual void pushValToPeerThruAL(ActiveLink &al)
         {
             printNodeStats("pushValToPeerThruAL()");
             if (clean_)
             {
-                cout << "pushValToPeerThruAL: Node " << id_ << " is clean.\n";                
+                cout << "pushValToPeerThruAL: Node " << id_ << " is clean.\n";
             }
 
             val internalVal = getVal();
 
             if (internalVal.isNumber())
             {
-                val product = jsval_.call<val>("multiplyValues", internalVal, al.transformFn_);
+                //val CLElement_ = val::global("CLElement");                
+                //val product = jsval_.call<val>("multiplyValues", internalVal, al.scalarConst_);
+                val product = al.CLElement_.call<val>("applyTransformFn", al.transformFn_, internalVal);
                 al.peer_->setVal(product);
             }
-            else {
+            else
+            {
                 al.peer_->setVal(internalVal);
             }
 
             clean_ = true;
-        }        
+        }
 
         void printALPeers(string prefix = "")
         {
@@ -162,7 +173,7 @@ namespace clarity
         {
             for (auto alpeer : alpeers_)
             {
-                val product = jsval_.call<val>("multiplyValues", inval, alpeer.transformFn_);
+                val product = jsval_.call<val>("multiplyValues", inval, alpeer.scalarConst_);
                 alpeer.peer_->setVal(product);
                 // alpeer.peer_->setVal(inval);
             }
@@ -203,18 +214,18 @@ namespace clarity
             {
                 return;
             }
-            al.peer_->addALPeer(ActiveLink(this, jsval_.call<val>("invertValue", al.transformFn_)), true);
+            al.peer_->addALPeer(ActiveLink(this, jsval_.call<val>("invertValue", al.scalarConst_)), true);
         }
 
     protected:
         bool clean_ = true;
         static TicketMachine tm;
         static map<const int, ControlNetworkNode *> switchboard;
-        val jsval_ = val::global("CLElement").new_();       
-        CppType anyvalPtrType_; // C++ Data type        
+        val jsval_ = val::global("CLElement").new_();
+        CppType anyvalPtrType_; // C++ Data type
         ControlNetworkNode *parent_;
         int id_ = 1000;
-        string name_;        
+        string name_;
         vector<ControlNetworkNode::ActiveLink> alpeers_;
     };
 }

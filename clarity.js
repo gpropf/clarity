@@ -13,6 +13,15 @@ class CLElement {
     return 1 / v
   }
 
+  static generateMultiplierFn(multiplier) {
+    return (x) => x * multiplier;
+  }
+
+  static applyTransformFn(f,v) {
+    if (!f) {alert("F is undefined!")}
+    return f.call(f, v);
+  }
+
 
   jsToCPPVal(jsval) {
 
