@@ -12,9 +12,8 @@
 #include "LabelledInput.hpp"
 #include "CanvasElement.hpp"
 
-
 using namespace clarity;
-//using CppType = clarity::CppType;
+// using CppType = clarity::CppType;
 
 /**
  * @brief A simple model of a nuclear power plant.
@@ -30,21 +29,20 @@ public:
 
   void update() {}
 
-  void iterate()
-  {
-    s_ += delta_;
-    delta_ *= 0.95;
-    printState();
-  }
+  double popFuelChunk();
+
+  void makeFuelSupply(int numFuelChunks = 20);
+
+  void iterate();
 
   NukeModel(double s, double delta);
-  
 
 private:
   friend class NukeControl;
   double s_, delta_;
-
+  double currentFuelChunk_;
   double controlRodSetting_;
+  double activity_;
   double coreTemp_;
   double coreToWaterHeatingConstant_;
   double waterTemp_;
@@ -52,14 +50,14 @@ private:
   double turbineInertia_;
   double powerOutput_;
   double totalPowerOutput_;
-  
+
   //::ModelNode;
 
   ModelNode<double> *controlRodSettingNode_;
   ModelNode<double> *coreToWaterHeatingConstantNode_;
   ModelNode<double> *turbineInertiaNode_;
 
-  vector<double> fuelQuality_;
+  vector<double> fuelSupply_;
 
   // int i_;
 };
@@ -81,7 +79,7 @@ public:
   clarity::WebElemNode *controlRodSetting_;
   clarity::WebElemNode *coreToWaterHeatingConstant_;
   clarity::WebElemNode *turbineInertia_;
-  //clarity::CompoundElement *cpe_;
+  // clarity::CompoundElement *cpe_;
 };
 
 #endif

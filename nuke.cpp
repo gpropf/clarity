@@ -4,6 +4,13 @@
 
 #include "embindings.hpp"
 
+double NukeModel::popFuelChunk()
+{
+  double fuelChunk = fuelSupply_.back();
+  fuelSupply_.pop_back();
+  return fuelChunk;
+}
+
 NukeModel::NukeModel(double s, double delta) : s_(s), delta_(delta)
 {
   printState();
@@ -13,6 +20,17 @@ NukeModel::NukeModel(double s, double delta) : s_(s), delta_(delta)
   turbineInertiaNode_ = new ModelNode<double>(&turbineInertia_, CppType::Double);
   controlRodSettingNode_ = new ModelNode<double>(&controlRodSetting_, CppType::Double);
   coreToWaterHeatingConstantNode_ = new ModelNode<double>(&coreToWaterHeatingConstant_, CppType::Double);
+  makeFuelSupply();
+  currentFuelChunk_ = popFuelChunk();
+}
+
+void NukeModel::makeFuelSupply(int numFuelChunks)
+{
+  for (int i = 0; i < numFuelChunks; i++)
+  {
+    cout << i << " ";
+    fuelSupply_.push_back(1.0);
+  }
 }
 
 NukeControl::NukeControl(const string &name, const string &tag,
@@ -76,21 +94,31 @@ map<const int, clarity::ControlNetworkNode *> clarity::ControlNetworkNode::switc
 map<string, std::function<void()>> clarity::WebElemNode::callbackMap;
 clarity::TicketMachine clarity::ControlNetworkNode::tm;
 
+void NukeModel::iterate()
+{
+  activity_ = currentFuelChunk_ * controlRodSetting_;
+  
+      s_ += delta_;
+
+  delta_ *= 0.95;
+  printState();
+}
+
 int main()
 {
-  val CLContext = val::global("CLElement");
-  if (CLContext.as<bool>())
-  {
-    printf("Got CLElement!\n");
-  }
-  else
-  {
-    return -1;
-  }
+  // val CLContext = val::global("CLElement");
+  // if (CLContext.as<bool>())
+  // {
+  //   printf("Got CLElement!\n");
+  // }
+  // else
+  // {
+  //   return -1;
+  // }
 
   using ActiveLink = ControlNetworkNode::ActiveLink;
 
-  double *n = new double(5);
+  double *n = new double(50);
   clarity::ModelNode<double> *nm = new clarity::ModelNode(n, clarity::CppType::Double);
   clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div", clarity::CppType::NoData);
   clarity::WebElemNode *ncntr = new clarity::WebElemNode("numerator", "input", clarity::CppType::Double);
@@ -124,7 +152,7 @@ int main()
 
   val CLE = val::global("CLElement");
   val blackbody = CLE["blackbody"];
-  //cout << "Testing blackbody: " << CLE.call<val>("blackbody", 55) << "\n"; 
+  // cout << "Testing blackbody: " << CLE.call<val>("blackbody", 55) << "\n";
   tempModel->addALPeer(ActiveLink(tempInput, 1));
   tempModel->addALPeer(ActiveLink(cir1TempColor, blackbody));
   tempModel->pushValToPeersThruAL(tempModel);
@@ -173,9 +201,9 @@ int main()
   {
     // cout<< "callbackMap[\"tick\"]\n";
     //(*n)++;
-    (*temp)+=5;
+    (*temp) += 5;
     tempModel->pushValToPeersThruAL(tempModel);
-    //nm->pushValToPeersThruAL(nm);
+    // nm->pushValToPeersThruAL(nm);
   };
 
   printf("Setup complete!\n");
