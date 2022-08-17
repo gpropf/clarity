@@ -11,7 +11,7 @@ double NukeModel::popFuelChunk()
   return fuelChunk;
 }
 
-NukeModel::NukeModel(double s, double delta) : s_(s), delta_(delta)
+NukeModel::NukeModel()
 {
   printState();
   controlRodSetting_ = 0.5;
@@ -97,10 +97,7 @@ clarity::TicketMachine clarity::ControlNetworkNode::tm;
 void NukeModel::iterate()
 {
   activity_ = currentFuelChunk_ * controlRodSetting_;
-  
-      s_ += delta_;
-
-  delta_ *= 0.95;
+ 
   printState();
 }
 
@@ -127,7 +124,7 @@ int main()
   clarity::WebElemNode *cir1 = new clarity::WebElemNode("cir1", "circle", clarity::CppType::Double);
   clarity::WebAttrNode *cir1Radius = new clarity::WebAttrNode("r", clarity::CppType::Double, cir1);
 
-  NukeModel *nmod = new NukeModel(1, 5);
+  NukeModel *nmod = new NukeModel();
   NukeControl *nc = new NukeControl("nuke_control", "div", clarity::CppType::NoData, *nmod);
   svgarea->setAttribute("width", val("300"));
   svgarea->setAttribute("height", val("200"));

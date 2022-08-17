@@ -35,15 +35,17 @@ public:
 
   void iterate();
 
-  NukeModel(double s, double delta);
+  NukeModel();
 
 private:
   friend class NukeControl;
-  double s_, delta_;
+  
   double currentFuelChunk_;
   double controlRodSetting_;
   double activity_;
   double coreTemp_;
+  double heatLoss_;
+  double heatLoss_coef_;
   double coreToWaterHeatingConstant_;
   double waterTemp_;
   double turbineRPM_;
