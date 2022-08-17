@@ -76,7 +76,7 @@ namespace clarity
 
         virtual void printNodeStats(const string &prefix = "") const
         {
-            cout << prefix << " " << nodeStats();
+            // cout<< prefix << " " << nodeStats();
         }
 
         static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
@@ -90,7 +90,7 @@ namespace clarity
 
         void toggleClean()
         {
-            cout << "TOGGLECLEAN, oldstate: " << clean_ << " ID = " << id_ << " \n\n\n";
+            // cout<< "TOGGLECLEAN, oldstate: " << clean_ << " ID = " << id_ << " \n\n\n";
             clean_ = !clean_;
         }
 
@@ -98,7 +98,7 @@ namespace clarity
         {
             id_ = tm.getNext();
             ControlNetworkNode::switchboard[id_] = this;
-            cout << "ControlNetworkNode(): Setting id to " << id_ << "\n";
+            // cout<< "ControlNetworkNode(): Setting id to " << id_ << "\n";
         }
 
         ControlNetworkNode()
@@ -111,15 +111,15 @@ namespace clarity
               anyvalPtrType_(anyvalPtrType)
         {
             init();
-            cout << "ControlNetworkNode(const string &name, const CppType anyvalPtrType): "
-                 << (int)anyvalPtrType << " ID = " << id_ << " \n";
+            // cout<< "ControlNetworkNode(const string &name, const CppType anyvalPtrType): "
+            //     << (int)anyvalPtrType << " ID = " << id_ << " \n";
             jsval_.set("cpptype", val(anyvalPtrType));
         }
 
         ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
         {
             init();
-            cout << "ControlNetworkNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << " ID = " << id_ << " \n";
+            // cout<< "ControlNetworkNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << " ID = " << id_ << " \n";
             jsval_.set("cpptype", val(anyvalPtrType));
         }
 
@@ -131,7 +131,7 @@ namespace clarity
         
         virtual void setVal(const val &inval)
         {
-            cout << "Marking node " << id_ << " as dirty.\n\n";
+            // cout<< "Marking node " << id_ << " as dirty.\n\n";
             clean_ = false;
         }
 
@@ -140,7 +140,7 @@ namespace clarity
             printNodeStats("pushValToPeerThruAL()");
             if (clean_)
             {
-                cout << "pushValToPeerThruAL: Node " << id_ << " is clean.\n";
+                // cout<< "pushValToPeerThruAL: Node " << id_ << " is clean.\n";
             }
 
             val internalVal = getVal();
@@ -164,7 +164,7 @@ namespace clarity
         {
             for (auto alpeer : alpeers_)
             {
-                cout << prefix << " printALPeers: id = " << id_ << ", ALPeer id = " << alpeer.peer_->id_ << "\n";
+                // cout<< prefix << " printALPeers: id = " << id_ << ", ALPeer id = " << alpeer.peer_->id_ << "\n";
             }
         }
 
@@ -183,21 +183,21 @@ namespace clarity
             printNodeStats("pushValToPeersThruAL()");
             if (excludedPeer == nullptr)
             {
-                cout << "pushValToPeersThruAL(): excludedPeer == nullptr\n";
+                // cout<< "pushValToPeersThruAL(): excludedPeer == nullptr\n";
                 for (auto alpeer : alpeers_)
                 {
-                    cout << "pushValToPeersThruAL(): alpeer.peer_.id_ = " << alpeer.peer_->id_ << "\n";
+                    // cout<< "pushValToPeersThruAL(): alpeer.peer_.id_ = " << alpeer.peer_->id_ << "\n";
                     pushValToPeerThruAL(alpeer);
                 }
             }
             else
             {
-                cout << "pushValToPeersThruAL(): excludedPeer != nullptr\n";
+                // cout<< "pushValToPeersThruAL(): excludedPeer != nullptr\n";
                 for (auto alpeer : alpeers_)
                 {
                     if (alpeer.peer_ != excludedPeer)
                     {
-                        cout << "pushValToPeersThruAL(): alpeer.peer_ != excludedPeer\n";
+                        // cout<< "pushValToPeersThruAL(): alpeer.peer_ != excludedPeer\n";
 
                         pushValToPeerThruAL(alpeer);
                     }

@@ -14,7 +14,7 @@ namespace clarity
     WebNode(const string &name, const CppType anyvalPtrType) : ControlNetworkNode(name, anyvalPtrType)
     {
 
-      cout << "DTEST:WebNode(const CppType anyvalPtrType):" << (int)anyvalPtrType << " id = " << id_ << "\n";
+      // cout<< "DTEST:WebNode(const CppType anyvalPtrType):" << (int)anyvalPtrType << " id = " << id_ << "\n";
     }
 
     val getVal() const
@@ -27,23 +27,23 @@ namespace clarity
       switch (this->anyvalPtrType_)
       {
       case CppType::Int:
-        cout << "GETVAL Int: " << valueText << "\n";
+        // cout<< "GETVAL Int: " << valueText << "\n";
         return val(stoi(valueText));
         break;
       case CppType::Float:
-        cout << "GETVAL Float: " << valueText << "\n";
+        // cout<< "GETVAL Float: " << valueText << "\n";
         return val(stof(valueText));
         break;
       case CppType::Double:
-        cout << "GETVAL Double: " << valueText << "\n";
+        // cout<< "GETVAL Double: " << valueText << "\n";
         return val(stod(valueText));
         break;
       case CppType::String:
-        cout << "GETVAL String: " << valueText << "\n";
+        // cout<< "GETVAL String: " << valueText << "\n";
         return val(valueText);
         break;
       case CppType::NoData:
-        cout << "GETVAL NoData\n";
+        // cout<< "GETVAL NoData\n";
       default:
         return val(NULL);
         break;

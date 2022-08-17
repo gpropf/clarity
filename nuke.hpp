@@ -25,7 +25,7 @@ class NukeModel //: public clarity::UpdateAble
 public:
   void printState() const
   {
-    cout << "MODEL STATE: s = " << s_ << ", delta = " << delta_ << endl;
+    // cout<< "MODEL STATE: s = " << s_ << ", delta = " << delta_ << endl;
   }
 
   void update() {}

@@ -77,22 +77,22 @@ int main()
 
   clarity::WebElemNode::callbackMap["iterateModel"] = [=]
   {
-    cout << "callbackMap[\"iterateModel\"]\n";
+    // cout<< "callbackMap[\"iterateModel\"]\n";
   };
 
   clarity::WebElemNode::callbackMap["syncModelView"] = [=]
   {
-    cout << "callbackMap[\"syncModelView\"]\n";
+    // cout<< "callbackMap[\"syncModelView\"]\n";
   };
 
   clarity::WebElemNode::callbackMap["printNetworkState"] = [=]
   {
-    cout << "callbackMap[\"printNetworkState\"]\n";
+    // cout<< "callbackMap[\"printNetworkState\"]\n";
   };
 
   clarity::WebElemNode::callbackMap["tick"] = [=]
   {
-    cout << "callbackMap[\"tick\"]\n";
+    // cout<< "callbackMap[\"tick\"]\n";
     (*n)++;
     nm->pushValToPeers(nm);
   };

@@ -13,9 +13,21 @@ class CLElement {
     return 1 / v
   }
 
+  /**
+   * 
+   * @param {*} temp: In degrees Kelvin 
+   * @returns a crude (for now) attempt at showing hot objects glowing the right way. This
+   * is returned as a string representing an RGB triplet with values from 0-255.
+   */
   static blackbody(temp) {
     // return "#aa0ff9";
-    return `rgb(100,${temp},200)`
+    var r = temp - 500;
+    var g = r / 2;
+    var b = r / 3;
+    if (r > 255) r = 255;
+    if (g > 255) g = 255;
+    if (b > 255) b = 255;
+    return `rgb(${r},${g},${b})`
   }
 
   static generateTransformFn(multiplier) {
@@ -189,7 +201,7 @@ class CLElement {
 
 }
 
-// let myVar = setInterval(myTimer, 1000);
+//let myVar = setInterval(myTimer, 300);
 function myTimer() {
   const d = new Date();
   console.log(d.toLocaleTimeString())
