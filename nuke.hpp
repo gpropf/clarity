@@ -72,8 +72,8 @@ class NukeControl : public clarity::WebElemNode
 {
 
 public:
-  NukeControl(const std::string &name, const std::string &tag, const CppType anyvalPtrType);
-  NukeControl(const std::string &name, const std::string &tag, const CppType anyvalPtrType, NukeModel &nm);
+  NukeControl(const std::string &name, const std::string &tag, const CppType storedValueType);
+  NukeControl(const std::string &name, const std::string &tag, const CppType storedValueType, NukeModel &nm);
   string *buttonText_;
   clarity::WebElemNode *mainDiv_;
   clarity::WebElemNode *applyButton_;

@@ -11,7 +11,7 @@ namespace clarity
 
   {
   public:
-    ButtonElement(const string &name, const string &tag, const CppType anyvalPtrType);
+    ButtonElement(const string &name, const string &tag, const CppType storedValueType);
   };
 
 }

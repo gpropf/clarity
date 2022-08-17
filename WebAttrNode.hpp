@@ -19,15 +19,15 @@ namespace clarity
 
   public:    
 
-    WebAttrNode(const string &attributeName, const CppType anyvalPtrType,
-                ControlNetworkNode *parent) : WebNode(attributeName, anyvalPtrType)
+    WebAttrNode(const string &attributeName, const CppType storedValueType,
+                ControlNetworkNode *parent) : WebNode(attributeName, storedValueType)
     {
-      //WebNode(attributeName, anyvalPtrType);
+      //WebNode(attributeName, storedValueType);
       parent_ = parent;
       boundField_ = attributeName;
       val parentDomelement = parent_->getJSval()["domElement"];
       // bool cln = parent->clean_;
-      jsval_.set("domElement", parentDomelement);
+      cle_.set("domElement", parentDomelement);
     }
 
     // void updateViewFromModel()
@@ -38,7 +38,7 @@ namespace clarity
     virtual void setVal(const val &inval)
     {
       ControlNetworkNode::setVal(inval);
-      val domElement = jsval_["domElement"];
+      val domElement = cle_["domElement"];
       domElement.call<void>("setAttribute", boundField_, inval);
     }
   };

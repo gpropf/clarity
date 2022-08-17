@@ -23,20 +23,20 @@ namespace clarity
      *
      * @param name String name of element, may be empty.
      * @param tag HTML tag of this element
-     * @param anyvalPtrType C++ type of data contained within
+     * @param storedValueType C++ type of data contained within
      *
      */
     WebElemNode(const string &name, const string &tag,
-                const CppType anyvalPtrType) : WebNode(name, anyvalPtrType)
+                const CppType storedValueType) : WebNode(name, storedValueType)
     {
-      // cout<< "WebElemNode(const string &name, const string &tag, const CppType anyvalPtrType): " << (int)anyvalPtrType << " id = " << id_ << "\n";
+      // cout<< "WebElemNode(const string &name, const string &tag, const CppType storedValueType): " << (int)storedValueType << " id = " << id_ << "\n";
 
-      // jsval_.set("cpptype", val(anyvalPtrType));
+      // jsval_.set("cpptype", val(storedValueType));
       // jsval_.set("tag", val(tag));
       // jsval_.set("id", val(id_));
       // jsval_.set("name", val(name));
 
-      jsval_.call<void>("createDOMElement", id_, tag, anyvalPtrType, name);
+      cle_.call<void>("createDOMElement", id_, tag, storedValueType, name);
       tag_ = tag;      
       boundField_ = "value";
       ControlNetworkNode::switchboard[id_] = this;
@@ -44,20 +44,20 @@ namespace clarity
 
     void setAttribute(const string &attr, const val &value)
     {
-      val domElement = jsval_["domElement"];
+      val domElement = cle_["domElement"];
       domElement.call<void>("setAttribute", attr, value);
     }
 
     bool appendChild(WebNode *child)
     {
       children_.push_back(child);
-      jsval_.call<void>("appendChild", child->getJSval());
+      cle_.call<void>("appendChild", child->getJSval());
       return true; // FIXME: need to check for duplicate ids.
     }
 
     void addEventListenerByName(const string &eventName, const string &callbackName)
     {
-      jsval_.call<void>("addEventListenerById", eventName, callbackName);
+      cle_.call<void>("addEventListenerById", eventName, callbackName);
     }
     //=====================
     // static map<const int, WebElemNode *> switchboard;
@@ -68,13 +68,13 @@ namespace clarity
     int getId() const { return id_; }
     // void setId(string id) { id_ = id; }
 
-    void setJsval(val jsval) { jsval_ = jsval; }
+    void setJsval(val jsval) { cle_ = jsval; }
     
-    CppType getAnyvalPtrType() const { return anyvalPtrType_; }
-    void setAnyvalPtrType(CppType cppType)
+    CppType getStoredValueType() const { return storedValueType_; }
+    void setStoredValueType(CppType cppType)
     {
-      anyvalPtrType_ = cppType;
-      jsval_.set("cpptype", cppType);
+      storedValueType_ = cppType;
+      cle_.set("cpptype", cppType);
     }
 
     // static void updateModelFromViewById(const int id) { switchboard[id]->updateModelFromView(); }

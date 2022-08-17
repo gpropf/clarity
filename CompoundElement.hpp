@@ -22,14 +22,14 @@ namespace clarity
     
     CompoundElement(const string &name,
                     const string &tag,
-                    const CppType anyvalPtrType);
+                    const CppType storedValueType);
 
     CompoundElement(const string &tag,
-                    const CppType anyvalPtrType, const string &name = "");
+                    const CppType storedValueType, const string &name = "");
 
     CompoundElement(const string &name = "",
                     const string &tag = "div",
-                    const CppType anyvalPtrType = CppType::NoData,
+                    const CppType storedValueType = CppType::NoData,
                     clarity::WebElemNode *innerElement = nullptr);
 
   protected:   

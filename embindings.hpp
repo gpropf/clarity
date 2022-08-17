@@ -27,6 +27,6 @@ EMSCRIPTEN_BINDINGS(WebElemNode)
       .constructor<string, string, const CppType>(allow_raw_pointers())
       .property("tag", &WebElemNode::getTag)
       .property("id", &WebElemNode::getId)
-      .property("anyvalPtrType", &WebElemNode::getAnyvalPtrType, &WebElemNode::setAnyvalPtrType) 
+      .property("storedValueType", &WebElemNode::getStoredValueType, &WebElemNode::setStoredValueType) 
       .class_function("runCallbackById", &WebElemNode::runCallbackById, allow_raw_pointers());
 }

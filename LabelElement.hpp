@@ -10,7 +10,7 @@ namespace clarity
 
   {
   public:
-    LabelElement(const CppType anyvalPtrType, const val &isFor, const string &name = "");
+    LabelElement(const CppType storedValueType, const val &isFor, const string &name = "");
   };
 
 }

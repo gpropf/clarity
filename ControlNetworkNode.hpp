@@ -63,9 +63,9 @@ namespace clarity
             return val(NULL);
         }
 
-        val getJSval() const { return jsval_; }
+        val getJSval() const { return cle_; }
 
-        virtual void printState() const { jsval_.call<void>("printState"); }
+        virtual void printState() const { cle_.call<void>("printState"); }
         static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
 
         virtual string nodeStats() const
@@ -106,21 +106,21 @@ namespace clarity
             init();
         }
 
-        ControlNetworkNode(const string &name, const CppType anyvalPtrType)
+        ControlNetworkNode(const string &name, const CppType storedValueType)
             : name_(name),
-              anyvalPtrType_(anyvalPtrType)
+              storedValueType_(storedValueType)
         {
             init();
-            // cout<< "ControlNetworkNode(const string &name, const CppType anyvalPtrType): "
-            //     << (int)anyvalPtrType << " ID = " << id_ << " \n";
-            jsval_.set("cpptype", val(anyvalPtrType));
+            // cout<< "ControlNetworkNode(const string &name, const CppType storedValueType): "
+            //     << (int)storedValueType << " ID = " << id_ << " \n";
+            cle_.set("cpptype", val(storedValueType));
         }
 
-        ControlNetworkNode(const CppType anyvalPtrType) : anyvalPtrType_(anyvalPtrType)
+        ControlNetworkNode(const CppType storedValueType) : storedValueType_(storedValueType)
         {
             init();
-            // cout<< "ControlNetworkNode(const CppType anyvalPtrType): " << (int)anyvalPtrType << " ID = " << id_ << " \n";
-            jsval_.set("cpptype", val(anyvalPtrType));
+            // cout<< "ControlNetworkNode(const CppType storedValueType): " << (int)storedValueType << " ID = " << id_ << " \n";
+            cle_.set("cpptype", val(storedValueType));
         }
 
         template <typename T>
@@ -213,15 +213,15 @@ namespace clarity
             {
                 return;
             }
-            al.peer_->addALPeer(ActiveLink(this, jsval_.call<val>("invertValue", al.scalarConst_)), true);
+            al.peer_->addALPeer(ActiveLink(this, cle_.call<val>("invertValue", al.scalarConst_)), true);
         }
 
     protected:
         bool clean_ = true;
         static TicketMachine tm;
         static map<const int, ControlNetworkNode *> switchboard;
-        val jsval_ = val::global("CLElement").new_();
-        CppType anyvalPtrType_; // C++ Data type
+        val cle_ = val::global("CLElement").new_();
+        CppType storedValueType_; // C++ Data type
         ControlNetworkNode *parent_;
         int id_ = 1000;
         string name_;

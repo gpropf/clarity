@@ -11,20 +11,20 @@ namespace clarity
   {
   public:
     WebNode() : ControlNetworkNode() {}
-    WebNode(const string &name, const CppType anyvalPtrType) : ControlNetworkNode(name, anyvalPtrType)
+    WebNode(const string &name, const CppType storedValueType) : ControlNetworkNode(name, storedValueType)
     {
 
-      // cout<< "DTEST:WebNode(const CppType anyvalPtrType):" << (int)anyvalPtrType << " id = " << id_ << "\n";
+      // cout<< "DTEST:WebNode(const CppType storedValueType):" << (int)storedValueType << " id = " << id_ << "\n";
     }
 
     val getVal() const
     {
       // ControlNetworkNode::getVal();
       printNodeStats("GETVAL");
-      val domElement = jsval_["domElement"];
+      val domElement = cle_["domElement"];
       string valueText = domElement[boundField_].as<string>();
 
-      switch (this->anyvalPtrType_)
+      switch (this->storedValueType_)
       {
       case CppType::Int:
         // cout<< "GETVAL Int: " << valueText << "\n";
@@ -61,7 +61,7 @@ namespace clarity
     void setVal(const val &inval)
     {
       ControlNetworkNode::setVal(inval);
-      val domElement = jsval_["domElement"];
+      val domElement = cle_["domElement"];
       domElement.set(boundField_, inval);
     }
 
