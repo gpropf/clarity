@@ -14,6 +14,7 @@ double NukeModel::popFuelChunk()
 NukeModel::NukeModel()
 {
   printState();
+  thermalEnergyLossRateConstant_ = 1;
   controlRodSetting_ = 0.5;
   coreToWaterHeatingConstant_ = 2.0;
   turbineInertia_ = 1.4;
@@ -74,7 +75,7 @@ NukeControl::NukeControl(const string &name, const string &tag,
   nm.coreToWaterHeatingConstantNode_->addALPeer(ActiveLink(coreToWaterHeatingConstant_, val(1)));
   nm.coreToWaterHeatingConstantNode_->pushValToPeersThruAL(nm.coreToWaterHeatingConstantNode_);
   nm.turbineInertiaNode_->addALPeer(ActiveLink(turbineInertia_, val(1)));
-  nm.turbineInertiaNode_->pushValToPeersThruAL(nm.turbineInertiaNode_);
+  nm.turbineInertiaNode_->pushValToPeersThruAL(nm.turbineInertiaNode_);  
 }
 
 /**
@@ -97,7 +98,7 @@ clarity::TicketMachine clarity::ControlNetworkNode::tm;
 void NukeModel::iterate()
 {
   activity_ = currentFuelChunk_ * controlRodSetting_;
- 
+
   printState();
 }
 

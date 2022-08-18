@@ -30,7 +30,13 @@ namespace clarity
                   const string &tag,
                   const CppType inputFieldType);
 
-    virtual val getVal() const;
+    template <typename T>
+    LabelledInput(const string &name,
+                  const string &inputFieldTag,
+                  const CppType inputFieldType,
+                  T *modelField);
+
+        virtual val getVal() const;
     virtual void setVal(const val &inval);
   };
 

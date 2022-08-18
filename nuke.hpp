@@ -52,6 +52,7 @@ private:
   double turbineInertia_;
   double powerOutput_;
   double totalPowerOutput_;
+  double thermalEnergyLossRateConstant_;
 
   //::ModelNode;
 

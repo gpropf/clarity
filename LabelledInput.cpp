@@ -18,22 +18,28 @@ clarity::LabelledInput::LabelledInput(const string &name,
 }
 
 clarity::LabelledInput::LabelledInput(const string &name,
-              const string &inputFieldTag,
-              const CppType inputFieldType)
+                                      const string &inputFieldTag,
+                                      const CppType inputFieldType)
 {
-  // cout<< "clarity::LabelledInput: 1\n";
   innerElement_ = new WebElemNode(name, inputFieldTag, inputFieldType);
-  // cout<< "clarity::LabelledInput: 2\n";
   innerElement_->setAttribute("type", val("text"));
-  // cout<< "clarity::LabelledInput: 3\n";
   label_ = new clarity::LabelElement(CppType::NoData, val(innerElement_->getId()));
-  // cout<< "clarity::LabelledInput: 4\n";
-  //clarity::CompoundElement(name, "div", CppType::NoData, innerElement_);
-  // cout<< "clarity::LabelledInput: 5\n";
   this->appendChild(label_);
-  // cout<< "clarity::LabelledInput: 6\n";
   this->appendChild(innerElement_);
-  // cout<< "clarity::LabelledInput: 7\n";
+}
+
+template <typename T>
+clarity::LabelledInput::LabelledInput(const string &name,
+                                      const string &inputFieldTag,
+                                      const CppType inputFieldType,
+                                      T *modelField)
+    : ControlNetworkNode(name, inputFieldType, modelField)
+{  
+  innerElement_ = new WebElemNode(name, inputFieldTag, inputFieldType);
+  innerElement_->setAttribute("type", val("text"));
+  label_ = new clarity::LabelElement(CppType::NoData, val(innerElement_->getId()));
+  this->appendChild(label_);
+  this->appendChild(innerElement_);
 }
 
 val clarity::LabelledInput::getVal() const
