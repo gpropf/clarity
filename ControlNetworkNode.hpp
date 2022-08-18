@@ -123,6 +123,17 @@ namespace clarity
             cle_.set("cpptype", val(storedValueType));
         }
 
+
+        // template <typename T>
+        // ControlNetworkNode(const string &name, const CppType storedValueType, T* modelField) : storedValueType_(storedValueType)
+        // {
+        //     init();
+        //     // cout<< "ControlNetworkNode(const CppType storedValueType): " << (int)storedValueType << " ID = " << id_ << " \n";
+        //     cle_.set("cpptype", val(storedValueType));
+        //     ModelNode * modelnode = new ModelNode(T modelField, storedValueType);
+            
+        // }
+
         template <typename T>
         inline static val cpp2js(void *valptr)
         {
