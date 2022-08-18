@@ -64,6 +64,14 @@ NukeControl::NukeControl(const string &name, const string &tag,
   mainDiv_->appendChild(controlRodSetting);
   mainDiv_->appendChild(coreToWaterHeatingConstant);
   mainDiv_->appendChild(turbineInertia);
+
+  labelledInputTestVal_ = new double(3.14);
+  // clarity::LabelledInput *labelledInputTestField = new clarity::LabelledInput("labelledInputTestVal",
+  //                                                                             "input",
+  //                                                                             CppType::Double,
+  //                                                                             labelledInputTestVal_);
+
+  //mainDiv_->appendChild(labelledInputTestField);
 }
 
 NukeControl::NukeControl(const string &name, const string &tag,
@@ -75,7 +83,7 @@ NukeControl::NukeControl(const string &name, const string &tag,
   nm.coreToWaterHeatingConstantNode_->addALPeer(ActiveLink(coreToWaterHeatingConstant_, val(1)));
   nm.coreToWaterHeatingConstantNode_->pushValToPeersThruAL(nm.coreToWaterHeatingConstantNode_);
   nm.turbineInertiaNode_->addALPeer(ActiveLink(turbineInertia_, val(1)));
-  nm.turbineInertiaNode_->pushValToPeersThruAL(nm.turbineInertiaNode_);  
+  nm.turbineInertiaNode_->pushValToPeersThruAL(nm.turbineInertiaNode_);
 }
 
 /**

@@ -39,7 +39,7 @@ public:
 
 private:
   friend class NukeControl;
-  
+
   double currentFuelChunk_;
   double controlRodSetting_;
   double activity_;
@@ -83,6 +83,7 @@ public:
   clarity::WebElemNode *coreToWaterHeatingConstant_;
   clarity::WebElemNode *turbineInertia_;
   // clarity::CompoundElement *cpe_;
+  double *labelledInputTestVal_;
 };
 
 #endif

@@ -36,7 +36,7 @@ namespace clarity
                   const CppType inputFieldType,
                   T *modelField);
 
-        virtual val getVal() const;
+    virtual val getVal() const;
     virtual void setVal(const val &inval);
   };
 
