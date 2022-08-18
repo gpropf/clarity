@@ -11,7 +11,7 @@ namespace clarity
   {
   public:
   protected:
-    vector<ControlNetworkNode *> children_;
+    //vector<ControlNetworkNode *> children_;
 
     // string tag_, name_;
     string tag_; //, name_;
@@ -48,12 +48,7 @@ namespace clarity
       domElement.call<void>("setAttribute", attr, value);
     }
 
-    bool appendChild(WebNode *child)
-    {
-      children_.push_back(child);
-      cle_.call<void>("appendChild", child->getJSval());
-      return true; // FIXME: need to check for duplicate ids.
-    }
+    
 
     void addEventListenerByName(const string &eventName, const string &callbackName)
     {

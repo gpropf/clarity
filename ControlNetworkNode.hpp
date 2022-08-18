@@ -15,6 +15,10 @@ namespace clarity
      * on the webpage. In future it may contain pure virtual methods and trying to instantiate it will be an error.
      *
      */
+
+    template <typename T>
+    class ModelNode;
+
     class ControlNetworkNode
     {
 
@@ -29,8 +33,6 @@ namespace clarity
         class ActiveLink //: public Invertable
         {
         public:
-              
-
             ActiveLink(ControlNetworkNode *peer, val scalarConst = val(1))
                 : peer_(peer), scalarConst_(scalarConst)
 
@@ -123,23 +125,29 @@ namespace clarity
             cle_.set("cpptype", val(storedValueType));
         }
 
-
-        // template <typename T>
-        // ControlNetworkNode(const string &name, const CppType storedValueType, T* modelField) : storedValueType_(storedValueType)
-        // {
-        //     init();
-        //     // cout<< "ControlNetworkNode(const CppType storedValueType): " << (int)storedValueType << " ID = " << id_ << " \n";
-        //     cle_.set("cpptype", val(storedValueType));
-        //     ModelNode * modelnode = new ModelNode(T modelField, storedValueType);
-            
-        // }
+        template <typename T>
+        ControlNetworkNode(const string &name, const CppType storedValueType, T *modelField) : storedValueType_(storedValueType)
+        {
+            init();
+            // cout<< "ControlNetworkNode(const CppType storedValueType): " << (int)storedValueType << " ID = " << id_ << " \n";
+            cle_.set("cpptype", val(storedValueType));
+            ModelNode<T> *modelnode = new ModelNode(modelField, storedValueType);
+            appendChild(modelnode);
+        }
 
         template <typename T>
         inline static val cpp2js(void *valptr)
         {
             return val(*reinterpret_cast<T *>(valptr));
         }
-        
+
+        bool appendChild(ControlNetworkNode *child)
+        {
+            children_.push_back(child);
+            cle_.call<void>("appendChild", child->getJSval());
+            return true; // FIXME: need to check for duplicate ids.
+        }
+
         virtual void setVal(const val &inval)
         {
             // cout<< "Marking node " << id_ << " as dirty.\n\n";
@@ -158,8 +166,8 @@ namespace clarity
 
             if (internalVal.isNumber())
             {
-                //val CLElement_ = val::global("CLElement");                
-                //val product = jsval_.call<val>("multiplyValues", internalVal, al.scalarConst_);
+                // val CLElement_ = val::global("CLElement");
+                // val product = jsval_.call<val>("multiplyValues", internalVal, al.scalarConst_);
                 val product = al.CLElement_.call<val>("applyTransformFn", al.transformFn_, internalVal);
                 al.peer_->setVal(product);
             }
@@ -228,6 +236,7 @@ namespace clarity
         }
 
     protected:
+        vector<ControlNetworkNode *> children_;
         bool clean_ = true;
         static TicketMachine tm;
         static map<const int, ControlNetworkNode *> switchboard;
