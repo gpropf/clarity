@@ -3,6 +3,7 @@
 
 #include "clarity.hpp"
 #include "ControlNetworkNode.hpp"
+#include "ModelNode.hpp"
 
 namespace clarity
 {
@@ -16,6 +17,27 @@ namespace clarity
 
       // cout<< "DTEST:WebNode(const CppType storedValueType):" << (int)storedValueType << " id = " << id_ << "\n";
     }
+
+    bool appendChild(ControlNetworkNode *child)
+    {
+      children_.push_back(child);
+      cle_.call<void>("appendChild", child->getJSval());
+      return true; // FIXME: need to check for duplicate ids.
+    }
+
+    template <typename T>
+    void installModelNode(T *dynval)
+    {
+      ModelNode<T> *m = new ModelNode<T>(dynval, storedValueType_);
+      appendChild(m);
+      m->addALPeer(ActiveLink(this, 1));
+      m->pushValToPeersThruAL(m);
+    }
+
+    // template <typename T>
+    // ModelNode<T> * getInnerModelNode() {
+
+    // }
 
     val getVal() const
     {
@@ -55,6 +77,7 @@ namespace clarity
     // {
     //   boundField_ = proxyiedElement->boundField_;
     // }
+    vector<ControlNetworkNode *> children_;
 
   public:
     string boundField_;

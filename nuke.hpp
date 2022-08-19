@@ -82,6 +82,7 @@ public:
   clarity::WebElemNode *controlRodSetting_;
   clarity::WebElemNode *coreToWaterHeatingConstant_;
   clarity::WebElemNode *turbineInertia_;
+  clarity::WebElemNode *thermalEnergyLossRateConstant_;
   // clarity::CompoundElement *cpe_;
   double *labelledInputTestVal_;
 };

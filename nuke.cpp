@@ -14,7 +14,7 @@ double NukeModel::popFuelChunk()
 NukeModel::NukeModel()
 {
   printState();
-  thermalEnergyLossRateConstant_ = 1;
+  thermalEnergyLossRateConstant_ = 1.01;
   controlRodSetting_ = 0.5;
   coreToWaterHeatingConstant_ = 2.0;
   turbineInertia_ = 1.4;
@@ -55,6 +55,11 @@ NukeControl::NukeControl(const string &name, const string &tag,
   clarity::LabelledInput *turbineInertia = new clarity::LabelledInput("turbineInertia_",
                                                                       "div", clarity::CppType::Double, turbineInertia_);
 
+  thermalEnergyLossRateConstant_ = new clarity::WebElemNode("thermalEnergyLossRateConstant_", "input", clarity::CppType::Double);
+  thermalEnergyLossRateConstant_->setAttribute("type", val("text"));
+  clarity::LabelledInput *thermalEnergyLossRateConstant = new clarity::LabelledInput("thermalEnergyLossRateConstant_",
+                                                                      "div", clarity::CppType::Double, thermalEnergyLossRateConstant_);
+
   applyButton_ = new clarity::ButtonElement("applyButton_", "button", clarity::CppType::String);
   // mainDiv_->appendChild(applyButton_);
 
@@ -71,7 +76,7 @@ NukeControl::NukeControl(const string &name, const string &tag,
   //                                                                             CppType::Double,
   //                                                                             labelledInputTestVal_);
 
-  //mainDiv_->appendChild(labelledInputTestField);
+  // mainDiv_->appendChild(labelledInputTestField);
 }
 
 NukeControl::NukeControl(const string &name, const string &tag,
@@ -84,6 +89,7 @@ NukeControl::NukeControl(const string &name, const string &tag,
   nm.coreToWaterHeatingConstantNode_->pushValToPeersThruAL(nm.coreToWaterHeatingConstantNode_);
   nm.turbineInertiaNode_->addALPeer(ActiveLink(turbineInertia_, val(1)));
   nm.turbineInertiaNode_->pushValToPeersThruAL(nm.turbineInertiaNode_);
+  thermalEnergyLossRateConstant_->installModelNode(&(nm.thermalEnergyLossRateConstant_));
 }
 
 /**

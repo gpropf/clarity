@@ -16,8 +16,8 @@ namespace clarity
      *
      */
 
-    template <typename T>
-    class ModelNode;
+    // template <typename T>
+    // class ModelNode;
 
     class ControlNetworkNode
     {
@@ -125,15 +125,17 @@ namespace clarity
             cle_.set("cpptype", val(storedValueType));
         }
 
-        template <typename T>
-        ControlNetworkNode(const string &name, const CppType storedValueType, T *modelField) : storedValueType_(storedValueType)
-        {
-            init();
-            // cout<< "ControlNetworkNode(const CppType storedValueType): " << (int)storedValueType << " ID = " << id_ << " \n";
-            cle_.set("cpptype", val(storedValueType));
-            ModelNode<T> *modelnode = new ModelNode(modelField, storedValueType);
-            appendChild(modelnode);
-        }
+        // template <typename T>
+        // ControlNetworkNode(const string &name, const CppType storedValueType, T *modelField) : storedValueType_(storedValueType)
+        // {
+        //     init();
+        //     // cout<< "ControlNetworkNode(const CppType storedValueType): " << (int)storedValueType << " ID = " << id_ << " \n";
+        //     cle_.set("cpptype", val(storedValueType));
+        //     ModelNode<T> *modelnode = new ModelNode(modelField, storedValueType);
+        //     appendChild(modelnode);
+        // }
+
+        
 
         template <typename T>
         inline static val cpp2js(void *valptr)
@@ -141,12 +143,7 @@ namespace clarity
             return val(*reinterpret_cast<T *>(valptr));
         }
 
-        bool appendChild(ControlNetworkNode *child)
-        {
-            children_.push_back(child);
-            cle_.call<void>("appendChild", child->getJSval());
-            return true; // FIXME: need to check for duplicate ids.
-        }
+        
 
         virtual void setVal(const val &inval)
         {
@@ -236,7 +233,7 @@ namespace clarity
         }
 
     protected:
-        vector<ControlNetworkNode *> children_;
+        
         bool clean_ = true;
         static TicketMachine tm;
         static map<const int, ControlNetworkNode *> switchboard;

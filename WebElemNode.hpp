@@ -11,7 +11,7 @@ namespace clarity
   {
   public:
   protected:
-    //vector<ControlNetworkNode *> children_;
+  
 
     // string tag_, name_;
     string tag_; //, name_;
@@ -41,6 +41,8 @@ namespace clarity
       boundField_ = "value";
       ControlNetworkNode::switchboard[id_] = this;
     }
+
+    
 
     void setAttribute(const string &attr, const val &value)
     {
