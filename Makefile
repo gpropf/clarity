@@ -4,7 +4,7 @@ ENV		= DEMANGLE_SUPPORT=1 EMCC_DEBUG=1 TOTAL_MEMORY=1900mb
 # -gsource-map --source-map-base .
 # --source-map-base=http://127.0.0.1
 CC		= emcc
-CFLAGS	=  -std=c++17 -g4
+CFLAGS	=  --source-map-base=http://localhost:6931/ -std=c++17 -gsource-map
 # -gsource-map
 # --source-map-base smap_ -gseparate-dwarf
 JSOUT	= clarity_embind.js
@@ -22,6 +22,10 @@ FRAMEWORK_DEPS = clarity.js clarity.html Makefile
 
 %.o : %.cpp %.hpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
+
+debugtest: debugtest.cpp
+	$(CC) debugtest.cpp -gsource-map --source-map-base=http://localhost:6931/ -o $(JSOUT) 
+
 
 simpleTest: simpleTest.o libclr.a
 	$(CC) -lembind simpleTest.o libclr.a -o $(JSOUT)
