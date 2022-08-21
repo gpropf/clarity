@@ -30,7 +30,7 @@ namespace clarity
          *
          */
 
-        class ActiveLink //: public Invertable
+        class ActiveLink
         {
         public:
             ActiveLink(ControlNetworkNode *peer, val scalarConst = val(1));

@@ -8,3 +8,4 @@ clarity::ControlNetworkNode::ActiveLink::ActiveLink(ControlNetworkNode *peer, va
     CLElement_ = val::global("CLElement");
     transformFn_ = CLElement_.call<val>("generateTransformFn", scalarConst_);
 }
+
