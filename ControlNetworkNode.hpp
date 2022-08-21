@@ -49,115 +49,91 @@ namespace clarity
             val transformFn_;
         };
 
-        void setParent(ControlNetworkNode *parent) { this->parent_ = parent; }
-        ControlNetworkNode *getParent() const { return this->parent_; }
+        inline void setParent(ControlNetworkNode *parent) { this->parent_ = parent; }
+        inline ControlNetworkNode *getParent() const { return this->parent_; }
 
-        virtual val getVal() const
+        inline virtual val getVal() const
         {
             printNodeStats("getVal()");
             return val(NULL);
         }
 
-        val getJSval() const { return cle_; }
+        inline val getJSval() const { return cle_; }
 
-        virtual void printState() const { cle_.call<void>("printState"); }
-        static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
+        inline virtual void printState() const { cle_.call<void>("printState"); }
+        inline static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
 
-        virtual string nodeStats() const
+        inline virtual string nodeStats() const
         {
             string s = "Node name: " + name_ + ", Node id: " + to_string(id_) + ", Node type: " + typeid(*this).name() + "\n";
             return s;
         }
 
-        virtual void printNodeStats(const string &prefix = "") const
-        {
-            // cout<< prefix << " " << nodeStats();
+        inline virtual void printNodeStats(const string &prefix = "") const
+        {        
         }
 
-        static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
+        inline static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
 
-        static void pushValToPeersThruALById(int id)
+        inline static void pushValToPeersThruALById(int id)
         {
             ControlNetworkNode *cnn = getCLElementById(id);
             cnn->printNodeStats("pushValToPeersThruALById()");
             cnn->pushValToPeersThruAL(cnn);
         }
 
-        void toggleClean()
-        {
-            // cout<< "TOGGLECLEAN, oldstate: " << clean_ << " ID = " << id_ << " \n\n\n";
+        inline void toggleClean()
+        {            
             clean_ = !clean_;
         }
 
-        void init()
+        inline void init()
         {
             id_ = tm.getNext();
-            ControlNetworkNode::switchboard[id_] = this;
-            // cout<< "ControlNetworkNode(): Setting id to " << id_ << "\n";
+            ControlNetworkNode::switchboard[id_] = this;            
         }
 
-        ControlNetworkNode()
+        inline ControlNetworkNode()
         {
             init();
         }
 
-        ControlNetworkNode(const string &name, const CppType storedValueType)
+        inline ControlNetworkNode(const string &name, const CppType storedValueType)
             : name_(name),
               storedValueType_(storedValueType)
         {
-            init();
-            // cout<< "ControlNetworkNode(const string &name, const CppType storedValueType): "
-            //     << (int)storedValueType << " ID = " << id_ << " \n";
+            init();            
             cle_.set("cpptype", val(storedValueType));
         }
 
-        ControlNetworkNode(const CppType storedValueType) : storedValueType_(storedValueType)
+        inline ControlNetworkNode(const CppType storedValueType) : storedValueType_(storedValueType)
         {
-            init();
-            // cout<< "ControlNetworkNode(const CppType storedValueType): " << (int)storedValueType << " ID = " << id_ << " \n";
+            init();            
             cle_.set("cpptype", val(storedValueType));
         }
-
-        // template <typename T>
-        // ControlNetworkNode(const string &name, const CppType storedValueType, T *modelField) : storedValueType_(storedValueType)
-        // {
-        //     init();
-        //     // cout<< "ControlNetworkNode(const CppType storedValueType): " << (int)storedValueType << " ID = " << id_ << " \n";
-        //     cle_.set("cpptype", val(storedValueType));
-        //     ModelNode<T> *modelnode = new ModelNode(modelField, storedValueType);
-        //     appendChild(modelnode);
-        // }
-
-        
 
         template <typename T>
         inline static val cpp2js(void *valptr)
         {
             return val(*reinterpret_cast<T *>(valptr));
-        }
+        }        
 
-        
-
-        virtual void setVal(const val &inval)
-        {
-            // cout<< "Marking node " << id_ << " as dirty.\n\n";
+        inline virtual void setVal(const val &inval)
+        {        
             clean_ = false;
         }
 
-        virtual void pushValToPeerThruAL(ActiveLink &al)
+        inline virtual void pushValToPeerThruAL(ActiveLink &al)
         {
             printNodeStats("pushValToPeerThruAL()");
             if (clean_)
-            {
-                // cout<< "pushValToPeerThruAL: Node " << id_ << " is clean.\n";
+            {         
             }
 
             val internalVal = getVal();
 
             if (internalVal.isNumber())
-            {
-                // val CLElement_ = val::global("CLElement");
-                // val product = jsval_.call<val>("multiplyValues", internalVal, al.scalarConst_);
+            {             
                 val product = al.CLElement_.call<val>("applyTransformFn", al.transformFn_, internalVal);
                 al.peer_->setVal(product);
             }
@@ -167,47 +143,24 @@ namespace clarity
             }
 
             clean_ = true;
-        }
+        }        
 
-        void printALPeers(string prefix = "")
-        {
-            for (auto alpeer : alpeers_)
-            {
-                // cout<< prefix << " printALPeers: id = " << id_ << ", ALPeer id = " << alpeer.peer_->id_ << "\n";
-            }
-        }
-
-        // void setValOnALPeers(const val &inval)
-        // {
-        //     for (auto alpeer : alpeers_)
-        //     {
-        //         val product = jsval_.call<val>("multiplyValues", inval, alpeer.scalarConst_);
-        //         alpeer.peer_->setVal(product);
-        //         // alpeer.peer_->setVal(inval);
-        //     }
-        // }
-
-        virtual void pushValToPeersThruAL(ControlNetworkNode *excludedPeer = nullptr)
+        inline virtual void pushValToPeersThruAL(ControlNetworkNode *excludedPeer = nullptr)
         {
             printNodeStats("pushValToPeersThruAL()");
             if (excludedPeer == nullptr)
-            {
-                // cout<< "pushValToPeersThruAL(): excludedPeer == nullptr\n";
+            {                
                 for (auto alpeer : alpeers_)
-                {
-                    // cout<< "pushValToPeersThruAL(): alpeer.peer_.id_ = " << alpeer.peer_->id_ << "\n";
+                {             
                     pushValToPeerThruAL(alpeer);
                 }
             }
             else
-            {
-                // cout<< "pushValToPeersThruAL(): excludedPeer != nullptr\n";
+            {                
                 for (auto alpeer : alpeers_)
                 {
                     if (alpeer.peer_ != excludedPeer)
                     {
-                        // cout<< "pushValToPeersThruAL(): alpeer.peer_ != excludedPeer\n";
-
                         pushValToPeerThruAL(alpeer);
                     }
                 }
