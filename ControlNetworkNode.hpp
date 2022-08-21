@@ -38,7 +38,6 @@ namespace clarity
             template <typename T>
             ActiveLink(ControlNetworkNode *peer, const T scalarConst)
                 : peer_(peer), scalarConst_(val(scalarConst))
-
             {
                 CLElement_ = val::global("CLElement");
                 transformFn_ = CLElement_.call<val>("generateTransformFn", scalarConst_);
