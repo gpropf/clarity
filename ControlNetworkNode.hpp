@@ -33,13 +33,7 @@ namespace clarity
         class ActiveLink //: public Invertable
         {
         public:
-            ActiveLink(ControlNetworkNode *peer, val scalarConst = val(1))
-                : peer_(peer), scalarConst_(scalarConst)
-
-            {
-                CLElement_ = val::global("CLElement");
-                transformFn_ = CLElement_.call<val>("generateTransformFn", scalarConst_);
-            }
+            ActiveLink(ControlNetworkNode *peer, val scalarConst = val(1));
 
             template <typename T>
             ActiveLink(ControlNetworkNode *peer, const T scalarConst)
