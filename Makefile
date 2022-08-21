@@ -4,7 +4,7 @@ ENV		= DEMANGLE_SUPPORT=1 EMCC_DEBUG=1 TOTAL_MEMORY=1900mb
 # -gsource-map --source-map-base .
 # --source-map-base=http://127.0.0.1
 CC		= emcc
-CFLAGS	=  -gsource-map --source-map-base=http://localhost:6931/ -std=c++17
+CFLAGS	=  --source-map-base=http://localhost:6931/ -gsource-map -std=c++17
 #CFLAGS	=  -std=c++17 -g
 # -gsource-map
 # --source-map-base smap_ -gseparate-dwarf
