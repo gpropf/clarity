@@ -21,7 +21,7 @@ namespace clarity
     bool appendChild(ControlNetworkNode *child)
     {
       children_.push_back(child);
-      cle_.call<void>("appendChild", child->getJSval());
+      cle_.call<void>("appendChild", child->getCLE());
       return true; // FIXME: need to check for duplicate ids.
     }
 

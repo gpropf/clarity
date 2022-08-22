@@ -58,7 +58,7 @@ namespace clarity
             return val(NULL);
         }
 
-        inline val getJSval() const { return cle_; }
+        inline val getCLE() const { return cle_; }
 
         inline virtual void printState() const { cle_.call<void>("printState"); }
         inline static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
@@ -183,8 +183,9 @@ namespace clarity
         bool clean_ = true;
         static TicketMachine tm;
         static map<const int, ControlNetworkNode *> switchboard;
-        val cle_ = val::global("CLElement").new_();
-        CppType storedValueType_; // C++ Data type
+        val cle_ = val::global("CLElement").new_(); //!< An instance of the CLElement class that acts as a "proxy" in JS space
+        
+        CppType storedValueType_; //!< C++ Data type
         ControlNetworkNode *parent_;
         int id_ = 1000;
         string name_;

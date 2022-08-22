@@ -25,7 +25,7 @@ namespace clarity
       //WebNode(attributeName, storedValueType);
       parent_ = parent;
       boundField_ = attributeName;
-      val parentDomelement = parent_->getJSval()["domElement"];
+      val parentDomelement = parent_->getCLE()["domElement"];
       // bool cln = parent->clean_;
       cle_.set("domElement", parentDomelement);
     }
