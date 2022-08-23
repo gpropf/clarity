@@ -13,8 +13,7 @@ clarity::LabelledInput::LabelledInput(const string &name,
   label_->boundField_ = "innerHTML";
   label_->setVal(val(name));
   // cout<< "LabelledInput constructor called! id = " << id_ << "\n";
-  this->appendChild(label_);
-  printNodeStats("LabelledInput");
+  this->appendChild(label_);  
 }
 
 clarity::LabelledInput::LabelledInput(const string &name,

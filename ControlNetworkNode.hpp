@@ -51,144 +51,45 @@ namespace clarity
 
         inline void setParent(ControlNetworkNode *parent) { this->parent_ = parent; }
         inline ControlNetworkNode *getParent() const { return this->parent_; }
-
-        inline virtual val getVal() const
-        {
-            printNodeStats("getVal()");
-            return val(NULL);
-        }
-
+        inline virtual val getVal() const { return val(NULL); }
         inline val getCLE() const { return cle_; }
-
         inline virtual void printState() const { cle_.call<void>("printState"); }
         inline static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
-
-        inline virtual string nodeStats() const
-        {
-            string s = "Node name: " + name_ + ", Node id: " + to_string(id_) + ", Node type: " + typeid(*this).name() + "\n";
-            return s;
-        }
-
-        inline virtual void printNodeStats(const string &prefix = "") const
-        {        
-        }
-
         inline static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
-
-        inline static void pushValToPeersThruALById(int id)
-        {
-            ControlNetworkNode *cnn = getCLElementById(id);
-            cnn->printNodeStats("pushValToPeersThruALById()");
-            cnn->pushValToPeersThruAL(cnn);
-        }
-
-        inline void toggleClean()
-        {            
-            clean_ = !clean_;
-        }
-
-        inline void init()
-        {
-            id_ = tm.getNext();
-            ControlNetworkNode::switchboard[id_] = this;            
-        }
-
-        inline ControlNetworkNode()
-        {
-            init();
-        }
-
-        inline ControlNetworkNode(const string &name, const CppType storedValueType)
-            : name_(name),
-              storedValueType_(storedValueType)
-        {
-            init();            
-            cle_.set("cpptype", val(storedValueType));
-        }
-
-        inline ControlNetworkNode(const CppType storedValueType) : storedValueType_(storedValueType)
-        {
-            init();            
-            cle_.set("cpptype", val(storedValueType));
-        }
+        inline void toggleClean() { clean_ = !clean_; }
+        inline ControlNetworkNode() { init(); }
+        inline virtual void setVal(const val &inval) { clean_ = false; }
 
         template <typename T>
-        inline static val cpp2js(void *valptr)
-        {
-            return val(*reinterpret_cast<T *>(valptr));
-        }        
+        inline static val cpp2js(void *valptr) { return val(*reinterpret_cast<T *>(valptr)); }
 
-        inline virtual void setVal(const val &inval)
-        {        
-            clean_ = false;
-        }
-
-        inline virtual void pushValToPeerThruAL(ActiveLink &al)
-        {
-            printNodeStats("pushValToPeerThruAL()");
-            if (clean_)
-            {         
-            }
-
-            val internalVal = getVal();
-
-            if (internalVal.isNumber())
-            {             
-                val product = al.CLElement_.call<val>("applyTransformFn", al.transformFn_, internalVal);
-                al.peer_->setVal(product);
-            }
-            else
-            {
-                al.peer_->setVal(internalVal);
-            }
-
-            clean_ = true;
-        }        
-
-        inline virtual void pushValToPeersThruAL(ControlNetworkNode *excludedPeer = nullptr)
-        {
-            printNodeStats("pushValToPeersThruAL()");
-            if (excludedPeer == nullptr)
-            {                
-                for (auto alpeer : alpeers_)
-                {             
-                    pushValToPeerThruAL(alpeer);
-                }
-            }
-            else
-            {                
-                for (auto alpeer : alpeers_)
-                {
-                    if (alpeer.peer_ != excludedPeer)
-                    {
-                        pushValToPeerThruAL(alpeer);
-                    }
-                }
-            }
-        }
-
-        void
-        addALPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false)
-        {
-            alpeers_.push_back(al);
-            if (alreadyAdded)
-            {
-                return;
-            }
-            al.peer_->addALPeer(ActiveLink(this, cle_.call<val>("invertValue", al.scalarConst_)), true);
-        }
+        virtual string nodeStats() const;
+        static void pushValToPeersThruALById(int id);
+        void EMSCRIPTEN_KEEPALIVE init();
+        EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const string &name, const CppType storedValueType);
+        EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const CppType storedValueType);
+        virtual void pushValToPeerThruAL(ActiveLink &al);
+        virtual void pushValToPeersThruAL(ControlNetworkNode *excludedPeer = nullptr);
+        void addALPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false);
 
     protected:
-        
+        /** \brief The node is clean if it has not been recently changed. This feature is mainly designed to prevent
+            infinite update loops if the node graph is not acyclic. It doesn't do anything yet.*/
         bool clean_ = true;
+        /** \brief Hands out the numeric ids for all nodes.*/
         static TicketMachine tm;
+        /** \brief Keeps track of all nodes in the system. If you have the id of a node you can get a pointer to it here. */
         static map<const int, ControlNetworkNode *> switchboard;
-        val cle_ = val::global("CLElement").new_(); //!< An instance of the CLElement class that acts as a "proxy" in JS space
-        
+        /** \brief Instance of the CLElement class that acts as a "proxy" in JS space. */
+        val cle_ = val::global("CLElement").new_(); 
+
         CppType storedValueType_; //!< C++ Data type
-        ControlNetworkNode *parent_;
-        int id_ = 1000;
-        string name_;
+        /** \brief A node's parent is the DOM element that contains it. In the case of the WebAttrNode this is the WebElemNode
+         * for which this is an attribute. */
+        ControlNetworkNode *parent_;        
+        int id_ = -1; //!< Unique identifier - immutable.
+        string name_; //!< Human readable name of node. Mutable, not required.
+        /** \brief List of peers linked through JS functions which are applied when data is moved between nodes. */
         vector<ControlNetworkNode::ActiveLink> alpeers_;
     };
 }

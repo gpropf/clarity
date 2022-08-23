@@ -42,7 +42,7 @@ namespace clarity
     val getVal() const
     {
       // ControlNetworkNode::getVal();
-      printNodeStats("GETVAL");
+      
       val domElement = cle_["domElement"];
       string valueText = domElement[boundField_].as<string>();
 

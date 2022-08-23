@@ -92,12 +92,7 @@ NukeControl::NukeControl(const string &name, const string &tag,
   thermalEnergyLossRateConstant_->installModelNode(&(nm.thermalEnergyLossRateConstant_));
 }
 
-/**
- * @brief switchboard is where a map of all the WebElements is stored so that
- * they can be found by their id numbers.
- *
- */
-// map<const int, clarity::WebElemNode *> clarity::WebElemNode::switchboard;
+
 map<const int, clarity::ControlNetworkNode *> clarity::ControlNetworkNode::switchboard;
 
 /**
@@ -112,7 +107,6 @@ clarity::TicketMachine clarity::ControlNetworkNode::tm;
 void NukeModel::iterate()
 {
   activity_ = currentFuelChunk_ * controlRodSetting_;
-
   printState();
 }
 
