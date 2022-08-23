@@ -23,13 +23,13 @@ namespace clarity
     {
 
     public:
+
         /**
          * @brief Represents the 'edges' in our control graph. These edges can be active and contain a JS value that can act as a transformation
          * on the values moving between nodes.
          *
          *
          */
-
         class ActiveLink
         {
         public:
@@ -49,27 +49,30 @@ namespace clarity
             val transformFn_;
         };
 
-        inline void setParent(ControlNetworkNode *parent) { this->parent_ = parent; }
+        void EMSCRIPTEN_KEEPALIVE init();
+        inline ControlNetworkNode() { init(); }        
+        EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const string &name, const CppType storedValueType);
+        EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const CppType storedValueType);
+
         inline ControlNetworkNode *getParent() const { return this->parent_; }
+        inline void setParent(ControlNetworkNode *parent) { this->parent_ = parent; }
         inline virtual val getVal() const { return val(NULL); }
+        inline virtual void setVal(const val &inval) { clean_ = false; }
+
         inline val getCLE() const { return cle_; }
         inline virtual void printState() const { cle_.call<void>("printState"); }
         inline static ControlNetworkNode *getCLElementById(const int id) { return switchboard[id]; }
         inline static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
         inline void toggleClean() { clean_ = !clean_; }
-        inline ControlNetworkNode() { init(); }
-        inline virtual void setVal(const val &inval) { clean_ = false; }
 
         template <typename T>
         inline static val cpp2js(void *valptr) { return val(*reinterpret_cast<T *>(valptr)); }
 
         virtual string nodeStats() const;
-        static void pushValToPeersThruALById(int id);
-        void EMSCRIPTEN_KEEPALIVE init();
-        EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const string &name, const CppType storedValueType);
-        EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const CppType storedValueType);
+        
         virtual void pushValToPeerThruAL(ActiveLink &al);
         virtual void pushValToPeersThruAL(ControlNetworkNode *excludedPeer = nullptr);
+        static void pushValToPeersThruALById(int id);        
         void addALPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false);
 
     protected:
