@@ -12,10 +12,10 @@ JSOUT	= clarity_embind.js
 # CPPIN	= clarity.cpp ButtonElement.cpp WebElemNode.cpp nuke.cpp
 LIBCLR_IN = clarity.cpp ButtonElement.cpp WebElemNode.cpp WebAttrNode.cpp WebNode.cpp \
 			ModelNode.cpp ControlNetworkNode.cpp CompoundElement.cpp LabelledInput.cpp \
-			LabelElement.cpp CanvasElement.cpp
+			LabelElement.cpp CanvasElement.cpp CLNodeFactory.cpp
 LIBCLR_OBJS = clarity.o ButtonElement.o WebElemNode.o WebAttrNode.o WebNode.o \
  			ModelNode.o ControlNetworkNode.o CompoundElement.o LabelledInput.o \
-			LabelElement.o CanvasElement.o
+			LabelElement.o CanvasElement.o CLNodeFactory.o
 AR 		= emar
 FRAMEWORK_DEPS = clarity.js clarity.html Makefile
 
@@ -23,6 +23,9 @@ FRAMEWORK_DEPS = clarity.js clarity.html Makefile
 
 %.o : %.cpp %.hpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
+
+testbed: testbed.o libclr.a
+	$(CC) -lembind testbed.o libclr.a $(CFLAGS) -o $(JSOUT)
 
 debugtest: debugtest.cpp
 	#$(CC) debugtest.cpp -g --source-map-base=http://localhost:6931/ -gsource-map -o debug.html

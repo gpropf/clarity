@@ -37,7 +37,9 @@ namespace clarity
       // jsval_.set("name", val(name));
 
       cle_.call<void>("createDOMElement", id_, tag, storedValueType, name);
-      tag_ = tag;      
+      cle_.set("name", val(name));
+      tag_ = tag;  
+      name_ = name;    
       boundField_ = "value";
       ControlNetworkNode::switchboard[id_] = this;
     }
