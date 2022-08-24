@@ -4,11 +4,14 @@ ENV		= DEMANGLE_SUPPORT=1 EMCC_DEBUG=1 TOTAL_MEMORY=1900mb
 # -gsource-map --source-map-base .
 # --source-map-base=http://127.0.0.1
 CC		= emcc
-CFLAGS	=  --source-map-base=http://localhost:6931/ -gsource-map -std=c++17
+CFLAGS	=  -g -gsource-map --source-map-base=http://localhost:6931/ -std=c++17
 #CFLAGS	=  -std=c++17 -g
 # -gsource-map
 # --source-map-base smap_ -gseparate-dwarf
 JSOUT	= clarity_embind.js
+NUKE_HTML_OUT = nuke.html
+NUKE_JS_OUT = nuke.js
+
 # CPPIN	= clarity.cpp ButtonElement.cpp WebElemNode.cpp nuke.cpp
 LIBCLR_IN = clarity.cpp ButtonElement.cpp WebElemNode.cpp WebAttrNode.cpp WebNode.cpp \
 			ModelNode.cpp ControlNetworkNode.cpp CompoundElement.cpp LabelledInput.cpp \
@@ -29,7 +32,7 @@ testbed: testbed.o libclr.a
 
 debugtest: debugtest.cpp
 	#$(CC) debugtest.cpp -g --source-map-base=http://localhost:6931/ -gsource-map -o debug.html
-	$(CC) debugtest.cpp -g -gsource-map -o debug.html
+	$(CC) debugtest.cpp -g -o debug.html
 
 
 simpleTest: simpleTest.o libclr.a
@@ -39,7 +42,13 @@ libclr.a: $(LIBCLR_OBJS)
 	$(AR) rcs libclr.a $(LIBCLR_OBJS)
 	
 nuke: nuke.o libclr.a
-	$(CC) -lembind nuke.o libclr.a -o $(JSOUT)
+	$(CC) -lembind nuke.o libclr.a $(CFLAGS) -o $(JSOUT)
+
+nukehtml: nuke.o libclr.a
+	$(CC) -lembind nuke.o libclr.a $(CFLAGS) -o $(NUKE_HTML_OUT)
+
+nukejs: nuke.o libclr.a
+	$(CC) -lembind nuke.o libclr.a $(CFLAGS) -o $(NUKE_JS_OUT)
 
 docs: clarity.doxyconfig
 	doxygen clarity.doxyconfig
