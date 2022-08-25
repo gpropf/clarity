@@ -15,7 +15,7 @@ int main()
     clarity::ModelNode<double> *nm = new clarity::ModelNode(n, clarity::CppType::Double);
     clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div", clarity::CppType::Double);
 
-    clarity::CLNodeFactory<WebAttrNode> builder("input", "foo_input", CppType::Float);
+    clarity::CLNodeFactory<WebElemNode> builder("input", "foo_input", CppType::Float);
     clarity::ControlNetworkNode *input1 = builder.build();
     clarity::ControlNetworkNode *input2 = builder.withTag("div").build();
     maindiv->appendChild(input1);

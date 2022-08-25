@@ -17,30 +17,12 @@ namespace clarity
   protected:
     string attributeName_;
 
-  public:    
+  public:
+    WebAttrNode(const string &attributeName,
+                const CppType storedValueType,
+                ControlNetworkNode *parent);    
 
-    WebAttrNode(const string &attributeName, const CppType storedValueType,
-                ControlNetworkNode *parent) : WebNode(attributeName, storedValueType)
-    {
-      //WebNode(attributeName, storedValueType);
-      parent_ = parent;
-      boundField_ = attributeName;
-      val parentDomelement = parent_->getCLE()["domElement"];
-      // bool cln = parent->clean_;
-      cle_.set("domElement", parentDomelement);
-    }
-
-    // void updateViewFromModel()
-    // {
-    //   // FIXME: fill in method
-    // }
-
-    virtual void setVal(const val &inval)
-    {
-      ControlNetworkNode::setVal(inval);
-      val domElement = cle_["domElement"];
-      domElement.call<void>("setAttribute", boundField_, inval);
-    }
+    virtual void setVal(const val &inval);
   };
 
 }
