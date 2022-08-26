@@ -24,8 +24,8 @@ namespace clarity
         BasicNodeType basicNodeType_;
 
         inline CLNodeFactory() {}
-        // inline CLNodeFactory(const string &tag, const string &name, CppType storedValueType)
-        //     : tag_(tag), name_(name), storedValueType_(storedValueType) {}
+        inline CLNodeFactory(const string &tag, const string &name, CppType storedValueType)
+            : tag_(tag), name_(name), storedValueType_(storedValueType) {}
 
         inline CLNodeFactory(const string &tag, const string &name, CppType storedValueType, V *storedValue)
             : tag_(tag), name_(name), storedValueType_(storedValueType), storedValue_(storedValue) {}
@@ -71,7 +71,7 @@ namespace clarity
             return cpy;
         }
 
-        CLNodeFactory<T, V> withStoredValue(T *storedValue)
+        CLNodeFactory<T, V> withStoredValue(V *storedValue)
         {
             CLNodeFactory cpy(*this);
             cpy.storedValue_ = storedValue;
