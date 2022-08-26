@@ -5,7 +5,7 @@
 
 namespace clarity
 {
-    template <typename T>
+    template <typename T, typename V>
     class CLNodeFactory
     {
 
@@ -17,31 +17,64 @@ namespace clarity
             ModelNode
         };
 
-        string tag_;
-        string name_;
-        CppType storedValueType_;
+        string tag_;              //!< Tag to be used with elements this factory builds.
+        string name_;             //!< Name to be used with elements this factory builds.
+        CppType storedValueType_; //!< storedValueType to be used with elements this factory builds.
+        V *storedValue_;          //!< Actually only used when creating a model node along with a web control.
         BasicNodeType basicNodeType_;
 
         inline CLNodeFactory() {}
-        inline CLNodeFactory(const string &tag, const string &name, CppType storedValueType)
-            : tag_(tag), name_(name), storedValueType_(storedValueType) {}
+        // inline CLNodeFactory(const string &tag, const string &name, CppType storedValueType)
+        //     : tag_(tag), name_(name), storedValueType_(storedValueType) {}
+
+        inline CLNodeFactory(const string &tag, const string &name, CppType storedValueType, V *storedValue)
+            : tag_(tag), name_(name), storedValueType_(storedValueType), storedValue_(storedValue) {}
 
         T *build()
         {
             return new T(name_, tag_, storedValueType_);
         }
 
-        CLNodeFactory<T> withTag(const string &tag)
+        T *buildInsideNode(WebNode *outerNode)
+        {
+            WebNode *innerNode = build();
+            outerNode->appendChild(innerNode);
+        }
+
+        T *buildWithModelNode(const val transformFn = val(1))
+        {
+            T *cnn = build();
+            ModelNode<V> *mn = new ModelNode<V>(storedValue_, storedValueType_);
+            mn->addALPeer(clarity::ControlNetworkNode::ActiveLink(cnn, transformFn));
+            mn->pushValToPeersThruAL(mn);
+        }
+
+        CLNodeFactory<T, V>
+        withTag(const string &tag)
         {
             CLNodeFactory cpy(*this);
             cpy.tag_ = tag;
             return cpy;
         }
 
-        CLNodeFactory<T> withName(const string &name)
+        CLNodeFactory<T, V> withName(const string &name)
         {
             CLNodeFactory cpy(*this);
             cpy.name_ = name;
+            return cpy;
+        }
+
+        CLNodeFactory<T, V> withStoredValueType(clarity::CppType storedValueType)
+        {
+            CLNodeFactory cpy(*this);
+            cpy.storedValueType_ = storedValueType;
+            return cpy;
+        }
+
+        CLNodeFactory<T, V> withStoredValue(T *storedValue)
+        {
+            CLNodeFactory cpy(*this);
+            cpy.storedValue_ = storedValue;
             return cpy;
         }
     };

@@ -12,14 +12,17 @@ int main()
     using ActiveLink = ControlNetworkNode::ActiveLink;
 
     double *n = new double(50);
+    double *pi = new double(3.14159);
     clarity::ModelNode<double> *nm = new clarity::ModelNode(n, clarity::CppType::Double);
     clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div", clarity::CppType::Double);
 
-    clarity::CLNodeFactory<WebElemNode> builder("input", "foo_input", CppType::Float);
+    clarity::CLNodeFactory<WebElemNode, double> builder("input", "foo_input", CppType::Float, pi);
     clarity::ControlNetworkNode *input1 = builder.build();
     clarity::ControlNetworkNode *input2 = builder.withTag("div").build();
+    clarity::ControlNetworkNode *input3 = builder.buildWithModelNode();
     maindiv->appendChild(input1);
     maindiv->appendChild(input2);
+    maindiv->appendChild(input3);
 
     printf("Setup complete!\n");
     return 0;
