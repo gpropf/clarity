@@ -39,6 +39,7 @@ namespace clarity
         {
             WebNode *innerNode = build();
             outerNode->appendChild(innerNode);
+            return outerNode;
         }
 
         T *buildWithModelNode(const val transformFn = val(1))
@@ -47,9 +48,10 @@ namespace clarity
             ModelNode<V> *mn = new ModelNode<V>(storedValue_, storedValueType_);
             mn->addALPeer(clarity::ControlNetworkNode::ActiveLink(cnn, transformFn));
             mn->pushValToPeersThruAL(mn);
+            return cnn;
         }
 
-        CLNodeFactory<T, V>
+        CLNodeFactory
         withTag(const string &tag)
         {
             CLNodeFactory cpy(*this);
@@ -57,21 +59,21 @@ namespace clarity
             return cpy;
         }
 
-        CLNodeFactory<T, V> withName(const string &name)
+        CLNodeFactory withName(const string &name)
         {
             CLNodeFactory cpy(*this);
             cpy.name_ = name;
             return cpy;
         }
 
-        CLNodeFactory<T, V> withStoredValueType(clarity::CppType storedValueType)
+        CLNodeFactory withStoredValueType(clarity::CppType storedValueType)
         {
             CLNodeFactory cpy(*this);
             cpy.storedValueType_ = storedValueType;
             return cpy;
         }
 
-        CLNodeFactory<T, V> withStoredValue(V *storedValue)
+        CLNodeFactory withStoredValue(V *storedValue)
         {
             CLNodeFactory cpy(*this);
             cpy.storedValue_ = storedValue;
