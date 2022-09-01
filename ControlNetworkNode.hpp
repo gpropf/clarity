@@ -22,8 +22,6 @@ namespace clarity
     class ControlNetworkNode
     {
 
-        
-
     public:
         /**
          * @brief Represents the 'edges' in our control graph. These edges can be active and contain a JS value that can act as a transformation
@@ -34,19 +32,20 @@ namespace clarity
         class ActiveLink
         {
         public:
+            static val CLElement_;
             ActiveLink(ControlNetworkNode *peer, val scalarConst = val(1));
 
             template <typename T>
             ActiveLink(ControlNetworkNode *peer, const T scalarConst)
                 : peer_(peer), scalarConst_(val(scalarConst))
             {
-                CLElement_ = val::global("CLElement");
+
                 transformFn_ = CLElement_.call<val>("generateTransformFn", scalarConst_);
             }
 
             ControlNetworkNode *peer_;
             val scalarConst_;
-            val CLElement_;
+            // val CLElement_;
             val transformFn_;
         };
 

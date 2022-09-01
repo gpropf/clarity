@@ -103,6 +103,7 @@ map<const int, clarity::ControlNetworkNode *> clarity::ControlNetworkNode::switc
  */
 map<string, std::function<void()>> clarity::WebElemNode::callbackMap;
 clarity::TicketMachine clarity::ControlNetworkNode::tm;
+val clarity::ControlNetworkNode::ActiveLink::CLElement_ = val::global("CLElement");
 
 void NukeModel::iterate()
 {
