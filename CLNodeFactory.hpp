@@ -5,23 +5,23 @@
 
 namespace clarity
 {
-    template <typename T, typename V>
+    template <class T, typename V>
     class CLNodeFactory
     {
 
     public:
-        enum class BasicNodeType : int
-        {
-            WebElemNode,
-            WebAttrNode,
-            ModelNode
-        };
+        // enum class BasicNodeType : int
+        // {
+        //     WebElemNode,
+        //     WebAttrNode,
+        //     ModelNode
+        // };
 
         string tag_;              //!< Tag to be used with elements this factory builds.
         string name_;             //!< Name to be used with elements this factory builds.
         CppType storedValueType_; //!< storedValueType to be used with elements this factory builds.
         V *storedValue_;          //!< Actually only used when creating a model node along with a web control.
-        BasicNodeType basicNodeType_;
+        //BasicNodeType basicNodeType_;
 
         inline CLNodeFactory() {}
         inline CLNodeFactory(const string &tag, const string &name, CppType storedValueType)

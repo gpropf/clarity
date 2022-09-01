@@ -129,10 +129,12 @@ class CLElement {
     return this.domElement_.name;
   }
 
+  static tagToUrl = {"svg": "http://www.w3.org/2000/svg", "circle":  "http://www.w3.org/2000/svg"};
+
   createDOMElementByTagType() {
     var el
-    if (this.tag_ == "svg" || this.tag_ == "circle") {
-      el = document.createElementNS("http://www.w3.org/2000/svg", this.tag_)
+    if (CLElement.tagToUrl[this.tag_]) {
+      el = document.createElementNS(CLElement.tagToUrl[this.tag_], this.tag_)
     }
     else {
       el = document.createElement(this.tag_)

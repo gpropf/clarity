@@ -11,7 +11,7 @@ int main()
 
     using ActiveLink = ControlNetworkNode::ActiveLink;
 
-     double *n = new double(50);
+    double *n = new double(50);
     double *pi = new double(3.14159);
 
     clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div", clarity::CppType::NoData);
