@@ -1,14 +1,14 @@
 allheaders.hpp
-ButtonElement.hpp
+ButtonElement.hpp       DONE
 CanvasElement.hpp
 clarity.hpp
 CLNodeFactory.hpp
-CompoundElement.hpp
-ControlNetworkNode.hpp
+CompoundElement.hpp     DONE
+ControlNetworkNode.hpp  DONE
 embindings.hpp
-LabelElement.hpp
-LabelledInput.hpp
-ModelNode.hpp
+LabelElement.hpp        DONE
+LabelledInput.hpp       DONE
+ModelNode.hpp           template, cannot move implementation.
 nuke.hpp
 simpleTest.hpp
 testbed.hpp
