@@ -20,9 +20,11 @@ int main()
 
     clarity::WebElemNode *input1 = builder.buildWithModelNode();
     clarity::WebElemNode *input2 = builder.withStoredValue(n).buildWithModelNode();
+    clarity::WebElemNode *button1 = builder.button("button1", "Press me!");
 
     maindiv->appendChild(input1);
     maindiv->appendChild(input2);
+    maindiv->appendChild(button1);
     input1->setAttribute("type", val("text"));
     input2->setAttribute("type", val("text"));
     printf("Setup complete!\n");

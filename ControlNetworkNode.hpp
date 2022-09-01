@@ -22,8 +22,9 @@ namespace clarity
     class ControlNetworkNode
     {
 
-    public:
+        
 
+    public:
         /**
          * @brief Represents the 'edges' in our control graph. These edges can be active and contain a JS value that can act as a transformation
          * on the values moving between nodes.
@@ -50,7 +51,7 @@ namespace clarity
         };
 
         void EMSCRIPTEN_KEEPALIVE init();
-        inline ControlNetworkNode() { init(); }        
+        inline ControlNetworkNode() { init(); }
         EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const string &name, const CppType storedValueType);
         EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const CppType storedValueType);
 
@@ -69,10 +70,10 @@ namespace clarity
         inline static val cpp2js(void *valptr) { return val(*reinterpret_cast<T *>(valptr)); }
 
         virtual string nodeStats() const;
-        
+
         virtual void pushValToPeerThruAL(ActiveLink &al);
         virtual void pushValToPeersThruAL(ControlNetworkNode *excludedPeer = nullptr);
-        static void pushValToPeersThruALById(int id);        
+        static void pushValToPeersThruALById(int id);
         void addALPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false);
 
     protected:
@@ -84,12 +85,12 @@ namespace clarity
         /** \brief Keeps track of all nodes in the system. If you have the id of a node you can get a pointer to it here. */
         static map<const int, ControlNetworkNode *> switchboard;
         /** \brief Instance of the CLElement class that acts as a "proxy" in JS space. */
-        val cle_ = val::global("CLElement").new_(); 
+        val cle_ = val::global("CLElement").new_();
 
         CppType storedValueType_; //!< C++ Data type
         /** \brief A node's parent is the DOM element that contains it. In the case of the WebAttrNode this is the WebElemNode
          * for which this is an attribute. */
-        ControlNetworkNode *parent_;        
+        ControlNetworkNode *parent_;
         int id_ = -1; //!< Unique identifier - immutable.
         string name_; //!< Human readable name of node. Mutable, not required.
         /** \brief List of peers linked through JS functions which are applied when data is moved between nodes. */
