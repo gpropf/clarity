@@ -21,7 +21,7 @@ namespace clarity
         string name_;             //!< Name to be used with elements this factory builds.
         CppType storedValueType_; //!< storedValueType to be used with elements this factory builds.
         V *storedValue_;          //!< Actually only used when creating a model node along with a web control.
-        //BasicNodeType basicNodeType_;
+        // BasicNodeType basicNodeType_;
 
         inline CLNodeFactory() {}
         inline CLNodeFactory(const string &tag, const string &name, CppType storedValueType)
@@ -80,21 +80,29 @@ namespace clarity
             return cpy;
         }
 
-        inline WebElemNode * button(const string& name, const string & text, val onPressCallback = val(NULL)) {
-            WebElemNode * button = withTag("button").build();
+        inline WebElemNode *button(const string &name, const string &text, val onPressCallback = val(NULL))
+        {
+            WebElemNode *button = withTag("button").build();
             button->boundField_ = "textContent";
             button->setVal(val(text));
-            //val buttonDOMElement = button->getCLE()["domElement"];
+            // val buttonDOMElement = button->getCLE()["domElement"];
             val buttonCLE = button->getCLE();
-            //val buttonDOMElement = buttonCLE["domElement"];
-            //buttonDOMElement.call<void>("addEventListener", "press", onPressCallback);
-            //val alertFn = buttonCLE.call<void>("testAlert");
-            //val CLElement = val::global("CLElement");
-            //button->addJSEventListener("press", CLElement["testAlert"]);
+            // val buttonDOMElement = buttonCLE["domElement"];
+            // buttonDOMElement.call<void>("addEventListener", "press", onPressCallback);
+            // val alertFn = buttonCLE.call<void>("testAlert");
+            // val CLElement = val::global("CLElement");
+            // button->addJSEventListener("press", CLElement["testAlert"]);
             return button;
         }
 
-
+        inline WebElemNode *label(WebElemNode * forNode, const string &text)
+        {
+            WebElemNode *label = withTag("label").build();
+            label->boundField_ = "innerHTML";
+            label->setVal(val(text));
+            label->setAttribute("for", val(forNode->getId()));
+            return label;
+        }
     };
 }
 #endif

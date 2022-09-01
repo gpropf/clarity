@@ -22,9 +22,11 @@ int main()
     clarity::WebElemNode *input1 = builder.buildWithModelNode();
     clarity::WebElemNode *input2 = builder.withStoredValue(n).buildWithModelNode();
     clarity::WebElemNode *button1 = builder.button("button1", "Press me!");
+    clarity::WebElemNode *labelInput1 = builder.label(input1, "PI");
     button1->addEventListenerByName("click", "iterateModel");
 
     maindiv->appendChild(input1);
+    maindiv->appendChild(labelInput1);
     maindiv->appendChild(input2);
     maindiv->appendChild(button1);
     input1->setAttribute("type", val("text"));
