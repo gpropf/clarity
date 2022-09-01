@@ -14,6 +14,7 @@
 using namespace std;
 using namespace emscripten;
 
+
 // Run with 'python3 -m http.server 8000'
 
 namespace clarity
@@ -64,6 +65,8 @@ namespace clarity
     virtual Invertable *inverted() = 0;
   };
 
-    }
+}
+
+using namespace clarity;
 
 #endif

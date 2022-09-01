@@ -9,7 +9,7 @@ clarity::ControlNetworkNode::ActiveLink::ActiveLink(ControlNetworkNode *peer, va
     transformFn_ = CLElement_.call<val>("generateTransformFn", scalarConst_);
 }
 
-string clarity::ControlNetworkNode::nodeStats() const
+inline string clarity::ControlNetworkNode::nodeStats() const
 {
     string s = "Node name: " + name_ + ", Node id: " + to_string(id_) + ", Node type: " + typeid(*this).name() + "\n";
     return s;
@@ -41,7 +41,7 @@ inline clarity::ControlNetworkNode::ControlNetworkNode(const CppType storedValue
     cle_.set("cpptype", val(storedValueType));
 }
 
-inline void clarity::ControlNetworkNode::pushValToPeerThruAL(ActiveLink &al)
+void clarity::ControlNetworkNode::pushValToPeerThruAL(ActiveLink &al)
 {
     if (clean_)
     {
@@ -62,7 +62,7 @@ inline void clarity::ControlNetworkNode::pushValToPeerThruAL(ActiveLink &al)
     clean_ = true;
 }
 
-inline void clarity::ControlNetworkNode::pushValToPeersThruAL(ControlNetworkNode *excludedPeer)
+void clarity::ControlNetworkNode::pushValToPeersThruAL(ControlNetworkNode *excludedPeer)
 {
     if (excludedPeer == nullptr)
     {
