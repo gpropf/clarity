@@ -22,12 +22,19 @@ int main()
     clarity::WebElemNode *input1 = builder.buildWithModelNode();
     clarity::WebElemNode *input2 = builder.withStoredValue(n).buildWithModelNode();
     clarity::WebElemNode *button1 = builder.button("button1", "Press me!");
+    button1->addEventListenerByName("click", "iterateModel");
 
     maindiv->appendChild(input1);
     maindiv->appendChild(input2);
     maindiv->appendChild(button1);
     input1->setAttribute("type", val("text"));
     input2->setAttribute("type", val("text"));
+
+    clarity::WebElemNode::callbackMap["iterateModel"] = [=]
+    {
+        cout << "callbackMap[\"iterateModel\"]\n";
+    };
+
     printf("Setup complete!\n");
     return 0;
 }

@@ -80,14 +80,17 @@ namespace clarity
             return cpy;
         }
 
-        inline T * button(const string& name, const string & text, val onPressCallback = val(NULL)) {
-            T * button = withTag("button").build();
+        inline WebElemNode * button(const string& name, const string & text, val onPressCallback = val(NULL)) {
+            WebElemNode * button = withTag("button").build();
             button->boundField_ = "textContent";
             button->setVal(val(text));
             //val buttonDOMElement = button->getCLE()["domElement"];
             val buttonCLE = button->getCLE();
-            val buttonDOMElement = buttonCLE["domElement"];
+            //val buttonDOMElement = buttonCLE["domElement"];
             //buttonDOMElement.call<void>("addEventListener", "press", onPressCallback);
+            //val alertFn = buttonCLE.call<void>("testAlert");
+            //val CLElement = val::global("CLElement");
+            //button->addJSEventListener("press", CLElement["testAlert"]);
             return button;
         }
 

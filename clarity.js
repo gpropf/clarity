@@ -13,6 +13,10 @@ class CLElement {
     return 1 / v
   }
 
+  static testAlert() {
+    alert("FOO!")
+  }
+
   /**
    * 
    * @param {*} temp: In degrees Kelvin 

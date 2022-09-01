@@ -40,6 +40,11 @@ namespace clarity
       cle_.call<void>("addEventListenerById", eventName, callbackName);
     }
 
+    inline void addJSEventListener(const string &eventName, val eventCallback)
+    {
+      cle_.call<void>("addEventListener", eventName, eventCallback);
+    }
+
     inline string getTag() const { return tag_; }
 
     inline int getId() const { return id_; }
