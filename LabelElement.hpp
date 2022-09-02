@@ -3,16 +3,16 @@
 
 #include "WebElemNode.hpp"
 
-namespace clarity
+namespace clarity {
+
+class LabelElement : public WebElemNode
+
 {
+   public:
+    LabelElement(const CppType storedValueType, const val &isFor,
+                 const string &name = "");
+};
 
-  class LabelElement : public WebElemNode
-
-  {
-  public:
-    LabelElement(const CppType storedValueType, const val &isFor, const string &name = "");
-  };
-
-}
+}  // namespace clarity
 
 #endif
