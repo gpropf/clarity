@@ -2,53 +2,39 @@
 #ifndef ModelNode_hpp
 #define ModelNode_hpp
 
-#include "clarity.hpp"
 #include "ControlNetworkNode.hpp"
+#include "clarity.hpp"
 
-namespace clarity
-{
-    template <typename T>
-    class ModelNode : public ControlNetworkNode
-    {
-    public:
-        // ModelNode(void *storedValue) : ControlNetworkNode(storedValue) {}
-        ModelNode(CppType storedValueType) : ControlNetworkNode(storedValueType)
-        {
-            // cout<< "ModelNode(CppType storedValueType): " << (int)storedValueType << " id = " << id_ << "\n";
+namespace clarity {
+template <typename T>
+class ModelNode : public ControlNetworkNode {
+   public:
+    ModelNode(CppType storedValueType) : ControlNetworkNode(storedValueType) {}
+
+    ModelNode(T *dynval) : dynval_(dynval) {}
+
+    ModelNode(T *dynval, CppType storedValueType)
+        : ControlNetworkNode(storedValueType) {
+        dynval_ = dynval;
+    }
+
+    virtual val getVal() const {
+        if (dynval_ == nullptr) {
+            return val(NULL);
         }
 
-        ModelNode(T *dynval) : dynval_(dynval)
-        {
-            // cout<< "ModelNode(T * dynval)" << typeid(T).name() << " id = " << id_ << "\n";
-            //// cout<< "ModelNode(T * dynval) id = " << id_ << "\n";
-        }
+        return val(cpp2js<T>(dynval_));
+    }
 
-        ModelNode(T *dynval, CppType storedValueType) : ControlNetworkNode(storedValueType)
-        {
-            dynval_ = dynval;
-            // cout<< "ModelNode(T *dynval, CppType storedValueType)" << typeid(T).name() << " id = " << id_ << "\n";
-        }
+    virtual void setVal(const val &inval) {
+        ControlNetworkNode::setVal(inval);
+        *reinterpret_cast<T *>(dynval_) =
+            this->cle_.template call<T>("jsToCPPVal", inval);
+        pushValToPeersThruAL(this);
+    }
 
-        virtual val getVal() const
-        {
-            if (dynval_ == nullptr)
-            {
-                return val(NULL);
-            }
-
-            return val(cpp2js<T>(dynval_));            
-        }
-
-        virtual void setVal(const val &inval)
-        {
-            ControlNetworkNode::setVal(inval);
-            *reinterpret_cast<T *>(dynval_) = this->cle_.template call<T>("jsToCPPVal", inval);
-            // cout<< "ModelNode::setVal() value is: " << *reinterpret_cast<T *>(dynval_) << ", id = " << id_ << "\n";            
-            pushValToPeersThruAL(this);
-        }
-
-        T *dynval_;
-    };
-}
+    T *dynval_;
+};
+}  // namespace clarity
 
 #endif
