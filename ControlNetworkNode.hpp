@@ -39,7 +39,6 @@ namespace clarity
             ActiveLink(ControlNetworkNode *peer, const T scalarConst)
                 : peer_(peer), scalarConst_(val(scalarConst))
             {
-
                 transformFn_ = CLElement_.call<val>("generateTransformFn", scalarConst_);
             }
 
@@ -53,6 +52,8 @@ namespace clarity
         inline ControlNetworkNode() { init(); }
         EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const string &name, const CppType storedValueType);
         EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const CppType storedValueType);
+
+        bool appendChild(ControlNetworkNode *child);
 
         inline ControlNetworkNode *getParent() const { return this->parent_; }
         inline void setParent(ControlNetworkNode *parent) { this->parent_ = parent; }
@@ -76,6 +77,8 @@ namespace clarity
         void addALPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false);
 
     protected:
+
+        vector<ControlNetworkNode *> children_;
         /** \brief The node is clean if it has not been recently changed. This feature is mainly designed to prevent
             infinite update loops if the node graph is not acyclic. It doesn't do anything yet.*/
         bool clean_ = true;

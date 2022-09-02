@@ -18,12 +18,7 @@ namespace clarity
       // cout<< "DTEST:WebNode(const CppType storedValueType):" << (int)storedValueType << " id = " << id_ << "\n";
     }
 
-    bool appendChild(ControlNetworkNode *child)
-    {
-      children_.push_back(child);
-      cle_.call<void>("appendChild", child->getCLE());
-      return true; // FIXME: need to check for duplicate ids.
-    }
+    
 
     template <typename T>
     void installModelNode(T *dynval)
@@ -77,7 +72,7 @@ namespace clarity
     // {
     //   boundField_ = proxyiedElement->boundField_;
     // }
-    vector<ControlNetworkNode *> children_;
+    
 
   public:
     string boundField_;

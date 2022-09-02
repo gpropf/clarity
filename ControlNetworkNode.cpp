@@ -1,11 +1,16 @@
 //#include "clarity.hpp"
 #include "ControlNetworkNode.hpp"
 
+bool ControlNetworkNode::appendChild(ControlNetworkNode *child)
+{
+    children_.push_back(child);
+    cle_.call<void>("appendChild", child->getCLE());
+    return true; // FIXME: need to check for duplicate ids.
+}
+
 clarity::ControlNetworkNode::ActiveLink::ActiveLink(ControlNetworkNode *peer, val scalarConst)
     : peer_(peer), scalarConst_(scalarConst)
-
-{
-    //CLElement_ = val::global("CLElement");
+{    
     transformFn_ = CLElement_.call<val>("generateTransformFn", scalarConst_);
 }
 
