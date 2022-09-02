@@ -1,7 +1,6 @@
 #ifndef ButtonElement_hpp
 #define ButtonElement_hpp
 
-//#include "clarity.hpp"
 #include "WebElemNode.hpp"
 
 namespace clarity {

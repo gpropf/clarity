@@ -3,19 +3,18 @@
 
 #include "WebElemNode.hpp"
 
-namespace clarity
+namespace clarity {
+
+class CanvasElement : public WebElemNode
+
 {
-
-  class CanvasElement : public WebElemNode
-
-  {
-  public:
+   public:
     CanvasElement(int width, int height, const string &name = "");
-protected:
-  int width_, height_;
 
-  };
+   protected:
+    int width_, height_;
+};
 
-}
+}  // namespace clarity
 
 #endif
