@@ -39,7 +39,9 @@ class CLElement {
       console.log("Multiplier is function")
       return multiplier;
     }
-    return (x) => x * multiplier;
+    var generatedMultiplierFunction = (x) => x * multiplier;
+    // If you just do 'return (x) => x * multiplier;' the function has no name attribute.
+    return generatedMultiplierFunction;
   }
 
   static applyTransformFn(f, v) {
