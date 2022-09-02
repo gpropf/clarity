@@ -13,11 +13,11 @@ NUKE_HTML_OUT = nuke.html
 NUKE_JS_OUT = nuke.js
 
 # CPPIN	= clarity.cpp ButtonElement.cpp WebElemNode.cpp nuke.cpp
-LIBCLR_IN = ButtonElement.cpp WebElemNode.cpp WebAttrNode.cpp WebNode.cpp \
-			ModelNode.cpp ControlNetworkNode.cpp CompoundElement.cpp LabelledInput.cpp \
+LIBCLR_IN = ButtonElement.cpp WebElemNode.cpp WebAttrNode.cpp \
+			ControlNetworkNode.cpp CompoundElement.cpp LabelledInput.cpp \
 			LabelElement.cpp CanvasElement.cpp CLNodeFactory.cpp
-LIBCLR_OBJS = ButtonElement.o WebElemNode.o WebAttrNode.o WebNode.o \
- 			ModelNode.o ControlNetworkNode.o CompoundElement.o LabelledInput.o \
+LIBCLR_OBJS = ButtonElement.o WebElemNode.o WebAttrNode.o \
+ 			ControlNetworkNode.o CompoundElement.o LabelledInput.o \
 			LabelElement.o CanvasElement.o CLNodeFactory.o
 AR 		= emar
 FRAMEWORK_DEPS = clarity.js clarity.html Makefile
