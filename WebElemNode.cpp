@@ -27,13 +27,13 @@ inline void WebElemNode::setAttribute(const string &attr, const val &value)
 }
 
 inline void WebElemNode::addEventListenerByName(const string &eventName, const string &callbackName)
-    {
-      cle_.call<void>("addEventListenerById", eventName, callbackName);
-    }
+{
+    cle_.call<void>("addEventListenerById", eventName, callbackName);
+}
 
-    inline void WebElemNode::addJSEventListener(const string &eventName, val eventCallback)
-    {
-      cle_.call<void>("addEventListener", eventName, eventCallback);
-    }
+inline void WebElemNode::addJSEventListener(const string &eventName, val eventCallback)
+{
+    cle_.call<void>("addEventListener", eventName, eventCallback);
+}
 
 static map<string, std::function<void()>> callbackMap;

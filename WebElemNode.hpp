@@ -34,7 +34,7 @@ namespace clarity
 
     inline string getTag() const { return tag_; }
     inline int getId() const { return id_; }
-    inline void setJsval(val jsval) { cle_ = jsval; }
+    inline void setCLE(val jsval) { cle_ = jsval; }
 
     inline CppType getStoredValueType() const { return storedValueType_; }
     EMSCRIPTEN_KEEPALIVE void setStoredValueType(CppType cppType);
