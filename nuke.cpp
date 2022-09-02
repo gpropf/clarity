@@ -126,7 +126,7 @@ int main()
   using ActiveLink = ControlNetworkNode::ActiveLink;
 
   double *n = new double(50);
-  clarity::ModelNode<double> *nm = new clarity::ModelNode(n, clarity::CppType::Double);
+  clarity::ModelNode<double> *nm = new clarity::ModelNode<double>(n, clarity::CppType::Double);
   clarity::WebElemNode *maindiv = new clarity::WebElemNode("maindiv", "div", clarity::CppType::NoData);
   clarity::WebElemNode *ncntr = new clarity::WebElemNode("numerator", "input", clarity::CppType::Double);
   clarity::WebElemNode *nslider = new clarity::WebElemNode("numerator", "input", clarity::CppType::Double);
