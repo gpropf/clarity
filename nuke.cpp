@@ -85,15 +85,14 @@ NukeControl::NukeControl(const string &name, const string &tag,
 NukeControl::NukeControl(const string &name, const string &tag,
                          clarity::CppType anyvalPtrType, NukeModel &nm)
     : NukeControl(name, tag, anyvalPtrType) {
-    nm.controlRodSettingNode_->addALPeer(
-        ActiveLink(controlRodSetting_, val(1)));
-    nm.controlRodSettingNode_->pushValToPeersThruAL(nm.controlRodSettingNode_);
-    nm.coreToWaterHeatingConstantNode_->addALPeer(
+    nm.controlRodSettingNode_->addPeer(ActiveLink(controlRodSetting_, val(1)));
+    nm.controlRodSettingNode_->pushValToPeers(nm.controlRodSettingNode_);
+    nm.coreToWaterHeatingConstantNode_->addPeer(
         ActiveLink(coreToWaterHeatingConstant_, val(1)));
-    nm.coreToWaterHeatingConstantNode_->pushValToPeersThruAL(
+    nm.coreToWaterHeatingConstantNode_->pushValToPeers(
         nm.coreToWaterHeatingConstantNode_);
-    nm.turbineInertiaNode_->addALPeer(ActiveLink(turbineInertia_, val(1)));
-    nm.turbineInertiaNode_->pushValToPeersThruAL(nm.turbineInertiaNode_);
+    nm.turbineInertiaNode_->addPeer(ActiveLink(turbineInertia_, val(1)));
+    nm.turbineInertiaNode_->pushValToPeers(nm.turbineInertiaNode_);
     thermalEnergyLossRateConstant_->installModelNode(
         &(nm.thermalEnergyLossRateConstant_));
 }
@@ -150,7 +149,7 @@ int main() {
     cir1->setAttribute("stroke-width", val(4));
     cir1->setAttribute("r", val(80));
 
-    nm->addALPeer(ActiveLink(cir1Radius, val(1)));
+    nm->addPeer(ActiveLink(cir1Radius, val(1)));
 
     clarity::WebAttrNode *cir1TempColor =
         new clarity::WebAttrNode("fill", clarity::CppType::String, cir1);
@@ -164,9 +163,9 @@ int main() {
     val CLE = val::global("CLElement");
     val blackbody = CLE["blackbody"];
 
-    tempModel->addALPeer(ActiveLink(tempInput, 1));
-    tempModel->addALPeer(ActiveLink(cir1TempColor, blackbody));
-    tempModel->pushValToPeersThruAL(tempModel);
+    tempModel->addPeer(ActiveLink(tempInput, 1));
+    tempModel->addPeer(ActiveLink(cir1TempColor, blackbody));
+    tempModel->pushValToPeers(tempModel);
 
     nslider->setAttribute("type", val("range"));
     maindiv->appendChild(ncntr);
@@ -176,8 +175,8 @@ int main() {
     svgarea->appendChild(cir1);
     ncntr->setAttribute("type", val("text"));
 
-    nm->addALPeer(ActiveLink(ncntr, 10));
-    nm->addALPeer(ActiveLink(nslider, val(1)));
+    nm->addPeer(ActiveLink(ncntr, 10));
+    nm->addPeer(ActiveLink(nslider, val(1)));
 
     ncntr->addEventListenerByName("change", "printNetworkState");
     nslider->addEventListenerByName("change", "printNetworkState");
@@ -189,10 +188,10 @@ int main() {
     nc->buttonModel_ = new clarity::ModelNode<string>(nc->buttonText_,
                                                       clarity::CppType::String);
 
-    nc->buttonModel_->addALPeer(ActiveLink(nc->applyButton_));
-    nc->buttonModel_->pushValToPeersThruAL(nc->buttonModel_);
+    nc->buttonModel_->addPeer(ActiveLink(nc->applyButton_));
+    nc->buttonModel_->pushValToPeers(nc->buttonModel_);
 
-    nm->pushValToPeersThruAL(nm);
+    nm->pushValToPeers(nm);
 
     clarity::WebElemNode::callbackMap["iterateModel"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";
@@ -208,7 +207,7 @@ int main() {
 
     clarity::WebElemNode::callbackMap["tick"] = [=] {
         (*temp) += 5;
-        tempModel->pushValToPeersThruAL(tempModel);
+        tempModel->pushValToPeers(tempModel);
     };
 
     printf("Setup complete!\n");

@@ -37,9 +37,8 @@ class CLNodeFactory {
     inline T *buildWithModelNode(const val transformFn = val(1)) {
         T *cnn = build();
         ModelNode<V> *mn = new ModelNode<V>(storedValue_, storedValueType_);
-        mn->addALPeer(
-            clarity::ControlNetworkNode::ActiveLink(cnn, transformFn));
-        mn->pushValToPeersThruAL(mn);
+        mn->addPeer(clarity::ControlNetworkNode::ActiveLink(cnn, transformFn));
+        mn->pushValToPeers(mn);
         return cnn;
     }
 

@@ -24,8 +24,8 @@ class WebElemNode : public WebNode {
 
     static map<string, std::function<void()>> callbackMap;
 
-    EMSCRIPTEN_KEEPALIVE inline void setAttribute(const string &attr,
-                                                  const val &value);
+    EMSCRIPTEN_KEEPALIVE void setAttribute(const string &attr,
+                                           const val &value);
 
     EMSCRIPTEN_KEEPALIVE void addEventListenerByName(
         const string &eventName, const string &callbackName);

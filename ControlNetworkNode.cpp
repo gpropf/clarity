@@ -19,9 +19,9 @@ inline string clarity::ControlNetworkNode::nodeStats() const {
     return s;
 }
 
-void clarity::ControlNetworkNode::pushValToPeersThruALById(int id) {
+void clarity::ControlNetworkNode::pushValToPeersById(int id) {
     ControlNetworkNode *cnn = getCLElementById(id);
-    cnn->pushValToPeersThruAL(cnn);
+    cnn->pushValToPeers(cnn);
 }
 
 inline void clarity::ControlNetworkNode::init() {
@@ -43,7 +43,7 @@ inline clarity::ControlNetworkNode::ControlNetworkNode(
     cle_.set("cpptype", val(storedValueType));
 }
 
-void clarity::ControlNetworkNode::pushValToPeerThruAL(ActiveLink &al) {
+void clarity::ControlNetworkNode::pushValToPeer(ActiveLink &al) {
     if (clean_) {
     }
 
@@ -60,27 +60,27 @@ void clarity::ControlNetworkNode::pushValToPeerThruAL(ActiveLink &al) {
     clean_ = true;
 }
 
-void clarity::ControlNetworkNode::pushValToPeersThruAL(
+void clarity::ControlNetworkNode::pushValToPeers(
     ControlNetworkNode *excludedPeer) {
     if (excludedPeer == nullptr) {
         for (auto alpeer : alpeers_) {
-            pushValToPeerThruAL(alpeer);
+            pushValToPeer(alpeer);
         }
     } else {
         for (auto alpeer : alpeers_) {
             if (alpeer.peer_ != excludedPeer) {
-                pushValToPeerThruAL(alpeer);
+                pushValToPeer(alpeer);
             }
         }
     }
 }
 
-void clarity::ControlNetworkNode::addALPeer(ControlNetworkNode::ActiveLink al,
-                                            bool alreadyAdded) {
+void clarity::ControlNetworkNode::addPeer(ControlNetworkNode::ActiveLink al,
+                                          bool alreadyAdded) {
     alpeers_.push_back(al);
     if (alreadyAdded) {
         return;
     }
-    al.peer_->addALPeer(
+    al.peer_->addPeer(
         ActiveLink(this, cle_.call<val>("invertValue", al.scalarConst_)), true);
 }

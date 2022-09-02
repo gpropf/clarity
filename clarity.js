@@ -133,7 +133,7 @@ class CLElement {
     return this.domElement_.name;
   }
 
-  static tagToUrl = {"svg": "http://www.w3.org/2000/svg", "circle":  "http://www.w3.org/2000/svg"};
+  static tagToUrl = { "svg": "http://www.w3.org/2000/svg", "circle": "http://www.w3.org/2000/svg" };
 
   createDOMElementByTagType() {
     var el
@@ -174,7 +174,7 @@ class CLElement {
       var outerThis = this
       this.domElement_.addEventListener('change', function (e) {
         console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)
-        Module.ControlNetworkNode.pushValToPeersThruALById(outerThis.id_)
+        Module.ControlNetworkNode.pushValToPeersById(outerThis.id_)
         Module.ControlNetworkNode.markNodeDirtyById(outerThis.id_)
       })
     }

@@ -30,7 +30,7 @@ class ModelNode : public ControlNetworkNode {
         ControlNetworkNode::setVal(inval);
         *reinterpret_cast<T *>(dynval_) =
             this->cle_.template call<T>("jsToCPPVal", inval);
-        pushValToPeersThruAL(this);
+        pushValToPeers(this);
     }
 
     T *dynval_;

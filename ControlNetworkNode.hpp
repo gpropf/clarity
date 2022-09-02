@@ -76,12 +76,10 @@ class ControlNetworkNode {
 
     virtual string nodeStats() const;
 
-    virtual void pushValToPeerThruAL(ActiveLink &al);
-    virtual void pushValToPeersThruAL(
-        ControlNetworkNode *excludedPeer = nullptr);
-    static void pushValToPeersThruALById(int id);
-    void addALPeer(ControlNetworkNode::ActiveLink al,
-                   bool alreadyAdded = false);
+    virtual void pushValToPeer(ActiveLink &al);
+    virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr);
+    static void pushValToPeersById(int id);
+    void addPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false);
 
    protected:
     vector<ControlNetworkNode *> children_;
