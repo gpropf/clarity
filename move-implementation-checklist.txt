@@ -1,17 +1,16 @@
-allheaders.hpp
 ButtonElement.hpp       DONE
 CanvasElement.hpp
-clarity.hpp
-CLNodeFactory.hpp
+
+CLNodeFactory.hpp       template, cannot move implementation.
 CompoundElement.hpp     DONE
 ControlNetworkNode.hpp  DONE
-embindings.hpp
+
 LabelElement.hpp        DONE
 LabelledInput.hpp       DONE
 ModelNode.hpp           template, cannot move implementation.
-nuke.hpp
-simpleTest.hpp
-testbed.hpp
+nuke.hpp                DONE
+
+testbed.hpp             DONE
 WebAttrNode.hpp         DONE
-WebElemNode.hpp
+WebElemNode.hpp         DONE
 WebNode.hpp
