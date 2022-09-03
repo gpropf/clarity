@@ -1,6 +1,8 @@
 #ifndef WebElemNode_hpp
 #define WebElemNode_hpp
 
+#include <map>
+
 #include "WebNode.hpp"
 #include "clarity.hpp"
 
@@ -26,6 +28,8 @@ class WebElemNode : public WebNode {
 
     EMSCRIPTEN_KEEPALIVE void setAttribute(const string &attr,
                                            const val &value);
+
+    EMSCRIPTEN_KEEPALIVE void setAttributes(const map<string, val> &attrs);
 
     EMSCRIPTEN_KEEPALIVE void addEventListenerByName(
         const string &eventName, const string &callbackName);

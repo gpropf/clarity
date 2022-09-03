@@ -60,6 +60,7 @@ class ControlNetworkNode {
     inline virtual void setVal(const val &inval) { clean_ = false; }
 
     inline val getCLE() const { return cle_; }
+    inline string getName() const { return name_; }
     inline virtual void printState() const { cle_.call<void>("printState"); }
     inline static ControlNetworkNode *getCLElementById(const int id) {
         return switchboard[id];

@@ -25,6 +25,12 @@ inline void WebElemNode::setAttribute(const string &attr, const val &value) {
     domElement.call<void>("setAttribute", attr, value);
 }
 
+inline void WebElemNode::setAttributes(const map<string, val> &attrs) {
+    for (auto [attrName, value] : attrs) {
+        setAttribute(attrName, value);
+    }
+}
+
 inline void WebElemNode::addEventListenerByName(const string &eventName,
                                                 const string &callbackName) {
     cle_.call<void>("addEventListenerById", eventName, callbackName);

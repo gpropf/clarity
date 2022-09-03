@@ -13,6 +13,13 @@ class CLNodeFactory {
                                //!< this factory builds.
     V *storedValue_;  //!< Actually only used when creating a model node along
                       //!< with a web control.
+    map<string, val> attrs_;
+
+    inline CLNodeFactory withAttributes(const map<string, val> &attrs) {
+        CLNodeFactory cpy(*this);
+        cpy.attrs_ = attrs;
+        return cpy;
+    }
 
     inline CLNodeFactory() {}
     inline CLNodeFactory(const string &tag, const string &name,
@@ -26,7 +33,18 @@ class CLNodeFactory {
           storedValueType_(storedValueType),
           storedValue_(storedValue) {}
 
-    inline T *build() { return new T(name_, tag_, storedValueType_); }
+    // inline T *build() { return new T(name_, tag_, storedValueType_); }
+
+    // inline WebElemNode *buildWithAttributes() {
+    //     WebElemNode *newNode = new WebElemNode(name_, tag_,
+    //     storedValueType_); newNode->setAttributes(attrs_); return newNode;
+    // }
+
+    inline WebElemNode *build() {
+        WebElemNode *newNode = new WebElemNode(name_, tag_, storedValueType_);
+        newNode->setAttributes(attrs_);
+        return newNode;
+    }
 
     inline T *buildInsideNode(WebNode *outerNode) {
         WebNode *innerNode = build();
@@ -81,6 +99,20 @@ class CLNodeFactory {
         label->setVal(val(text));
         label->setAttribute("for", val(forNode->getId()));
         return label;
+    }
+
+    inline WebElemNode *labelGivenNode(WebElemNode *nodeToBeLabelled,
+                                       const string &labelText) {
+        WebElemNode *outerDiv =
+            withTag("div")
+                .withName("labeldiv_" + nodeToBeLabelled->getName())
+                .build();
+        WebElemNode *labelNode =
+            withName("labelfor_" + nodeToBeLabelled->getName())
+                .label(nodeToBeLabelled, labelText);
+        outerDiv->appendChild(nodeToBeLabelled);
+        outerDiv->appendChild(labelNode);
+        return outerDiv;
     }
 };
 }  // namespace clarity
