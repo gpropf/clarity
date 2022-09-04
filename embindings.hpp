@@ -1,5 +1,5 @@
 using clarity::ControlNetworkNode;
-using clarity::WebElemNode;
+
 using std::string;
 
 EMSCRIPTEN_BINDINGS(clarity) {
@@ -17,9 +17,16 @@ EMSCRIPTEN_BINDINGS(clarity) {
                         allow_raw_pointers())
         .class_function("markNodeDirtyById",
                         &ControlNetworkNode::markNodeDirtyById,
+                        allow_raw_pointers())
+        .constructor<string, string, const CppType>(allow_raw_pointers())
+        .property("tag", &ControlNetworkNode::getTag)
+        .property("id", &ControlNetworkNode::getId)
+        .property("storedValueType", &ControlNetworkNode::getStoredValueType,
+                  &ControlNetworkNode::setStoredValueType)
+        .class_function("runCallbackById", &ControlNetworkNode::runCallbackById,
                         allow_raw_pointers());
 
-    enum_<CppType>("WebElementCppType")
+    enum_<CppType>("CppType")
         .value("Int", CppType::Int)
         .value("Float", CppType::Float)
         .value("Double", CppType::Double)
@@ -27,13 +34,3 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .value("NoData", CppType::NoData);
 }
 
-EMSCRIPTEN_BINDINGS(WebElemNode) {
-    class_<WebElemNode>("WebElement")
-        .constructor<string, string, const CppType>(allow_raw_pointers())
-        .property("tag", &WebElemNode::getTag)
-        .property("id", &WebElemNode::getId)
-        .property("storedValueType", &WebElemNode::getStoredValueType,
-                  &WebElemNode::setStoredValueType)
-        .class_function("runCallbackById", &WebElemNode::runCallbackById,
-                        allow_raw_pointers());
-}

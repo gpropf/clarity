@@ -7,7 +7,7 @@
 #include "embindings.hpp"
 
 map<const int, ControlNetworkNode *> ControlNetworkNode::switchboard;
-map<string, std::function<void()>> WebElemNode::callbackMap;
+map<string, std::function<void()>> ControlNetworkNode::callbackMap;
 TicketMachine ControlNetworkNode::tm;
 val ControlNetworkNode::ActiveLink::CLElement_ = val::global("CLElement");
 
@@ -18,10 +18,11 @@ int main() {
     // double *pi = new double(3.14159);
     double *a = new double(2.78);
 
-    WebElemNode *maindiv = new WebElemNode("maindiv", "div", CppType::NoData);
+    ControlNetworkNode *maindiv =
+        new ControlNetworkNode("maindiv", "div", CppType::NoData);
 
-    CLNodeFactory<WebElemNode, double> builder("input", "input_double",
-                                               CppType::Double, a);
+    CLNodeFactory<ControlNetworkNode, double> builder("input", "input_double",
+                                                      CppType::Double, a);
 
     // WebElemNode *input1 = builder.buildWithModelNode();
     //  WebElemNode *input2 = builder.withStoredValue(n).buildWithModelNode();
@@ -30,10 +31,10 @@ int main() {
     //  button1->addEventListenerByName("click", "iterateModel");
 
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
-    WebElemNode *input_a = builder.withStoredValue(a)
-                               .withName("input_a_text")
-                               .withAttributes(inputFieldAttrs)
-                               .buildWithModelNode();
+    ControlNetworkNode *input_a = builder.withStoredValue(a)
+                                      .withName("input_a_text")
+                                      .withAttributes(inputFieldAttrs)
+                                      .build();
     // WebElemNode *labelled_input_a =
     //     builder.labelGivenNode(input_a, "Label for A");
 
@@ -41,7 +42,9 @@ int main() {
     //  maindiv->appendChild(labelInput1);
     //  maindiv->appendChild(input2);
     //  maindiv->appendChild(button1);
-    maindiv->appendChild(input_a);
+
+    // maindiv->appendChild(input_a);
+
     // maindiv->appendChild(labelled_input_a);
     // input1->setAttribute("type", val("text"));
     // input2->setAttribute("type", val("text"));

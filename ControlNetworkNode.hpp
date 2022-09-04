@@ -44,11 +44,41 @@ class ControlNetworkNode {
         val transformFn_;
     };
 
+    EMSCRIPTEN_KEEPALIVE void addEventListenerByName(
+        const string &eventName, const string &callbackName);
+    EMSCRIPTEN_KEEPALIVE void addJSEventListener(const string &eventName,
+                                                 val eventCallback);
+
+    inline string getTag() const { return tag_; }
+    inline int getId() const { return id_; }
+    inline void setCLE(val jsval) { cle_ = jsval; }
+
+    inline static void runCallbackById(const string &id) { callbackMap[id](); }
+
     void EMSCRIPTEN_KEEPALIVE init();
     inline ControlNetworkNode() { init(); }
     EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const string &name,
                                             const CppType storedValueType);
     EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const CppType storedValueType);
+
+    /**
+     * @brief Construct a new Web Element object
+     *
+     * @param name String name of element, may be empty.
+     * @param tag HTML tag of this element
+     * @param storedValueType C++ type of data contained within
+     *
+     */
+    ControlNetworkNode(const string &name, const string &tag,
+                       const CppType storedValueType);
+
+    EMSCRIPTEN_KEEPALIVE void setAttribute(const string &attr,
+                                           const val &value);
+
+    EMSCRIPTEN_KEEPALIVE void setAttributes(const map<string, val> &attrs);
+
+    inline CppType getStoredValueType() const { return storedValueType_; }
+    EMSCRIPTEN_KEEPALIVE void setStoredValueType(CppType cppType);
 
     bool appendChild(ControlNetworkNode *child);
 
@@ -57,7 +87,13 @@ class ControlNetworkNode {
         this->parent_ = parent;
     }
     inline virtual val getVal() const { return val(NULL); }
-    inline virtual void setVal(const val &inval) { clean_ = false; }
+    // inline virtual void setVal(const val &inval) { clean_ = false; }
+
+    inline void setVal(const val &inval) {
+        clean_ = false;
+        val domElement = cle_["domElement"];
+        domElement.set(boundField_, inval);
+    }
 
     inline val getCLE() const { return cle_; }
     inline string getName() const { return name_; }
@@ -83,6 +119,9 @@ class ControlNetworkNode {
     void addPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false);
 
    protected:
+    string tag_;
+    string boundField_;
+
     vector<ControlNetworkNode *> children_;
     /** \brief The node is clean if it has not been recently changed. This
        feature is mainly designed to prevent infinite update loops if the node
@@ -93,7 +132,10 @@ class ControlNetworkNode {
     /** \brief Keeps track of all nodes in the system. If you have the id of a
      * node you can get a pointer to it here. */
     static map<const int, ControlNetworkNode *> switchboard;
-    /** \brief Instance of the CLElement class that acts as a "proxy" in JS
+
+    static map<string, std::function<void()>> callbackMap;
+
+        /** \brief Instance of the CLElement class that acts as a "proxy" in JS
      * space. */
     val cle_ = val::global("CLElement").new_();
 

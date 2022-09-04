@@ -75,8 +75,9 @@ class CLElement {
   //object.freeze(CPP_Type);
 
   appendChild(child) {
-    if (child.domElement && child.domElement instanceof Element)
+    if (child.domElement && child.domElement instanceof Element) {
       this.domElement.appendChild(child.domElement)
+    }
   }
 
   createCLElement() {

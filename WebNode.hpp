@@ -51,12 +51,8 @@ class WebNode : public ControlNetworkNode {
     }
 
    public:
-    string boundField_;
-    void setVal(const val &inval) {
-        ControlNetworkNode::setVal(inval);
-        val domElement = cle_["domElement"];
-        domElement.set(boundField_, inval);
-    }
+   
+    
 };
 }  // namespace clarity
 

@@ -43,6 +43,16 @@ inline clarity::ControlNetworkNode::ControlNetworkNode(
     cle_.set("cpptype", val(storedValueType));
 }
 
+ControlNetworkNode::ControlNetworkNode(const string &name, const string &tag,
+                                       const CppType storedValueType) {
+    cle_.call<void>("createDOMElement", id_, tag, storedValueType, name);
+    cle_.set("name", val(name));
+    tag_ = tag;
+    name_ = name;
+    boundField_ = "value";
+    ControlNetworkNode::switchboard[id_] = this;
+}
+
 void clarity::ControlNetworkNode::pushValToPeer(ActiveLink &al) {
     if (clean_) {
     }
@@ -83,4 +93,31 @@ void clarity::ControlNetworkNode::addPeer(ControlNetworkNode::ActiveLink al,
     }
     al.peer_->addPeer(
         ActiveLink(this, cle_.call<val>("invertValue", al.scalarConst_)), true);
+}
+
+inline void ControlNetworkNode::setAttribute(const string &attr,
+                                             const val &value) {
+    val domElement = cle_["domElement"];
+    domElement.call<void>("setAttribute", attr, value);
+}
+
+inline void ControlNetworkNode::setAttributes(const map<string, val> &attrs) {
+    for (auto [attrName, value] : attrs) {
+        setAttribute(attrName, value);
+    }
+}
+
+inline void ControlNetworkNode::setStoredValueType(CppType cppType) {
+    storedValueType_ = cppType;
+    cle_.set("cpptype", cppType);
+}
+
+inline void ControlNetworkNode::addEventListenerByName(
+    const string &eventName, const string &callbackName) {
+    cle_.call<void>("addEventListenerById", eventName, callbackName);
+}
+
+inline void ControlNetworkNode::addJSEventListener(const string &eventName,
+                                                   val eventCallback) {
+    cle_.call<void>("addEventListener", eventName, eventCallback);
 }

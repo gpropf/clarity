@@ -1,7 +1,7 @@
 #ifndef CLNodeFactory_hpp
 #define CLNodeFactory_hpp
 
-#include "allheaders.hpp"
+#include "ModelNode.hpp"
 
 namespace clarity {
 template <class T, typename V>
@@ -46,8 +46,8 @@ class CLNodeFactory {
         return newNode;
     }
 
-    inline T *buildInsideNode(WebNode *outerNode) {
-        WebNode *innerNode = build();
+    inline T *buildInsideNode(ControlNetworkNode *outerNode) {
+        ControlNetworkNode *innerNode = build();
         outerNode->appendChild(innerNode);
         return outerNode;
     }
