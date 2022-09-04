@@ -63,13 +63,13 @@ void clarity::ControlNetworkNode::pushValToPeer(ActiveLink &al) {
 void clarity::ControlNetworkNode::pushValToPeers(
     ControlNetworkNode *excludedPeer) {
     if (excludedPeer == nullptr) {
-        for (auto alpeer : alpeers_) {
-            pushValToPeer(alpeer);
+        for (auto peer : peers_) {
+            pushValToPeer(peer);
         }
     } else {
-        for (auto alpeer : alpeers_) {
-            if (alpeer.peer_ != excludedPeer) {
-                pushValToPeer(alpeer);
+        for (auto peer : peers_) {
+            if (peer.peer_ != excludedPeer) {
+                pushValToPeer(peer);
             }
         }
     }
@@ -77,7 +77,7 @@ void clarity::ControlNetworkNode::pushValToPeers(
 
 void clarity::ControlNetworkNode::addPeer(ControlNetworkNode::ActiveLink al,
                                           bool alreadyAdded) {
-    alpeers_.push_back(al);
+    peers_.push_back(al);
     if (alreadyAdded) {
         return;
     }

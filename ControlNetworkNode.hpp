@@ -106,7 +106,7 @@ class ControlNetworkNode {
     string name_;  //!< Human readable name of node. Mutable, not required.
     /** \brief List of peers linked through JS functions which are applied when
      * data is moved between nodes. */
-    vector<ControlNetworkNode::ActiveLink> alpeers_;
+    vector<ControlNetworkNode::ActiveLink> peers_;
 };
 }  // namespace clarity
 #endif
