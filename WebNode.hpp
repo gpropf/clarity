@@ -12,6 +12,12 @@ class WebNode : public ControlNetworkNode {
     WebNode(const string &name, const CppType storedValueType)
         : ControlNetworkNode(name, storedValueType) {}
 
+    /**
+     * @brief Needs to be deprecated as we move to using CLNF. Only used in one place in nuke demo program.
+     * 
+     * @tparam T 
+     * @param dynval 
+     */
     template <typename T>
     void installModelNode(T *dynval) {
         ModelNode<T> *m = new ModelNode<T>(dynval, storedValueType_);
