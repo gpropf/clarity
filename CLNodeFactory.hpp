@@ -35,13 +35,13 @@ class CLNodeFactory {
 
     // inline T *build() { return new T(name_, tag_, storedValueType_); }
 
-    // inline WebElemNode *buildWithAttributes() {
-    //     WebElemNode *newNode = new WebElemNode(name_, tag_,
+    // inline T *buildWithAttributes() {
+    //     T *newNode = new T(name_, tag_,
     //     storedValueType_); newNode->setAttributes(attrs_); return newNode;
     // }
 
-    inline WebElemNode *build() {
-        WebElemNode *newNode = new WebElemNode(name_, tag_, storedValueType_);
+    inline T *build() {
+        T *newNode = new T(name_, tag_, storedValueType_);
         newNode->setAttributes(attrs_);
         return newNode;
     }
@@ -84,30 +84,30 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline WebElemNode *button(const string &name, const string &text,
+    inline T *button(const string &name, const string &text,
                                val onPressCallback = val(NULL)) {
-        WebElemNode *button = withTag("button").build();
+        T *button = withTag("button").build();
         button->boundField_ = "textContent";
         button->setVal(val(text));
         val buttonCLE = button->getCLE();
         return button;
     }
 
-    inline WebElemNode *label(WebElemNode *forNode, const string &text) {
-        WebElemNode *label = withTag("label").build();
+    inline T *label(T *forNode, const string &text) {
+        T *label = withTag("label").build();
         label->boundField_ = "innerHTML";
         label->setVal(val(text));
         label->setAttribute("for", val(forNode->getId()));
         return label;
     }
 
-    inline WebElemNode *labelGivenNode(WebElemNode *nodeToBeLabelled,
+    inline T *labelGivenNode(T *nodeToBeLabelled,
                                        const string &labelText) {
-        WebElemNode *outerDiv =
+        T *outerDiv =
             withTag("div")
                 .withName("labeldiv_" + nodeToBeLabelled->getName())
                 .build();
-        WebElemNode *labelNode =
+        T *labelNode =
             withName("labelfor_" + nodeToBeLabelled->getName())
                 .label(nodeToBeLabelled, labelText);
         outerDiv->appendChild(nodeToBeLabelled);
