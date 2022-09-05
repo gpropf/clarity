@@ -31,10 +31,19 @@ int main() {
     //  button1->addEventListenerByName("click", "iterateModel");
 
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
-    ControlNetworkNode *input_a = builder.withStoredValue(a)
-                                      .withName("input_a_text")
-                                      .withAttributes(inputFieldAttrs)
-                                      .buildWithModelNode();
+    // ControlNetworkNode *input_a = builder.withStoredValue(a)
+    //                                   .withName("input_a_text")
+    //                                   .withAttributes(inputFieldAttrs)
+    //                                   .build();
+
+    ControlNetworkNode *input_a =
+        new ControlNetworkNode("input_a_text", "input", CppType::Double);
+
+    ModelNode<double> *mn = new ModelNode(a, CppType::Double);
+    mn->addPeer(ActiveLink(input_a, 1));
+    mn->pushValToPeers(mn);
+
+    cout << "CPPType for input_a is: " << (int)input_a->getStoredValueType() << "\n";
 
     // WebElemNode *labelled_input_a =
     //     builder.labelGivenNode(input_a, "Label for A");
@@ -44,7 +53,7 @@ int main() {
     //  maindiv->appendChild(input2);
     //  maindiv->appendChild(button1);
 
-     maindiv->appendChild(input_a);
+    maindiv->appendChild(input_a);
 
     // maindiv->appendChild(labelled_input_a);
     // input1->setAttribute("type", val("text"));

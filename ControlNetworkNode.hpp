@@ -39,9 +39,7 @@ class ControlNetworkNode {
                 CLElement_.call<val>("generateTransformFn", scalarConst_);
         }
 
-        void printAL() {
-            cout << "AL peer ID: " << peer_->getId() << "\n";
-        }
+        void printAL() { cout << "AL peer ID: " << peer_->getId() << "\n"; }
 
         ControlNetworkNode *peer_;
         val scalarConst_;
@@ -90,26 +88,32 @@ class ControlNetworkNode {
     inline void setParent(ControlNetworkNode *parent) {
         this->parent_ = parent;
     }
-    
-    val getVal() const {
+
+    virtual val getVal() const {
         val domElement = cle_["domElement"];
         string valueText = domElement[boundField_].as<string>();
-
+        cout << "ControlNetworkNode::getVal() valueText = " << valueText
+             << "\n";
         switch (this->storedValueType_) {
             case CppType::Int:
+                cout << "ControlNetworkNode::getVal() Int\n";
                 return val(stoi(valueText));
                 break;
             case CppType::Float:
+                cout << "ControlNetworkNode::getVal() Float\n";
                 return val(stof(valueText));
                 break;
             case CppType::Double:
+                cout << "ControlNetworkNode::getVal() Double\n";
                 return val(stod(valueText));
                 break;
             case CppType::String:
+                cout << "ControlNetworkNode::getVal() String\n";
                 return val(valueText);
                 break;
             case CppType::NoData:
             default:
+                cout << "ControlNetworkNode::getVal() NoData\n";
                 return val(NULL);
                 break;
         }
@@ -147,7 +151,6 @@ class ControlNetworkNode {
     void addPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false);
 
    protected:
-    
     string tag_;
     string boundField_;
 
