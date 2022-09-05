@@ -4,7 +4,7 @@
 #include "ModelNode.hpp"
 
 namespace clarity {
-template <class T, typename V>
+template <typename V>
 class CLNodeFactory {
    public:
     string tag_;   //!< Tag to be used with elements this factory builds.
@@ -46,7 +46,7 @@ class CLNodeFactory {
     // }
 
     inline ControlNetworkNode *build() {
-        ControlNetworkNode *newNode = new T(name_, tag_, storedValueType_);
+        ControlNetworkNode *newNode = new ControlNetworkNode(name_, tag_, storedValueType_);
         newNode->setAttributes(attrs_);
         if (parent_) {
             parent_->appendChild(newNode);

@@ -24,12 +24,12 @@ int main() {
     // ControlNetworkNode *maindiv =
     //     new ControlNetworkNode("maindiv", "div", CppType::NoData);
 
-    CLNodeFactory<ControlNetworkNode, double> builder("div", "maindiv",
+    CLNodeFactory<double> builder("div", "maindiv",
                                                       CppType::NoData);
 
     ControlNetworkNode *maindiv = builder.build();
 
-    CLNodeFactory<ControlNetworkNode, double> childOfMaindivBuilder =
+    CLNodeFactory<double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
     // WebElemNode *input1 = builder.buildWithModelNode();
