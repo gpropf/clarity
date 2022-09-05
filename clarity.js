@@ -53,19 +53,19 @@ class CLElement {
 
 
   jsToCPPVal(jsval) {
-    console.log("jsToCPPVal: text is '" + jsval + "'");
+
     switch (this.cpptype_) {
 
-      case Module.CppType.Int:
+      case Module.WebElementCppType.Int:
         console.log("jsToCPPVal: Int")
         return parseInt(jsval)
-      case Module.CppType.Float:
+      case Module.WebElementCppType.Float:
         console.log("jsToCPPVal: Float")
         return parseFloat(jsval)
-      case Module.CppType.Double:
+      case Module.WebElementCppType.Double:
         console.log("jsToCPPVal: Double")
         return parseFloat(jsval)
-      case Module.CppType.NoData:
+      case Module.WebElementCppType.NoData:
         console.log("jsToCPPVal: NoData")
         return null
       default:
@@ -75,9 +75,8 @@ class CLElement {
   //object.freeze(CPP_Type);
 
   appendChild(child) {
-    if (child.domElement && child.domElement instanceof Element) {
+    if (child.domElement && child.domElement instanceof Element)
       this.domElement.appendChild(child.domElement)
-    }
   }
 
   createCLElement() {
@@ -189,7 +188,7 @@ class CLElement {
 
   addEventListenerById(eventName, id) {
     this.domElement_.addEventListener(eventName, (e) => {
-      Module.ControlNetworkNode.runCallbackById(id)
+      Module.WebElement.runCallbackById(id)
     })
   }
 
@@ -215,7 +214,7 @@ class CLElement {
 function myTimer() {
   const d = new Date();
   console.log(d.toLocaleTimeString())
-  Module.ControlNetworkNode.runCallbackById("tick")
+  Module.WebElement.runCallbackById("tick")
 }
 
 window.CLElement = CLElement

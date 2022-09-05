@@ -45,11 +45,16 @@ inline clarity::ControlNetworkNode::ControlNetworkNode(
 }
 
 ControlNetworkNode::ControlNetworkNode(const string &name, const string &tag,
-                                       const CppType storedValueType)
+                                       const CppType storedValueType,
+                                       bool useExistingDOMElement_)
     : name_(name), tag_(tag), storedValueType_(storedValueType) {
     init();
-    cle_.call<void>("createDOMElement", id_, tag, storedValueType, name);
+    if (!useExistingDOMElement_)
+        cle_.call<void>("createDOMElement", id_, tag, storedValueType, name);
     cle_.set("name", val(name));
+    // For some reason the code that sets the name in clarity.js doesn't "take"
+    // so we re-set it here.
+
     // tag_ = tag;
     // name_ = name;
     boundField_ = "value";

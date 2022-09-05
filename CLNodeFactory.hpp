@@ -16,6 +16,7 @@ class CLNodeFactory {
 
     string boundField_;
     ControlNetworkNode *parent_;
+    bool useExistingDOMElement_ = false;
 
     map<string, val> attrs_;
 
@@ -46,7 +47,8 @@ class CLNodeFactory {
     // }
 
     inline ControlNetworkNode *build() {
-        ControlNetworkNode *newNode = new ControlNetworkNode(name_, tag_, storedValueType_);
+        ControlNetworkNode *newNode = new ControlNetworkNode(
+            name_, tag_, storedValueType_, useExistingDOMElement_);
         newNode->setAttributes(attrs_);
         if (parent_) {
             parent_->appendChild(newNode);
@@ -93,7 +95,7 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline CLNodeFactory withParent(ControlNetworkNode * parent) {
+    inline CLNodeFactory withParent(ControlNetworkNode *parent) {
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
@@ -108,6 +110,12 @@ class CLNodeFactory {
     inline CLNodeFactory withStoredValue(V *storedValue) {
         CLNodeFactory cpy(*this);
         cpy.storedValue_ = storedValue;
+        return cpy;
+    }
+
+    inline CLNodeFactory withExistingDOMElement() {
+        CLNodeFactory cpy(*this);
+        cpy.useExistingDOMElement_ = true;
         return cpy;
     }
 

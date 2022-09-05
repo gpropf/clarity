@@ -75,7 +75,8 @@ class ControlNetworkNode {
      *
      */
     ControlNetworkNode(const string &name, const string &tag,
-                       const CppType storedValueType);
+                       const CppType storedValueType,
+                       bool useExistingDOMElement_ = false);
 
     EMSCRIPTEN_KEEPALIVE void setAttribute(const string &attr,
                                            const val &value);
