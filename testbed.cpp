@@ -31,17 +31,26 @@ int main() {
     //  button1->addEventListenerByName("click", "iterateModel");
 
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
-    // ControlNetworkNode *input_a = builder.withStoredValue(a)
-    //                                   .withName("input_a_text")
-    //                                   .withAttributes(inputFieldAttrs)
-    //                                   .build();
+    ControlNetworkNode *input_a = builder.withStoredValue(a)
+                                      .withName("input_a_text")
+                                      .withAttributes(inputFieldAttrs)
+                                      .buildWithModelNode();
 
-    ControlNetworkNode *input_a =
-        new ControlNetworkNode("input_a_text", "input", CppType::Double);
 
-    ModelNode<double> *mn = new ModelNode(a, CppType::Double);
-    mn->addPeer(ActiveLink(input_a, 1));
-    mn->pushValToPeers(mn);
+clarity::WebElemNode *svgarea =
+        new clarity::WebElemNode("svgarea", "svg", clarity::CppType::NoData);
+    clarity::WebElemNode *cir1 =
+        new clarity::WebElemNode("cir1", "circle", clarity::CppType::Double);
+    clarity::WebAttrNode *cir1Radius =
+        new clarity::WebAttrNode("r", clarity::CppType::Double, cir1);
+
+
+    // ControlNetworkNode *input_a =
+    //     new ControlNetworkNode("input_a_text", "input", CppType::Double);
+
+    // ModelNode<double> *mn = new ModelNode(a, CppType::Double);
+    // mn->addPeer(ActiveLink(input_a, 1));
+    // mn->pushValToPeers(mn);
 
     cout << "CPPType for input_a is: " << (int)input_a->getStoredValueType() << "\n";
 
