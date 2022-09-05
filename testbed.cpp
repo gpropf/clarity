@@ -34,7 +34,8 @@ int main() {
     ControlNetworkNode *input_a = builder.withStoredValue(a)
                                       .withName("input_a_text")
                                       .withAttributes(inputFieldAttrs)
-                                      .build();
+                                      .buildWithModelNode();
+
     // WebElemNode *labelled_input_a =
     //     builder.labelGivenNode(input_a, "Label for A");
 
@@ -43,7 +44,7 @@ int main() {
     //  maindiv->appendChild(input2);
     //  maindiv->appendChild(button1);
 
-    // maindiv->appendChild(input_a);
+     maindiv->appendChild(input_a);
 
     // maindiv->appendChild(labelled_input_a);
     // input1->setAttribute("type", val("text"));

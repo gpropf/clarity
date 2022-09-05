@@ -39,6 +39,10 @@ class ControlNetworkNode {
                 CLElement_.call<val>("generateTransformFn", scalarConst_);
         }
 
+        void printAL() {
+            cout << "AL peer ID: " << peer_->getId() << "\n";
+        }
+
         ControlNetworkNode *peer_;
         val scalarConst_;
         val transformFn_;
@@ -89,7 +93,8 @@ class ControlNetworkNode {
     inline virtual val getVal() const { return val(NULL); }
     // inline virtual void setVal(const val &inval) { clean_ = false; }
 
-    inline void setVal(const val &inval) {
+    inline virtual void setVal(const val &inval) {
+        cout << "CNN::setVal(const val &inval)\n";
         clean_ = false;
         val domElement = cle_["domElement"];
         domElement.set(boundField_, inval);
@@ -119,6 +124,7 @@ class ControlNetworkNode {
     void addPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false);
 
    protected:
+    
     string tag_;
     string boundField_;
 
@@ -135,7 +141,7 @@ class ControlNetworkNode {
 
     static map<string, std::function<void()>> callbackMap;
 
-        /** \brief Instance of the CLElement class that acts as a "proxy" in JS
+    /** \brief Instance of the CLElement class that acts as a "proxy" in JS
      * space. */
     val cle_ = val::global("CLElement").new_();
 

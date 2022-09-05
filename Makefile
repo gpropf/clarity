@@ -2,8 +2,9 @@
 ENV		= DEMANGLE_SUPPORT=1 EMCC_DEBUG=1 TOTAL_MEMORY=1900mb
 
 CC		= emcc
-#CFLAGS	=  -O0 -g -gsource-map --source-map-base=http://localhost:6931/ -std=c++17
-CFLAGS	=  -O3 -std=c++17
+
+CFLAGS	=  -O0 -g -gsource-map --source-map-base=http://localhost:6931/ -std=c++17
+#CFLAGS	=  -O3 -std=c++17
 
 JSOUT	= clarity_embind.js
 
