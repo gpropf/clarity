@@ -15,7 +15,7 @@ class CLNodeFactory {
                       //!< with a web control.
 
     string boundField_;
-    T * parent_;
+    ControlNetworkNode *parent_;
 
     map<string, val> attrs_;
 
@@ -37,30 +37,32 @@ class CLNodeFactory {
           storedValueType_(storedValueType),
           storedValue_(storedValue) {}
 
-    // inline T *build() { return new T(name_, tag_, storedValueType_); }
+    // inline ControlNetworkNode *build() { return new T(name_, tag_,
+    // storedValueType_); }
 
-    // inline T *buildWithAttributes() {
-    //     T *newNode = new T(name_, tag_,
+    // inline ControlNetworkNode *buildWithAttributes() {
+    //     ControlNetworkNode *newNode = new T(name_, tag_,
     //     storedValueType_); newNode->setAttributes(attrs_); return newNode;
     // }
 
-    inline T *build() {
-        T *newNode = new T(name_, tag_, storedValueType_);
+    inline ControlNetworkNode *build() {
+        ControlNetworkNode *newNode = new T(name_, tag_, storedValueType_);
         newNode->setAttributes(attrs_);
-        // if (parent_) {
-        //     parent_->appendChild(newNode);
-        // }
+        if (parent_) {
+            parent_->appendChild(newNode);
+        }
         return newNode;
     }
 
-    inline T *buildInsideNode(ControlNetworkNode *outerNode) {
+    inline ControlNetworkNode *buildInsideNode(ControlNetworkNode *outerNode) {
         ControlNetworkNode *innerNode = build();
         outerNode->appendChild(innerNode);
         return outerNode;
     }
 
-    inline T *buildWithModelNode(const val transformFn = val(1)) {
-        T *cnn = build();
+    inline ControlNetworkNode *buildWithModelNode(
+        const val transformFn = val(1)) {
+        ControlNetworkNode *cnn = build();
         ModelNode<V> *mn = new ModelNode<V>(storedValue_, storedValueType_);
         mn->addPeer(clarity::ControlNetworkNode::ActiveLink(cnn, transformFn));
         mn->pushValToPeers(mn);
@@ -73,7 +75,7 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline CLNodeFactory createChildrenOf(T * parent) {
+    inline CLNodeFactory createChildrenOf(ControlNetworkNode *parent) {
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
@@ -91,6 +93,12 @@ class CLNodeFactory {
         return cpy;
     }
 
+    inline CLNodeFactory withParent(ControlNetworkNode * parent) {
+        CLNodeFactory cpy(*this);
+        cpy.parent_ = parent;
+        return cpy;
+    }
+
     inline CLNodeFactory withStoredValueType(clarity::CppType storedValueType) {
         CLNodeFactory cpy(*this);
         cpy.storedValueType_ = storedValueType;
@@ -103,29 +111,33 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline T *button(const string &name, const string &text,
-                     val onPressCallback = val(NULL)) {
-        T *button = withTag("button").build();
-        button->boundField_ = "textContent";
+    inline ControlNetworkNode *button(const string &name, const string &text,
+                                      val onPressCallback = val(NULL)) {
+        ControlNetworkNode *button = withTag("button").build();
+        button->setBoundField("textContent");
         button->setVal(val(text));
         val buttonCLE = button->getCLE();
         return button;
     }
 
-    inline T *label(T *forNode, const string &text) {
-        T *label = withTag("label").build();
-        label->boundField_ = "innerHTML";
+    inline ControlNetworkNode *label(ControlNetworkNode *forNode,
+                                     const string &text) {
+        ControlNetworkNode *label = withTag("label").build();
+        label->setBoundField("innerHTML");
         label->setVal(val(text));
         label->setAttribute("for", val(forNode->getId()));
         return label;
     }
 
-    inline T *labelGivenNode(T *nodeToBeLabelled, const string &labelText) {
-        T *outerDiv = withTag("div")
-                          .withName("labeldiv_" + nodeToBeLabelled->getName())
-                          .build();
-        T *labelNode = withName("labelfor_" + nodeToBeLabelled->getName())
-                           .label(nodeToBeLabelled, labelText);
+    inline ControlNetworkNode *labelGivenNode(
+        ControlNetworkNode *nodeToBeLabelled, const string &labelText) {
+        ControlNetworkNode *outerDiv =
+            withTag("div")
+                .withName("labeldiv_" + nodeToBeLabelled->getName())
+                .build();
+        ControlNetworkNode *labelNode =
+            withName("labelfor_" + nodeToBeLabelled->getName())
+                .label(nodeToBeLabelled, labelText);
         outerDiv->appendChild(nodeToBeLabelled);
         outerDiv->appendChild(labelNode);
         return outerDiv;

@@ -18,11 +18,19 @@ int main() {
     // double *pi = new double(3.14159);
     double *a = new double(2.78);
 
-    ControlNetworkNode *maindiv =
-        new ControlNetworkNode("maindiv", "div", CppType::NoData);
+    // CLNodeFactory<ControlNetworkNode, double> builder("div", "maindiv",
+    //                                                   CppType::NoData, a);
 
-    CLNodeFactory<ControlNetworkNode, double> builder("input", "input_double",
-                                                      CppType::Double, a);
+    // ControlNetworkNode *maindiv =
+    //     new ControlNetworkNode("maindiv", "div", CppType::NoData);
+
+    CLNodeFactory<ControlNetworkNode, double> builder("div", "maindiv",
+                                                      CppType::NoData);
+
+    ControlNetworkNode *maindiv = builder.build();
+
+    CLNodeFactory<ControlNetworkNode, double> childOfMaindivBuilder =
+        builder.createChildrenOf(maindiv);
 
     // WebElemNode *input1 = builder.buildWithModelNode();
     //  WebElemNode *input2 = builder.withStoredValue(n).buildWithModelNode();
@@ -31,13 +39,15 @@ int main() {
     //  button1->addEventListenerByName("click", "iterateModel");
 
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
-    ControlNetworkNode *input_a = builder.withStoredValue(a)
+    ControlNetworkNode *input_a = childOfMaindivBuilder.withStoredValue(a)
+                                      .withStoredValueType(CppType::Double)
                                       .withName("input_a_text")
+                                      .withTag("input")
                                       .withAttributes(inputFieldAttrs)
                                       .buildWithModelNode();
 
     ControlNetworkNode *svgarea =
-        builder.withName("svgarea")
+        childOfMaindivBuilder.withName("svgarea")
             .withTag("svg")
             .withAttributes({{"width", val("300")},
                              {"height", val("200")},
@@ -46,7 +56,8 @@ int main() {
             .build();
 
     ControlNetworkNode *cir1 =
-        builder.withName("cir1")
+        childOfMaindivBuilder.withName("cir1")
+            .withParent(svgarea)
             .withTag("circle")
             .withAttributes({{"r", val("30")},
                              {"cx", val(100)},
@@ -55,6 +66,9 @@ int main() {
                              {"fill", val("rgb(50,199,77)")},
                              {"stroke-width", val(4)}})
             .build();
+
+    // ControlNetworkNode *cir1Radius = childOfMaindivBuilder.withName("cir1Radius")
+    //         .withParent(cir1).withBoundField("r").build();
 
     //         cir1->setAttribute();
     // cir1->setAttribute();
@@ -86,8 +100,8 @@ int main() {
     //  maindiv->appendChild(labelInput1);
     //  maindiv->appendChild(input2);
     //  maindiv->appendChild(button1);
-    maindiv->appendChild(svgarea);
-    maindiv->appendChild(input_a);
+    // maindiv->appendChild(svgarea);
+    // maindiv->appendChild(input_a);
 
     // maindiv->appendChild(labelled_input_a);
     // input1->setAttribute("type", val("text"));

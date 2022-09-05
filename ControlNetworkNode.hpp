@@ -2,6 +2,7 @@
 #define ControlNetworkNode_hpp
 
 #include "clarity.hpp"
+//#include "CLNodeFactory.hpp"
 
 namespace clarity {
 
@@ -19,6 +20,8 @@ namespace clarity {
  */
 
 class ControlNetworkNode {
+    // friend class CLNodeFactory;
+
    public:
     /**
      * @brief Represents the 'edges' in our control graph. These edges can be
@@ -125,6 +128,10 @@ class ControlNetworkNode {
         clean_ = false;
         val domElement = cle_["domElement"];
         domElement.set(boundField_, inval);
+    }
+
+    inline void setBoundField(const string &boundField) {
+        boundField_ = boundField;
     }
 
     inline val getCLE() const { return cle_; }

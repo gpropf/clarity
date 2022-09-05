@@ -27,14 +27,14 @@ class ModelNode : public ControlNetworkNode {
     }
 
     void setVal(const val &inval) {
-        cout << "ModelNode::setVal 1\n";
+        //cout << "ModelNode::setVal 1\n";
         //ControlNetworkNode::setVal(inval);
-        cout << "ModelNode::setVal 2\n";
+       // cout << "ModelNode::setVal 2\n";
         *reinterpret_cast<T *>(dynval_) =
             this->cle_.template call<T>("jsToCPPVal", inval);
-        cout << "ModelNode::setVal 3\n";
+       // cout << "ModelNode::setVal 3\n";
         pushValToPeers(this);
-        cout << "ModelNode::setVal 4\n";
+       // cout << "ModelNode::setVal 4\n";
     }
 
     T *dynval_;
