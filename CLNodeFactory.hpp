@@ -13,6 +13,10 @@ class CLNodeFactory {
                                //!< this factory builds.
     V *storedValue_;  //!< Actually only used when creating a model node along
                       //!< with a web control.
+
+    string boundField_;
+    T * parent_;
+
     map<string, val> attrs_;
 
     inline CLNodeFactory withAttributes(const map<string, val> &attrs) {
@@ -43,6 +47,9 @@ class CLNodeFactory {
     inline T *build() {
         T *newNode = new T(name_, tag_, storedValueType_);
         newNode->setAttributes(attrs_);
+        // if (parent_) {
+        //     parent_->appendChild(newNode);
+        // }
         return newNode;
     }
 
@@ -58,6 +65,18 @@ class CLNodeFactory {
         mn->addPeer(clarity::ControlNetworkNode::ActiveLink(cnn, transformFn));
         mn->pushValToPeers(mn);
         return cnn;
+    }
+
+    inline CLNodeFactory withBoundField(const string &boundField) {
+        CLNodeFactory cpy(*this);
+        cpy.boundField_ = boundField;
+        return cpy;
+    }
+
+    inline CLNodeFactory createChildrenOf(T * parent) {
+        CLNodeFactory cpy(*this);
+        cpy.parent_ = parent;
+        return cpy;
     }
 
     inline CLNodeFactory withTag(const string &tag) {
@@ -85,7 +104,7 @@ class CLNodeFactory {
     }
 
     inline T *button(const string &name, const string &text,
-                               val onPressCallback = val(NULL)) {
+                     val onPressCallback = val(NULL)) {
         T *button = withTag("button").build();
         button->boundField_ = "textContent";
         button->setVal(val(text));
@@ -101,19 +120,20 @@ class CLNodeFactory {
         return label;
     }
 
-    inline T *labelGivenNode(T *nodeToBeLabelled,
-                                       const string &labelText) {
-        T *outerDiv =
-            withTag("div")
-                .withName("labeldiv_" + nodeToBeLabelled->getName())
-                .build();
-        T *labelNode =
-            withName("labelfor_" + nodeToBeLabelled->getName())
-                .label(nodeToBeLabelled, labelText);
+    inline T *labelGivenNode(T *nodeToBeLabelled, const string &labelText) {
+        T *outerDiv = withTag("div")
+                          .withName("labeldiv_" + nodeToBeLabelled->getName())
+                          .build();
+        T *labelNode = withName("labelfor_" + nodeToBeLabelled->getName())
+                           .label(nodeToBeLabelled, labelText);
         outerDiv->appendChild(nodeToBeLabelled);
         outerDiv->appendChild(labelNode);
         return outerDiv;
     }
+
+    // boundField_ = attributeName;
+    // val parentDomelement = parent_->getCLE()["domElement"];
+    // cle_.set("domElement", parentDomelement);
 };
 }  // namespace clarity
 #endif
