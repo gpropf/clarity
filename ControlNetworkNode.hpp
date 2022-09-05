@@ -90,7 +90,30 @@ class ControlNetworkNode {
     inline void setParent(ControlNetworkNode *parent) {
         this->parent_ = parent;
     }
-    inline virtual val getVal() const { return val(NULL); }
+    
+    val getVal() const {
+        val domElement = cle_["domElement"];
+        string valueText = domElement[boundField_].as<string>();
+
+        switch (this->storedValueType_) {
+            case CppType::Int:
+                return val(stoi(valueText));
+                break;
+            case CppType::Float:
+                return val(stof(valueText));
+                break;
+            case CppType::Double:
+                return val(stod(valueText));
+                break;
+            case CppType::String:
+                return val(valueText);
+                break;
+            case CppType::NoData:
+            default:
+                return val(NULL);
+                break;
+        }
+    }
     // inline virtual void setVal(const val &inval) { clean_ = false; }
 
     inline virtual void setVal(const val &inval) {
