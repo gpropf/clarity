@@ -53,6 +53,13 @@ class CLNodeFactory {
         if (parent_) {
             parent_->appendChild(newNode);
         }
+        if (storedValue_) {
+            val transformFn = val(1);
+            ModelNode<V> *mn = new ModelNode<V>(storedValue_, storedValueType_);
+            mn->addPeer(
+                clarity::ControlNetworkNode::ActiveLink(newNode, transformFn));
+            mn->pushValToPeers(mn);
+        }
         return newNode;
     }
 
@@ -63,14 +70,14 @@ class CLNodeFactory {
     //     return outerNode;
     // }
 
-    inline ControlNetworkNode *buildWithModelNode(
-        const val transformFn = val(1)) {
-        ControlNetworkNode *cnn = build();
-        ModelNode<V> *mn = new ModelNode<V>(storedValue_, storedValueType_);
-        mn->addPeer(clarity::ControlNetworkNode::ActiveLink(cnn, transformFn));
-        mn->pushValToPeers(mn);
-        return cnn;
-    }
+    // inline ControlNetworkNode *buildWithModelNode(
+    //     const val transformFn = val(1)) {
+    //     ControlNetworkNode *cnn = build();
+    //     ModelNode<V> *mn = new ModelNode<V>(storedValue_, storedValueType_);
+    //     mn->addPeer(clarity::ControlNetworkNode::ActiveLink(cnn, transformFn));
+    //     mn->pushValToPeers(mn);
+    //     return cnn;
+    // }
 
     inline CLNodeFactory withBoundField(const string &boundField) {
         CLNodeFactory cpy(*this);

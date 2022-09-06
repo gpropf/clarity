@@ -44,7 +44,7 @@ int main() {
                                       .withName("input_a_text")
                                       .withTag("input")
                                       .withAttributes(inputFieldAttrs)
-                                      .buildWithModelNode();
+                                      .build();
 
     ControlNetworkNode *svgarea =
         childOfMaindivBuilder.withName("svgarea")
