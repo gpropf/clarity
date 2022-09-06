@@ -14,9 +14,9 @@ clarity::ControlNetworkNode::ActiveLink::ActiveLink(ControlNetworkNode *peer,
     transformFn_ = CLElement_.call<val>("generateTransformFn", scalarConst_);
 }
 
-inline string clarity::ControlNetworkNode::nodeStats() const {
+inline string clarity::ControlNetworkNode::nodeStats(const string &msg) const {
     string s = "Node name: " + name_ + ", Node id: " + to_string(id_) +
-               ", Node type: " + typeid(*this).name() + "\n";
+               ", Node type: " + typeid(*this).name() + msg + "\n";
     return s;
 }
 
@@ -69,6 +69,7 @@ void clarity::ControlNetworkNode::pushValToPeer(ActiveLink &al) {
 
     al.printAL();
     // cout << "void clarity::ControlNetworkNode::pushValToPeer\n";
+    //cout << nodeStats("pushValToPeer");
 
     if (internalVal.isNumber()) {
         val product = al.CLElement_.call<val>("applyTransformFn",

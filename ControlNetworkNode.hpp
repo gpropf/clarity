@@ -153,7 +153,7 @@ class ControlNetworkNode {
         return val(*reinterpret_cast<T *>(valptr));
     }
 
-    virtual string nodeStats() const;
+    virtual string nodeStats(const string &msg = "") const;
 
     virtual void pushValToPeer(ActiveLink &al);
     virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr);
