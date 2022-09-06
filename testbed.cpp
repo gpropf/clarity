@@ -24,8 +24,7 @@ int main() {
     // ControlNetworkNode *maindiv =
     //     new ControlNetworkNode("maindiv", "div", CppType::NoData);
 
-    CLNodeFactory<double> builder("div", "maindiv",
-                                                      CppType::NoData);
+    CLNodeFactory<double> builder("div", "maindiv", CppType::NoData);
 
     ControlNetworkNode *maindiv = builder.build();
 
@@ -55,6 +54,9 @@ int main() {
                              {"style", val("border: 1px solid black")}})
             .build();
 
+    ControlNetworkNode *statusButton =
+        childOfMaindivBuilder.button("statusButton", "Print Status");
+
     ControlNetworkNode *cir1 =
         childOfMaindivBuilder.withName("cir1")
             .withParent(svgarea)
@@ -67,7 +69,12 @@ int main() {
                              {"stroke-width", val(4)}})
             .build();
 
-    // ControlNetworkNode *cir1Radius = childOfMaindivBuilder.withName("cir1Radius")
+    ControlNetworkNode::callbackMap["printStats"] = [=] {
+        cout << "callbackMap[\"iterateModel\"]\n";
+    };
+
+    // ControlNetworkNode *cir1Radius =
+    // childOfMaindivBuilder.withName("cir1Radius")
     //         .withParent(cir1).withBoundField("r").build();
 
     //         cir1->setAttribute();

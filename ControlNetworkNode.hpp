@@ -190,5 +190,10 @@ class ControlNetworkNode {
      * data is moved between nodes. */
     vector<ControlNetworkNode::ActiveLink> peers_;
 };
+
+
 }  // namespace clarity
+
+
+
 #endif
