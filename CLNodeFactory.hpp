@@ -56,11 +56,12 @@ class CLNodeFactory {
         return newNode;
     }
 
-    inline ControlNetworkNode *buildInsideNode(ControlNetworkNode *outerNode) {
-        ControlNetworkNode *innerNode = build();
-        outerNode->appendChild(innerNode);
-        return outerNode;
-    }
+    // inline ControlNetworkNode *buildInsideNode(ControlNetworkNode *outerNode)
+    // {
+    //     ControlNetworkNode *innerNode = build();
+    //     outerNode->appendChild(innerNode);
+    //     return outerNode;
+    // }
 
     inline ControlNetworkNode *buildWithModelNode(
         const val transformFn = val(1)) {
@@ -81,6 +82,16 @@ class CLNodeFactory {
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
+    }
+
+    inline CLNodeFactory createAttributesOf(ControlNetworkNode *parent) {
+        return createChildrenOf(parent).withExistingDOMElement();
+    }
+
+    inline CLNodeFactory createAttributesOf(int parentId) {  // FIXME
+        // CLNodeFactory cpy(*this);
+        // cpy.parent_ = parent;
+        // return cpy;
     }
 
     inline CLNodeFactory withTag(const string &tag) {
@@ -151,9 +162,21 @@ class CLNodeFactory {
         return outerDiv;
     }
 
-    // boundField_ = attributeName;
-    // val parentDomelement = parent_->getCLE()["domElement"];
-    // cle_.set("domElement", parentDomelement);
+    inline ControlNetworkNode *attributeNode(const string &attributeName) {
+        ControlNetworkNode *attributeNode =
+            withBoundField(attributeName).build();
+    }
+
+    inline ControlNetworkNode *attributeNode(
+        const string &attributeName, ControlNetworkNode *parent = nullptr) {
+        ControlNetworkNode *attributeNode =
+            withBoundField(attributeName).build();
+    }
+
+    //    parent_ = parent;
+    //     boundField_ = attributeName;
+    //     val parentDomelement = parent_->getCLE()["domElement"];
+    //     cle_.set("domElement", parentDomelement);
 };
 }  // namespace clarity
 #endif
