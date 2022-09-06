@@ -73,6 +73,8 @@ int main() {
         cout << "callbackMap[\"iterateModel\"]\n";
     };
 
+    statusButton->addEventListenerByName("onclick", "printStats");
+
     // ControlNetworkNode *cir1Radius =
     // childOfMaindivBuilder.withName("cir1Radius")
     //         .withParent(cir1).withBoundField("r").build();

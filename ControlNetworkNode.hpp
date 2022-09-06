@@ -23,6 +23,8 @@ class ControlNetworkNode {
     // friend class CLNodeFactory;
 
    public:
+    static map<string, std::function<void()>> callbackMap;
+
     /**
      * @brief Represents the 'edges' in our control graph. These edges can be
      * active and contain a JS value that can act as a transformation on the
@@ -173,8 +175,6 @@ class ControlNetworkNode {
      * node you can get a pointer to it here. */
     static map<const int, ControlNetworkNode *> switchboard;
 
-    static map<string, std::function<void()>> callbackMap;
-
     /** \brief Instance of the CLElement class that acts as a "proxy" in JS
      * space. */
     val cle_ = val::global("CLElement").new_();
@@ -191,9 +191,6 @@ class ControlNetworkNode {
     vector<ControlNetworkNode::ActiveLink> peers_;
 };
 
-
 }  // namespace clarity
-
-
 
 #endif
