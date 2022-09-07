@@ -17,7 +17,7 @@ int main() {
     // double *n = new double(50);
     // double *pi = new double(3.14159);
     double *a = new double(2.78);
-
+    ModelNode<double> *a_mn = new ModelNode(a, CppType::Double);
     // CLNodeFactory<ControlNetworkNode, double> builder("div", "maindiv",
     //                                                   CppType::NoData, a);
 
@@ -31,19 +31,24 @@ int main() {
     CLNodeFactory<double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
-    // WebElemNode *input1 = builder.buildWithModelNode();
-    //  WebElemNode *input2 = builder.withStoredValue(n).buildWithModelNode();
-    //  WebElemNode *button1 = builder.button("button1", "Press me!");
-    //  WebElemNode *labelInput1 = builder.label(input1, "PI");
-    //  button1->addEventListenerByName("click", "iterateModel");
-
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
-    ControlNetworkNode *input_a = childOfMaindivBuilder.withStoredValue(a)
-                                      .withStoredValueType(CppType::Double)
+
+    CLNodeFactory<double> inputBuilder =
+        childOfMaindivBuilder.withStoredValueType(CppType::Double)
+            .withTag("input")
+            .withAttributes(inputFieldAttrs);
+
+    ControlNetworkNode *input_a = inputBuilder
+                                      .withModelNode(a_mn)
+                                      //.withStoredValueType(CppType::Double)
                                       .withName("input_a_text")
-                                      .withTag("input")
-                                      .withAttributes(inputFieldAttrs)
+                                     // .extractModelNode(a_mn)
+                                      // .withTag("input")
+                                      //  .withAttributes(inputFieldAttrs)
                                       .build();
+
+    cout << "ModelNode should now have been extracted.\n"
+         << input_a->countPeers() << "\n";
 
     ControlNetworkNode *svgarea =
         childOfMaindivBuilder.withName("svgarea")
@@ -69,7 +74,23 @@ int main() {
                              {"stroke-width", val(4)}})
             .build();
 
-    ControlNetworkNode *circleRadius = childOfMaindivBuilder.attributeNode("r", cir1);
+    ControlNetworkNode *circleRadius =
+        childOfMaindivBuilder.withModelNode(a_mn).attributeNode("r", cir1);
+
+    cout << "attributeNode should now have been created.\n"
+         << a_mn->nodeStats() << "\n";
+
+
+ControlNetworkNode *range_a = inputBuilder
+                                      .withModelNode(a_mn)
+                                      //.withStoredValueType(CppType::Double)
+                                      .withName("range_a")
+                                      .withAttributes({{"type", val("range")}})
+                                     // .extractModelNode(a_mn)
+                                      // .withTag("input")
+                                      //  .withAttributes(inputFieldAttrs)
+                                      .build();
+
 
     ControlNetworkNode::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";
@@ -123,5 +144,6 @@ int main() {
     // };
 
     printf("Setup complete!\n");
+
     return 0;
 }

@@ -41,8 +41,9 @@ class CLNodeFactory {
     }
 
     template <typename T>
-    inline void extractModelNode(ModelNode<T> *modelNode) {
+    inline CLNodeFactory extractModelNode(ModelNode<T> *modelNode) {
         modelNode = modelNode_;
+        return *this;
     }
 
     inline ControlNetworkNode *build() {
@@ -53,7 +54,7 @@ class CLNodeFactory {
             parent_->appendChild(newNode);
         }
         if (modelNode_) {
-            val transformFn = val(1);
+            //val transformFn = val(1);
 
             modelNode_->addPeer(ControlNetworkNode::ActiveLink(newNode));
             modelNode_->pushValToPeers(modelNode_);
@@ -121,7 +122,10 @@ class CLNodeFactory {
     inline CLNodeFactory withStoredValueType(clarity::CppType storedValueType) {
         CLNodeFactory cpy(*this);
         cpy.storedValueType_ = storedValueType;
-        cpy.modelNode_->setStoredValueType(storedValueType);
+        if (cpy.modelNode_) {
+            cpy.modelNode_->setStoredValueType(storedValueType);
+        }
+        
         // In case we already created a MN, we need to double back and set the
         // type in it.
         return cpy;
@@ -141,6 +145,7 @@ class CLNodeFactory {
     inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) {
         CLNodeFactory cpy(*this);
         cpy.modelNode_ = modelNode;
+
         return cpy;
     }
 

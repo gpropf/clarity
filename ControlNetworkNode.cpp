@@ -15,8 +15,9 @@ clarity::ControlNetworkNode::ActiveLink::ActiveLink(ControlNetworkNode *peer,
 }
 
 inline string clarity::ControlNetworkNode::nodeStats(const string &msg) const {
-    string s = "Node name: " + name_ + ", Node id: " + to_string(id_) +
-               ", Node type: " + typeid(*this).name() + msg + "\n";
+    string s = "NS: Node name: " + name_ + ", Node id: " + to_string(id_) +
+               ", Node type: " + typeid(*this).name() +
+               ", peer count = " + to_string(countPeers()) + msg + "\n";
     return s;
 }
 
@@ -61,15 +62,16 @@ ControlNetworkNode::ControlNetworkNode(const string &name, const string &tag,
     ControlNetworkNode::switchboard[id_] = this;
 }
 
-void clarity::ControlNetworkNode::pushValToPeer(ActiveLink &al) {
+void clarity::ControlNetworkNode::pushValToPeer(ActiveLink &al,
+                                                const string &tabs) {
     if (clean_) {
     }
 
     val internalVal = getVal();
 
-    al.printAL();
-    // cout << "void clarity::ControlNetworkNode::pushValToPeer\n";
-    //cout << nodeStats("pushValToPeer");
+    // al.printAL();
+    cout << tabs << "void clarity::ControlNetworkNode::pushValToPeer\n";
+    cout << tabs << al.peer_->nodeStats();
 
     if (internalVal.isNumber()) {
         val product = al.CLElement_.call<val>("applyTransformFn",
@@ -84,11 +86,16 @@ void clarity::ControlNetworkNode::pushValToPeer(ActiveLink &al) {
 
 void clarity::ControlNetworkNode::pushValToPeers(
     ControlNetworkNode *excludedPeer) {
+    cout << "ControlNetworkNode::pushValToPeers, id = " << id_ << " Node has "
+         << to_string(countPeers()) << " peers!!!!!!!!!!!!!!!!!!!!!!!\n";
+    // cout << "ControlNetworkNode::pushValToPeers ==>> " << nodeStats();
     if (excludedPeer == nullptr) {
+        cout << "\tNo peers excluded.\n";
         for (auto peer : peers_) {
             pushValToPeer(peer);
         }
     } else {
+        cout << "\tExcluded peer exists!\n";
         for (auto peer : peers_) {
             if (peer.peer_ != excludedPeer) {
                 pushValToPeer(peer);
@@ -105,6 +112,8 @@ void clarity::ControlNetworkNode::addPeer(ControlNetworkNode::ActiveLink al,
     }
     al.peer_->addPeer(
         ActiveLink(this, cle_.call<val>("invertValue", al.scalarConst_)), true);
+    // cout << nodeStats(". ControlNetworkNode::addPeer: There are " +
+    //                   to_string(countPeers()) + " peer nodes.\n");
 }
 
 inline void ControlNetworkNode::setAttribute(const string &attr,
@@ -133,5 +142,3 @@ inline void ControlNetworkNode::addJSEventListener(const string &eventName,
                                                    val eventCallback) {
     cle_.call<void>("addEventListener", eventName, eventCallback);
 }
-
-

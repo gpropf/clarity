@@ -155,10 +155,11 @@ class ControlNetworkNode {
 
     virtual string nodeStats(const string &msg = "") const;
 
-    virtual void pushValToPeer(ActiveLink &al);
+    virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
     virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr);
     static void pushValToPeersById(int id);
     void addPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false);
+    inline int countPeers() const { return peers_.size(); }
 
    protected:
     string tag_;
