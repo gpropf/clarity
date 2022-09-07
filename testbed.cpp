@@ -36,6 +36,7 @@ int main() {
     CLNodeFactory<double> inputBuilder =
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
             .withTag("input")
+            .withBoundField("value")
             .withAttributes(inputFieldAttrs);
 
     ControlNetworkNode *input_a = inputBuilder
@@ -47,8 +48,8 @@ int main() {
                                       //  .withAttributes(inputFieldAttrs)
                                       .build();
 
-    cout << "ModelNode should now have been extracted.\n"
-         << input_a->countPeers() << "\n";
+    // cout << "ModelNode should now have been extracted.\n"
+    //      << input_a->countPeers() << "\n";
 
     ControlNetworkNode *svgarea =
         childOfMaindivBuilder.withName("svgarea")
@@ -75,10 +76,10 @@ int main() {
             .build();
 
     ControlNetworkNode *circleRadius =
-        childOfMaindivBuilder.withModelNode(a_mn).attributeNode("r", cir1);
+        childOfMaindivBuilder.withModelNode(a_mn).withName("RADIUS").withAttributes({}).attributeNode("r", cir1);
 
-    cout << "attributeNode should now have been created.\n"
-         << a_mn->nodeStats() << "\n";
+    // cout << "attributeNode should now have been created.\n"
+    //      << a_mn->nodeStats() << "\n";
 
 
 ControlNetworkNode *range_a = inputBuilder

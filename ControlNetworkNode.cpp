@@ -3,7 +3,7 @@
 
 bool ControlNetworkNode::appendChild(ControlNetworkNode *child) {
     children_.push_back(child);
-    child->setParent(this);
+    child->setParent(this);    
     cle_.call<void>("appendChild", child->getCLE());
     return true;  // FIXME: need to check for duplicate ids.
 }

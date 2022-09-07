@@ -13,8 +13,12 @@ class CLElement {
     return 1 / v
   }
 
-  static testAlert() {
+  testAlert() {
     alert("FOO!")
+  }
+
+  printVal(v) {
+    console.log("JSVAL = " + v);
   }
 
   /**

@@ -97,6 +97,7 @@ class ControlNetworkNode {
 
     virtual val getVal() const {
         val domElement = cle_["domElement"];
+       
         string valueText = domElement[boundField_].as<string>();
         cout << "ControlNetworkNode::getVal() valueText = " << valueText
              << "\n";
@@ -127,10 +128,13 @@ class ControlNetworkNode {
     // inline virtual void setVal(const val &inval) { clean_ = false; }
 
     inline virtual void setVal(const val &inval) {
-        cout << "CNN::setVal(const val &inval)\n";
+        cout << "<<<<<<<<<<<<< CNN::setVal(const val &inval) >>>>>>>>>>>>>\n";
         clean_ = false;
         val domElement = cle_["domElement"];
+        cle_.call<void>("printVal", inval);
+        cout << "boundField_ = " << boundField_ << "\n";
         domElement.set(boundField_, inval);
+        domElement.call<void>("setAttribute", val(boundField_), inval);
     }
 
     inline void setBoundField(const string &boundField) {

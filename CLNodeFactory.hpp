@@ -49,12 +49,13 @@ class CLNodeFactory {
     inline ControlNetworkNode *build() {
         ControlNetworkNode *newNode = new ControlNetworkNode(
             name_, tag_, storedValueType_, useExistingDOMElement_);
+        newNode->setBoundField(boundField_);
         newNode->setAttributes(attrs_);
         if (parent_) {
             parent_->appendChild(newNode);
         }
         if (modelNode_) {
-            //val transformFn = val(1);
+            // val transformFn = val(1);
 
             modelNode_->addPeer(ControlNetworkNode::ActiveLink(newNode));
             modelNode_->pushValToPeers(modelNode_);
@@ -80,6 +81,7 @@ class CLNodeFactory {
     inline CLNodeFactory withBoundField(const string &boundField) {
         CLNodeFactory cpy(*this);
         cpy.boundField_ = boundField;
+        cout << "withBoundField:: boundField = " << boundField << "\n";
         return cpy;
     }
 
@@ -125,7 +127,7 @@ class CLNodeFactory {
         if (cpy.modelNode_) {
             cpy.modelNode_->setStoredValueType(storedValueType);
         }
-        
+
         // In case we already created a MN, we need to double back and set the
         // type in it.
         return cpy;
@@ -137,7 +139,7 @@ class CLNodeFactory {
             this->modelNode_ = mn;
             return *this;
         }
-        CLNodeFactory cpy(*this);       
+        CLNodeFactory cpy(*this);
         cpy.modelNode_ = mn;
         return cpy;
     }
