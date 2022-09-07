@@ -24,16 +24,16 @@ int main() {
     // ControlNetworkNode *maindiv =
     //     new ControlNetworkNode("maindiv", "div", CppType::NoData);
 
-    CLNodeFactory<double> builder("div", "maindiv", CppType::NoData);
+    CLNodeFactory<ControlNetworkNode, double> builder("div", "maindiv", CppType::NoData);
 
     ControlNetworkNode *maindiv = builder.build();
 
-    CLNodeFactory<double> childOfMaindivBuilder =
+    CLNodeFactory<ControlNetworkNode, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
 
-    CLNodeFactory<double> inputBuilder =
+    CLNodeFactory<ControlNetworkNode, double> inputBuilder =
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
             .withTag("input")
             .withBoundField("value")

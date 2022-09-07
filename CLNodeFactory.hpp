@@ -4,7 +4,7 @@
 #include "ModelNode.hpp"
 
 namespace clarity {
-template <typename V>
+template <class Nc, typename V>
 class CLNodeFactory {
    public:
     string tag_;   //!< Tag to be used with elements this factory builds.
@@ -46,8 +46,8 @@ class CLNodeFactory {
         return *this;
     }
 
-    inline ControlNetworkNode *build() {
-        ControlNetworkNode *newNode = new ControlNetworkNode(
+    inline Nc *build() {
+        Nc *newNode = new Nc(
             name_, tag_, storedValueType_, useExistingDOMElement_);
         newNode->setBoundField(boundField_);
         newNode->setAttributes(attrs_);
@@ -85,14 +85,14 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline CLNodeFactory createChildrenOf(ControlNetworkNode *parent) {
+    inline CLNodeFactory createChildrenOf(Nc *parent) {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
     }
 
-    inline CLNodeFactory createAttributesOf(ControlNetworkNode *parent) {
+    inline CLNodeFactory createAttributesOf(Nc *parent) {
         return createChildrenOf(parent).withExistingDOMElement();
     }
 
@@ -114,7 +114,7 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline CLNodeFactory withParent(ControlNetworkNode *parent) {
+    inline CLNodeFactory withParent(Nc *parent) {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
