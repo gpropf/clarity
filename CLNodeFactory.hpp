@@ -11,11 +11,14 @@ class CLNodeFactory {
     string name_;  //!< Name to be used with elements this factory builds.
     CppType storedValueType_;  //!< storedValueType to be used with elements
                                //!< this factory builds.
-    V *storedValue_;  //!< Actually only used when creating a model node along
-                      //!< with a web control.
+    // V *storedValue_ = nullptr;  //!< Actually only used when creating a model
+    //                             //!< node along with a web control.
 
     string boundField_;
-    ControlNetworkNode *parent_;
+    ControlNetworkNode *parent_ = nullptr;
+    ModelNode<V> *modelNode_ =
+        nullptr;  //!< If we create a new MN or attach one, we set this. Note
+                  //!< that we can create ControlNetworkNodes with no MN.
     bool useExistingDOMElement_ = false;
 
     map<string, val> attrs_;
@@ -33,18 +36,14 @@ class CLNodeFactory {
 
     inline CLNodeFactory(const string &tag, const string &name,
                          CppType storedValueType, V *storedValue)
-        : tag_(tag),
-          name_(name),
-          storedValueType_(storedValueType),
-          storedValue_(storedValue) {}
+        : tag_(tag), name_(name), storedValueType_(storedValueType) {
+        withStoredValue(storedValue, true);
+    }
 
-    // inline ControlNetworkNode *build() { return new T(name_, tag_,
-    // storedValueType_); }
-
-    // inline ControlNetworkNode *buildWithAttributes() {
-    //     ControlNetworkNode *newNode = new T(name_, tag_,
-    //     storedValueType_); newNode->setAttributes(attrs_); return newNode;
-    // }
+    template <typename T>
+    inline void extractModelNode(ModelNode<T> *modelNode) {
+        modelNode = modelNode_;
+    }
 
     inline ControlNetworkNode *build() {
         ControlNetworkNode *newNode = new ControlNetworkNode(
@@ -53,12 +52,11 @@ class CLNodeFactory {
         if (parent_) {
             parent_->appendChild(newNode);
         }
-        if (storedValue_) {
+        if (modelNode_) {
             val transformFn = val(1);
-            ModelNode<V> *mn = new ModelNode<V>(storedValue_, storedValueType_);
-            mn->addPeer(
-                clarity::ControlNetworkNode::ActiveLink(newNode, transformFn));
-            mn->pushValToPeers(mn);
+
+            modelNode_->addPeer(ControlNetworkNode::ActiveLink(newNode));
+            modelNode_->pushValToPeers(modelNode_);
         }
         return newNode;
     }
@@ -74,9 +72,8 @@ class CLNodeFactory {
     //     const val transformFn = val(1)) {
     //     ControlNetworkNode *cnn = build();
     //     ModelNode<V> *mn = new ModelNode<V>(storedValue_, storedValueType_);
-    //     mn->addPeer(clarity::ControlNetworkNode::ActiveLink(cnn, transformFn));
-    //     mn->pushValToPeers(mn);
-    //     return cnn;
+    //     mn->addPeer(clarity::ControlNetworkNode::ActiveLink(cnn,
+    //     transformFn)); mn->pushValToPeers(mn); return cnn;
     // }
 
     inline CLNodeFactory withBoundField(const string &boundField) {
@@ -86,6 +83,7 @@ class CLNodeFactory {
     }
 
     inline CLNodeFactory createChildrenOf(ControlNetworkNode *parent) {
+        assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
@@ -114,6 +112,7 @@ class CLNodeFactory {
     }
 
     inline CLNodeFactory withParent(ControlNetworkNode *parent) {
+        assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
@@ -122,12 +121,26 @@ class CLNodeFactory {
     inline CLNodeFactory withStoredValueType(clarity::CppType storedValueType) {
         CLNodeFactory cpy(*this);
         cpy.storedValueType_ = storedValueType;
+        cpy.modelNode_->setStoredValueType(storedValueType);
+        // In case we already created a MN, we need to double back and set the
+        // type in it.
         return cpy;
     }
 
-    inline CLNodeFactory withStoredValue(V *storedValue) {
+    inline CLNodeFactory withStoredValue(V *storedValue, bool mutate = false) {
+        ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_);
+        if (mutate) {
+            this->modelNode_ = mn;
+            return *this;
+        }
+        CLNodeFactory cpy(*this);       
+        cpy.modelNode_ = mn;
+        return cpy;
+    }
+
+    inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) {
         CLNodeFactory cpy(*this);
-        cpy.storedValue_ = storedValue;
+        cpy.modelNode_ = modelNode;
         return cpy;
     }
 
@@ -172,12 +185,16 @@ class CLNodeFactory {
     inline ControlNetworkNode *attributeNode(const string &attributeName) {
         ControlNetworkNode *attributeNode =
             withBoundField(attributeName).build();
+        val parentDomelement = parent_->getCLE()["domElement"];
+        attributeNode->getCLE().set("domElement", parentDomelement);
+        return attributeNode;
     }
 
-    inline ControlNetworkNode *attributeNode(
-        const string &attributeName, ControlNetworkNode *parent = nullptr) {
+    inline ControlNetworkNode *attributeNode(const string &attributeName,
+                                             ControlNetworkNode *parent) {
         ControlNetworkNode *attributeNode =
-            withBoundField(attributeName).build();
+            withParent(parent).attributeNode(attributeName);
+        return attributeNode;
     }
 
     //    parent_ = parent;

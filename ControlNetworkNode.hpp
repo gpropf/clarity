@@ -58,7 +58,7 @@ class ControlNetworkNode {
 
     inline string getTag() const { return tag_; }
     inline int getId() const { return id_; }
-    inline void setCLE(val jsval) { cle_ = jsval; }
+    inline void setCLE(val cle) { cle_ = cle; }
 
     inline static void runCallbackById(const string &id) { callbackMap[id](); }
 

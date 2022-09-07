@@ -69,6 +69,8 @@ int main() {
                              {"stroke-width", val(4)}})
             .build();
 
+    ControlNetworkNode *circleRadius = childOfMaindivBuilder.attributeNode("r", cir1);
+
     ControlNetworkNode::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";
     };

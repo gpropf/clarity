@@ -30,6 +30,7 @@ class ModelNode : public ControlNetworkNode {
         //cout << "ModelNode::setVal 1\n";
         //ControlNetworkNode::setVal(inval);
        // cout << "ModelNode::setVal 2\n";
+       assert(dynval_ != nullptr);
         *reinterpret_cast<T *>(dynval_) =
             this->cle_.template call<T>("jsToCPPVal", inval);
        // cout << "ModelNode::setVal 3\n";
