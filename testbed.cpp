@@ -48,7 +48,7 @@ int main() {
     ClarityNode *input_a = inputBuilder
                                       .withModelNode(a_mn)
                                       // .withTransformFn(square)
-                                      .withLinkMultiplierConstant(0.1)
+                                      //.withLinkMultiplierConstant(0.1)
                                       //.withLinkMultiplierConstant(3)
                                       //.withStoredValueType(CppType::Double)
                                       .withName("input_a_text")
@@ -86,7 +86,7 @@ int main() {
 
     ClarityNode *circleRadius = childOfMaindivBuilder.withModelNode(a_mn)
                                            .withName("RADIUS")
-                                           .withLinkMultiplierConstant(0.1)
+                                           //.withLinkMultiplierConstant(0.1)
                                            .withAttributes({})
                                            .attributeNode("r", cir1);
 

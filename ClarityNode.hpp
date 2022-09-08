@@ -25,6 +25,43 @@ class ClarityNode {
    public:
     static map<string, std::function<void()>> callbackMap;
 
+    class DualLink {
+        ClarityNode *nodeA_;
+        ClarityNode *nodeB_;
+        int intMultiplier = 1;
+        double dblMultiplier = 1.0;
+        val a2b_xfmr_;
+        val b2a_xfmr_;
+
+       public:
+        static val CLElement_;
+        val get_a2b_xfmr() const;
+        val get_b2a_xfmr() const;
+        void set_a2b_xfmr(val xfmr);
+        void set_b2a_xfmr(val xfmr);
+
+        template <typename T>
+        DualLink(ClarityNode *nodeA, ClarityNode *nodeB,
+                 const T multiplier = 1) {
+            a2b_xfmr_ = CLElement_.call<val>("generateTransformFn", multiplier);
+            b2a_xfmr_ =
+                CLElement_.call<val>("generateTransformFn", 1 / multiplier);
+        };
+
+        template <typename T>
+        DualLink(ClarityNode *nodeA, ClarityNode *nodeB, val a2b_xfmr,
+                 val b2a_xfmr)
+            : nodeA_(nodeA),
+              nodeB_(nodeB),
+              a2b_xfmr_(a2b_xfmr),
+              b2a_xfmr_(b2a_xfmr) {}
+
+        void printDL() {
+            cout << "DL peer IDs: A = " << nodeA_->getId()
+                 << ", B = " << nodeB_->getId() << "\n";
+        }
+    };
+
     /**
      * @brief Represents the 'edges' in our control graph. These edges can be
      * active and contain a JS value that can act as a transformation on the
