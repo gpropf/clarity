@@ -10,8 +10,8 @@ CFLAGS	=  -O0 -g -std=c++17
 JSOUT	= clarity_embind.js
 
 
-LIBCLR_IN = ControlNetworkNode.cpp ModelNode.hpp CanvasElement.cpp CLNodeFactory.hpp			
-LIBCLR_OBJS = ControlNetworkNode.o ModelNode.o CanvasElement.o CLNodeFactory.o			
+LIBCLR_IN = ClarityNode.cpp ModelNode.hpp CanvasElement.cpp CLNodeFactory.hpp			
+LIBCLR_OBJS = ClarityNode.o ModelNode.o CanvasElement.o CLNodeFactory.o			
 AR 		= emar
 FRAMEWORK_DEPS = clarity.js clarity.html Makefile
 
@@ -20,8 +20,8 @@ FRAMEWORK_DEPS = clarity.js clarity.html Makefile
 %.o : %.cpp %.hpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
 
-testbed: testbed.o ControlNetworkNode.o
-	$(CC) -lembind testbed.o ControlNetworkNode.o $(CFLAGS) -o $(JSOUT)
+testbed: testbed.o ClarityNode.o
+	$(CC) -lembind testbed.o ClarityNode.o $(CFLAGS) -o $(JSOUT)
 
 libclr.a: $(LIBCLR_OBJS)
 	$(AR) rcs libclr.a $(LIBCLR_OBJS)

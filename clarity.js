@@ -14,7 +14,7 @@ class CLElement {
   }
 
   static square(x) {
-    return x**2;
+    return x ** 2;
   }
 
   static testAlert() {
@@ -188,8 +188,8 @@ class CLElement {
       var outerThis = this
       this.domElement_.addEventListener('change', function (e) {
         console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)
-        Module.ControlNetworkNode.pushValToPeersById(outerThis.id_)
-        Module.ControlNetworkNode.markNodeDirtyById(outerThis.id_)
+        Module.ClarityNode.pushValToPeersById(outerThis.id_)
+        Module.ClarityNode.markNodeDirtyById(outerThis.id_)
       })
     }
   }
@@ -200,7 +200,7 @@ class CLElement {
 
   addEventListenerById(eventName, id) {
     this.domElement_.addEventListener(eventName, (e) => {
-      Module.ControlNetworkNode.runCallbackById(id)
+      Module.ClarityNode.runCallbackById(id)
     })
   }
 
@@ -226,7 +226,7 @@ class CLElement {
 function myTimer() {
   const d = new Date();
   console.log(d.toLocaleTimeString())
-  Module.ControlNetworkNode.runCallbackById("tick")
+  Module.ClarityNode.runCallbackById("tick")
 }
 
 window.CLElement = CLElement

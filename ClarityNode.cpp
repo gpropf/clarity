@@ -1,51 +1,51 @@
 //#include "clarity.hpp"
-#include "ControlNetworkNode.hpp"
+#include "ClarityNode.hpp"
 
-bool ControlNetworkNode::appendChild(ControlNetworkNode *child) {
+bool ClarityNode::appendChild(ClarityNode *child) {
     children_.push_back(child);
     child->setParent(this);    
     cle_.call<void>("appendChild", child->getCLE());
     return true;  // FIXME: need to check for duplicate ids.
 }
 
-clarity::ControlNetworkNode::ActiveLink::ActiveLink(ControlNetworkNode *peer,
+clarity::ClarityNode::ActiveLink::ActiveLink(ClarityNode *peer,
                                                     val scalarConst)
     : peer_(peer), constantOrFunction_(scalarConst) {
     transformFn_ = CLElement_.call<val>("generateTransformFn", constantOrFunction_);
 }
 
-inline string clarity::ControlNetworkNode::nodeStats(const string &msg) const {
+inline string clarity::ClarityNode::nodeStats(const string &msg) const {
     string s = "NS: Node name: " + name_ + ", Node id: " + to_string(id_) +
                ", Node type: " + typeid(*this).name() +
                ", peer count = " + to_string(countPeers()) + msg + "\n";
     return s;
 }
 
-void clarity::ControlNetworkNode::pushValToPeersById(int id) {
-    ControlNetworkNode *cnn = getCLElementById(id);
+void clarity::ClarityNode::pushValToPeersById(int id) {
+    ClarityNode *cnn = getCLElementById(id);
     cnn->pushValToPeers(cnn);
 }
 
-inline void clarity::ControlNetworkNode::init() {
+inline void clarity::ClarityNode::init() {
     id_ = tm.getNext();
-    ControlNetworkNode::switchboard[id_] = this;
+    ClarityNode::switchboard[id_] = this;
 }
 
-inline clarity::ControlNetworkNode::ControlNetworkNode(
+inline clarity::ClarityNode::ClarityNode(
     const string &name, const CppType storedValueType)
     : name_(name), storedValueType_(storedValueType) {
     init();
     cle_.set("cpptype", val(storedValueType));
 }
 
-inline clarity::ControlNetworkNode::ControlNetworkNode(
+inline clarity::ClarityNode::ClarityNode(
     const CppType storedValueType)
     : storedValueType_(storedValueType) {
     init();
     cle_.set("cpptype", val(storedValueType));
 }
 
-ControlNetworkNode::ControlNetworkNode(const string &name, const string &tag,
+ClarityNode::ClarityNode(const string &name, const string &tag,
                                        const CppType storedValueType,
                                        bool useExistingDOMElement_)
     : name_(name), tag_(tag), storedValueType_(storedValueType) {
@@ -59,10 +59,10 @@ ControlNetworkNode::ControlNetworkNode(const string &name, const string &tag,
     // tag_ = tag;
     // name_ = name;
     boundField_ = "value";
-    ControlNetworkNode::switchboard[id_] = this;
+    ClarityNode::switchboard[id_] = this;
 }
 
-void clarity::ControlNetworkNode::pushValToPeer(ActiveLink &al,
+void clarity::ClarityNode::pushValToPeer(ActiveLink &al,
                                                 const string &tabs) {
     if (clean_) {
     }
@@ -84,8 +84,8 @@ void clarity::ControlNetworkNode::pushValToPeer(ActiveLink &al,
     clean_ = true;
 }
 
-void clarity::ControlNetworkNode::pushValToPeers(
-    ControlNetworkNode *excludedPeer) {
+void clarity::ClarityNode::pushValToPeers(
+    ClarityNode *excludedPeer) {
     cout << "ControlNetworkNode::pushValToPeers, id = " << id_ << " Node has "
          << to_string(countPeers()) << " peers!!!!!!!!!!!!!!!!!!!!!!!\n";
     // cout << "ControlNetworkNode::pushValToPeers ==>> " << nodeStats();
@@ -104,7 +104,7 @@ void clarity::ControlNetworkNode::pushValToPeers(
     }
 }
 
-void clarity::ControlNetworkNode::addPeer(ControlNetworkNode::ActiveLink al,
+void clarity::ClarityNode::addPeer(ClarityNode::ActiveLink al,
                                           bool alreadyAdded) {
     peers_.push_back(al);
     if (alreadyAdded) {
@@ -116,29 +116,29 @@ void clarity::ControlNetworkNode::addPeer(ControlNetworkNode::ActiveLink al,
     //                   to_string(countPeers()) + " peer nodes.\n");
 }
 
-inline void ControlNetworkNode::setAttribute(const string &attr,
+inline void ClarityNode::setAttribute(const string &attr,
                                              const val &value) {
     val domElement = cle_["domElement"];
     domElement.call<void>("setAttribute", attr, value);
 }
 
-inline void ControlNetworkNode::setAttributes(const map<string, val> &attrs) {
+inline void ClarityNode::setAttributes(const map<string, val> &attrs) {
     for (auto [attrName, value] : attrs) {
         setAttribute(attrName, value);
     }
 }
 
-inline void ControlNetworkNode::setStoredValueType(CppType cppType) {
+inline void ClarityNode::setStoredValueType(CppType cppType) {
     storedValueType_ = cppType;
     cle_.set("cpptype", cppType);
 }
 
-inline void ControlNetworkNode::addEventListenerByName(
+inline void ClarityNode::addEventListenerByName(
     const string &eventName, const string &callbackName) {
     cle_.call<void>("addEventListenerById", eventName, callbackName);
 }
 
-inline void ControlNetworkNode::addJSEventListener(const string &eventName,
+inline void ClarityNode::addJSEventListener(const string &eventName,
                                                    val eventCallback) {
     cle_.call<void>("addEventListener", eventName, eventCallback);
 }

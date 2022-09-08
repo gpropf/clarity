@@ -6,13 +6,13 @@
 #include "clarity.hpp"
 #include "embindings.hpp"
 
-map<const int, ControlNetworkNode *> ControlNetworkNode::switchboard;
-map<string, std::function<void()>> ControlNetworkNode::callbackMap;
-TicketMachine ControlNetworkNode::tm;
-val ControlNetworkNode::ActiveLink::CLElement_ = val::global("CLElement");
+map<const int, ClarityNode *> ClarityNode::switchboard;
+map<string, std::function<void()>> ClarityNode::callbackMap;
+TicketMachine ClarityNode::tm;
+val ClarityNode::ActiveLink::CLElement_ = val::global("CLElement");
 
 int main() {
-    using ActiveLink = ControlNetworkNode::ActiveLink;
+    using ActiveLink = ClarityNode::ActiveLink;
 
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
@@ -29,23 +29,23 @@ int main() {
     // ControlNetworkNode *maindiv =
     //     new ControlNetworkNode("maindiv", "div", CppType::NoData);
 
-    CLNodeFactory<ControlNetworkNode, double> builder("div", "maindiv",
+    CLNodeFactory<ClarityNode, double> builder("div", "maindiv",
                                                       CppType::NoData);
 
-    ControlNetworkNode *maindiv = builder.build();
+    ClarityNode *maindiv = builder.build();
 
-    CLNodeFactory<ControlNetworkNode, double> childOfMaindivBuilder =
+    CLNodeFactory<ClarityNode, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
 
-    CLNodeFactory<ControlNetworkNode, double> inputBuilder =
+    CLNodeFactory<ClarityNode, double> inputBuilder =
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
             .withTag("input")
             .withBoundField("value")
             .withAttributes(inputFieldAttrs);
 
-    ControlNetworkNode *input_a = inputBuilder
+    ClarityNode *input_a = inputBuilder
                                       .withModelNode(a_mn)
                                       // .withTransformFn(square)
                                       .withLinkMultiplierConstant(0.1)
@@ -60,7 +60,7 @@ int main() {
     // cout << "ModelNode should now have been extracted.\n"
     //      << input_a->countPeers() << "\n";
 
-    ControlNetworkNode *svgarea =
+    ClarityNode *svgarea =
         childOfMaindivBuilder.withName("svgarea")
             .withTag("svg")
             .withAttributes({{"width", val("300")},
@@ -69,10 +69,10 @@ int main() {
                              {"style", val("border: 1px solid black")}})
             .build();
 
-    ControlNetworkNode *statusButton =
+    ClarityNode *statusButton =
         childOfMaindivBuilder.button("statusButton", "Print Status", doNothing);
 
-    ControlNetworkNode *cir1 =
+    ClarityNode *cir1 =
         childOfMaindivBuilder.withName("cir1")
             .withParent(svgarea)
             .withTag("circle")
@@ -84,13 +84,13 @@ int main() {
                              {"stroke-width", val(4)}})
             .build();
 
-    ControlNetworkNode *circleRadius = childOfMaindivBuilder.withModelNode(a_mn)
+    ClarityNode *circleRadius = childOfMaindivBuilder.withModelNode(a_mn)
                                            .withName("RADIUS")
                                            .withLinkMultiplierConstant(0.1)
                                            .withAttributes({})
                                            .attributeNode("r", cir1);
 
-    ControlNetworkNode *circleFill = childOfMaindivBuilder.withModelNode(a_mn)
+    ClarityNode *circleFill = childOfMaindivBuilder.withModelNode(a_mn)
                                          .withName("CIRCLEFILL")
                                          .withTransformFn(blackbody)
                                          .withAttributes({})
@@ -99,7 +99,7 @@ int main() {
     // cout << "attributeNode should now have been created.\n"
     //      << a_mn->nodeStats() << "\n";
 
-    ControlNetworkNode *range_a = inputBuilder
+    ClarityNode *range_a = inputBuilder
                                       .withModelNode(a_mn)
                                       //.withStoredValueType(CppType::Double)
                                       .withName("range_a")
@@ -109,7 +109,7 @@ int main() {
                                       //  .withAttributes(inputFieldAttrs)
                                       .build();
 
-    ControlNetworkNode::callbackMap["printStats"] = [=] {
+    ClarityNode::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";
     };
 

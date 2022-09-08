@@ -26,7 +26,7 @@ class CLNodeFactory {
 
     string boundField_;  //!< Different types of elements need different fields
                          //!< to be modified when the node value changes.
-    ControlNetworkNode *parent_ =
+    ClarityNode *parent_ =
         nullptr;  //!< If we have this set, we are creating any new nodes as its
                   //!< children.
     ModelNode<V> *modelNode_ =
@@ -129,9 +129,9 @@ class CLNodeFactory {
             // val transformFn = val(1);
             if (transformFn_ != val(NULL)) {
                 modelNode_->addPeer(
-                    ControlNetworkNode::ActiveLink(newNode, transformFn_));
+                    ClarityNode::ActiveLink(newNode, transformFn_));
             } else {
-                modelNode_->addPeer(ControlNetworkNode::ActiveLink(
+                modelNode_->addPeer(ClarityNode::ActiveLink(
                     newNode, linkMultiplierConstant_));
             }
 
@@ -234,9 +234,9 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline ControlNetworkNode *button(const string &name, const string &text,
+    inline ClarityNode *button(const string &name, const string &text,
                                       val onPressCallback = val(NULL)) {
-        ControlNetworkNode *button = withTag("button").build();
+        ClarityNode *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setVal(val(text));
         val buttonDOMElement = button->getCLE()["domElement"];
@@ -245,22 +245,22 @@ class CLNodeFactory {
         return button;
     }
 
-    inline ControlNetworkNode *label(ControlNetworkNode *forNode,
+    inline ClarityNode *label(ClarityNode *forNode,
                                      const string &text) {
-        ControlNetworkNode *label = withTag("label").build();
+        ClarityNode *label = withTag("label").build();
         label->setBoundField("innerHTML");
         label->setVal(val(text));
         label->setAttribute("for", val(forNode->getId()));
         return label;
     }
 
-    inline ControlNetworkNode *labelGivenNode(
-        ControlNetworkNode *nodeToBeLabelled, const string &labelText) {
-        ControlNetworkNode *outerDiv =
+    inline ClarityNode *labelGivenNode(
+        ClarityNode *nodeToBeLabelled, const string &labelText) {
+        ClarityNode *outerDiv =
             withTag("div")
                 .withName("labeldiv_" + nodeToBeLabelled->getName())
                 .build();
-        ControlNetworkNode *labelNode =
+        ClarityNode *labelNode =
             withName("labelfor_" + nodeToBeLabelled->getName())
                 .label(nodeToBeLabelled, labelText);
         outerDiv->appendChild(nodeToBeLabelled);
@@ -268,17 +268,17 @@ class CLNodeFactory {
         return outerDiv;
     }
 
-    inline ControlNetworkNode *attributeNode(const string &attributeName) {
-        ControlNetworkNode *attributeNode =
+    inline ClarityNode *attributeNode(const string &attributeName) {
+        ClarityNode *attributeNode =
             withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
         return attributeNode;
     }
 
-    inline ControlNetworkNode *attributeNode(const string &attributeName,
-                                             ControlNetworkNode *parent) {
-        ControlNetworkNode *attributeNode =
+    inline ClarityNode *attributeNode(const string &attributeName,
+                                             ClarityNode *parent) {
+        ClarityNode *attributeNode =
             withParent(parent).attributeNode(attributeName);
         return attributeNode;
     }

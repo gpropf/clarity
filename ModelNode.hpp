@@ -2,19 +2,19 @@
 #ifndef ModelNode_hpp
 #define ModelNode_hpp
 
-#include "ControlNetworkNode.hpp"
+#include "ClarityNode.hpp"
 #include "clarity.hpp"
 
 namespace clarity {
 template <typename T>
-class ModelNode : public ControlNetworkNode {
+class ModelNode : public ClarityNode {
    public:
-    ModelNode(CppType storedValueType) : ControlNetworkNode(storedValueType) {}
+    ModelNode(CppType storedValueType) : ClarityNode(storedValueType) {}
 
     ModelNode(T *dynval) : dynval_(dynval) {}
 
     ModelNode(T *dynval, CppType storedValueType)
-        : ControlNetworkNode(storedValueType) {
+        : ClarityNode(storedValueType) {
         dynval_ = dynval;
     }
 

@@ -1,5 +1,5 @@
-#ifndef ControlNetworkNode_hpp
-#define ControlNetworkNode_hpp
+#ifndef ClarityNode_hpp
+#define ClarityNode_hpp
 
 #include "clarity.hpp"
 //#include "CLNodeFactory.hpp"
@@ -19,7 +19,7 @@ namespace clarity {
  *
  */
 
-class ControlNetworkNode {
+class ClarityNode {
     // friend class CLNodeFactory;
 
    public:
@@ -35,18 +35,18 @@ class ControlNetworkNode {
     class ActiveLink {
        public:
         static val CLElement_;
-        ActiveLink(ControlNetworkNode *peer, val constantOrFunction = val(1));
+        ActiveLink(ClarityNode *peer, val constantOrFunction = val(1));
 
         template <typename T>
-        ActiveLink(ControlNetworkNode *peer, const T constantOrFunction)
+        ActiveLink(ClarityNode *peer, const T constantOrFunction)
             : peer_(peer), constantOrFunction_(val(constantOrFunction)) {
-            transformFn_ =
-                CLElement_.call<val>("generateTransformFn", constantOrFunction_);
+            transformFn_ = CLElement_.call<val>("generateTransformFn",
+                                                constantOrFunction_);
         }
 
         void printAL() { cout << "AL peer ID: " << peer_->getId() << "\n"; }
 
-        ControlNetworkNode *peer_;
+        ClarityNode *peer_;
         val constantOrFunction_;
         val transformFn_;
     };
@@ -63,10 +63,10 @@ class ControlNetworkNode {
     inline static void runCallbackById(const string &id) { callbackMap[id](); }
 
     void EMSCRIPTEN_KEEPALIVE init();
-    inline ControlNetworkNode() { init(); }
-    EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const string &name,
-                                            const CppType storedValueType);
-    EMSCRIPTEN_KEEPALIVE ControlNetworkNode(const CppType storedValueType);
+    inline ClarityNode() { init(); }
+    EMSCRIPTEN_KEEPALIVE ClarityNode(const string &name,
+                                     const CppType storedValueType);
+    EMSCRIPTEN_KEEPALIVE ClarityNode(const CppType storedValueType);
 
     /**
      * @brief Construct a new Web Element object
@@ -76,9 +76,9 @@ class ControlNetworkNode {
      * @param storedValueType C++ type of data contained within
      *
      */
-    ControlNetworkNode(const string &name, const string &tag,
-                       const CppType storedValueType,
-                       bool useExistingDOMElement_ = false);
+    ClarityNode(const string &name, const string &tag,
+                const CppType storedValueType,
+                bool useExistingDOMElement_ = false);
 
     EMSCRIPTEN_KEEPALIVE void setAttribute(const string &attr,
                                            const val &value);
@@ -88,39 +88,36 @@ class ControlNetworkNode {
     inline CppType getStoredValueType() const { return storedValueType_; }
     EMSCRIPTEN_KEEPALIVE void setStoredValueType(CppType cppType);
 
-    bool appendChild(ControlNetworkNode *child);
+    bool appendChild(ClarityNode *child);
 
-    inline ControlNetworkNode *getParent() const { return this->parent_; }
-    inline void setParent(ControlNetworkNode *parent) {
-        this->parent_ = parent;
-    }
+    inline ClarityNode *getParent() const { return this->parent_; }
+    inline void setParent(ClarityNode *parent) { this->parent_ = parent; }
 
     virtual val getVal() const {
         val domElement = cle_["domElement"];
-       
+
         string valueText = domElement[boundField_].as<string>();
-        cout << "ControlNetworkNode::getVal() valueText = " << valueText
-             << "\n";
+        cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
         switch (this->storedValueType_) {
             case CppType::Int:
-                cout << "ControlNetworkNode::getVal() Int\n";
+                cout << "ClarityNode::getVal() Int\n";
                 return val(stoi(valueText));
                 break;
             case CppType::Float:
-                cout << "ControlNetworkNode::getVal() Float\n";
+                cout << "ClarityNode::getVal() Float\n";
                 return val(stof(valueText));
                 break;
             case CppType::Double:
-                cout << "ControlNetworkNode::getVal() Double\n";
+                cout << "ClarityNode::getVal() Double\n";
                 return val(stod(valueText));
                 break;
             case CppType::String:
-                cout << "ControlNetworkNode::getVal() String\n";
+                cout << "ClarityNode::getVal() String\n";
                 return val(valueText);
                 break;
             case CppType::NoData:
             default:
-                cout << "ControlNetworkNode::getVal() NoData\n";
+                cout << "ClarityNode::getVal() NoData\n";
                 return val(NULL);
                 break;
         }
@@ -144,7 +141,7 @@ class ControlNetworkNode {
     inline val getCLE() const { return cle_; }
     inline string getName() const { return name_; }
     inline virtual void printState() const { cle_.call<void>("printState"); }
-    inline static ControlNetworkNode *getCLElementById(const int id) {
+    inline static ClarityNode *getCLElementById(const int id) {
         return switchboard[id];
     }
     inline static void markNodeDirtyById(int id) {
@@ -160,16 +157,16 @@ class ControlNetworkNode {
     virtual string nodeStats(const string &msg = "") const;
 
     virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
-    virtual void pushValToPeers(ControlNetworkNode *excludedPeer = nullptr);
+    virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
     static void pushValToPeersById(int id);
-    void addPeer(ControlNetworkNode::ActiveLink al, bool alreadyAdded = false);
+    void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
     inline int countPeers() const { return peers_.size(); }
 
    protected:
     string tag_;
     string boundField_;
 
-    vector<ControlNetworkNode *> children_;
+    vector<ClarityNode *> children_;
     /** \brief The node is clean if it has not been recently changed. This
        feature is mainly designed to prevent infinite update loops if the node
        graph is not acyclic. It doesn't do anything yet.*/
@@ -178,7 +175,7 @@ class ControlNetworkNode {
     static TicketMachine tm;
     /** \brief Keeps track of all nodes in the system. If you have the id of a
      * node you can get a pointer to it here. */
-    static map<const int, ControlNetworkNode *> switchboard;
+    static map<const int, ClarityNode *> switchboard;
 
     /** \brief Instance of the CLElement class that acts as a "proxy" in JS
      * space. */
@@ -188,12 +185,12 @@ class ControlNetworkNode {
     /** \brief A node's parent is the DOM element that contains it. In the case
      * of the WebAttrNode this is the WebElemNode for which this is an
      * attribute. */
-    ControlNetworkNode *parent_;
+    ClarityNode *parent_;
     int id_ = -1;  //!< Unique identifier - immutable.
     string name_;  //!< Human readable name of node. Mutable, not required.
     /** \brief List of peers linked through JS functions which are applied when
      * data is moved between nodes. */
-    vector<ControlNetworkNode::ActiveLink> peers_;
+    vector<ClarityNode::ActiveLink> peers_;
 };
 
 }  // namespace clarity
