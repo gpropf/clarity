@@ -4,6 +4,18 @@
 #include "ModelNode.hpp"
 
 namespace clarity {
+
+/**
+ * @brief This class offers a set of pure functions that can be chained to
+ * create complex web controls. Essentially, instead of being a typical
+ * 'factory' class that just emits objects in a single method call, CLNF can act
+ * like an assembly line, creating basic web controls and then building more
+ * complex ones from those. It replaces a whole complex class heirarchy that
+ * worked the same but was an inflexible mess.
+ *
+ * @tparam Nc
+ * @tparam V
+ */
 template <class Nc, typename V>
 class CLNodeFactory {
    public:
@@ -11,38 +23,94 @@ class CLNodeFactory {
     string name_;  //!< Name to be used with elements this factory builds.
     CppType storedValueType_;  //!< storedValueType to be used with elements
                                //!< this factory builds.
-    // V *storedValue_ = nullptr;  //!< Actually only used when creating a model
-    //                             //!< node along with a web control.
 
-    string boundField_;
-    ControlNetworkNode *parent_ = nullptr;
+    string boundField_;  //!< Different types of elements need different fields
+                         //!< to be modified when the node value changes.
+    ControlNetworkNode *parent_ =
+        nullptr;  //!< If we have this set, we are creating any new nodes as its
+                  //!< children.
     ModelNode<V> *modelNode_ =
         nullptr;  //!< If we create a new MN or attach one, we set this. Note
                   //!< that we can create ControlNetworkNodes with no MN.
 
-    V linkMultiplierConstant_ = 1;
-    val transformFn_ = val(NULL);
-    bool useExistingDOMElement_ = false;
+    V linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
+                                    //!< values from node to node unchanged.
+    val transformFn_ = val(NULL);   //!< See the docs on the ActiveLink class.
+    bool useExistingDOMElement_ =
+        false;  //!< Primarily this is intended for creating attribute nodes.
+                //!< The idea is that some nodes control attributes of other
+                //!< nodes. The canonical example of this would be color of an
+                //!< SVG object. In these cases we don't want to create a new
+                //!< DOM element.
 
-    map<string, val> attrs_;
+    map<string, val>
+        attrs_;  //!< Sometimes a web element should be created with a bunch of
+                 //!< attributes already set. That's what this is for. Even
+                 //!< simple things like text input fields need to set the type
+                 //!< attribute and doing just about anything with SVG requires
+                 //!< a lot of attributes.
 
+    /**
+     * @brief Create the element with the listed attrs.
+     *
+     * @param attrs
+     * @return CLNodeFactory
+     */
     inline CLNodeFactory withAttributes(const map<string, val> &attrs) {
         CLNodeFactory cpy(*this);
         cpy.attrs_ = attrs;
         return cpy;
     }
 
+    /**
+     * @brief Construct a new CLNodeFactory object
+     *
+     */
     inline CLNodeFactory() {}
+
+    /**
+     * @brief Construct a new CLNodeFactory object
+     *
+     * @param tag valid HTML tag, e.g. input, div, button, etc...
+     * @param name the string name to give the element
+     * @param storedValueType The type the corresponding stored data has in C++.
+     * This is a far smaller set of types than actually exist in C++ but is
+     * meant to make basic distinctions between, say, a string and a float
+     * value.
+     */
     inline CLNodeFactory(const string &tag, const string &name,
                          CppType storedValueType)
         : tag_(tag), name_(name), storedValueType_(storedValueType) {}
 
+    /**
+     * @brief Construct a new CLNodeFactory object
+     *
+     * @param tag
+     * @param name
+     * @param storedValueType
+     * @param storedValue If we use this, we are creating a corresponding MN to
+     * hold the value.
+     */
     inline CLNodeFactory(const string &tag, const string &name,
                          CppType storedValueType, V *storedValue)
         : tag_(tag), name_(name), storedValueType_(storedValueType) {
         withStoredValue(storedValue, true);
     }
 
+    /**
+     * @brief This is something I'm trying out that might be a bit novel and
+     * that I haven't tested well yet. The idea is that you can use mutable
+     * arguments to methods to pull values "out the side" of a chain of pure
+     * functions. Here, we use it to pull out the MN we create to store a value
+     * for a control. This would be useful to create other controls that can
+     * modify or be modified by that same value. An example of this would be
+     * where you have a slider control as well as a text input field for the
+     * same value.
+     *
+     * @tparam T
+     * @param modelNode
+     * @return CLNodeFactory
+     */
     template <typename T>
     inline CLNodeFactory extractModelNode(ModelNode<T> *modelNode) {
         modelNode = modelNode_;
