@@ -24,7 +24,8 @@ int main() {
     // ControlNetworkNode *maindiv =
     //     new ControlNetworkNode("maindiv", "div", CppType::NoData);
 
-    CLNodeFactory<ControlNetworkNode, double> builder("div", "maindiv", CppType::NoData);
+    CLNodeFactory<ControlNetworkNode, double> builder("div", "maindiv",
+                                                      CppType::NoData);
 
     ControlNetworkNode *maindiv = builder.build();
 
@@ -43,7 +44,7 @@ int main() {
                                       .withModelNode(a_mn)
                                       //.withStoredValueType(CppType::Double)
                                       .withName("input_a_text")
-                                     // .extractModelNode(a_mn)
+                                      // .extractModelNode(a_mn)
                                       // .withTag("input")
                                       //  .withAttributes(inputFieldAttrs)
                                       .build();
@@ -60,8 +61,10 @@ int main() {
                              {"style", val("border: 1px solid black")}})
             .build();
 
+    val CLE = val::global("CLElement");
+    val testAlert = CLE["doNothing"];
     ControlNetworkNode *statusButton =
-        childOfMaindivBuilder.button("statusButton", "Print Status");
+        childOfMaindivBuilder.button("statusButton", "Print Status", testAlert);
 
     ControlNetworkNode *cir1 =
         childOfMaindivBuilder.withName("cir1")
@@ -75,23 +78,23 @@ int main() {
                              {"stroke-width", val(4)}})
             .build();
 
-    ControlNetworkNode *circleRadius =
-        childOfMaindivBuilder.withModelNode(a_mn).withName("RADIUS").withAttributes({}).attributeNode("r", cir1);
+    ControlNetworkNode *circleRadius = childOfMaindivBuilder.withModelNode(a_mn)
+                                           .withName("RADIUS")
+                                           .withAttributes({})
+                                           .attributeNode("r", cir1);
 
     // cout << "attributeNode should now have been created.\n"
     //      << a_mn->nodeStats() << "\n";
 
-
-ControlNetworkNode *range_a = inputBuilder
+    ControlNetworkNode *range_a = inputBuilder
                                       .withModelNode(a_mn)
                                       //.withStoredValueType(CppType::Double)
                                       .withName("range_a")
                                       .withAttributes({{"type", val("range")}})
-                                     // .extractModelNode(a_mn)
+                                      // .extractModelNode(a_mn)
                                       // .withTag("input")
                                       //  .withAttributes(inputFieldAttrs)
                                       .build();
-
 
     ControlNetworkNode::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";

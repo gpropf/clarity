@@ -13,8 +13,12 @@ class CLElement {
     return 1 / v
   }
 
-  testAlert() {
+  static testAlert() {
     alert("FOO!")
+  }
+
+  static doNothing() {
+    console.log("doNothing(): a function that proudly does nothing...");
   }
 
   printVal(v) {

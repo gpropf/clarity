@@ -47,8 +47,8 @@ class CLNodeFactory {
     }
 
     inline Nc *build() {
-        Nc *newNode = new Nc(
-            name_, tag_, storedValueType_, useExistingDOMElement_);
+        Nc *newNode =
+            new Nc(name_, tag_, storedValueType_, useExistingDOMElement_);
         newNode->setBoundField(boundField_);
         newNode->setAttributes(attrs_);
         if (parent_) {
@@ -63,22 +63,8 @@ class CLNodeFactory {
         return newNode;
     }
 
-    // inline ControlNetworkNode *buildInsideNode(ControlNetworkNode *outerNode)
-    // {
-    //     ControlNetworkNode *innerNode = build();
-    //     outerNode->appendChild(innerNode);
-    //     return outerNode;
-    // }
-
-    // inline ControlNetworkNode *buildWithModelNode(
-    //     const val transformFn = val(1)) {
-    //     ControlNetworkNode *cnn = build();
-    //     ModelNode<V> *mn = new ModelNode<V>(storedValue_, storedValueType_);
-    //     mn->addPeer(clarity::ControlNetworkNode::ActiveLink(cnn,
-    //     transformFn)); mn->pushValToPeers(mn); return cnn;
-    // }
-
     inline CLNodeFactory withBoundField(const string &boundField) {
+        assert(boundField != "");
         CLNodeFactory cpy(*this);
         cpy.boundField_ = boundField;
         cout << "withBoundField:: boundField = " << boundField << "\n";
@@ -134,6 +120,7 @@ class CLNodeFactory {
     }
 
     inline CLNodeFactory withStoredValue(V *storedValue, bool mutate = false) {
+        assert(storedValue != nullptr);
         ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_);
         if (mutate) {
             this->modelNode_ = mn;
@@ -145,9 +132,9 @@ class CLNodeFactory {
     }
 
     inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) {
+        assert(modelNode != nullptr);
         CLNodeFactory cpy(*this);
         cpy.modelNode_ = modelNode;
-
         return cpy;
     }
 
@@ -162,7 +149,9 @@ class CLNodeFactory {
         ControlNetworkNode *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setVal(val(text));
-        val buttonCLE = button->getCLE();
+        val buttonDOMElement = button->getCLE()["domElement"];
+        buttonDOMElement.call<void>("addEventListener", val("click"),
+                                    onPressCallback);
         return button;
     }
 
@@ -203,11 +192,7 @@ class CLNodeFactory {
             withParent(parent).attributeNode(attributeName);
         return attributeNode;
     }
-
-    //    parent_ = parent;
-    //     boundField_ = attributeName;
-    //     val parentDomelement = parent_->getCLE()["domElement"];
-    //     cle_.set("domElement", parentDomelement);
 };
+
 }  // namespace clarity
 #endif
