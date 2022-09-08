@@ -1,18 +1,14 @@
 
 ENV		= DEMANGLE_SUPPORT=1 EMCC_DEBUG=1 TOTAL_MEMORY=1900mb
-#EMCC_DEBUG=1 TOTAL_MEMORY=1900mb
-# -gsource-map --source-map-base .
-# --source-map-base=http://127.0.0.1
-CC		= emcc
-CFLAGS	=  -O0 -g -gsource-map --source-map-base=http://localhost:6931/ -std=c++17
-#CFLAGS	=  -std=c++17 -g
-# -gsource-map
-# --source-map-base smap_ -gseparate-dwarf
-JSOUT	= clarity_embind.js
-NUKE_HTML_OUT = nuke.html
-NUKE_JS_OUT = nuke.js
 
-# CPPIN	= clarity.cpp ButtonElement.cpp WebElemNode.cpp nuke.cpp
+CC		= emcc
+
+CFLAGS	=  -O0 -g -gsource-map --source-map-base=http://localhost:6931/ -std=c++17
+#CFLAGS	=  -O3 -std=c++17
+
+JSOUT	= clarity_embind.js
+
+
 LIBCLR_IN = WebElemNode.cpp WebAttrNode.cpp \
 			ControlNetworkNode.cpp CompoundElement.cpp LabelledInput.cpp \
 			LabelElement.cpp CanvasElement.cpp
@@ -27,8 +23,8 @@ FRAMEWORK_DEPS = clarity.js clarity.html Makefile
 %.o : %.cpp %.hpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
 
-testbed: testbed.o libclr.a
-	$(CC) -lembind testbed.o libclr.a $(CFLAGS) -o $(JSOUT)
+testbed: testbed.o ControlNetworkNode.o
+	$(CC) -lembind testbed.o ControlNetworkNode.o $(CFLAGS) -o $(JSOUT)
 
 debugtest: debugtest.cpp
 	#$(CC) debugtest.cpp -g --source-map-base=http://localhost:6931/ -gsource-map -o debug.html

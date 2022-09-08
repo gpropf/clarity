@@ -13,8 +13,20 @@ class CLElement {
     return 1 / v
   }
 
+  static square(x) {
+    return x**2;
+  }
+
   static testAlert() {
     alert("FOO!")
+  }
+
+  static doNothing() {
+    console.log("doNothing(): a function that proudly does nothing...");
+  }
+
+  printVal(v) {
+    console.log("JSVAL = " + v);
   }
 
   /**
@@ -34,12 +46,12 @@ class CLElement {
     return `rgb(${r},${g},${b})`
   }
 
-  static generateTransformFn(multiplier) {
-    if (multiplier instanceof Function) {
+  static generateTransformFn(constantOrFunction) {
+    if (constantOrFunction instanceof Function) {
       console.log("Multiplier is function")
-      return multiplier;
+      return constantOrFunction;
     }
-    var generatedMultiplierFunction = (x) => x * multiplier;
+    var generatedMultiplierFunction = (x) => x * constantOrFunction;
     // If you just do 'return (x) => x * multiplier;' the function has no name attribute.
     return generatedMultiplierFunction;
   }
@@ -56,16 +68,16 @@ class CLElement {
 
     switch (this.cpptype_) {
 
-      case Module.WebElementCppType.Int:
+      case Module.CppType.Int:
         console.log("jsToCPPVal: Int")
         return parseInt(jsval)
-      case Module.WebElementCppType.Float:
+      case Module.CppType.Float:
         console.log("jsToCPPVal: Float")
         return parseFloat(jsval)
-      case Module.WebElementCppType.Double:
+      case Module.CppType.Double:
         console.log("jsToCPPVal: Double")
         return parseFloat(jsval)
-      case Module.WebElementCppType.NoData:
+      case Module.CppType.NoData:
         console.log("jsToCPPVal: NoData")
         return null
       default:
@@ -188,7 +200,7 @@ class CLElement {
 
   addEventListenerById(eventName, id) {
     this.domElement_.addEventListener(eventName, (e) => {
-      Module.WebElement.runCallbackById(id)
+      Module.ControlNetworkNode.runCallbackById(id)
     })
   }
 
@@ -214,7 +226,7 @@ class CLElement {
 function myTimer() {
   const d = new Date();
   console.log(d.toLocaleTimeString())
-  Module.WebElement.runCallbackById("tick")
+  Module.ControlNetworkNode.runCallbackById("tick")
 }
 
 window.CLElement = CLElement
