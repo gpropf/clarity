@@ -19,6 +19,8 @@ class CLNodeFactory {
     ModelNode<V> *modelNode_ =
         nullptr;  //!< If we create a new MN or attach one, we set this. Note
                   //!< that we can create ControlNetworkNodes with no MN.
+
+    V linkMultiplierConstant_ = 1;
     bool useExistingDOMElement_ = false;
 
     map<string, val> attrs_;
@@ -135,6 +137,13 @@ class CLNodeFactory {
         assert(modelNode != nullptr);
         CLNodeFactory cpy(*this);
         cpy.modelNode_ = modelNode;
+        return cpy;
+    }
+
+    inline CLNodeFactory withLinkMultiplierConstant(V linkMultiplierConstant) {
+        assert(linkMultiplierConstant != 0);
+        CLNodeFactory cpy(*this);
+        cpy.linkMultiplierConstant_ = linkMultiplierConstant;
         return cpy;
     }
 
