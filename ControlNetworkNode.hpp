@@ -35,19 +35,19 @@ class ControlNetworkNode {
     class ActiveLink {
        public:
         static val CLElement_;
-        ActiveLink(ControlNetworkNode *peer, val scalarConst = val(1));
+        ActiveLink(ControlNetworkNode *peer, val constantOrFunction = val(1));
 
         template <typename T>
-        ActiveLink(ControlNetworkNode *peer, const T scalarConst)
-            : peer_(peer), scalarConst_(val(scalarConst)) {
+        ActiveLink(ControlNetworkNode *peer, const T constantOrFunction)
+            : peer_(peer), constantOrFunction_(val(constantOrFunction)) {
             transformFn_ =
-                CLElement_.call<val>("generateTransformFn", scalarConst_);
+                CLElement_.call<val>("generateTransformFn", constantOrFunction_);
         }
 
         void printAL() { cout << "AL peer ID: " << peer_->getId() << "\n"; }
 
         ControlNetworkNode *peer_;
-        val scalarConst_;
+        val constantOrFunction_;
         val transformFn_;
     };
 

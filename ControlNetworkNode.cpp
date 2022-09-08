@@ -10,8 +10,8 @@ bool ControlNetworkNode::appendChild(ControlNetworkNode *child) {
 
 clarity::ControlNetworkNode::ActiveLink::ActiveLink(ControlNetworkNode *peer,
                                                     val scalarConst)
-    : peer_(peer), scalarConst_(scalarConst) {
-    transformFn_ = CLElement_.call<val>("generateTransformFn", scalarConst_);
+    : peer_(peer), constantOrFunction_(scalarConst) {
+    transformFn_ = CLElement_.call<val>("generateTransformFn", constantOrFunction_);
 }
 
 inline string clarity::ControlNetworkNode::nodeStats(const string &msg) const {
@@ -111,7 +111,7 @@ void clarity::ControlNetworkNode::addPeer(ControlNetworkNode::ActiveLink al,
         return;
     }
     al.peer_->addPeer(
-        ActiveLink(this, cle_.call<val>("invertValue", al.scalarConst_)), true);
+        ActiveLink(this, cle_.call<val>("invertValue", al.constantOrFunction_)), true);
     // cout << nodeStats(". ControlNetworkNode::addPeer: There are " +
     //                   to_string(countPeers()) + " peer nodes.\n");
 }

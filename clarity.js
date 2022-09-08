@@ -13,6 +13,10 @@ class CLElement {
     return 1 / v
   }
 
+  static square(x) {
+    return x**2;
+  }
+
   static testAlert() {
     alert("FOO!")
   }
@@ -42,12 +46,12 @@ class CLElement {
     return `rgb(${r},${g},${b})`
   }
 
-  static generateTransformFn(multiplier) {
-    if (multiplier instanceof Function) {
+  static generateTransformFn(constantOrFunction) {
+    if (constantOrFunction instanceof Function) {
       console.log("Multiplier is function")
-      return multiplier;
+      return constantOrFunction;
     }
-    var generatedMultiplierFunction = (x) => x * multiplier;
+    var generatedMultiplierFunction = (x) => x * constantOrFunction;
     // If you just do 'return (x) => x * multiplier;' the function has no name attribute.
     return generatedMultiplierFunction;
   }

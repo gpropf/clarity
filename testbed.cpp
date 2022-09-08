@@ -14,6 +14,11 @@ val ControlNetworkNode::ActiveLink::CLElement_ = val::global("CLElement");
 int main() {
     using ActiveLink = ControlNetworkNode::ActiveLink;
 
+    val CLE = val::global("CLElement");
+    val doNothing = CLE["doNothing"];
+    val square = CLE["square"];
+    val blackbody = CLE["blackbody"];
+
     // double *n = new double(50);
     // double *pi = new double(3.14159);
     double *a = new double(2.78);
@@ -42,6 +47,9 @@ int main() {
 
     ControlNetworkNode *input_a = inputBuilder
                                       .withModelNode(a_mn)
+                                      // .withTransformFn(square)
+                                      .withLinkMultiplierConstant(0.1)
+                                      //.withLinkMultiplierConstant(3)
                                       //.withStoredValueType(CppType::Double)
                                       .withName("input_a_text")
                                       // .extractModelNode(a_mn)
@@ -61,10 +69,8 @@ int main() {
                              {"style", val("border: 1px solid black")}})
             .build();
 
-    val CLE = val::global("CLElement");
-    val testAlert = CLE["doNothing"];
     ControlNetworkNode *statusButton =
-        childOfMaindivBuilder.button("statusButton", "Print Status", testAlert);
+        childOfMaindivBuilder.button("statusButton", "Print Status", doNothing);
 
     ControlNetworkNode *cir1 =
         childOfMaindivBuilder.withName("cir1")
@@ -80,8 +86,15 @@ int main() {
 
     ControlNetworkNode *circleRadius = childOfMaindivBuilder.withModelNode(a_mn)
                                            .withName("RADIUS")
+                                           .withLinkMultiplierConstant(0.1)
                                            .withAttributes({})
                                            .attributeNode("r", cir1);
+
+    ControlNetworkNode *circleFill = childOfMaindivBuilder.withModelNode(a_mn)
+                                         .withName("CIRCLEFILL")
+                                         .withTransformFn(blackbody)
+                                         .withAttributes({})
+                                         .attributeNode("fill", cir1);
 
     // cout << "attributeNode should now have been created.\n"
     //      << a_mn->nodeStats() << "\n";

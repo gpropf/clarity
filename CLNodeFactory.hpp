@@ -21,6 +21,7 @@ class CLNodeFactory {
                   //!< that we can create ControlNetworkNodes with no MN.
 
     V linkMultiplierConstant_ = 1;
+    val transformFn_ = val(NULL);
     bool useExistingDOMElement_ = false;
 
     map<string, val> attrs_;
@@ -58,8 +59,14 @@ class CLNodeFactory {
         }
         if (modelNode_) {
             // val transformFn = val(1);
+            if (transformFn_ != val(NULL)) {
+                modelNode_->addPeer(
+                    ControlNetworkNode::ActiveLink(newNode, transformFn_));
+            } else {
+                modelNode_->addPeer(ControlNetworkNode::ActiveLink(
+                    newNode, linkMultiplierConstant_));
+            }
 
-            modelNode_->addPeer(ControlNetworkNode::ActiveLink(newNode));
             modelNode_->pushValToPeers(modelNode_);
         }
         return newNode;
@@ -144,6 +151,12 @@ class CLNodeFactory {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(*this);
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
+        return cpy;
+    }
+
+    inline CLNodeFactory withTransformFn(val transformFn) {
+        CLNodeFactory cpy(*this);
+        cpy.transformFn_ = transformFn;
         return cpy;
     }
 
