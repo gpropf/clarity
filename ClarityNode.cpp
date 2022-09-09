@@ -84,6 +84,29 @@ void clarity::ClarityNode::pushValToPeer(ActiveLink &al,
     clean_ = true;
 }
 
+void clarity::ClarityNode::pushValToPeer2(DualLink &dl,
+                                                const string &tabs) {
+    if (clean_) {
+    }
+
+    val internalVal = getVal();
+
+    // al.printAL();
+    cout << tabs << "void clarity::ControlNetworkNode::pushValToPeer\n";
+    cout << tabs << dl.nodeA_->nodeStats();
+
+    // if (internalVal.isNumber()) {
+    //     val product = al.CLElement_.call<val>("applyTransformFn",
+    //                                           al.transformFn_, internalVal);
+    //     al.peer_->setVal(product);
+    // } else {
+    //     al.peer_->setVal(internalVal);
+    // }
+
+    clean_ = true;
+}
+
+
 void clarity::ClarityNode::pushValToPeers(
     ClarityNode *excludedPeer) {
     cout << "ControlNetworkNode::pushValToPeers, id = " << id_ << " Node has "
@@ -112,6 +135,24 @@ void clarity::ClarityNode::addPeer(ClarityNode::ActiveLink al,
     }
     al.peer_->addPeer(
         ActiveLink(this, cle_.call<val>("invertValue", al.constantOrFunction_)), true);
+    // cout << nodeStats(". ControlNetworkNode::addPeer: There are " +
+    //                   to_string(countPeers()) + " peer nodes.\n");
+}
+
+
+void clarity::ClarityNode::addPeer2(ClarityNode * peer,
+                                          bool alreadyAdded) {
+    auto dl = make_shared<DualLink>(this, peer, 1);
+    
+    dlpeers_.push_back(dl);
+    if (alreadyAdded) {
+        return;
+    }
+
+    peer->appendDualLink(dl);
+
+    // dl.dlpeer_->addPeer(
+    //     ActiveLink(this, cle_.call<val>("invertValue", al.constantOrFunction_)), true);
     // cout << nodeStats(". ControlNetworkNode::addPeer: There are " +
     //                   to_string(countPeers()) + " peer nodes.\n");
 }

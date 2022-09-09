@@ -26,6 +26,7 @@ class ClarityNode {
     static map<string, std::function<void()>> callbackMap;
 
     class DualLink {
+       public:
         ClarityNode *nodeA_;
         ClarityNode *nodeB_;
         int intMultiplier = 1;
@@ -33,7 +34,6 @@ class ClarityNode {
         val a2b_xfmr_;
         val b2a_xfmr_;
 
-       public:
         static val CLElement_;
         val get_a2b_xfmr() const;
         val get_b2a_xfmr() const;
@@ -41,8 +41,8 @@ class ClarityNode {
         void set_b2a_xfmr(val xfmr);
 
         template <typename T>
-        DualLink(ClarityNode *nodeA, ClarityNode *nodeB,
-                 const T multiplier = 1) {
+        DualLink(ClarityNode *nodeA, ClarityNode *nodeB, const T multiplier = 1)
+            : nodeA_(nodeA), nodeB_(nodeB) {
             a2b_xfmr_ = CLElement_.call<val>("generateTransformFn", multiplier);
             b2a_xfmr_ =
                 CLElement_.call<val>("generateTransformFn", 1 / multiplier);
@@ -194,9 +194,14 @@ class ClarityNode {
     virtual string nodeStats(const string &msg = "") const;
 
     virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
+    virtual void pushValToPeer2(DualLink &al, const string &tabs = "");
     virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
     static void pushValToPeersById(int id);
     void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
+    void addPeer2(ClarityNode *peer, bool alreadyAdded = false);
+    inline void appendDualLink(shared_ptr<DualLink> dl) {
+        dlpeers_.push_back(dl);
+    }
     inline int countPeers() const { return peers_.size(); }
 
    protected:
@@ -228,6 +233,7 @@ class ClarityNode {
     /** \brief List of peers linked through JS functions which are applied when
      * data is moved between nodes. */
     vector<ClarityNode::ActiveLink> peers_;
+    vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
 };
 
 }  // namespace clarity

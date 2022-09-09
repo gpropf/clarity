@@ -10,6 +10,7 @@ map<const int, ClarityNode *> ClarityNode::switchboard;
 map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm;
 val ClarityNode::ActiveLink::CLElement_ = val::global("CLElement");
+val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
 
 int main() {
     using ActiveLink = ClarityNode::ActiveLink;
@@ -21,8 +22,8 @@ int main() {
 
     // double *n = new double(50);
     // double *pi = new double(3.14159);
-    double *a = new double(2.78);
-    ModelNode<double> *a_mn = new ModelNode(a, CppType::Double);
+    double *a = new double(27.8);
+    ModelNode<double> *a_mn = new ModelNode(a, CppType::Double, "independently_created_modelnode");
     // CLNodeFactory<ControlNetworkNode, double> builder("div", "maindiv",
     //                                                   CppType::NoData, a);
 
@@ -30,7 +31,7 @@ int main() {
     //     new ControlNetworkNode("maindiv", "div", CppType::NoData);
 
     CLNodeFactory<ClarityNode, double> builder("div", "maindiv",
-                                                      CppType::NoData);
+                                               CppType::NoData);
 
     ClarityNode *maindiv = builder.build();
 
@@ -45,75 +46,74 @@ int main() {
             .withBoundField("value")
             .withAttributes(inputFieldAttrs);
 
-    ClarityNode *input_a = inputBuilder
-                                      .withModelNode(a_mn)
-                                      // .withTransformFn(square)
-                                      //.withLinkMultiplierConstant(0.1)
-                                      //.withLinkMultiplierConstant(3)
-                                      //.withStoredValueType(CppType::Double)
-                                      .withName("input_a_text")
-                                      // .extractModelNode(a_mn)
-                                      // .withTag("input")
-                                      //  .withAttributes(inputFieldAttrs)
-                                      .build();
+    ClarityNode *input_a = inputBuilder.withName("input_a_text")
+                               .withModelNode(a_mn)
+                               // .withTransformFn(square)
+                               //.withLinkMultiplierConstant(0.1)
+                               //.withLinkMultiplierConstant(3)
+                               //.withStoredValueType(CppType::Double)
+
+                               // .extractModelNode(a_mn)
+                               // .withTag("input")
+                               //  .withAttributes(inputFieldAttrs)
+                               .build();
 
     // cout << "ModelNode should now have been extracted.\n"
     //      << input_a->countPeers() << "\n";
 
-    ClarityNode *svgarea =
-        childOfMaindivBuilder.withName("svgarea")
-            .withTag("svg")
-            .withAttributes({{"width", val("300")},
-                             {"height", val("200")},
-                             {"viewBox", val("0 0 200 200")},
-                             {"style", val("border: 1px solid black")}})
-            .build();
+    // ClarityNode *svgarea =
+    //     childOfMaindivBuilder.withName("svgarea")
+    //         .withTag("svg")
+    //         .withAttributes({{"width", val("300")},
+    //                          {"height", val("200")},
+    //                          {"viewBox", val("0 0 200 200")},
+    //                          {"style", val("border: 1px solid black")}})
+    //         .build();
 
-    ClarityNode *statusButton =
-        childOfMaindivBuilder.button("statusButton", "Print Status", doNothing);
+    // ClarityNode *statusButton =
+    //     childOfMaindivBuilder.button("statusButton", "Print Status", doNothing);
 
-    ClarityNode *cir1 =
-        childOfMaindivBuilder.withName("cir1")
-            .withParent(svgarea)
-            .withTag("circle")
-            .withAttributes({{"r", val("30")},
-                             {"cx", val(100)},
-                             {"cy", val(100)},
-                             {"stroke", val("green")},
-                             {"fill", val("rgb(50,199,77)")},
-                             {"stroke-width", val(4)}})
-            .build();
+    // ClarityNode *cir1 = childOfMaindivBuilder.withName("cir1")
+    //                         .withParent(svgarea)
+    //                         .withTag("circle")
+    //                         .withAttributes({{"r", val("30")},
+    //                                          {"cx", val(100)},
+    //                                          {"cy", val(100)},
+    //                                          {"stroke", val("green")},
+    //                                          {"fill", val("rgb(50,199,77)")},
+    //                                          {"stroke-width", val(4)}})
+    //                         .build();
 
-    ClarityNode *circleRadius = childOfMaindivBuilder.withModelNode(a_mn)
-                                           .withName("RADIUS")
-                                           //.withLinkMultiplierConstant(0.1)
-                                           .withAttributes({})
-                                           .attributeNode("r", cir1);
+    // ClarityNode *circleRadius = childOfMaindivBuilder.withModelNode(a_mn)
+    //                                 .withName("RADIUS")
+    //                                 //.withLinkMultiplierConstant(0.1)
+    //                                 .withAttributes({})
+    //                                 .attributeNode("r", cir1);
 
-    ClarityNode *circleFill = childOfMaindivBuilder.withModelNode(a_mn)
-                                         .withName("CIRCLEFILL")
-                                         .withTransformFn(blackbody)
-                                         .withAttributes({})
-                                         .attributeNode("fill", cir1);
+    // ClarityNode *circleFill = childOfMaindivBuilder.withModelNode(a_mn)
+    //                               .withName("CIRCLEFILL")
+    //                               .withTransformFn(blackbody)
+    //                               .withAttributes({})
+    //                               .attributeNode("fill", cir1);
 
     // cout << "attributeNode should now have been created.\n"
     //      << a_mn->nodeStats() << "\n";
 
     ClarityNode *range_a = inputBuilder
-                                      .withModelNode(a_mn)
-                                      //.withStoredValueType(CppType::Double)
-                                      .withName("range_a")
-                                      .withAttributes({{"type", val("range")}})
-                                      // .extractModelNode(a_mn)
-                                      // .withTag("input")
-                                      //  .withAttributes(inputFieldAttrs)
-                                      .build();
+                               .withModelNode(a_mn)
+                               //.withStoredValueType(CppType::Double)
+                               .withName("range_a")
+                               .withAttributes({{"type", val("range")}})
+                               // .extractModelNode(a_mn)
+                               // .withTag("input")
+                               //  .withAttributes(inputFieldAttrs)
+                               .build();
 
     ClarityNode::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";
     };
 
-    statusButton->addEventListenerByName("onclick", "printStats");
+    //statusButton->addEventListenerByName("onclick", "printStats");
 
     // ControlNetworkNode *cir1Radius =
     // childOfMaindivBuilder.withName("cir1Radius")
@@ -124,7 +124,7 @@ int main() {
     // cir1->setAttribute();
     // cir1->setAttribute("r", val(80));
 
-    svgarea->appendChild(cir1);
+    //svgarea->appendChild(cir1);
 
     //     new clarity::WebElemNode("svgarea", "svg", clarity::CppType::NoData);
     // clarity::WebElemNode *cir1 =

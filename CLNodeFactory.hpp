@@ -26,9 +26,8 @@ class CLNodeFactory {
 
     string boundField_;  //!< Different types of elements need different fields
                          //!< to be modified when the node value changes.
-    ClarityNode *parent_ =
-        nullptr;  //!< If we have this set, we are creating any new nodes as its
-                  //!< children.
+    ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
+                                     //!< any new nodes as its children.
     ModelNode<V> *modelNode_ =
         nullptr;  //!< If we create a new MN or attach one, we set this. Note
                   //!< that we can create ControlNetworkNodes with no MN.
@@ -131,9 +130,11 @@ class CLNodeFactory {
                 modelNode_->addPeer(
                     ClarityNode::ActiveLink(newNode, transformFn_));
             } else {
-                modelNode_->addPeer(ClarityNode::ActiveLink(
-                    newNode, linkMultiplierConstant_));
+                modelNode_->addPeer(
+                    ClarityNode::ActiveLink(newNode, linkMultiplierConstant_));
             }
+
+            modelNode_->addPeer2(newNode);
 
             modelNode_->pushValToPeers(modelNode_);
         }
@@ -198,7 +199,7 @@ class CLNodeFactory {
 
     inline CLNodeFactory withStoredValue(V *storedValue, bool mutate = false) {
         assert(storedValue != nullptr);
-        ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_);
+        ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_, "modelnode_for_" + this->name_);
         if (mutate) {
             this->modelNode_ = mn;
             return *this;
@@ -235,7 +236,7 @@ class CLNodeFactory {
     }
 
     inline ClarityNode *button(const string &name, const string &text,
-                                      val onPressCallback = val(NULL)) {
+                               val onPressCallback = val(NULL)) {
         ClarityNode *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setVal(val(text));
@@ -245,8 +246,7 @@ class CLNodeFactory {
         return button;
     }
 
-    inline ClarityNode *label(ClarityNode *forNode,
-                                     const string &text) {
+    inline ClarityNode *label(ClarityNode *forNode, const string &text) {
         ClarityNode *label = withTag("label").build();
         label->setBoundField("innerHTML");
         label->setVal(val(text));
@@ -254,8 +254,8 @@ class CLNodeFactory {
         return label;
     }
 
-    inline ClarityNode *labelGivenNode(
-        ClarityNode *nodeToBeLabelled, const string &labelText) {
+    inline ClarityNode *labelGivenNode(ClarityNode *nodeToBeLabelled,
+                                       const string &labelText) {
         ClarityNode *outerDiv =
             withTag("div")
                 .withName("labeldiv_" + nodeToBeLabelled->getName())
@@ -269,15 +269,14 @@ class CLNodeFactory {
     }
 
     inline ClarityNode *attributeNode(const string &attributeName) {
-        ClarityNode *attributeNode =
-            withBoundField(attributeName).build();
+        ClarityNode *attributeNode = withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
         return attributeNode;
     }
 
     inline ClarityNode *attributeNode(const string &attributeName,
-                                             ClarityNode *parent) {
+                                      ClarityNode *parent) {
         ClarityNode *attributeNode =
             withParent(parent).attributeNode(attributeName);
         return attributeNode;

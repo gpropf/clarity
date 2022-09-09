@@ -18,6 +18,11 @@ class ModelNode : public ClarityNode {
         dynval_ = dynval;
     }
 
+    ModelNode(T *dynval, CppType storedValueType, const string& name)
+        : ModelNode(dynval, storedValueType) {
+        name_ = name;
+    }
+
     virtual val getVal() const {
         if (dynval_ == nullptr) {
             return val(NULL);
