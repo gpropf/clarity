@@ -18,12 +18,13 @@ int main() {
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
     val square = CLE["square"];
+    val blackbody_st = CLE["blackbody_st"];
 
     double *a = new double(27.8);
     ModelNode<double> *a_mn =
         new ModelNode(a, CppType::Double, "independently_created_modelnode");
 
-    val blackbody_st = a_mn->getCLE()["blackbody_st"];
+    //val blackbody_st = a_mn->getCLE()["blackbody_st"];
 
     CLNodeFactory<ClarityNode, double> builder("div", "maindiv",
                                                CppType::NoData);
