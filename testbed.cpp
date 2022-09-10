@@ -18,11 +18,13 @@ int main() {
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
     val square = CLE["square"];
-    val blackbody = CLE["blackbody"];
+    
   
     double *a = new double(27.8);
     ModelNode<double> *a_mn =
         new ModelNode(a, CppType::Double, "independently_created_modelnode");
+
+val blackbody = a_mn->getCLE()["blackbody"];        
 
     CLNodeFactory<ClarityNode, double> builder("div", "maindiv",
                                                CppType::NoData);
@@ -69,13 +71,13 @@ int main() {
 
     ClarityNode *circleRadius = childOfMaindivBuilder.withModelNode(a_mn)
                                     .withName("RADIUS")
-                                    //.withLinkMultiplierConstant(0.1)
+                                    .withLinkMultiplierConstant(0.1)
                                     .withAttributes({})
                                     .attributeNode("r", cir1);
 
     ClarityNode *circleFill = childOfMaindivBuilder.withModelNode(a_mn)
                                   .withName("CIRCLEFILL")
-                                  .withTransformFns(blackbody)
+                                  //.withTransformFns(blackbody)
                                   .withAttributes({})
                                   .attributeNode("fill", cir1);
   

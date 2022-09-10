@@ -35,7 +35,7 @@ class CLElement {
    * @returns a crude (for now) attempt at showing hot objects glowing the right way. This
    * is returned as a string representing an RGB triplet with values from 0-255.
    */
-  static blackbody(temp) {
+  blackbody(temp) {
     // return "#aa0ff9";
     var r = temp - 500;
     var g = r / 2;
@@ -57,7 +57,7 @@ class CLElement {
   }
 
   static applyTransformFn(f, v) {
-    if (!f) { alert("F is undefined!") }
+    if (!f) {  console.log("F IS UNDEFINED") }
     var r = f.call(f, v);
     console.log("Value " + v + ", Transformed into " + r + " by function " + f.name);
     return r;
