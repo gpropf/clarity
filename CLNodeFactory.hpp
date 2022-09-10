@@ -142,6 +142,12 @@ class CLNodeFactory {
             //         linkMultiplierConstant_));
             // }
             if (a2b_xfmr_ != val(NULL)) {
+                val CLElement_ = val::global("CLElement");
+
+                // a2b_xfmr_ = CLElement_.call<val>("generateTransformFn", 5);
+                a2b_xfmr_ = CLElement_["blackbody_st"];
+                b2a_xfmr_ = CLElement_["blackbody_st"];
+                //a2b_xfmr_ = CLElement_["doNothing"];
                 modelNode_->addPeer2(newNode, a2b_xfmr_, b2a_xfmr_);
             } else {
                 modelNode_->addPeer2(newNode, linkMultiplierConstant_);

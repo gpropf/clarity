@@ -35,7 +35,8 @@ class CLElement {
    * @returns a crude (for now) attempt at showing hot objects glowing the right way. This
    * is returned as a string representing an RGB triplet with values from 0-255.
    */
-  blackbody(temp) {
+  static blackbody_st(temp) {
+    temp+=600;
     // return "#aa0ff9";
     var r = temp - 500;
     var g = r / 2;
@@ -43,7 +44,13 @@ class CLElement {
     if (r > 255) r = 255;
     if (g > 255) g = 255;
     if (b > 255) b = 255;
-    return `rgb(${r},${g},${b})`
+    var rgbstr = `rgb(${r},${g},${b})`;
+    return rgbstr;
+
+  }
+
+  blackbody(temp) {
+    return blackbody_st(temp);
   }
 
   static generateTransformFn(constantOrFunction) {
