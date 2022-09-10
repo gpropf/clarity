@@ -141,8 +141,11 @@ class CLNodeFactory {
             //         ClarityNode::ActiveLink(newNode,
             //         linkMultiplierConstant_));
             // }
-
-            modelNode_->addPeer2(newNode);
+            if (a2b_xfmr_ != val(NULL)) {
+                //modelNode_->addPeer2(newNode, a2b_xfmr_, b2a_xfmr_);
+            } else {
+                modelNode_->addPeer2(newNode);
+            }
 
             // modelNode_->pushValToPeers(modelNode_);
             modelNode_->pushValToPeers2(modelNode_);

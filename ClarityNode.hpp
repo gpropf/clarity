@@ -48,7 +48,7 @@ class ClarityNode {
                 CLElement_.call<val>("generateTransformFn", 1 / multiplier);
         };
 
-        template <typename T>
+        
         DualLink(ClarityNode *nodeA, ClarityNode *nodeB, val a2b_xfmr,
                  val b2a_xfmr = val(NULL))
             : nodeA_(nodeA),
@@ -211,6 +211,7 @@ class ClarityNode {
     static void pushValToPeersById2(int id);
     // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
     void addPeer2(ClarityNode *peer);
+    void addPeer2(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr = val(NULL));
     inline void appendDualLink(shared_ptr<DualLink> dl) {
         dlpeers_.push_back(dl);
     }
