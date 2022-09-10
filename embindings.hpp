@@ -6,11 +6,11 @@ EMSCRIPTEN_BINDINGS(clarity) {
     class_<ClarityNode>("ClarityNode")
         .function("toggleClean", &ClarityNode::toggleClean,
                   allow_raw_pointers())
-        .function("pushValToPeers", &ClarityNode::pushValToPeers,
+        .function("pushValToPeers2", &ClarityNode::pushValToPeers2,
                   allow_raw_pointers())
         .function("getVal", &ClarityNode::getVal, allow_raw_pointers())
-        .class_function("pushValToPeersById",
-                        &ClarityNode::pushValToPeersById,
+        .class_function("pushValToPeersById2",
+                        &ClarityNode::pushValToPeersById2,
                         allow_raw_pointers())
         .class_function("getCLElementById",
                         &ClarityNode::getCLElementById,

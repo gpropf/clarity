@@ -39,7 +39,7 @@ class ModelNode : public ClarityNode {
         *reinterpret_cast<T *>(dynval_) =
             this->cle_.template call<T>("jsToCPPVal", inval);
        // cout << "ModelNode::setVal 3\n";
-        pushValToPeers(this);
+        pushValToPeers2(this);
        // cout << "ModelNode::setVal 4\n";
     }
 

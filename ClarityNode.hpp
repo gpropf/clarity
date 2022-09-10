@@ -56,9 +56,18 @@ class ClarityNode {
               a2b_xfmr_(a2b_xfmr),
               b2a_xfmr_(b2a_xfmr) {}
 
-        void printDL() {
+        inline void printDL() {
             cout << "DL peer IDs: A = " << nodeA_->getId()
                  << ", B = " << nodeB_->getId() << "\n";
+        }
+
+        inline pair<ClarityNode *, val> getOtherNode(ClarityNode *thisNode) {
+            if (nodeA_ == thisNode) {
+                return pair(nodeB_, b2a_xfmr_);
+            }
+            return pair(nodeA_, a2b_xfmr_);
+            // FIXME: probably should check to see if nodeA_ is actually the
+            // same as thisNode and throw an exception if not.
         }
     };
 
@@ -195,9 +204,12 @@ class ClarityNode {
 
     virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
     virtual void pushValToPeer2(DualLink &al, const string &tabs = "");
-    virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
+
+    //virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
+    virtual void pushValToPeers2(ClarityNode *excludedPeer = nullptr);
     static void pushValToPeersById(int id);
-    void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
+    static void pushValToPeersById2(int id);
+    // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
     void addPeer2(ClarityNode *peer, bool alreadyAdded = false);
     inline void appendDualLink(shared_ptr<DualLink> dl) {
         dlpeers_.push_back(dl);

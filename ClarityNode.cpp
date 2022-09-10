@@ -3,15 +3,15 @@
 
 bool ClarityNode::appendChild(ClarityNode *child) {
     children_.push_back(child);
-    child->setParent(this);    
+    child->setParent(this);
     cle_.call<void>("appendChild", child->getCLE());
     return true;  // FIXME: need to check for duplicate ids.
 }
 
-clarity::ClarityNode::ActiveLink::ActiveLink(ClarityNode *peer,
-                                                    val scalarConst)
+clarity::ClarityNode::ActiveLink::ActiveLink(ClarityNode *peer, val scalarConst)
     : peer_(peer), constantOrFunction_(scalarConst) {
-    transformFn_ = CLElement_.call<val>("generateTransformFn", constantOrFunction_);
+    transformFn_ =
+        CLElement_.call<val>("generateTransformFn", constantOrFunction_);
 }
 
 inline string clarity::ClarityNode::nodeStats(const string &msg) const {
@@ -21,9 +21,10 @@ inline string clarity::ClarityNode::nodeStats(const string &msg) const {
     return s;
 }
 
-void clarity::ClarityNode::pushValToPeersById(int id) {
+void clarity::ClarityNode::pushValToPeersById2(int id) {
     ClarityNode *cnn = getCLElementById(id);
-    cnn->pushValToPeers(cnn);
+    //cnn->pushValToPeers(cnn);
+    cnn->pushValToPeers2(cnn);
 }
 
 inline void clarity::ClarityNode::init() {
@@ -31,23 +32,22 @@ inline void clarity::ClarityNode::init() {
     ClarityNode::switchboard[id_] = this;
 }
 
-inline clarity::ClarityNode::ClarityNode(
-    const string &name, const CppType storedValueType)
+inline clarity::ClarityNode::ClarityNode(const string &name,
+                                         const CppType storedValueType)
     : name_(name), storedValueType_(storedValueType) {
     init();
     cle_.set("cpptype", val(storedValueType));
 }
 
-inline clarity::ClarityNode::ClarityNode(
-    const CppType storedValueType)
+inline clarity::ClarityNode::ClarityNode(const CppType storedValueType)
     : storedValueType_(storedValueType) {
     init();
     cle_.set("cpptype", val(storedValueType));
 }
 
 ClarityNode::ClarityNode(const string &name, const string &tag,
-                                       const CppType storedValueType,
-                                       bool useExistingDOMElement_)
+                         const CppType storedValueType,
+                         bool useExistingDOMElement_)
     : name_(name), tag_(tag), storedValueType_(storedValueType) {
     init();
     if (!useExistingDOMElement_)
@@ -62,8 +62,7 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
     ClarityNode::switchboard[id_] = this;
 }
 
-void clarity::ClarityNode::pushValToPeer(ActiveLink &al,
-                                                const string &tabs) {
+void clarity::ClarityNode::pushValToPeer(ActiveLink &al, const string &tabs) {
     if (clean_) {
     }
 
@@ -84,81 +83,93 @@ void clarity::ClarityNode::pushValToPeer(ActiveLink &al,
     clean_ = true;
 }
 
-void clarity::ClarityNode::pushValToPeer2(DualLink &dl,
-                                                const string &tabs) {
+void clarity::ClarityNode::pushValToPeer2(DualLink &dl, const string &tabs) {
     if (clean_) {
     }
 
     val internalVal = getVal();
 
     // al.printAL();
-    cout << tabs << "void clarity::ControlNetworkNode::pushValToPeer\n";
-    cout << tabs << dl.nodeA_->nodeStats();
+    cout << tabs << "pushValToPeer2(): ";
+    cout << tabs << "nodeA: " << dl.nodeA_->getId()
+         << ", nodeB: " << dl.nodeB_->getId() << "\n";
 
-    // if (internalVal.isNumber()) {
-    //     val product = al.CLElement_.call<val>("applyTransformFn",
-    //                                           al.transformFn_, internalVal);
-    //     al.peer_->setVal(product);
-    // } else {
-    //     al.peer_->setVal(internalVal);
-    // }
+    auto [peer, xfmr] = dl.getOtherNode(this);
+    if (internalVal.isNumber()) {
+        val product = ClarityNode::DualLink::CLElement_.call<val>(
+            "applyTransformFn", xfmr, internalVal);
+        peer->setVal(product);
+    } else {
+        peer->setVal(internalVal);
+    }
 
     clean_ = true;
 }
 
+// void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
+//     cout << "ControlNetworkNode::pushValToPeers, id = " << id_ << " Node has "
+//          << to_string(countPeers()) << " peers!!!!!!!!!!!!!!!!!!!!!!!\n";
+//     // cout << "ControlNetworkNode::pushValToPeers ==>> " << nodeStats();
+//     if (excludedPeer == nullptr) {
+//         cout << "\tNo peers excluded.\n";
+//         for (auto peer : peers_) {
+//             pushValToPeer(peer);
+//         }
+//     } else {
+//         cout << "\tExcluded peer exists!\n";
+//         for (auto peer : peers_) {
+//             if (peer.peer_ != excludedPeer) {
+//                 pushValToPeer(peer);
+//             }
+//         }
+//     }
+// }
 
-void clarity::ClarityNode::pushValToPeers(
-    ClarityNode *excludedPeer) {
-    cout << "ControlNetworkNode::pushValToPeers, id = " << id_ << " Node has "
+void clarity::ClarityNode::pushValToPeers2(ClarityNode *excludedPeer) {
+    cout << "ControlNetworkNode::pushValToPeers2, id = " << id_ << " Node has "
          << to_string(countPeers()) << " peers!!!!!!!!!!!!!!!!!!!!!!!\n";
     // cout << "ControlNetworkNode::pushValToPeers ==>> " << nodeStats();
     if (excludedPeer == nullptr) {
         cout << "\tNo peers excluded.\n";
-        for (auto peer : peers_) {
-            pushValToPeer(peer);
+        for (auto dl : dlpeers_) {
+            pushValToPeer2(*dl);
         }
     } else {
         cout << "\tExcluded peer exists!\n";
-        for (auto peer : peers_) {
-            if (peer.peer_ != excludedPeer) {
-                pushValToPeer(peer);
+        for (auto dl : dlpeers_) {
+            auto [peer, xfmr] = dl->getOtherNode(this);
+            if (peer != excludedPeer) {
+                pushValToPeer2(*dl);
             }
         }
     }
 }
 
-void clarity::ClarityNode::addPeer(ClarityNode::ActiveLink al,
-                                          bool alreadyAdded) {
-    peers_.push_back(al);
-    if (alreadyAdded) {
-        return;
-    }
-    al.peer_->addPeer(
-        ActiveLink(this, cle_.call<val>("invertValue", al.constantOrFunction_)), true);
-    // cout << nodeStats(". ControlNetworkNode::addPeer: There are " +
-    //                   to_string(countPeers()) + " peer nodes.\n");
-}
+// void clarity::ClarityNode::addPeer(ClarityNode::ActiveLink al,
+//                                    bool alreadyAdded) {
+//     peers_.push_back(al);
+//     if (alreadyAdded) {
+//         return;
+//     }
+//     al.peer_->addPeer(
+//         ActiveLink(this, cle_.call<val>("invertValue", al.constantOrFunction_)),
+//         true);
+//     // cout << nodeStats(". ControlNetworkNode::addPeer: There are " +
+//     //                   to_string(countPeers()) + " peer nodes.\n");
+// }
 
-
-void clarity::ClarityNode::addPeer2(ClarityNode * peer,
-                                          bool alreadyAdded) {
+void clarity::ClarityNode::addPeer2(ClarityNode *peer, bool alreadyAdded) {
     auto dl = make_shared<DualLink>(this, peer, 1);
-    
+
     dlpeers_.push_back(dl);
     if (alreadyAdded) {
         return;
     }
 
     peer->appendDualLink(dl);
-
-    // dl.dlpeer_->addPeer(
-    //     ActiveLink(this, cle_.call<val>("invertValue", al.constantOrFunction_)), true);
-    // cout << nodeStats(". ControlNetworkNode::addPeer: There are " +
-    //                   to_string(countPeers()) + " peer nodes.\n");
 }
 
-inline void ClarityNode::setAttribute(const string &attr,
-                                             const val &value) {
+inline void ClarityNode::setAttribute(const string &attr, const val &value) {
     val domElement = cle_["domElement"];
     domElement.call<void>("setAttribute", attr, value);
 }
@@ -174,12 +185,12 @@ inline void ClarityNode::setStoredValueType(CppType cppType) {
     cle_.set("cpptype", cppType);
 }
 
-inline void ClarityNode::addEventListenerByName(
-    const string &eventName, const string &callbackName) {
+inline void ClarityNode::addEventListenerByName(const string &eventName,
+                                                const string &callbackName) {
     cle_.call<void>("addEventListenerById", eventName, callbackName);
 }
 
 inline void ClarityNode::addJSEventListener(const string &eventName,
-                                                   val eventCallback) {
+                                            val eventCallback) {
     cle_.call<void>("addEventListener", eventName, eventCallback);
 }

@@ -126,17 +126,18 @@ class CLNodeFactory {
         }
         if (modelNode_) {
             // val transformFn = val(1);
-            if (transformFn_ != val(NULL)) {
-                modelNode_->addPeer(
-                    ClarityNode::ActiveLink(newNode, transformFn_));
-            } else {
-                modelNode_->addPeer(
-                    ClarityNode::ActiveLink(newNode, linkMultiplierConstant_));
-            }
+            // if (transformFn_ != val(NULL)) {
+            //     modelNode_->addPeer(
+            //         ClarityNode::ActiveLink(newNode, transformFn_));
+            // } else {
+            //     modelNode_->addPeer(
+            //         ClarityNode::ActiveLink(newNode, linkMultiplierConstant_));
+            // }
 
             modelNode_->addPeer2(newNode);
 
-            modelNode_->pushValToPeers(modelNode_);
+            //modelNode_->pushValToPeers(modelNode_);
+            modelNode_->pushValToPeers2(modelNode_);
         }
         return newNode;
     }
