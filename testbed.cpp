@@ -18,13 +18,12 @@ int main() {
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
     val square = CLE["square"];
-    
-  
+
     double *a = new double(27.8);
     ModelNode<double> *a_mn =
         new ModelNode(a, CppType::Double, "independently_created_modelnode");
 
-val blackbody = a_mn->getCLE()["blackbody"];        
+    val blackbody = a_mn->getCLE()["blackbody"];
 
     CLNodeFactory<ClarityNode, double> builder("div", "maindiv",
                                                CppType::NoData);
@@ -42,9 +41,8 @@ val blackbody = a_mn->getCLE()["blackbody"];
             .withBoundField("value")
             .withAttributes(inputFieldAttrs);
 
-    ClarityNode *input_a = inputBuilder.withName("input_a_text")
-                               .withModelNode(a_mn)
-                               .build();   
+    ClarityNode *input_a =
+        inputBuilder.withName("input_a_text").withModelNode(a_mn).build();
 
     ClarityNode *svgarea =
         childOfMaindivBuilder.withName("svgarea")
@@ -77,21 +75,20 @@ val blackbody = a_mn->getCLE()["blackbody"];
 
     ClarityNode *circleFill = childOfMaindivBuilder.withModelNode(a_mn)
                                   .withName("CIRCLEFILL")
-                                  //.withTransformFns(blackbody)
+                                  .withTransformFns(blackbody)
                                   .withAttributes({})
                                   .attributeNode("fill", cir1);
-  
-    ClarityNode *range_a = inputBuilder
-                               .withModelNode(a_mn)
+
+    ClarityNode *range_a = inputBuilder.withModelNode(a_mn)
                                .withName("range_a")
-                               .withAttributes({{"type", val("range")}})                               
+                               .withAttributes({{"type", val("range")}})
                                .build();
 
     ClarityNode::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";
     };
 
-      printf("Setup complete!\n");
+    printf("Setup complete!\n");
 
     return 0;
 }

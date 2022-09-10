@@ -52,8 +52,8 @@ class ClarityNode {
                  val b2a_xfmr = val(NULL))
             : nodeA_(nodeA),
               nodeB_(nodeB),
-              a2b_xfmr_(a2b_xfmr),
-              b2a_xfmr_(b2a_xfmr) {}
+              a2b_xfmr_(CLElement_.call<val>("generateTransformFn", 2)),
+              b2a_xfmr_(CLElement_.call<val>("generateTransformFn", 0.5)) {}
 
         inline void printDL() {
             cout << "DL peer IDs: A = " << nodeA_->getId()
