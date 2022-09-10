@@ -210,7 +210,7 @@ class ClarityNode {
     static void pushValToPeersById(int id);
     static void pushValToPeersById2(int id);
     // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
-    void addPeer2(ClarityNode *peer, bool alreadyAdded = false);
+    void addPeer2(ClarityNode *peer);
     inline void appendDualLink(shared_ptr<DualLink> dl) {
         dlpeers_.push_back(dl);
     }

@@ -35,6 +35,8 @@ class CLNodeFactory {
     V linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
                                     //!< values from node to node unchanged.
     val transformFn_ = val(NULL);   //!< See the docs on the ActiveLink class.
+    val a2b_xfmr_ = val(NULL);
+    val b2a_xfmr_ = val(NULL);
     bool useExistingDOMElement_ =
         false;  //!< Primarily this is intended for creating attribute nodes.
                 //!< The idea is that some nodes control attributes of other
@@ -131,12 +133,13 @@ class CLNodeFactory {
             //         ClarityNode::ActiveLink(newNode, transformFn_));
             // } else {
             //     modelNode_->addPeer(
-            //         ClarityNode::ActiveLink(newNode, linkMultiplierConstant_));
+            //         ClarityNode::ActiveLink(newNode,
+            //         linkMultiplierConstant_));
             // }
 
             modelNode_->addPeer2(newNode);
 
-            //modelNode_->pushValToPeers(modelNode_);
+            // modelNode_->pushValToPeers(modelNode_);
             modelNode_->pushValToPeers2(modelNode_);
         }
         return newNode;
@@ -200,7 +203,8 @@ class CLNodeFactory {
 
     inline CLNodeFactory withStoredValue(V *storedValue, bool mutate = false) {
         assert(storedValue != nullptr);
-        ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_, "modelnode_for_" + this->name_);
+        ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
+                                            "modelnode_for_" + this->name_);
         if (mutate) {
             this->modelNode_ = mn;
             return *this;
@@ -224,9 +228,11 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline CLNodeFactory withTransformFn(val transformFn) {
+    inline CLNodeFactory withTransformFns(val a2b_xfmr,
+                                          val b2a_xfmr = val(NULL)) {
         CLNodeFactory cpy(*this);
-        cpy.transformFn_ = transformFn;
+        cpy.a2b_xfmr_ = a2b_xfmr;
+        cpy.b2a_xfmr_ = b2a_xfmr;
         return cpy;
     }
 

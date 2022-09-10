@@ -23,7 +23,8 @@ int main() {
     // double *n = new double(50);
     // double *pi = new double(3.14159);
     double *a = new double(27.8);
-    ModelNode<double> *a_mn = new ModelNode(a, CppType::Double, "independently_created_modelnode");
+    ModelNode<double> *a_mn =
+        new ModelNode(a, CppType::Double, "independently_created_modelnode");
     // CLNodeFactory<ControlNetworkNode, double> builder("div", "maindiv",
     //                                                   CppType::NoData, a);
 
@@ -70,8 +71,8 @@ int main() {
     //                          {"style", val("border: 1px solid black")}})
     //         .build();
 
-    // ClarityNode *statusButton =
-    //     childOfMaindivBuilder.button("statusButton", "Print Status", doNothing);
+    ClarityNode *statusButton =
+        childOfMaindivBuilder.button("statusButton", "Print Status", doNothing);
 
     // ClarityNode *cir1 = childOfMaindivBuilder.withName("cir1")
     //                         .withParent(svgarea)
@@ -113,7 +114,7 @@ int main() {
         cout << "callbackMap[\"iterateModel\"]\n";
     };
 
-    //statusButton->addEventListenerByName("onclick", "printStats");
+    // statusButton->addEventListenerByName("onclick", "printStats");
 
     // ControlNetworkNode *cir1Radius =
     // childOfMaindivBuilder.withName("cir1Radius")
@@ -124,7 +125,7 @@ int main() {
     // cir1->setAttribute();
     // cir1->setAttribute("r", val(80));
 
-    //svgarea->appendChild(cir1);
+    // svgarea->appendChild(cir1);
 
     //     new clarity::WebElemNode("svgarea", "svg", clarity::CppType::NoData);
     // clarity::WebElemNode *cir1 =

@@ -158,14 +158,9 @@ void clarity::ClarityNode::pushValToPeers2(ClarityNode *excludedPeer) {
 //     //                   to_string(countPeers()) + " peer nodes.\n");
 // }
 
-void clarity::ClarityNode::addPeer2(ClarityNode *peer, bool alreadyAdded) {
+void clarity::ClarityNode::addPeer2(ClarityNode *peer) {
     auto dl = make_shared<DualLink>(this, peer, 1);
-
-    dlpeers_.push_back(dl);
-    if (alreadyAdded) {
-        return;
-    }
-
+    dlpeers_.push_back(dl);    
     peer->appendDualLink(dl);
 }
 
