@@ -50,7 +50,7 @@ class ClarityNode {
 
         template <typename T>
         DualLink(ClarityNode *nodeA, ClarityNode *nodeB, val a2b_xfmr,
-                 val b2a_xfmr)
+                 val b2a_xfmr = val(NULL))
             : nodeA_(nodeA),
               nodeB_(nodeB),
               a2b_xfmr_(a2b_xfmr),
