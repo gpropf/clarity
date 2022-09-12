@@ -131,14 +131,14 @@ class CLNodeFactory {
         if (parent_) {
             parent_->appendChild(newNode);
         }
-        if (modelNode_) {            
-            if (a2b_xfmr_ != val(NULL)) {                
+        if (modelNode_) {
+            if (a2b_xfmr_ != val(NULL)) {
                 modelNode_->addPeer2(newNode, a2b_xfmr_, b2a_xfmr_);
             } else {
                 modelNode_->addPeer2(newNode, linkMultiplierConstant_);
             }
-            
-            modelNode_->pushValToPeers2(modelNode_);
+            if (!useExistingDOMElement_)
+                modelNode_->pushValToPeers2(modelNode_);
         }
         return newNode;
     }
@@ -274,9 +274,11 @@ class CLNodeFactory {
     }
 
     inline ClarityNode *attributeNode(const string &attributeName) {
-        ClarityNode *attributeNode = withBoundField(attributeName).build();
+        ClarityNode *attributeNode =
+            withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
+        modelNode_->pushValToPeers2(modelNode_);
         return attributeNode;
     }
 

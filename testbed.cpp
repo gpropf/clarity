@@ -81,7 +81,7 @@ int main() {
                                   .withName("CIRCLEFILL")
                                   .withTransformFns(blackbody, blackbody)
                                   .withAttributes({})
-                                  .attributeNode("fill", cir1);    
+                                  .attributeNode("fill", cir1);
 
     ClarityNode *range_a = inputBuilder.withModelNode(a_mn)
                                .withName("range_a")
@@ -92,7 +92,7 @@ int main() {
         cout << "callbackMap[\"iterateModel\"]\n";
     };
 
-cout << "FILLCOLOR\n\n";
+    cout << "FILLCOLOR\n\n";
     val fillColor = circleFill->getVal();
     circleFill->getCLE().set("originalColor", fillColor);
 
