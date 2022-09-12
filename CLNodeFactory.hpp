@@ -51,11 +51,6 @@ class CLNodeFactory {
                  //!< attribute and doing just about anything with SVG requires
                  //!< a lot of attributes.
 
-    bool isAttributeNode_ =
-        false;  //!< Set this to true for nodes that represent attributes of
-                //!< other nodes and are thus "write-only" with regard to
-                //!< values.
-
     /**
      * @brief Create the element with the listed attrs.
      *
