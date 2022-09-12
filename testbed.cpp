@@ -81,16 +81,7 @@ int main() {
                                   .withName("CIRCLEFILL")
                                   .withTransformFns(blackbody, blackbody)
                                   .withAttributes({})
-                                  .attributeNode("fill", cir1);
-
-    // val fillColor = circleFill->getVal();
-    //  CLE.call<void>("console.log", val("HELLO"));
-
-    // val rgbcol = val::object();
-    // rgbcol.set("r", 30);
-    // rgbcol.set("g", 200);
-    // rgbcol.set("b", 75);
-    // circleFill->getCLE().set("originalColor", rgbcol);
+                                  .attributeNode("fill", cir1);    
 
     ClarityNode *range_a = inputBuilder.withModelNode(a_mn)
                                .withName("range_a")

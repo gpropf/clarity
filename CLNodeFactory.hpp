@@ -131,29 +131,13 @@ class CLNodeFactory {
         if (parent_) {
             parent_->appendChild(newNode);
         }
-        if (modelNode_) {
-            // val transformFn = val(1);
-            // if (transformFn_ != val(NULL)) {
-            //     modelNode_->addPeer(
-            //         ClarityNode::ActiveLink(newNode, transformFn_));
-            // } else {
-            //     modelNode_->addPeer(
-            //         ClarityNode::ActiveLink(newNode,
-            //         linkMultiplierConstant_));
-            // }
-            if (a2b_xfmr_ != val(NULL)) {
-                val CLElement_ = val::global("CLElement");
-
-                // a2b_xfmr_ = CLElement_.call<val>("generateTransformFn", 5);
-                //a2b_xfmr_ = CLElement_["blackbody_st"];
-                //b2a_xfmr_ = CLElement_["blackbody_st"];
-                //a2b_xfmr_ = CLElement_["doNothing"];
+        if (modelNode_) {            
+            if (a2b_xfmr_ != val(NULL)) {                
                 modelNode_->addPeer2(newNode, a2b_xfmr_, b2a_xfmr_);
             } else {
                 modelNode_->addPeer2(newNode, linkMultiplierConstant_);
             }
-
-            // modelNode_->pushValToPeers(modelNode_);
+            
             modelNode_->pushValToPeers2(modelNode_);
         }
         return newNode;
