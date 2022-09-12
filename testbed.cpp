@@ -24,7 +24,7 @@ int main() {
     ModelNode<double> *a_mn =
         new ModelNode(a, CppType::Double, "independently_created_modelnode");
 
-    //val blackbody_st = a_mn->getCLE()["blackbody_st"];
+    // val blackbody_st = a_mn->getCLE()["blackbody_st"];
 
     CLNodeFactory<ClarityNode, double> builder("div", "maindiv",
                                                CppType::NoData);
@@ -74,11 +74,23 @@ int main() {
                                     .withAttributes({})
                                     .attributeNode("r", cir1);
 
+    val blackbody = a_mn->getCLE()["blackbody"];
+
     ClarityNode *circleFill = childOfMaindivBuilder.withModelNode(a_mn)
+                                  .withStoredValueType(CppType::String)
                                   .withName("CIRCLEFILL")
-                                  .withTransformFns(blackbody_st, blackbody_st)
+                                  .withTransformFns(blackbody, blackbody)
                                   .withAttributes({})
                                   .attributeNode("fill", cir1);
+
+    // val fillColor = circleFill->getVal();
+    //  CLE.call<void>("console.log", val("HELLO"));
+
+    // val rgbcol = val::object();
+    // rgbcol.set("r", 30);
+    // rgbcol.set("g", 200);
+    // rgbcol.set("b", 75);
+    // circleFill->getCLE().set("originalColor", rgbcol);
 
     ClarityNode *range_a = inputBuilder.withModelNode(a_mn)
                                .withName("range_a")
@@ -88,6 +100,10 @@ int main() {
     ClarityNode::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";
     };
+
+cout << "FILLCOLOR\n\n";
+    val fillColor = circleFill->getVal();
+    circleFill->getCLE().set("originalColor", fillColor);
 
     printf("Setup complete!\n");
 

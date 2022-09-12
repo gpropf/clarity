@@ -142,7 +142,7 @@ class ClarityNode {
         val domElement = cle_["domElement"];
 
         string valueText = domElement[boundField_].as<string>();
-        cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
+        //cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
         switch (this->storedValueType_) {
             case CppType::Int:
                 cout << "ClarityNode::getVal() Int\n";

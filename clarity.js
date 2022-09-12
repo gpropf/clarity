@@ -29,18 +29,30 @@ class CLElement {
     console.log("JSVAL = " + v);
   }
 
+  
+  
+
+  static zerofloor(n) {
+    if (n < 0) return 0;
+    return n;
+  }
+
   /**
    * 
    * @param {*} temp: In degrees Kelvin 
+   * @param {*} originalColor: the object's 'actual' color at 0 K.
    * @returns a crude (for now) attempt at showing hot objects glowing the right way. This
    * is returned as a string representing an RGB triplet with values from 0-255.
-   */
-  static blackbody_st(temp) {
-    temp+=600;
+   */  
+  static blackbody_st(temp, originalColor) {
+    console.log(originalColor);
+    temp += 600;
     // return "#aa0ff9";
-    var r = temp - 500;
-    var g = r / 2;
-    var b = r / 3;
+
+    var r = originalColor.r + CLElement.zerofloor(temp - 500) / 2;
+    var g = originalColor.g + CLElement.zerofloor(temp - 1000) / 5;
+    var b = originalColor.b + CLElement.zerofloor(temp - 1500) / 5;
+
     if (r > 255) r = 255;
     if (g > 255) g = 255;
     if (b > 255) b = 255;
@@ -50,7 +62,8 @@ class CLElement {
   }
 
   blackbody(temp) {
-    return blackbody_st(temp);
+    var originalColor = { "r": 0, "g": 200, "b": 75 };
+    return CLElement.blackbody_st(temp, originalColor);
   }
 
   static generateTransformFn(constantOrFunction) {
@@ -64,7 +77,7 @@ class CLElement {
   }
 
   static applyTransformFn(f, v) {
-    if (!f) {  console.log("F IS UNDEFINED") }
+    if (!f) { console.log("F IS UNDEFINED") }
     var r = f.call(f, v);
     console.log("Value " + v + ", Transformed into " + r + " by function " + f.name);
     return r;
