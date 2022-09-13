@@ -78,6 +78,13 @@ int main() {
             .withModelNode(temp_mn2)
             .rangeInput();
 
+    // ClarityNode *lts =
+    //     childOfMaindivBuilder.withStoredValueType(CppType::Double)
+    //         .withLinkMultiplierConstant(3)
+    //         .withName("LTS")
+    //         .withModelNode(temp_mn2)
+    //         .labelledTextSliderControl("LTS_LABELTEXT");
+
     ClarityNode *svgarea =
         childOfMaindivBuilder.withName("svgarea")
             .withTag("svg")

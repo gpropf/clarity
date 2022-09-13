@@ -299,6 +299,22 @@ class CLNodeFactory {
         return outerDiv;
     }
 
+    inline ClarityNode *labelledTextSliderControl(const string &labelText) {
+        ClarityNode *textInput = this->textInput();
+        ClarityNode *rangeInput = this->rangeInput();
+        ClarityNode *outerDiv =
+            withTag("div")
+                .withName("labelledTextSliderControl_" + name_)
+                .build();
+        ClarityNode *labelNode = withName("labelfor_" + textInput->getName())
+                                     .label(textInput, labelText);
+
+        outerDiv->appendChild(labelNode);
+        outerDiv->appendChild(textInput);
+        outerDiv->appendChild(rangeInput);
+        return outerDiv;
+    }
+
     inline ClarityNode *attributeNode(const string &attributeName) {
         ClarityNode *attributeNode =
             withExistingDOMElement().withBoundField(attributeName).build();
