@@ -12,6 +12,16 @@ TicketMachine ClarityNode::tm;
 val ClarityNode::ActiveLink::CLElement_ = val::global("CLElement");
 val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
 
+// double *testmem(double *dptr) {
+//     dptr = new double(37);
+//     return dptr;
+// }
+
+void testmem(double *&dptr) {
+    dptr = new double(37);
+    //return dptr;
+}
+
 int main() {
     using ActiveLink = ClarityNode::ActiveLink;
 
@@ -29,7 +39,7 @@ int main() {
     // val blackbody_st = a_mn->getCLE()["blackbody_st"];
 
     CLNodeFactory<ClarityNode, double> builder("div", "maindiv",
-                                               CppType::NoData);    
+                                               CppType::NoData);
 
     ClarityNode *maindiv = builder.build();
 
@@ -47,8 +57,25 @@ int main() {
     ClarityNode *input_a =
         inputBuilder.withName("input_a_text").withModelNode(a_mn).build();
 
+    double *ival;
+    // ival = testmem(ival);
+    testmem(ival);
+    cout << "Value created in CLNF is: " << *ival << "\n";
+
+    ModelNode<double> *temp_mn2;
     ClarityNode *input_temp =
-        inputBuilder.withName("input_temp_text").withStoredValue(temp).build();
+        childOfMaindivBuilder.withStoredValueType(CppType::Double)
+            .withName("input_temp_text")
+            .withStoredValue(temp)
+            //.testPtrExtraction(ival)
+            .extractModelNode<double>(temp_mn2)
+            .textInput();
+
+    ClarityNode *input_temp_r =
+        childOfMaindivBuilder.withStoredValueType(CppType::Double)
+            .withName("input_temp_range")
+            .withModelNode(temp_mn2)
+            .rangeInput();
 
     ClarityNode *svgarea =
         childOfMaindivBuilder.withName("svgarea")
@@ -93,7 +120,8 @@ int main() {
                                .withAttributes({{"type", val("range")}})
                                .build();
 
-    //ClarityNode * range_a_lbld = childOfMaindivBuilder.labelGivenNode(range_a, "Temperature");
+    // ClarityNode * range_a_lbld =
+    // childOfMaindivBuilder.labelGivenNode(range_a, "Temperature");
 
     ClarityNode::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";

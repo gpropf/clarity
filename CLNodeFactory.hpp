@@ -108,12 +108,25 @@ class CLNodeFactory {
      * where you have a slider control as well as a text input field for the
      * same value.
      *
+     * Initially this didn't work and I decided to move on and work on other
+     * stuff. When I came back to it I realized that the problem was that I was
+     * only changing the **copy** of the modelNode pointer that was passed into
+     * the method. As a result the calling function's pointer never changed. So
+     * now we do this odd thing where we modify a pointer through a reference
+     * and this allows us to have access to the internally created modelNode in
+     * the calling scope.
+     *
+     * In short, having a (non-const) pointer allows you to change the thing the
+     * pointer points to - not the value of the pointer itself. You cannot make
+     * it point somewhere else for instance. This is what I was initially trying
+     * to do.
+     *
      * @tparam T
      * @param modelNode
      * @return CLNodeFactory
      */
     template <typename T>
-    inline CLNodeFactory extractModelNode(ModelNode<T> *modelNode) {
+    inline CLNodeFactory extractModelNode(ModelNode<T> *&modelNode) {
         modelNode = modelNode_;
         return *this;
     }
@@ -254,6 +267,24 @@ class CLNodeFactory {
         return label;
     }
 
+    inline ClarityNode *textInput() {
+        map<string, val> inputFieldAttrs = {{"type", val("text")}};
+        ClarityNode *inp = withTag("input")
+                               .withBoundField("value")
+                               .withAttributes(inputFieldAttrs)
+                               .build();
+        return inp;
+    }
+
+    inline ClarityNode *rangeInput() {
+        map<string, val> inputFieldAttrs = {{"type", val("range")}};
+        ClarityNode *inp = withTag("input")
+                               .withBoundField("value")
+                               .withAttributes(inputFieldAttrs)
+                               .build();
+        return inp;
+    }
+
     inline ClarityNode *labelGivenNode(ClarityNode *nodeToBeLabelled,
                                        const string &labelText) {
         ClarityNode *outerDiv =
@@ -286,4 +317,5 @@ class CLNodeFactory {
 };
 
 }  // namespace clarity
+
 #endif
