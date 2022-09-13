@@ -304,7 +304,7 @@ class CLNodeFactory {
         ClarityNode *rangeInput = this->rangeInput();
         ClarityNode *outerDiv =
             withTag("div")
-                .withName("labelledTextSliderControl_" + name_)
+                .withName("labelledTextSliderControl")
                 .build();
         ClarityNode *labelNode = withName("labelfor_" + textInput->getName())
                                      .label(textInput, labelText);

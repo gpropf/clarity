@@ -78,13 +78,6 @@ int main() {
             .withModelNode(temp_mn2)
             .rangeInput();
 
-    // ClarityNode *lts =
-    //     childOfMaindivBuilder.withStoredValueType(CppType::Double)
-    //         .withLinkMultiplierConstant(3)
-    //         .withName("LTS")
-    //         .withModelNode(temp_mn2)
-    //         .labelledTextSliderControl("LTS_LABELTEXT");
-
     ClarityNode *svgarea =
         childOfMaindivBuilder.withName("svgarea")
             .withTag("svg")
@@ -128,8 +121,15 @@ int main() {
                                .withAttributes({{"type", val("range")}})
                                .build();
 
-    // ClarityNode * range_a_lbld =
-    // childOfMaindivBuilder.labelGivenNode(range_a, "Temperature");
+    ClarityNode *range_a_lbld =
+        childOfMaindivBuilder.labelGivenNode(input_temp, "Temperature");
+
+    ClarityNode *lts =
+        childOfMaindivBuilder.withModelNode(a_mn) //.withStoredValueType(CppType::Double)
+            .withLinkMultiplierConstant(3)
+            .withName("LTS")
+            
+            .labelledTextSliderControl("LTS_LABELTEXT");
 
     ClarityNode::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";

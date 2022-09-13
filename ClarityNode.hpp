@@ -142,7 +142,7 @@ class ClarityNode {
         val domElement = cle_["domElement"];
 
         string valueText = domElement[boundField_].as<string>();
-        //cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
+        // cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
         switch (this->storedValueType_) {
             case CppType::Int:
                 cout << "ClarityNode::getVal() Int\n";
@@ -175,8 +175,13 @@ class ClarityNode {
         val domElement = cle_["domElement"];
         cle_.call<void>("printVal", inval);
         cout << "boundField_ = " << boundField_ << "\n";
-        domElement.set(boundField_, inval);
-        domElement.call<void>("setAttribute", val(boundField_), inval);
+        if (boundField_ != "") {
+            domElement.set(boundField_, inval);
+            domElement.call<void>("setAttribute", val(boundField_), inval);
+        }
+        else {
+            cout << "WARNING: boundField_ IS EMPTY for node " << id_ << "!!\n\n";
+        }
     }
 
     inline void setBoundField(const string &boundField) {
@@ -211,8 +216,7 @@ class ClarityNode {
     // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
 
     template <typename T>
-    void addPeer2(ClarityNode *peer,
-                                        const T linkMultiplierConstant = 1) {
+    void addPeer2(ClarityNode *peer, const T linkMultiplierConstant = 1) {
         auto dl = make_shared<DualLink>(this, peer, linkMultiplierConstant);
         dlpeers_.push_back(dl);
         peer->appendDualLink(dl);
