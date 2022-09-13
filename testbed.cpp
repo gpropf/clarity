@@ -19,7 +19,7 @@ val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
 
 void testmem(double *&dptr) {
     dptr = new double(37);
-    //return dptr;
+    // return dptr;
 }
 
 int main() {
@@ -73,6 +73,7 @@ int main() {
 
     ClarityNode *input_temp_r =
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
+            .withLinkMultiplierConstant(10)
             .withName("input_temp_range")
             .withModelNode(temp_mn2)
             .rangeInput();
@@ -108,7 +109,7 @@ int main() {
 
     val blackbody = a_mn->getCLE()["blackbody"];
 
-    ClarityNode *circleFill = childOfMaindivBuilder.withModelNode(a_mn)
+    ClarityNode *circleFill = childOfMaindivBuilder.withModelNode(temp_mn2)
                                   .withStoredValueType(CppType::String)
                                   .withName("CIRCLEFILL")
                                   .withTransformFns(blackbody, blackbody)
