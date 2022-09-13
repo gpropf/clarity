@@ -21,13 +21,15 @@ int main() {
     val blackbody_st = CLE["blackbody_st"];
 
     double *a = new double(27.8);
+
+    double *temp = new double(600.4);
     ModelNode<double> *a_mn =
         new ModelNode(a, CppType::Double, "independently_created_modelnode");
 
     // val blackbody_st = a_mn->getCLE()["blackbody_st"];
 
     CLNodeFactory<ClarityNode, double> builder("div", "maindiv",
-                                               CppType::NoData);
+                                               CppType::NoData);    
 
     ClarityNode *maindiv = builder.build();
 
@@ -44,6 +46,9 @@ int main() {
 
     ClarityNode *input_a =
         inputBuilder.withName("input_a_text").withModelNode(a_mn).build();
+
+    ClarityNode *input_temp =
+        inputBuilder.withName("input_temp_text").withStoredValue(temp).build();
 
     ClarityNode *svgarea =
         childOfMaindivBuilder.withName("svgarea")
@@ -87,6 +92,8 @@ int main() {
                                .withName("range_a")
                                .withAttributes({{"type", val("range")}})
                                .build();
+
+    //ClarityNode * range_a_lbld = childOfMaindivBuilder.labelGivenNode(range_a, "Temperature");
 
     ClarityNode::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";
