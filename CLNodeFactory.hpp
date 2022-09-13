@@ -285,6 +285,28 @@ class CLNodeFactory {
         return inp;
     }
 
+    inline ClarityNode *trInput() {
+        map<string, val> inputFieldAttrs = {{"type", val("text")}};
+        ClarityNode *tinp = withTag("input")
+                                .withBoundField("value")
+                                .withAttributes(inputFieldAttrs)
+                                .build();
+        
+        inputFieldAttrs["type"] = val("range");
+        //inputFieldAttrs.find("type") = "range";
+        ClarityNode *rinp = withTag("input")
+                                .withBoundField("value")
+                                .withAttributes(inputFieldAttrs)
+                                .build();
+        ClarityNode *outerDiv =
+            withTag("div")
+                .withName("tr_" + name_)
+                .build();
+        outerDiv->appendChild(tinp);
+        outerDiv->appendChild(rinp);
+        return outerDiv;
+    }
+
     inline ClarityNode *labelGivenNode(ClarityNode *nodeToBeLabelled,
                                        const string &labelText) {
         ClarityNode *outerDiv =
@@ -299,21 +321,21 @@ class CLNodeFactory {
         return outerDiv;
     }
 
-    inline ClarityNode *labelledTextSliderControl(const string &labelText) {
-        ClarityNode *textInput = this->textInput();
-        ClarityNode *rangeInput = this->rangeInput();
-        ClarityNode *outerDiv =
-            withTag("div")
-                .withName("labelledTextSliderControl")
-                .build();
-        ClarityNode *labelNode = withName("labelfor_" + textInput->getName())
-                                     .label(textInput, labelText);
+    // inline ClarityNode *labelledTextSliderControl(const string &labelText) {
+    //     ClarityNode *textInput = this->textInput();
+    //     ClarityNode *rangeInput = this->rangeInput();
+    //     ClarityNode *outerDiv =
+    //         withTag("div")
+    //             .withName("labelledTextSliderControl")
+    //             .build();
+    //     ClarityNode *labelNode = withName("labelfor_" + textInput->getName())
+    //                                  .label(textInput, labelText);
 
-        outerDiv->appendChild(labelNode);
-        outerDiv->appendChild(textInput);
-        outerDiv->appendChild(rangeInput);
-        return outerDiv;
-    }
+    //     outerDiv->appendChild(labelNode);
+    //     outerDiv->appendChild(textInput);
+    //     outerDiv->appendChild(rangeInput);
+    //     return outerDiv;
+    // }
 
     inline ClarityNode *attributeNode(const string &attributeName) {
         ClarityNode *attributeNode =

@@ -71,12 +71,12 @@ int main() {
             .extractModelNode<double>(temp_mn2)
             .textInput();
 
-    ClarityNode *input_temp_r =
+    ClarityNode *input_temp_tr =
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
             .withLinkMultiplierConstant(10)
             .withName("input_temp_range")
             .withModelNode(temp_mn2)
-            .rangeInput();
+            .trInput();
 
     ClarityNode *svgarea =
         childOfMaindivBuilder.withName("svgarea")
@@ -122,7 +122,7 @@ int main() {
                                .build();
 
     ClarityNode *range_a_lbld =
-        childOfMaindivBuilder.labelGivenNode(input_temp, "Temperature");
+        childOfMaindivBuilder.labelGivenNode(input_temp_tr, "Temperature");
 
     
     ClarityNode::callbackMap["printStats"] = [=] {
