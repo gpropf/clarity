@@ -321,21 +321,10 @@ class CLNodeFactory {
         return outerDiv;
     }
 
-    // inline ClarityNode *labelledTextSliderControl(const string &labelText) {
-    //     ClarityNode *textInput = this->textInput();
-    //     ClarityNode *rangeInput = this->rangeInput();
-    //     ClarityNode *outerDiv =
-    //         withTag("div")
-    //             .withName("labelledTextSliderControl")
-    //             .build();
-    //     ClarityNode *labelNode = withName("labelfor_" + textInput->getName())
-    //                                  .label(textInput, labelText);
-
-    //     outerDiv->appendChild(labelNode);
-    //     outerDiv->appendChild(textInput);
-    //     outerDiv->appendChild(rangeInput);
-    //     return outerDiv;
-    // }
+    inline ClarityNode * labelledTRInputNode(const string &labelText) {
+        ClarityNode * trInputNode = trInput();
+        return labelGivenNode(trInputNode, labelText);
+    }
 
     inline ClarityNode *attributeNode(const string &attributeName) {
         ClarityNode *attributeNode =
