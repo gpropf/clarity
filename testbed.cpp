@@ -124,13 +124,7 @@ int main() {
     ClarityNode *range_a_lbld =
         childOfMaindivBuilder.labelGivenNode(input_temp, "Temperature");
 
-    ClarityNode *lts =
-        childOfMaindivBuilder.withModelNode(a_mn) //.withStoredValueType(CppType::Double)
-            .withLinkMultiplierConstant(3)
-            .withName("LTS")
-            
-            .labelledTextSliderControl("LTS_LABELTEXT");
-
+    
     ClarityNode::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";
     };
