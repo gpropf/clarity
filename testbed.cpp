@@ -38,17 +38,17 @@ int main() {
 
     // val blackbody_st = a_mn->getCLE()["blackbody_st"];
 
-    CLNodeFactory<ClarityNode, double> builder("div", "maindiv",
-                                               CppType::NoData);
+    CLNodeFactory<ClarityNode, double, double> builder("div", "maindiv",
+                                                       CppType::NoData);
 
     ClarityNode *maindiv = builder.build();
 
-    CLNodeFactory<ClarityNode, double> childOfMaindivBuilder =
+    CLNodeFactory<ClarityNode, double, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
 
-    CLNodeFactory<ClarityNode, double> inputBuilder =
+    CLNodeFactory<ClarityNode, double, double> inputBuilder =
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
             .withTag("input")
             .withBoundField("value")
@@ -67,9 +67,30 @@ int main() {
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
             .withName("input_temp_text")
             .withStoredValue(temp)
-            //.testPtrExtraction(ival)
             .extractModelNode<double>(temp_mn2)
             .textInput();
+
+    CLNodeFactory<ClarityNode, string, int> childOfMaindivBuilder_str;
+    CLNodeFactory<ClarityNode, string, int>::clone(
+        childOfMaindivBuilder, childOfMaindivBuilder_str);
+
+    string *flexLabelText = new string("Flex Text");
+
+    ModelNode<string> *flexLabel_mn;
+    ClarityNode *flexLabel =
+        childOfMaindivBuilder_str.withStoredValueType(CppType::String)
+            .withStoredValue(flexLabelText)
+            .extractModelNode<string>(flexLabel_mn)
+            .label(input_temp, *flexLabelText);
+
+    val passthru = flexLabel_mn->getCLE()["passthru"];
+
+    ClarityNode *inputFlexTextLabel =
+        childOfMaindivBuilder_str.withModelNode(flexLabel_mn).withStoredValueType(CppType::String)
+            .withTransformFns(passthru, passthru)
+            .textInput();
+
+    //<class Nc_in, class Nc_out, typename V_in, typename V_out>
 
     ClarityNode *input_temp_tr =
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
@@ -124,7 +145,6 @@ int main() {
     ClarityNode *range_a_lbld =
         childOfMaindivBuilder.labelGivenNode(input_temp_tr, "Temperature");
 
-    
     ClarityNode::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";
     };

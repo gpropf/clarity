@@ -66,6 +66,15 @@ class CLElement {
     return CLElement.blackbody_st(temp, originalColor);
   }
 
+  /**
+   * 
+   * @param {*} x 
+   * @returns Whatever you pass in. This is mainly for anything that is not some kind of numeric value.
+   */
+  passthru(x) {
+    return x;
+  }
+
   static generateTransformFn(constantOrFunction) {
     if (constantOrFunction instanceof Function) {
       console.log("Multiplier is function")

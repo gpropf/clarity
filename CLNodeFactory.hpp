@@ -16,7 +16,7 @@ namespace clarity {
  * @tparam Nc
  * @tparam V
  */
-template <class Nc, typename V>
+template <class Nc, typename V, typename N>
 class CLNodeFactory {
    public:
     string tag_;   //!< Tag to be used with elements this factory builds.
@@ -32,7 +32,7 @@ class CLNodeFactory {
         nullptr;  //!< If we create a new MN or attach one, we set this. Note
                   //!< that we can create ControlNetworkNodes with no MN.
 
-    V linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
+    N linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
                                     //!< values from node to node unchanged.
     val transformFn_ = val(NULL);   //!< See the docs on the ActiveLink class.
     val a2b_xfmr_ = val(NULL);
@@ -63,6 +63,32 @@ class CLNodeFactory {
         return cpy;
     }
 
+    template <class Nc_from, typename V_from, typename N_from, class Nc_to,
+              typename V_to, typename N_to>
+    static CLNodeFactory clone(
+        const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from,
+        CLNodeFactory<Nc_to, V_to, N_to> &clnf_to) {
+        clnf_to.tag_ = clnf_from.tag_;
+        clnf_to.name_ = clnf_from.name_;
+        clnf_to.storedValueType_ = clnf_from.storedValueType_;
+
+        clnf_to.boundField_ = clnf_from.boundField_;
+
+        clnf_to.parent_ = clnf_from.parent_;
+
+        // modelNode_ =  nullptr;
+
+        clnf_to.linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
+
+        clnf_to.transformFn_ = clnf_from.transformFn_;
+        clnf_to.a2b_xfmr_ = clnf_from.a2b_xfmr_;
+        clnf_to.b2a_xfmr_ = clnf_from.b2a_xfmr_;
+        clnf_to.useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
+
+        clnf_to.attrs_ = clnf_from.attrs_;
+        return clnf_to;
+    }
+
     /**
      * @brief Construct a new CLNodeFactory object
      *
@@ -74,14 +100,20 @@ class CLNodeFactory {
      *
      * @param tag valid HTML tag, e.g. input, div, button, etc...
      * @param name the string name to give the element
-     * @param storedValueType The type the corresponding stored data has in C++.
-     * This is a far smaller set of types than actually exist in C++ but is
-     * meant to make basic distinctions between, say, a string and a float
-     * value.
+     * @param storedValueType The type the corresponding stored data has in
+     * C++. This is a far smaller set of types than actually exist in C++
+     * but is meant to make basic distinctions between, say, a string and a
+     * float value.
      */
     inline CLNodeFactory(const string &tag, const string &name,
                          CppType storedValueType)
         : tag_(tag), name_(name), storedValueType_(storedValueType) {}
+
+    // template <class Nc_out, class Nc_in, typename V_out, typename V_in>
+    // static CLNodeFactory<Nc_out, V_out> morph(
+    //     const CLNodeFactory<Nc_in, V_in> &clnf) {
+    //     return CLNodeFactory<Nc_out, V_out>(clnf);
+    // }
 
     /**
      * @brief Construct a new CLNodeFactory object
@@ -227,7 +259,7 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline CLNodeFactory withLinkMultiplierConstant(V linkMultiplierConstant) {
+    inline CLNodeFactory withLinkMultiplierConstant(N linkMultiplierConstant) {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(*this);
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
@@ -291,17 +323,14 @@ class CLNodeFactory {
                                 .withBoundField("value")
                                 .withAttributes(inputFieldAttrs)
                                 .build();
-        
+
         inputFieldAttrs["type"] = val("range");
-        //inputFieldAttrs.find("type") = "range";
+        // inputFieldAttrs.find("type") = "range";
         ClarityNode *rinp = withTag("input")
                                 .withBoundField("value")
                                 .withAttributes(inputFieldAttrs)
                                 .build();
-        ClarityNode *outerDiv =
-            withTag("div")
-                .withName("tr_" + name_)
-                .build();
+        ClarityNode *outerDiv = withTag("div").withName("tr_" + name_).build();
         outerDiv->appendChild(tinp);
         outerDiv->appendChild(rinp);
         return outerDiv;
@@ -321,8 +350,8 @@ class CLNodeFactory {
         return outerDiv;
     }
 
-    inline ClarityNode * labelledTRInputNode(const string &labelText) {
-        ClarityNode * trInputNode = trInput();
+    inline ClarityNode *labelledTRInputNode(const string &labelText) {
+        ClarityNode *trInputNode = trInput();
         return labelGivenNode(trInputNode, labelText);
     }
 
