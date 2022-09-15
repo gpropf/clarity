@@ -46,6 +46,12 @@ int main() {
     CLNodeFactory<ClarityNode, double, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
+    ClarityNode *canvas1 =
+        childOfMaindivBuilder.withName("canvas1")
+            .withTag("canvas")
+            .withAttributes({{"width", val(400)}, {"height", val(300)}})
+            .build();
+
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
 
     CLNodeFactory<ClarityNode, double, double> inputBuilder =
@@ -71,8 +77,8 @@ int main() {
             .textInput();
 
     CLNodeFactory<ClarityNode, string, int> childOfMaindivBuilder_str;
-    CLNodeFactory<ClarityNode, string, int>::clone(
-        childOfMaindivBuilder, childOfMaindivBuilder_str);
+    CLNodeFactory<ClarityNode, string, int>::clone(childOfMaindivBuilder,
+                                                   childOfMaindivBuilder_str);
 
     string *flexLabelText = new string("Flex Text");
 
@@ -86,7 +92,8 @@ int main() {
     val passthru = flexLabel_mn->getCLE()["passthru"];
 
     ClarityNode *inputFlexTextLabel =
-        childOfMaindivBuilder_str.withModelNode(flexLabel_mn).withStoredValueType(CppType::String)
+        childOfMaindivBuilder_str.withModelNode(flexLabel_mn)
+            .withStoredValueType(CppType::String)
             //.withTransformFns(passthru, passthru)
             .textInput();
 

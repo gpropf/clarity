@@ -29,9 +29,6 @@ class CLElement {
     console.log("JSVAL = " + v);
   }
 
-  
-  
-
   static zerofloor(n) {
     if (n < 0) return 0;
     return n;
@@ -41,9 +38,9 @@ class CLElement {
    * 
    * @param {*} temp: In degrees Kelvin 
    * @param {*} originalColor: the object's 'actual' color at 0 K.
-   * @returns a crude (for now) attempt at showing hot objects glowing the right way. This
+   * @returns a very crude (for now) attempt at showing hot objects glowing the right way. This
    * is returned as a string representing an RGB triplet with values from 0-255.
-   */  
+   */
   static blackbody_st(temp, originalColor) {
     console.log(originalColor);
     temp += 600;
@@ -92,11 +89,8 @@ class CLElement {
     return r;
   }
 
-
   jsToCPPVal(jsval) {
-
     switch (this.cpptype_) {
-
       case Module.CppType.Int:
         console.log("jsToCPPVal: Int")
         return parseInt(jsval)
@@ -169,7 +163,6 @@ class CLElement {
     if (this.domElement_) {
       this.domElement_.setAttribute("name", name);
     }
-    //
   }
 
   get name() {
@@ -177,6 +170,39 @@ class CLElement {
   }
 
   static tagToUrl = { "svg": "http://www.w3.org/2000/svg", "circle": "http://www.w3.org/2000/svg" };
+  static extraInitCode = {
+    "canvas": function (domElement) {
+      if (domElement.getContext) {
+        let ctx = domElement.getContext('2d');
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(10, 10, 60, 60);
+        ctx.fillRect(100, 10, 90, 60);
+
+        ctx.beginPath();
+        ctx.arc(250, 40, 32, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(10, 160);
+        ctx.lineTo(90, 160);
+        ctx.lineTo(50, 110);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.save();
+        ctx.scale(2, 1);
+        ctx.beginPath();
+        ctx.arc(72, 130, 25, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.arc(250, 120, 40, 0, Math.PI);
+        ctx.fill();
+        //alert(ctx);
+      }
+    }
+  };
 
   createDOMElementByTagType() {
     var el
@@ -185,6 +211,9 @@ class CLElement {
     }
     else {
       el = document.createElement(this.tag_)
+    }
+    if (CLElement.extraInitCode[this.tag_]) {
+      CLElement.extraInitCode[this.tag_](el);
     }
     return el
   }

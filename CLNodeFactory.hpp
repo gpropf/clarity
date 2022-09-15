@@ -13,8 +13,13 @@ namespace clarity {
  * complex ones from those. It replaces a whole complex class heirarchy that
  * worked the same but was an inflexible mess.
  *
- * @tparam Nc
- * @tparam V
+ * @tparam Nc Node Class: Tells you what kind of Node this factory builds.
+ * @tparam V Value: The type of C++ data the nodes will hold.
+ * @tparam N Numeric Type: When the V type is a number of some kind, this tells
+ * us what type is used for linkMultiplierConstant values. Technically V and N
+ * should be the same thing but we get problems when V is a string. The fact
+ * that there are two different tparams for this probably means we need a bit of
+ * a refactoring.
  */
 template <class Nc, typename V, typename N>
 class CLNodeFactory {
@@ -63,6 +68,25 @@ class CLNodeFactory {
         return cpy;
     }
 
+    /**
+     * @brief This is a bit of a kludge to allow us to switch the parameter
+     * values 'midstream' while building a GUI. The idea is to preserve the work
+     * you've already done, for instance in setting up a builder that produces
+     * only children of a certain node. You might want to preserve most of the
+     * settings in such a builder while changing the type of data or class of
+     * nodes it produces. You feed in a 'from' factory and get back your 'to'
+     * factory with all the non-tparam values copied over.
+     *
+     * @tparam Nc_from Node class of the 'from' factory.
+     * @tparam V_from V for 'from' factory.
+     * @tparam N_from N for 'from' factory.
+     * @tparam Nc_to Node class of the 'to' factory.
+     * @tparam V_to V for 'to' factory.
+     * @tparam N_to N for 'from' factory.
+     * @param clnf_from 'from' factory
+     * @param clnf_to 'to' factory
+     * @return CLNodeFactory
+     */
     template <class Nc_from, typename V_from, typename N_from, class Nc_to,
               typename V_to, typename N_to>
     static CLNodeFactory clone(

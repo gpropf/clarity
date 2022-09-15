@@ -1,11 +1,11 @@
 #ifndef CanvasElement_hpp
 #define CanvasElement_hpp
 
-#include "WebElemNode.hpp"
+#include "ClarityNode.hpp"
 
 namespace clarity {
 
-class CanvasElement : public WebElemNode
+class CanvasElement : public ClarityNode
 
 {
    public:
