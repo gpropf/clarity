@@ -57,18 +57,6 @@ class CLNodeFactory {
                  //!< a lot of attributes.
 
     /**
-     * @brief Create the element with the listed attrs.
-     *
-     * @param attrs
-     * @return CLNodeFactory
-     */
-    inline CLNodeFactory withAttributes(const map<string, val> &attrs) {
-        CLNodeFactory cpy(*this);
-        cpy.attrs_ = attrs;
-        return cpy;
-    }
-
-    /**
      * @brief This is a bit of a kludge to allow us to switch the parameter
      * values 'midstream' while building a GUI. The idea is to preserve the work
      * you've already done, for instance in setting up a builder that produces
@@ -95,20 +83,13 @@ class CLNodeFactory {
         clnf_to.tag_ = clnf_from.tag_;
         clnf_to.name_ = clnf_from.name_;
         clnf_to.storedValueType_ = clnf_from.storedValueType_;
-
         clnf_to.boundField_ = clnf_from.boundField_;
-
         clnf_to.parent_ = clnf_from.parent_;
-
-        // modelNode_ =  nullptr;
-
         clnf_to.linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
-
         clnf_to.transformFn_ = clnf_from.transformFn_;
         clnf_to.a2b_xfmr_ = clnf_from.a2b_xfmr_;
         clnf_to.b2a_xfmr_ = clnf_from.b2a_xfmr_;
         clnf_to.useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
-
         clnf_to.attrs_ = clnf_from.attrs_;
         return clnf_to;
     }
@@ -205,6 +186,18 @@ class CLNodeFactory {
                 modelNode_->pushValToPeers2(modelNode_);
         }
         return newNode;
+    }
+
+    /**
+     * @brief Create the element with the listed attrs.
+     *
+     * @param attrs
+     * @return CLNodeFactory
+     */
+    inline CLNodeFactory withAttributes(const map<string, val> &attrs) {
+        CLNodeFactory cpy(*this);
+        cpy.attrs_ = attrs;
+        return cpy;
     }
 
     inline CLNodeFactory withBoundField(const string &boundField) {

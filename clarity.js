@@ -173,6 +173,8 @@ class CLElement {
   static extraInitCode = {
     "canvas": function (domElement) {
       if (domElement.getContext) {
+        domElement.style.display = 'none';
+        domElement.style.display = 'block';
         let ctx = domElement.getContext('2d');
         ctx.fillStyle = 'blue';
         ctx.fillRect(10, 10, 60, 60);
@@ -200,6 +202,7 @@ class CLElement {
         ctx.arc(250, 120, 40, 0, Math.PI);
         ctx.fill();
         //alert(ctx);
+
       }
     }
   };
