@@ -87,7 +87,7 @@ int main() {
 
     ClarityNode *inputFlexTextLabel =
         childOfMaindivBuilder_str.withModelNode(flexLabel_mn).withStoredValueType(CppType::String)
-            .withTransformFns(passthru, passthru)
+            //.withTransformFns(passthru, passthru)
             .textInput();
 
     //<class Nc_in, class Nc_out, typename V_in, typename V_out>
