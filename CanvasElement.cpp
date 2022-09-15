@@ -8,6 +8,6 @@ CanvasElement::CanvasElement(int width, int height, const string &name)
     setAttribute("width", val(width_));
     setAttribute("height", val(height_));
     val domElement = cle_["domElement"];
-    val canvasInit = 
+  //  val canvasInit = 
 
 }
