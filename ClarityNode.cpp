@@ -31,7 +31,7 @@ void clarity::ClarityNode::pushValToPeersById2(int id) {
 inline void clarity::ClarityNode::init() {
     id_ = tm.getNext();
     ClarityNode::switchboard[id_] = this;
-    cout << "CLN line 33: id_ = " << id_ << "\n";
+    //cout << "CLN line 33: id_ = " << id_ << "\n";
 }
 
 inline clarity::ClarityNode::ClarityNode(const string &name,

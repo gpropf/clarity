@@ -31,7 +31,7 @@ class CLElement {
   }
 
   printVal(v) {
-    console.log("JSVAL = " + v);
+    //console.log("JSVAL = " + v);
   }
 
   static zerofloor(n) {
@@ -90,7 +90,7 @@ class CLElement {
   static applyTransformFn(f, v) {
     if (!f) { console.log("F IS UNDEFINED") }
     var r = f.call(f, v);
-    console.log("Value " + v + ", Transformed into " + r + " by function " + f.name);
+    //console.log("Value " + v + ", Transformed into " + r + " by function " + f.name);
     return r;
   }
 

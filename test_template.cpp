@@ -17,7 +17,6 @@ vector<ModelNode<int> *> mns;
 vector<ClarityNode *> clns;
 
 void destroy_everything() {
-   
     for (auto cln : clns) {
         delete cln;
     }
@@ -25,7 +24,7 @@ void destroy_everything() {
     for (auto i : ns) {
         delete i;
     }
-     for (auto mn : mns) {
+    for (auto mn : mns) {
         delete mn;
     }
 }
@@ -63,20 +62,23 @@ int main() {
     CLNodeFactory<ClarityNode, int, int>::clone(childOfMaindivBuilder,
                                                 childOfMaindivBuilder_int);
 
-    int *n_input_fields = new int(900);
+    for (int j = 0; j < 50; j++) {
+        int *n_input_fields = new int(90);
 
-    for (int i = 0; i < *n_input_fields; i++) {
-        int *iptr = new int(i);
-        ModelNode<int> *mn = nullptr;
-        ClarityNode *cln =
-            childOfMaindivBuilder_int.withStoredValueType(CppType::Int)
-                .withName("cln_" + to_string(i))
-                .withStoredValue(iptr)
-                .extractModelNode<int>(mn)
-                .trInput();
-        ns.push_back(iptr);
-        mns.push_back(mn);
-        clns.push_back(cln);
+        for (int i = 0; i < *n_input_fields; i++) {
+            int *iptr = new int(i);
+            ModelNode<int> *mn = nullptr;
+            ClarityNode *cln =
+                childOfMaindivBuilder_int.withStoredValueType(CppType::Int)
+                    .withName("cln_" + to_string(i))
+                    .withStoredValue(iptr)
+                    .extractModelNode<int>(mn)
+                    .trInput();
+            ns.push_back(iptr);
+            mns.push_back(mn);
+            clns.push_back(cln);
+        }
+        //destroy_everything();
     }
 
     ClarityNode *statusButton = childOfMaindivBuilder.button(
