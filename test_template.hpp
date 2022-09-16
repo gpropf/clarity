@@ -1,5 +1,5 @@
-#ifndef testbed_hpp
-#define testbed_hpp
+#ifndef test_template_hpp
+#define test_template_hpp
 
 #include "ClarityNode.hpp"
 #include "clarity.hpp"
