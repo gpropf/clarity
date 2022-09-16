@@ -42,7 +42,7 @@ class CLElement {
    * is returned as a string representing an RGB triplet with values from 0-255.
    */
   static blackbody_st(temp, originalColor) {
-    console.log(originalColor);
+    // console.log(originalColor);
     temp += 600;
     // return "#aa0ff9";
 
@@ -74,7 +74,7 @@ class CLElement {
 
   static generateTransformFn(constantOrFunction) {
     if (constantOrFunction instanceof Function) {
-      console.log("Multiplier is function")
+      // console.log("Multiplier is function")
       return constantOrFunction;
     }
     var generatedMultiplierFunction = (x) => x * constantOrFunction;
@@ -92,16 +92,16 @@ class CLElement {
   jsToCPPVal(jsval) {
     switch (this.cpptype_) {
       case Module.CppType.Int:
-        console.log("jsToCPPVal: Int")
+        // console.log("jsToCPPVal: Int")
         return parseInt(jsval)
       case Module.CppType.Float:
-        console.log("jsToCPPVal: Float")
+        // console.log("jsToCPPVal: Float")
         return parseFloat(jsval)
       case Module.CppType.Double:
-        console.log("jsToCPPVal: Double")
+        // console.log("jsToCPPVal: Double")
         return parseFloat(jsval)
       case Module.CppType.NoData:
-        console.log("jsToCPPVal: NoData")
+        // console.log("jsToCPPVal: NoData")
         return null
       default:
         return jsval
@@ -227,12 +227,12 @@ class CLElement {
     this.cpptype_ = cpptype
     this.name_ = name
 
-    console.log(`ID ${id} from ticketMachine.`)
+    // console.log(`ID ${id} from ticketMachine.`)
     var el = document.getElementById(this.id_)
     if (el == null) {
       el = document.getElementById(this.name_)
       if (el == null) {
-        console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
+        // console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
         el = this.createDOMElementByTagType()
         document.body.appendChild(el)
         // Without this the elements get garbage collected and vanish. The idea is that you append them later to
@@ -248,7 +248,7 @@ class CLElement {
     if (this.tag_ == 'input') {
       var outerThis = this
       this.domElement_.addEventListener('change', function (e) {
-        console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)
+        // console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)
         Module.ClarityNode.pushValToPeersById2(outerThis.id_)
         Module.ClarityNode.markNodeDirtyById(outerThis.id_)
       })
@@ -286,7 +286,7 @@ class CLElement {
 //let myVar = setInterval(myTimer, 300);
 function myTimer() {
   const d = new Date();
-  console.log(d.toLocaleTimeString())
+  // console.log(d.toLocaleTimeString())
   Module.ClarityNode.runCallbackById("tick")
 }
 

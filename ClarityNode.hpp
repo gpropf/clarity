@@ -125,6 +125,17 @@ class ClarityNode {
                 const CppType storedValueType,
                 bool useExistingDOMElement_ = false);
 
+
+    ~ClarityNode() {
+       
+    cout << "DESTROYING NODE " << id_ << "\n";
+         
+        for (auto dl : dlpeers_) {
+           dl.reset();
+        }
+    }
+    
+
     EMSCRIPTEN_KEEPALIVE void setAttribute(const string &attr,
                                            const val &value);
 
@@ -145,24 +156,24 @@ class ClarityNode {
         // cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
         switch (this->storedValueType_) {
             case CppType::Int:
-                cout << "ClarityNode::getVal() Int\n";
+                // cout << "ClarityNode::getVal() Int\n";
                 return val(stoi(valueText));
                 break;
             case CppType::Float:
-                cout << "ClarityNode::getVal() Float\n";
+                // cout << "ClarityNode::getVal() Float\n";
                 return val(stof(valueText));
                 break;
             case CppType::Double:
-                cout << "ClarityNode::getVal() Double\n";
+                // cout << "ClarityNode::getVal() Double\n";
                 return val(stod(valueText));
                 break;
             case CppType::String:
-                cout << "ClarityNode::getVal() String\n";
+                // cout << "ClarityNode::getVal() String\n";
                 return val(valueText);
                 break;
             case CppType::NoData:
             default:
-                cout << "ClarityNode::getVal() NoData\n";
+                // cout << "ClarityNode::getVal() NoData\n";
                 return val(NULL);
                 break;
         }
@@ -170,17 +181,17 @@ class ClarityNode {
     // inline virtual void setVal(const val &inval) { clean_ = false; }
 
     inline virtual void setVal(const val &inval) {
-        cout << "<<<<<<<<<<<<< CNN::setVal(const val &inval) >>>>>>>>>>>>>\n";
+        // cout << "<<<<<<<<<<<<< CNN::setVal(const val &inval) >>>>>>>>>>>>>\n";
         clean_ = false;
         val domElement = cle_["domElement"];
         cle_.call<void>("printVal", inval);
-        cout << "boundField_ = " << boundField_ << "\n";
+        // cout << "boundField_ = " << boundField_ << "\n";
         if (boundField_ != "") {
             domElement.set(boundField_, inval);
             domElement.call<void>("setAttribute", val(boundField_), inval);
         }
         else {
-            cout << "WARNING: boundField_ IS EMPTY for node " << id_ << "!!\n\n";
+            // cout << "WARNING: boundField_ IS EMPTY for node " << id_ << "!!\n\n";
         }
     }
 

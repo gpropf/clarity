@@ -69,8 +69,8 @@ void clarity::ClarityNode::pushValToPeer(ActiveLink &al, const string &tabs) {
     val internalVal = getVal();
 
     // al.printAL();
-    cout << tabs << "void clarity::ControlNetworkNode::pushValToPeer\n";
-    cout << tabs << al.peer_->nodeStats();
+    // cout << tabs << "void clarity::ControlNetworkNode::pushValToPeer\n";
+    // cout << tabs << al.peer_->nodeStats();
 
     if (internalVal.isNumber()) {
         val product = al.CLElement_.call<val>("applyTransformFn",
@@ -90,9 +90,9 @@ void clarity::ClarityNode::pushValToPeer2(DualLink &dl, const string &tabs) {
     val internalVal = getVal();
 
     // al.printAL();
-    cout << tabs << "pushValToPeer2(): ";
-    cout << tabs << "nodeA: " << dl.nodeA_->getId()
-         << ", nodeB: " << dl.nodeB_->getId() << "\n";
+    // cout << tabs << "pushValToPeer2(): ";
+    // cout << tabs << "nodeA: " << dl.nodeA_->getId()
+    //     << ", nodeB: " << dl.nodeB_->getId() << "\n";
 
     auto [peer, xfmr] = dl.getOtherNode(this);
     if (internalVal.isNumber()) {
@@ -126,16 +126,16 @@ void clarity::ClarityNode::pushValToPeer2(DualLink &dl, const string &tabs) {
 // }
 
 void clarity::ClarityNode::pushValToPeers2(ClarityNode *excludedPeer) {
-    cout << "ControlNetworkNode::pushValToPeers2, id = " << id_ << " Node has "
-         << to_string(countPeers()) << " peers!!!!!!!!!!!!!!!!!!!!!!!\n";
+    // cout << "ControlNetworkNode::pushValToPeers2, id = " << id_ << " Node has "
+    //     << to_string(countPeers()) << " peers!!!!!!!!!!!!!!!!!!!!!!!\n";
     // cout << "ControlNetworkNode::pushValToPeers ==>> " << nodeStats();
     if (excludedPeer == nullptr) {
-        cout << "\tNo peers excluded.\n";
+        // cout << "\tNo peers excluded.\n";
         for (auto dl : dlpeers_) {
             pushValToPeer2(*dl);
         }
     } else {
-        cout << "\tExcluded peer exists!\n";
+        // cout << "\tExcluded peer exists!\n";
         for (auto dl : dlpeers_) {
             auto [peer, xfmr] = dl->getOtherNode(this);
             if (peer != excludedPeer) {

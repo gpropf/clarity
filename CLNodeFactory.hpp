@@ -204,7 +204,7 @@ class CLNodeFactory {
         assert(boundField != "");
         CLNodeFactory cpy(*this);
         cpy.boundField_ = boundField;
-        cout << "withBoundField:: boundField = " << boundField << "\n";
+        // cout << "withBoundField:: boundField = " << boundField << "\n";
         return cpy;
     }
 
