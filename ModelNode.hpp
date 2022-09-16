@@ -9,6 +9,17 @@ namespace clarity {
 template <typename T>
 class ModelNode : public ClarityNode {
    public:
+
+    ~ModelNode() {
+        cout << "DESTROYING MODELNODE " << id_ << "\n";
+         
+        for (auto dl : dlpeers_) {
+           dl.reset();
+        }
+        //cle_["domElement"].call<void>("remove");
+    
+    }
+
     ModelNode(CppType storedValueType) : ClarityNode(storedValueType) {}
 
     ModelNode(T *dynval) : dynval_(dynval) {}

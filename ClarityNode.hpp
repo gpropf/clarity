@@ -125,16 +125,15 @@ class ClarityNode {
                 const CppType storedValueType,
                 bool useExistingDOMElement_ = false);
 
-
     ~ClarityNode() {
-       
-    cout << "DESTROYING NODE " << id_ << "\n";
-         
+        cout << "DESTROYING CLARITYNODE " << id_ << "\n";
+
         for (auto dl : dlpeers_) {
-           dl.reset();
+            dl.reset();
         }
+        val domElement = cle_["domElement"];
+        if (!domElement.isUndefined()) cle_["domElement"].call<void>("remove");
     }
-    
 
     EMSCRIPTEN_KEEPALIVE void setAttribute(const string &attr,
                                            const val &value);
@@ -181,7 +180,8 @@ class ClarityNode {
     // inline virtual void setVal(const val &inval) { clean_ = false; }
 
     inline virtual void setVal(const val &inval) {
-        // cout << "<<<<<<<<<<<<< CNN::setVal(const val &inval) >>>>>>>>>>>>>\n";
+        // cout << "<<<<<<<<<<<<< CNN::setVal(const val &inval)
+        // >>>>>>>>>>>>>\n";
         clean_ = false;
         val domElement = cle_["domElement"];
         cle_.call<void>("printVal", inval);
@@ -189,9 +189,9 @@ class ClarityNode {
         if (boundField_ != "") {
             domElement.set(boundField_, inval);
             domElement.call<void>("setAttribute", val(boundField_), inval);
-        }
-        else {
-            // cout << "WARNING: boundField_ IS EMPTY for node " << id_ << "!!\n\n";
+        } else {
+            // cout << "WARNING: boundField_ IS EMPTY for node " << id_ <<
+            // "!!\n\n";
         }
     }
 
@@ -268,7 +268,7 @@ class ClarityNode {
     string name_;  //!< Human readable name of node. Mutable, not required.
     /** \brief List of peers linked through JS functions which are applied when
      * data is moved between nodes. */
-    //vector<ClarityNode::ActiveLink> peers_;
+    // vector<ClarityNode::ActiveLink> peers_;
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
 };
 

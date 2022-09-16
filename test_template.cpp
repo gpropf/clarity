@@ -1,3 +1,5 @@
+#include <unistd.h>
+
 #include <map>
 
 #include "CLNodeFactory.hpp"
@@ -10,9 +12,28 @@ map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm;
 val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
 
+vector<int *> ns;
+vector<ModelNode<int> *> mns;
+vector<ClarityNode *> clns;
+
+void destroy_everything() {
+   
+    for (auto cln : clns) {
+        delete cln;
+    }
+
+    for (auto i : ns) {
+        delete i;
+    }
+     for (auto mn : mns) {
+        delete mn;
+    }
+}
+
 int main() {
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
+    val destroy_everything_cpp = CLE["destroy_everything"];
     val square = CLE["square"];
     val blackbody_st = CLE["blackbody_st"];
 
@@ -42,107 +63,30 @@ int main() {
     CLNodeFactory<ClarityNode, int, int>::clone(childOfMaindivBuilder,
                                                 childOfMaindivBuilder_int);
 
-    int *n_input_fields = new int(10);
+    int *n_input_fields = new int(900);
 
-    vector<int *> ns;
-    vector<ModelNode<int> *> mns;
-    vector<ClarityNode *> clns;
     for (int i = 0; i < *n_input_fields; i++) {
-        int *iptr = new int(i);        
-        ModelNode<int> *mn = nullptr;        
+        int *iptr = new int(i);
+        ModelNode<int> *mn = nullptr;
         ClarityNode *cln =
-        childOfMaindivBuilder_int.withStoredValueType(CppType::Int)
-            .withName("cln_" + to_string(i))
-            .withStoredValue(iptr)
-            .extractModelNode<int>(mn)
-            .trInput();
+            childOfMaindivBuilder_int.withStoredValueType(CppType::Int)
+                .withName("cln_" + to_string(i))
+                .withStoredValue(iptr)
+                .extractModelNode<int>(mn)
+                .trInput();
         ns.push_back(iptr);
         mns.push_back(mn);
         clns.push_back(cln);
     }
 
-    // string *flexLabelText = new string("Flex Text");
-
-    // ModelNode<string> *flexLabel_mn;
-    // ClarityNode *flexLabel =
-    //     childOfMaindivBuilder_str.withStoredValueType(CppType::String)
-    //         .withStoredValue(flexLabelText)
-    //         .extractModelNode<string>(flexLabel_mn)
-    //         .label(input_temp, *flexLabelText);
-
-    // val passthru = flexLabel_mn->getCLE()["passthru"];
-
-    // ClarityNode *inputFlexTextLabel =
-    //     childOfMaindivBuilder_str.withModelNode(flexLabel_mn)
-    //         .withStoredValueType(CppType::String)
-    //         //.withTransformFns(passthru, passthru)
-    //         .textInput();
-
-    // //<class Nc_in, class Nc_out, typename V_in, typename V_out>
-
-    // ClarityNode *input_temp_tr =
-    //     childOfMaindivBuilder.withStoredValueType(CppType::Double)
-    //         .withLinkMultiplierConstant(10)
-    //         .withName("input_temp_range")
-    //         .withModelNode(temp_mn2)
-    //         .trInput();
-
-    // ClarityNode *svgarea =
-    //     childOfMaindivBuilder.withName("svgarea")
-    //         .withTag("svg")
-    //         .withAttributes({{"width", val("300")},
-    //                          {"height", val("200")},
-    //                          {"viewBox", val("0 0 200 200")},
-    //                          {"style", val("border: 1px solid black")}})
-    //         .build();
-
-    // ClarityNode *statusButton =
-    //     childOfMaindivBuilder.button("statusButton", "Print Status",
-    //     doNothing);
-
-    // ClarityNode *cir1 = childOfMaindivBuilder.withName("cir1")
-    //                         .withParent(svgarea)
-    //                         .withTag("circle")
-    //                         .withAttributes({{"r", val("30")},
-    //                                          {"cx", val(100)},
-    //                                          {"cy", val(100)},
-    //                                          {"stroke", val("green")},
-    //                                          {"fill", val("rgb(50,199,77)")},
-    //                                          {"stroke-width", val(4)}})
-    //                         .build();
-
-    // ClarityNode *circleRadius = childOfMaindivBuilder.withModelNode(a_mn)
-    //                                 .withName("RADIUS")
-    //                                 .withLinkMultiplierConstant(1)
-    //                                 .withAttributes({})
-    //                                 .attributeNode("r", cir1);
-
-    // val blackbody = a_mn->getCLE()["blackbody"];
-
-    // ClarityNode *circleFill = childOfMaindivBuilder.withModelNode(temp_mn2)
-    //                               .withStoredValueType(CppType::String)
-    //                               .withName("CIRCLEFILL")
-    //                               .withTransformFns(blackbody, blackbody)
-    //                               .withAttributes({})
-    //                               .attributeNode("fill", cir1);
-
-    // ClarityNode *range_a = inputBuilder.withModelNode(a_mn)
-    //                            .withName("range_a")
-    //                            .withAttributes({{"type", val("range")}})
-    //                            .build();
-
-    // ClarityNode *range_a_lbld =
-    //     childOfMaindivBuilder.labelGivenNode(input_temp_tr, "Temperature");
-
-    // ClarityNode::callbackMap["printStats"] = [=] {
-    //     cout << "callbackMap[\"iterateModel\"]\n";
-    // };
-
-    // cout << "FILLCOLOR\n\n";
-    // val fillColor = circleFill->getVal();
-    // circleFill->getCLE().set("originalColor", fillColor);
+    ClarityNode *statusButton = childOfMaindivBuilder.button(
+        "statusButton", "BOOM!", destroy_everything_cpp);
 
     printf("Setup complete!\n");
+
+    clarity::ClarityNode::callbackMap["destroy_everything"] = [=] {
+        destroy_everything();
+    };
 
     return 0;
 }
