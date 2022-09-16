@@ -20,6 +20,9 @@ FRAMEWORK_DEPS = clarity.js clarity.html Makefile
 %.o : %.cpp %.hpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
 
+tt: test_template.o ClarityNode.o
+	$(CC) -lembind test_template.o ClarityNode.o $(CFLAGS) -o $(JSOUT)
+
 testbed: testbed.o ClarityNode.o
 	$(CC) -lembind testbed.o ClarityNode.o $(CFLAGS) -o $(JSOUT)
 
