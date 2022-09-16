@@ -94,6 +94,13 @@ class CLNodeFactory {
         return clnf_to;
     }
 
+    // template <class Nc_from, typename V_from, typename N_from, class Nc_to,
+    //           typename V_to, typename N_to>
+    // CLNodeFactory<Nc_from, V_from, N_from> clone2() {
+    //     CLNodeFactory<Nc_to, V_to, N_to> clnf_to(*this);         
+    //     return clnf_to;
+    // }
+
     /**
      * @brief Construct a new CLNodeFactory object
      *

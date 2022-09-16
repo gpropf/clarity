@@ -1,20 +1,16 @@
-#include "testbed.hpp"
-
 #include <map>
 
 #include "CLNodeFactory.hpp"
 #include "clarity.hpp"
 #include "embindings.hpp"
+#include "testbed.hpp"
 
 map<const int, ClarityNode *> ClarityNode::switchboard;
 map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm;
 val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
 
-
-
 int main() {
-
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
     val square = CLE["square"];
@@ -31,9 +27,6 @@ int main() {
     CLNodeFactory<ClarityNode, double, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
-    
-   
-
     ModelNode<double> *d1_mn;
     ClarityNode *d1_trinp =
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
@@ -42,9 +35,31 @@ int main() {
             .extractModelNode<double>(d1_mn)
             .trInput();
 
-    // CLNodeFactory<ClarityNode, string, int> childOfMaindivBuilder_str;
-    // CLNodeFactory<ClarityNode, string, int>::clone(childOfMaindivBuilder,
-    //                                                childOfMaindivBuilder_str);
+    ClarityNode *labelled_d1_trinp =
+        childOfMaindivBuilder.labelGivenNode(d1_trinp, "CONST LABEL");
+
+    CLNodeFactory<ClarityNode, int, int> childOfMaindivBuilder_int;
+    CLNodeFactory<ClarityNode, int, int>::clone(childOfMaindivBuilder,
+                                                childOfMaindivBuilder_int);
+
+    int *n_input_fields = new int(10);
+
+    vector<int *> ns;
+    vector<ModelNode<int> *> mns;
+    vector<ClarityNode *> clns;
+    for (int i = 0; i < *n_input_fields; i++) {
+        int *iptr = new int(i);        
+        ModelNode<int> *mn = nullptr;        
+        ClarityNode *cln =
+        childOfMaindivBuilder_int.withStoredValueType(CppType::Int)
+            .withName("cln_" + to_string(i))
+            .withStoredValue(iptr)
+            .extractModelNode<int>(mn)
+            .trInput();
+        ns.push_back(iptr);
+        mns.push_back(mn);
+        clns.push_back(cln);
+    }
 
     // string *flexLabelText = new string("Flex Text");
 
@@ -82,7 +97,8 @@ int main() {
     //         .build();
 
     // ClarityNode *statusButton =
-    //     childOfMaindivBuilder.button("statusButton", "Print Status", doNothing);
+    //     childOfMaindivBuilder.button("statusButton", "Print Status",
+    //     doNothing);
 
     // ClarityNode *cir1 = childOfMaindivBuilder.withName("cir1")
     //                         .withParent(svgarea)
