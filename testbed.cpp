@@ -9,7 +9,7 @@
 map<const int, ClarityNode *> ClarityNode::switchboard;
 map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm;
-val ClarityNode::ActiveLink::CLElement_ = val::global("CLElement");
+//val ClarityNode::ActiveLink::CLElement_ = val::global("CLElement");
 val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
 
 // double *testmem(double *dptr) {
@@ -23,7 +23,7 @@ void testmem(double *&dptr) {
 }
 
 int main() {
-    using ActiveLink = ClarityNode::ActiveLink;
+    //using ActiveLink = ClarityNode::ActiveLink;
 
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];

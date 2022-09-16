@@ -8,11 +8,11 @@ bool ClarityNode::appendChild(ClarityNode *child) {
     return true;  // FIXME: need to check for duplicate ids.
 }
 
-clarity::ClarityNode::ActiveLink::ActiveLink(ClarityNode *peer, val scalarConst)
-    : peer_(peer), constantOrFunction_(scalarConst) {
-    transformFn_ =
-        CLElement_.call<val>("generateTransformFn", constantOrFunction_);
-}
+// clarity::ClarityNode::ActiveLink::ActiveLink(ClarityNode *peer, val scalarConst)
+//     : peer_(peer), constantOrFunction_(scalarConst) {
+//     transformFn_ =
+//         CLElement_.call<val>("generateTransformFn", constantOrFunction_);
+// }
 
 inline string clarity::ClarityNode::nodeStats(const string &msg) const {
     string s = "NS: Node name: " + name_ + ", Node id: " + to_string(id_) +
@@ -62,26 +62,26 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
     ClarityNode::switchboard[id_] = this;
 }
 
-void clarity::ClarityNode::pushValToPeer(ActiveLink &al, const string &tabs) {
-    if (clean_) {
-    }
+// void clarity::ClarityNode::pushValToPeer(ActiveLink &al, const string &tabs) {
+//     if (clean_) {
+//     }
 
-    val internalVal = getVal();
+//     val internalVal = getVal();
 
-    // al.printAL();
-    // cout << tabs << "void clarity::ControlNetworkNode::pushValToPeer\n";
-    // cout << tabs << al.peer_->nodeStats();
+//     // al.printAL();
+//     // cout << tabs << "void clarity::ControlNetworkNode::pushValToPeer\n";
+//     // cout << tabs << al.peer_->nodeStats();
 
-    if (internalVal.isNumber()) {
-        val product = al.CLElement_.call<val>("applyTransformFn",
-                                              al.transformFn_, internalVal);
-        al.peer_->setVal(product);
-    } else {
-        al.peer_->setVal(internalVal);
-    }
+//     if (internalVal.isNumber()) {
+//         val product = al.CLElement_.call<val>("applyTransformFn",
+//                                               al.transformFn_, internalVal);
+//         al.peer_->setVal(product);
+//     } else {
+//         al.peer_->setVal(internalVal);
+//     }
 
-    clean_ = true;
-}
+//     clean_ = true;
+// }
 
 void clarity::ClarityNode::pushValToPeer2(DualLink &dl, const string &tabs) {
     if (clean_) {

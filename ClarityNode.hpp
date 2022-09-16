@@ -70,31 +70,31 @@ class ClarityNode {
         }
     };
 
-    /**
-     * @brief Represents the 'edges' in our control graph. These edges can be
-     * active and contain a JS value that can act as a transformation on the
-     * values moving between nodes.
-     *
-     *
-     */
-    class ActiveLink {
-       public:
-        static val CLElement_;
-        ActiveLink(ClarityNode *peer, val constantOrFunction = val(1));
+    // /**
+    //  * @brief Represents the 'edges' in our control graph. These edges can be
+    //  * active and contain a JS value that can act as a transformation on the
+    //  * values moving between nodes.
+    //  *
+    //  *
+    //  */
+    // class ActiveLink {
+    //    public:
+    //     static val CLElement_;
+    //     ActiveLink(ClarityNode *peer, val constantOrFunction = val(1));
 
-        template <typename T>
-        ActiveLink(ClarityNode *peer, const T constantOrFunction)
-            : peer_(peer), constantOrFunction_(val(constantOrFunction)) {
-            transformFn_ = CLElement_.call<val>("generateTransformFn",
-                                                constantOrFunction_);
-        }
+    //     template <typename T>
+    //     ActiveLink(ClarityNode *peer, const T constantOrFunction)
+    //         : peer_(peer), constantOrFunction_(val(constantOrFunction)) {
+    //         transformFn_ = CLElement_.call<val>("generateTransformFn",
+    //                                             constantOrFunction_);
+    //     }
 
-        void printAL() { cout << "AL peer ID: " << peer_->getId() << "\n"; }
+    //     void printAL() { cout << "AL peer ID: " << peer_->getId() << "\n"; }
 
-        ClarityNode *peer_;
-        val constantOrFunction_;
-        val transformFn_;
-    };
+    //     ClarityNode *peer_;
+    //     val constantOrFunction_;
+    //     val transformFn_;
+    // };
 
     EMSCRIPTEN_KEEPALIVE void addEventListenerByName(
         const string &eventName, const string &callbackName);
@@ -217,7 +217,7 @@ class ClarityNode {
 
     virtual string nodeStats(const string &msg = "") const;
 
-    virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
+    // virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
     virtual void pushValToPeer2(DualLink &al, const string &tabs = "");
 
     // virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
@@ -238,7 +238,7 @@ class ClarityNode {
     inline void appendDualLink(shared_ptr<DualLink> dl) {
         dlpeers_.push_back(dl);
     }
-    inline int countPeers() const { return peers_.size(); }
+    inline int countPeers() const { return dlpeers_.size(); }
 
    protected:
     string tag_;
@@ -268,7 +268,7 @@ class ClarityNode {
     string name_;  //!< Human readable name of node. Mutable, not required.
     /** \brief List of peers linked through JS functions which are applied when
      * data is moved between nodes. */
-    vector<ClarityNode::ActiveLink> peers_;
+    //vector<ClarityNode::ActiveLink> peers_;
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
 };
 
