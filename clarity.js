@@ -30,6 +30,11 @@ class CLElement {
     Module.ClarityNode.runCallbackById("destroy_everything")
   }
 
+  static make_trs_ints() {
+    console.log("JS:make_trs_ints()");
+    Module.ClarityNode.runCallbackById("make_trs_ints");
+  }
+
   printVal(v) {
     //console.log("JSVAL = " + v);
   }

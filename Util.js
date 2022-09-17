@@ -10,6 +10,12 @@ class Util {
         console.log("x is:" + x);
     }
 
+
+    static make_trs() {
+        console.log("Making the fields!");
+        Module.Util.make_trs();
+      }
+
 }
 
 

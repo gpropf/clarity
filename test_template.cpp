@@ -32,23 +32,30 @@ time_t msecs_time() {
 }
 
 void destroy_everything() {
+    cout << "Vectors clns, ns, and mns contain: " << clns.size() << ", "
+         << ns.size() << ", " << mns.size() << " elements respectively.\n";
     for (auto cln : clns) {
         delete cln;
     }
-
     for (auto i : ns) {
         delete i;
     }
     for (auto mn : mns) {
         delete mn;
     }
+    clns.clear();
+    ns.clear();
+    mns.clear();
 }
+
+int *n_input_fields = new int(15);
+int *n_fieldsets = new int(5);
 
 template <class Nc, typename V, typename N>
 void make_trs(CLNodeFactory<Nc, V, N> builder) {
     time_t t1 = msecs_time();
-    for (int j = 0; j < 5; j++) {
-        int *n_input_fields = new int(90);
+    for (int j = 0; j < *n_fieldsets; j++) {
+        // n_input_fields = new int(90);
 
         for (int i = 0; i < *n_input_fields; i++) {
             int *iptr = new int(i);
@@ -70,11 +77,19 @@ void make_trs(CLNodeFactory<Nc, V, N> builder) {
     cout << "Elapsed time: " << del_t << "\n";
 }
 
+// using namespace emscripten;
+// EMSCRIPTEN_BINDINGS(Util) {
+
+//         function("make_trs", &make_trs);
+
+// }
+
 int main() {
     val utils_instance = val::global("Util").new_();
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
     val destroy_everything_cpp = CLE["destroy_everything"];
+    val make_trs_ints = CLE["make_trs_ints"];
     val square = CLE["square"];
     val blackbody_st = CLE["blackbody_st"];
 
@@ -104,15 +119,37 @@ int main() {
     CLNodeFactory<ClarityNode, int, int>::clone(childOfMaindivBuilder,
                                                 childOfMaindivBuilder_int);
 
-    make_trs(childOfMaindivBuilder_int);
+    childOfMaindivBuilder_int =
+        childOfMaindivBuilder_int.withStoredValueType(CppType::Int);
+
+    ClarityNode *fieldsets_inp =
+        childOfMaindivBuilder_int  // .withStoredValueType(CppType::Int)
+            .withStoredValue(n_fieldsets)
+            .textInput();
+    ClarityNode *labelled_fieldsets_inp =
+        childOfMaindivBuilder_int.labelGivenNode(fieldsets_inp, "fieldsets");
+
+    ClarityNode *n_input_fields_inp =
+        childOfMaindivBuilder_int  // .withStoredValueType(CppType::Int)
+            .withStoredValue(n_input_fields)
+            .textInput();
+    ClarityNode *labelled_n_input_fields_inp =
+        childOfMaindivBuilder_int.labelGivenNode(n_input_fields_inp, "fields per set");
 
     ClarityNode *statusButton = childOfMaindivBuilder.button(
         "statusButton", "BOOM!", destroy_everything_cpp);
+
+    ClarityNode *make_trs_button = childOfMaindivBuilder.button(
+        "make_trs_button", "Make the fields!", make_trs_ints);
 
     printf("Setup complete!\n");
 
     clarity::ClarityNode::callbackMap["destroy_everything"] = [=] {
         destroy_everything();
+    };
+
+    clarity::ClarityNode::callbackMap["make_trs_ints"] = [=] {
+        make_trs(childOfMaindivBuilder_int);
     };
 
     utils_instance.call<void>("utiltest", 3);
