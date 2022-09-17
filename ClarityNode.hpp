@@ -131,6 +131,7 @@ class ClarityNode {
         for (auto dl : dlpeers_) {
             dl.reset();
         }
+        dlpeers_.clear();
         val domElement = cle_["domElement"];
         if (!domElement.isUndefined()) cle_["domElement"].call<void>("remove");
     }

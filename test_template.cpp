@@ -48,8 +48,8 @@ void destroy_everything() {
     mns.clear();
 }
 
-int *n_input_fields = new int(15);
-int *n_fieldsets = new int(5);
+int *n_input_fields = new int(30);
+int *n_fieldsets = new int(100);
 
 template <class Nc, typename V, typename N>
 void make_trs(CLNodeFactory<Nc, V, N> builder) {

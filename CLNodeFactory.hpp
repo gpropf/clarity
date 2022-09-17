@@ -267,8 +267,9 @@ class CLNodeFactory {
         cpy.parent_ = parent;
         return cpy;
     }
-///////////////////////////
-    inline CLNodeFactory withStoredValueType(clarity::CppType storedValueType) {
+    ///////////////////////////
+    inline CLNodeFactory withStoredValueType(
+        clarity::CppType storedValueType) const & {
         CLNodeFactory cpy(*this);
         cpy.storedValueType_ = storedValueType;
         if (cpy.modelNode_) {
@@ -280,15 +281,41 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline CLNodeFactory withStoredValue(V *storedValue, bool mutate = false) {
+    inline CLNodeFactory withStoredValueType(
+        clarity::CppType storedValueType) && {
+        CLNodeFactory cpy(move(*this));
+        cpy.storedValueType_ = storedValueType;
+        if (cpy.modelNode_) {
+            cpy.modelNode_->setStoredValueType(storedValueType);
+        }
+
+        // In case we already created a MN, we need to double back and set the
+        // type in it.
+        return cpy;
+    }
+
+    inline CLNodeFactory withStoredValue(V *storedValue) const & {
         assert(storedValue != nullptr);
         ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
                                             "modelnode_for_" + this->name_);
-        if (mutate) {
-            this->modelNode_ = mn;
-            return *this;
-        }
+        // if (mutate) {
+        //     this->modelNode_ = mn;
+        //     return *this;
+        // }
         CLNodeFactory cpy(*this);
+        cpy.modelNode_ = mn;
+        return cpy;
+    }
+
+    inline CLNodeFactory withStoredValue(V *storedValue) && {
+        assert(storedValue != nullptr);
+        ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
+                                            "modelnode_for_" + this->name_);
+        // if (mutate) {
+        //     this->modelNode_ = mn;
+        //     return *this;
+        // }
+        CLNodeFactory cpy(move(*this));
         cpy.modelNode_ = mn;
         return cpy;
     }
