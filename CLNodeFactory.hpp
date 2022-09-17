@@ -97,7 +97,7 @@ class CLNodeFactory {
     // template <class Nc_from, typename V_from, typename N_from, class Nc_to,
     //           typename V_to, typename N_to>
     // CLNodeFactory<Nc_from, V_from, N_from> clone2() {
-    //     CLNodeFactory<Nc_to, V_to, N_to> clnf_to(*this);         
+    //     CLNodeFactory<Nc_to, V_to, N_to> clnf_to(*this);
     //     return clnf_to;
     // }
 
@@ -226,13 +226,11 @@ class CLNodeFactory {
         return createChildrenOf(parent).withExistingDOMElement();
     }
 
-    inline CLNodeFactory createAttributesOf(int parentId) {  // FIXME
-        // CLNodeFactory cpy(*this);
-        // cpy.parent_ = parent;
-        // return cpy;
+    inline CLNodeFactory createAttributesOf(
+        int parentId) {  // FIXME: do we need this?
     }
 
-    inline CLNodeFactory withTag(const string &tag) const &{
+    inline CLNodeFactory withTag(const string &tag) const & {
         CLNodeFactory cpy(*this);
         cpy.tag_ = tag;
         return cpy;
@@ -244,19 +242,32 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline CLNodeFactory withName(const string &name) {
+    inline CLNodeFactory withName(const string &name) const & {
         CLNodeFactory cpy(*this);
         cpy.name_ = name;
         return cpy;
     }
 
-    inline CLNodeFactory withParent(Nc *parent) {
+    inline CLNodeFactory withName(const string &name) && {
+        CLNodeFactory cpy(move(*this));
+        cpy.name_ = name;
+        return cpy;
+    }
+
+    inline CLNodeFactory withParent(Nc *parent) const & {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
     }
 
+    inline CLNodeFactory withParent(Nc *parent) && {
+        assert(parent != nullptr);
+        CLNodeFactory cpy(move(*this));
+        cpy.parent_ = parent;
+        return cpy;
+    }
+///////////////////////////
     inline CLNodeFactory withStoredValueType(clarity::CppType storedValueType) {
         CLNodeFactory cpy(*this);
         cpy.storedValueType_ = storedValueType;
