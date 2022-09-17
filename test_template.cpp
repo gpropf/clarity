@@ -1,5 +1,9 @@
+#include <sys/time.h>
 #include <unistd.h>
 
+#include <chrono>
+#include <ctime>
+#include <iostream>
 #include <map>
 
 #include "CLNodeFactory.hpp"
@@ -15,6 +19,17 @@ val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
 vector<int *> ns;
 vector<ModelNode<int> *> mns;
 vector<ClarityNode *> clns;
+
+time_t msecs_time() {
+    struct timeval time_now {};
+    gettimeofday(&time_now, nullptr);
+    time_t msecs_time = (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
+
+    cout << "seconds since epoch: " << time_now.tv_sec << endl;
+    cout << "milliseconds since epoch: " << msecs_time << endl << endl;
+
+    return msecs_time;
+}
 
 void destroy_everything() {
     for (auto cln : clns) {
@@ -62,6 +77,8 @@ int main() {
     CLNodeFactory<ClarityNode, int, int>::clone(childOfMaindivBuilder,
                                                 childOfMaindivBuilder_int);
 
+
+    time_t t1 = msecs_time();
     for (int j = 0; j < 50; j++) {
         int *n_input_fields = new int(90);
 
@@ -78,9 +95,13 @@ int main() {
             mns.push_back(mn);
             clns.push_back(cln);
         }
-        //destroy_everything();
+        // destroy_everything();
     }
-
+    time_t t2 = msecs_time();
+    //msecs_time();
+    time_t del_t =  t2 - t1;
+    cout << "Elapsed time: " << del_t;
+    
     ClarityNode *statusButton = childOfMaindivBuilder.button(
         "statusButton", "BOOM!", destroy_everything_cpp);
 
