@@ -9,7 +9,7 @@
 #include "CLNodeFactory.hpp"
 #include "clarity.hpp"
 #include "embindings.hpp"
-#include "testbed.hpp"
+#include "speedtest.hpp"
 
 map<const int, ClarityNode *> ClarityNode::switchboard;
 map<string, std::function<void()>> ClarityNode::callbackMap;

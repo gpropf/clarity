@@ -320,30 +320,58 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) {
+    inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) const & {
         assert(modelNode != nullptr);
         CLNodeFactory cpy(*this);
         cpy.modelNode_ = modelNode;
         return cpy;
     }
 
-    inline CLNodeFactory withLinkMultiplierConstant(N linkMultiplierConstant) {
+    inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) && {
+        assert(modelNode != nullptr);
+        CLNodeFactory cpy(move(*this));
+        cpy.modelNode_ = modelNode;
+        return cpy;
+    }
+
+    inline CLNodeFactory withLinkMultiplierConstant(N linkMultiplierConstant) const & {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(*this);
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
         return cpy;
     }
 
+    inline CLNodeFactory withLinkMultiplierConstant(N linkMultiplierConstant) && {
+        assert(linkMultiplierConstant != 0);
+        CLNodeFactory cpy(move(*this));
+        cpy.linkMultiplierConstant_ = linkMultiplierConstant;
+        return cpy;
+    }
+
     inline CLNodeFactory withTransformFns(val a2b_xfmr,
-                                          val b2a_xfmr = val(NULL)) {
+                                          val b2a_xfmr = val(NULL)) const &{
         CLNodeFactory cpy(*this);
         cpy.a2b_xfmr_ = a2b_xfmr;
         cpy.b2a_xfmr_ = b2a_xfmr;
         return cpy;
     }
 
-    inline CLNodeFactory withExistingDOMElement() {
+     inline CLNodeFactory withTransformFns(val a2b_xfmr,
+                                          val b2a_xfmr = val(NULL)) &&{
+        CLNodeFactory cpy(move(*this));
+        cpy.a2b_xfmr_ = a2b_xfmr;
+        cpy.b2a_xfmr_ = b2a_xfmr;
+        return cpy;
+    }
+
+    inline CLNodeFactory withExistingDOMElement() const & {
         CLNodeFactory cpy(*this);
+        cpy.useExistingDOMElement_ = true;
+        return cpy;
+    }
+
+    inline CLNodeFactory withExistingDOMElement() && {
+        CLNodeFactory cpy(move(*this));
         cpy.useExistingDOMElement_ = true;
         return cpy;
     }
