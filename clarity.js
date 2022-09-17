@@ -5,6 +5,44 @@ class CLElement {
 
   constructor() { }
 
+  static tagToUrl = { "svg": "http://www.w3.org/2000/svg", "circle": "http://www.w3.org/2000/svg" };
+  static extraInitCode = {
+    "canvas": function (domElement) {
+      if (domElement.getContext) {
+        domElement.style.display = 'none';
+        domElement.style.display = 'block';
+        let ctx = domElement.getContext('2d');
+        ctx.fillStyle = 'blue';
+        ctx.fillRect(10, 10, 60, 60);
+        ctx.fillRect(100, 10, 90, 60);
+
+        ctx.beginPath();
+        ctx.arc(250, 40, 32, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(10, 160);
+        ctx.lineTo(90, 160);
+        ctx.lineTo(50, 110);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.save();
+        ctx.scale(2, 1);
+        ctx.beginPath();
+        ctx.arc(72, 130, 25, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.restore();
+
+        ctx.beginPath();
+        ctx.arc(250, 120, 40, 0, Math.PI);
+        ctx.fill();
+        //alert(ctx);
+
+      }
+    }
+  };
+
   multiplyValues(a, b) {
     return a * b
   }
@@ -42,6 +80,13 @@ class CLElement {
   static zerofloor(n) {
     if (n < 0) return 0;
     return n;
+  }
+
+  static draw_test_pattern() {
+    console.log("draw_test_pattern");
+    let canvasEl = document.getElementById(2);
+    var canvasCode = CLElement.extraInitCode["canvas"];
+    canvasCode(canvasEl);
   }
 
   /**
@@ -179,43 +224,6 @@ class CLElement {
     return this.domElement_.name;
   }
 
-  static tagToUrl = { "svg": "http://www.w3.org/2000/svg", "circle": "http://www.w3.org/2000/svg" };
-  static extraInitCode = {
-    "canvas": function (domElement) {
-      if (domElement.getContext) {
-        domElement.style.display = 'none';
-        domElement.style.display = 'block';
-        let ctx = domElement.getContext('2d');
-        ctx.fillStyle = 'blue';
-        ctx.fillRect(10, 10, 60, 60);
-        ctx.fillRect(100, 10, 90, 60);
-
-        ctx.beginPath();
-        ctx.arc(250, 40, 32, 0, 2 * Math.PI);
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.moveTo(10, 160);
-        ctx.lineTo(90, 160);
-        ctx.lineTo(50, 110);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.save();
-        ctx.scale(2, 1);
-        ctx.beginPath();
-        ctx.arc(72, 130, 25, 0, 2 * Math.PI);
-        ctx.fill();
-        ctx.restore();
-
-        ctx.beginPath();
-        ctx.arc(250, 120, 40, 0, Math.PI);
-        ctx.fill();
-        //alert(ctx);
-
-      }
-    }
-  };
 
   createDOMElementByTagType() {
     var el
