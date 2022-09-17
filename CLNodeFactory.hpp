@@ -175,6 +175,13 @@ class CLNodeFactory {
         return *this;
     }
 
+    /**
+     * @brief The method that makes it all possible. Virtually all the other
+     * methods use this at least once. The build method uses all the current
+     * settings to construct a control element.
+     *
+     * @return Nc*
+     */
     inline Nc *build() {
         Nc *newNode =
             new Nc(name_, tag_, storedValueType_, useExistingDOMElement_);
@@ -207,6 +214,13 @@ class CLNodeFactory {
         return cpy;
     }
 
+    /**
+     * @brief The "bound" field is the one that stores the data and reflects the
+     * current state of the associated ModelNode.
+     *
+     * @param boundField
+     * @return CLNodeFactory
+     */
     inline CLNodeFactory withBoundField(const string &boundField) {
         assert(boundField != "");
         CLNodeFactory cpy(*this);
@@ -215,6 +229,14 @@ class CLNodeFactory {
         return cpy;
     }
 
+    /**
+     * @brief Sets the factory to create all future nodes as children of the one
+     * you give it. Very handy when fleshing out a piece of the GUI that is all
+     * stored inside one div.
+     *
+     * @param parent
+     * @return CLNodeFactory
+     */
     inline CLNodeFactory createChildrenOf(Nc *parent) {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
@@ -222,14 +244,20 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline CLNodeFactory createAttributesOf(Nc *parent) {
-        return createChildrenOf(parent).withExistingDOMElement();
-    }
+    // inline CLNodeFactory createAttributesOf(Nc *parent) {
+    //     return createChildrenOf(parent).withExistingDOMElement();
+    // }
 
-    inline CLNodeFactory createAttributesOf(
-        int parentId) {  // FIXME: do we need this?
-    }
+    // inline CLNodeFactory createAttributesOf(
+    //     int parentId) {  // FIXME: do we need this?
+    // }
 
+    /**
+     * @brief Sets the HTML tag to use when creating the node.
+     *
+     * @param tag
+     * @return CLNodeFactory
+     */
     inline CLNodeFactory withTag(const string &tag) const & {
         CLNodeFactory cpy(*this);
         cpy.tag_ = tag;
@@ -242,6 +270,12 @@ class CLNodeFactory {
         return cpy;
     }
 
+    /**
+     * @brief Sets the name of the node to create.
+     *
+     * @param name
+     * @return CLNodeFactory
+     */
     inline CLNodeFactory withName(const string &name) const & {
         CLNodeFactory cpy(*this);
         cpy.name_ = name;
@@ -254,6 +288,12 @@ class CLNodeFactory {
         return cpy;
     }
 
+    /**
+     * @brief Set the node's parent.
+     *
+     * @param parent Cannot be null.
+     * @return CLNodeFactory
+     */
     inline CLNodeFactory withParent(Nc *parent) const & {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
@@ -267,7 +307,14 @@ class CLNodeFactory {
         cpy.parent_ = parent;
         return cpy;
     }
-    ///////////////////////////
+
+    /**
+     * @brief Sets the C++ type of the stored data. If a ModelNode is already
+     * set, also sets the storedValueType_ for it.
+     *
+     * @param storedValueType
+     * @return CLNodeFactory
+     */
     inline CLNodeFactory withStoredValueType(
         clarity::CppType storedValueType) const & {
         CLNodeFactory cpy(*this);
@@ -275,9 +322,6 @@ class CLNodeFactory {
         if (cpy.modelNode_) {
             cpy.modelNode_->setStoredValueType(storedValueType);
         }
-
-        // In case we already created a MN, we need to double back and set the
-        // type in it.
         return cpy;
     }
 
@@ -288,20 +332,21 @@ class CLNodeFactory {
         if (cpy.modelNode_) {
             cpy.modelNode_->setStoredValueType(storedValueType);
         }
-
-        // In case we already created a MN, we need to double back and set the
-        // type in it.
         return cpy;
     }
 
+    /**
+     * @brief Creates a ModelNode in which to store the provided value. During
+     * the build() call the ModelNode will be linked to the built node as a
+     * peer.
+     *
+     * @param storedValue
+     * @return CLNodeFactory
+     */
     inline CLNodeFactory withStoredValue(V *storedValue) const & {
         assert(storedValue != nullptr);
         ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
                                             "modelnode_for_" + this->name_);
-        // if (mutate) {
-        //     this->modelNode_ = mn;
-        //     return *this;
-        // }
         CLNodeFactory cpy(*this);
         cpy.modelNode_ = mn;
         return cpy;
@@ -311,15 +356,20 @@ class CLNodeFactory {
         assert(storedValue != nullptr);
         ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
                                             "modelnode_for_" + this->name_);
-        // if (mutate) {
-        //     this->modelNode_ = mn;
-        //     return *this;
-        // }
         CLNodeFactory cpy(move(*this));
         cpy.modelNode_ = mn;
         return cpy;
     }
 
+    /**
+     * @brief In the case where a ModelNode already exists we can store it in
+     * the factory and it will be linked to the built node as a peer in the
+     * build() method. Note that this method and withStoredValue() are
+     * incompatible.
+     *
+     * @param modelNode
+     * @return CLNodeFactory
+     */
     inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) const & {
         assert(modelNode != nullptr);
         CLNodeFactory cpy(*this);
@@ -334,36 +384,68 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline CLNodeFactory withLinkMultiplierConstant(N linkMultiplierConstant) const & {
+    /**
+     * @brief A numeric constant that will be used as a multiplier when
+     * transferring the value in this node to its associated ModelNode. The
+     * inverse of this factor is applied for reverse data transfers.
+     *
+     * @param linkMultiplierConstant Cannot be 0.
+     * @return CLNodeFactory
+     */
+    inline CLNodeFactory withLinkMultiplierConstant(
+        N linkMultiplierConstant) const & {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(*this);
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
         return cpy;
     }
 
-    inline CLNodeFactory withLinkMultiplierConstant(N linkMultiplierConstant) && {
+    inline CLNodeFactory withLinkMultiplierConstant(
+        N linkMultiplierConstant) && {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(move(*this));
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
+        return cpy;
+    }
+
+    /**
+     * @brief It is sometimes necessary to apply a complex transform rather than
+     * just a constant multiplier to a value when transferring it between nodes.
+     * An example would be when translating a numeric value into an RGB color
+     * value to make an object become redder as its temperature rises. These
+     * JavaSCript transform functions can be stored to apply these
+     * transformations. There are two to represent the possible transfer of
+     * values in both directions. The reverse (b2a) transform can be null since
+     * many uses of this feature will involve setting attributes from values and
+     * attributes are generally not capable of accepting input.
+     *
+     * @param a2b_xfmr
+     * @param b2a_xfmr
+     * @return CLNodeFactory
+     */
+    inline CLNodeFactory withTransformFns(val a2b_xfmr,
+                                          val b2a_xfmr = val(NULL)) const & {
+        CLNodeFactory cpy(*this);
+        cpy.a2b_xfmr_ = a2b_xfmr;
+        cpy.b2a_xfmr_ = b2a_xfmr;
         return cpy;
     }
 
     inline CLNodeFactory withTransformFns(val a2b_xfmr,
-                                          val b2a_xfmr = val(NULL)) const &{
-        CLNodeFactory cpy(*this);
-        cpy.a2b_xfmr_ = a2b_xfmr;
-        cpy.b2a_xfmr_ = b2a_xfmr;
-        return cpy;
-    }
-
-     inline CLNodeFactory withTransformFns(val a2b_xfmr,
-                                          val b2a_xfmr = val(NULL)) &&{
+                                          val b2a_xfmr = val(NULL)) && {
         CLNodeFactory cpy(move(*this));
         cpy.a2b_xfmr_ = a2b_xfmr;
         cpy.b2a_xfmr_ = b2a_xfmr;
         return cpy;
     }
 
+    /**
+     * @brief Primarily meant to be used when creating an attribute node since
+     * the DOM element already exists. I also plan to allow attaching nodes to
+     * existing DOM elements in a static web page.
+     *
+     * @return CLNodeFactory
+     */
     inline CLNodeFactory withExistingDOMElement() const & {
         CLNodeFactory cpy(*this);
         cpy.useExistingDOMElement_ = true;
@@ -376,6 +458,14 @@ class CLNodeFactory {
         return cpy;
     }
 
+    /**
+     * @brief A button.
+     *
+     * @param name
+     * @param text
+     * @param onPressCallback JS function to run when button is pressed.
+     * @return ClarityNode*
+     */
     inline ClarityNode *button(const string &name, const string &text,
                                val onPressCallback = val(NULL)) {
         ClarityNode *button = withTag("button").build();
@@ -387,6 +477,14 @@ class CLNodeFactory {
         return button;
     }
 
+    /**
+     * @brief An HTML label. By default, this tracks the value of the current
+     * ModelNode and can thus be changed dynamically.
+     *
+     * @param forNode
+     * @param text
+     * @return ClarityNode*
+     */
     inline ClarityNode *label(ClarityNode *forNode, const string &text) {
         ClarityNode *label = withTag("label").build();
         label->setBoundField("innerHTML");
@@ -395,6 +493,11 @@ class CLNodeFactory {
         return label;
     }
 
+    /**
+     * @brief A simple text input field.
+     *
+     * @return ClarityNode*
+     */
     inline ClarityNode *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
         ClarityNode *inp = withTag("input")
@@ -404,6 +507,11 @@ class CLNodeFactory {
         return inp;
     }
 
+    /**
+     * @brief A range (slider) control.
+     *
+     * @return ClarityNode*
+     */
     inline ClarityNode *rangeInput() {
         map<string, val> inputFieldAttrs = {{"type", val("range")}};
         ClarityNode *inp = withTag("input")
@@ -413,6 +521,12 @@ class CLNodeFactory {
         return inp;
     }
 
+    /**
+     * @brief Text/Range input control. Creates a text field  and corresponding
+     * range (slider) input that both control the same value.
+     *
+     * @return ClarityNode*
+     */
     inline ClarityNode *trInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
         ClarityNode *tinp = withTag("input")
@@ -432,6 +546,14 @@ class CLNodeFactory {
         return outerDiv;
     }
 
+    /**
+     * @brief Creates a label for any node you give it and encapsulates the
+     * given node and the label in an enclosing div.
+     *
+     * @param nodeToBeLabelled
+     * @param labelText
+     * @return ClarityNode*
+     */
     inline ClarityNode *labelGivenNode(ClarityNode *nodeToBeLabelled,
                                        const string &labelText) {
         ClarityNode *outerDiv =
@@ -446,11 +568,26 @@ class CLNodeFactory {
         return outerDiv;
     }
 
+    /**
+     * @brief This is suppsed to create a dual text and range input control and
+     * add a label. It needs work. The label text ends up using the
+     * storedValue_, not exactly what I wanted.
+     *
+     * @param labelText
+     * @return ClarityNode*
+     */
     inline ClarityNode *labelledTRInputNode(const string &labelText) {
         ClarityNode *trInputNode = trInput();
         return labelGivenNode(trInputNode, labelText);
     }
 
+    /**
+     * @brief Attribute nodes are a special case. They represent a single
+     * attribute of another node and thus do not have their own DOM element.
+     *
+     * @param attributeName
+     * @return ClarityNode*
+     */
     inline ClarityNode *attributeNode(const string &attributeName) {
         ClarityNode *attributeNode =
             withExistingDOMElement().withBoundField(attributeName).build();
@@ -460,6 +597,14 @@ class CLNodeFactory {
         return attributeNode;
     }
 
+    /**
+     * @brief A variant of attributeNode method that sets the parent node and
+     * then calls the single argument form.
+     *
+     * @param attributeName
+     * @param parent
+     * @return ClarityNode*
+     */
     inline ClarityNode *attributeNode(const string &attributeName,
                                       ClarityNode *parent) {
         ClarityNode *attributeNode =
