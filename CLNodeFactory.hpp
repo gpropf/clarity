@@ -232,8 +232,14 @@ class CLNodeFactory {
         // return cpy;
     }
 
-    inline CLNodeFactory withTag(const string &tag) {
+    inline CLNodeFactory withTag(const string &tag) const &{
         CLNodeFactory cpy(*this);
+        cpy.tag_ = tag;
+        return cpy;
+    }
+
+    inline CLNodeFactory withTag(const string &tag) && {
+        CLNodeFactory cpy(move(*this));
         cpy.tag_ = tag;
         return cpy;
     }

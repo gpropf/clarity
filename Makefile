@@ -13,7 +13,7 @@ JSOUT	= clarity_embind.js
 LIBCLR_IN = ClarityNode.cpp ModelNode.hpp CanvasElement.cpp CLNodeFactory.hpp			
 LIBCLR_OBJS = ClarityNode.o ModelNode.o CanvasElement.o CLNodeFactory.o			
 AR 		= emar
-FRAMEWORK_DEPS = clarity.js clarity.html Makefile
+FRAMEWORK_DEPS = clarity.js Util.js clarity.html Makefile
 
 # %.cpp : %.hpp
 

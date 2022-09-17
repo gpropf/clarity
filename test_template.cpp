@@ -45,6 +45,7 @@ void destroy_everything() {
 }
 
 int main() {
+    val utils_instance = val::global("Util").new_();
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
     val destroy_everything_cpp = CLE["destroy_everything"];
@@ -79,7 +80,7 @@ int main() {
 
 
     time_t t1 = msecs_time();
-    for (int j = 0; j < 50; j++) {
+    for (int j = 0; j < 5; j++) {
         int *n_input_fields = new int(90);
 
         for (int i = 0; i < *n_input_fields; i++) {
@@ -100,7 +101,7 @@ int main() {
     time_t t2 = msecs_time();
     //msecs_time();
     time_t del_t =  t2 - t1;
-    cout << "Elapsed time: " << del_t;
+    cout << "Elapsed time: " << del_t << "\n";
     
     ClarityNode *statusButton = childOfMaindivBuilder.button(
         "statusButton", "BOOM!", destroy_everything_cpp);
@@ -111,5 +112,6 @@ int main() {
         destroy_everything();
     };
 
+    utils_instance.call<void>("utiltest", 3);
     return 0;
 }
