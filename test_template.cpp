@@ -44,6 +44,32 @@ void destroy_everything() {
     }
 }
 
+template <class Nc, typename V, typename N>
+void make_trs(CLNodeFactory<Nc, V, N> builder) {
+    time_t t1 = msecs_time();
+    for (int j = 0; j < 5; j++) {
+        int *n_input_fields = new int(90);
+
+        for (int i = 0; i < *n_input_fields; i++) {
+            int *iptr = new int(i);
+            ModelNode<int> *mn = nullptr;
+            ClarityNode *cln = builder.withStoredValueType(CppType::Int)
+                                   .withName("cln_" + to_string(i))
+                                   .withStoredValue(iptr)
+                                   .template extractModelNode<V>(mn)
+                                   .trInput();
+            ns.push_back(iptr);
+            mns.push_back(mn);
+            clns.push_back(cln);
+        }
+        // destroy_everything();
+    }
+    time_t t2 = msecs_time();
+    // msecs_time();
+    time_t del_t = t2 - t1;
+    cout << "Elapsed time: " << del_t << "\n";
+}
+
 int main() {
     val utils_instance = val::global("Util").new_();
     val CLE = val::global("CLElement");
@@ -78,31 +104,8 @@ int main() {
     CLNodeFactory<ClarityNode, int, int>::clone(childOfMaindivBuilder,
                                                 childOfMaindivBuilder_int);
 
+    make_trs(childOfMaindivBuilder_int);
 
-    time_t t1 = msecs_time();
-    for (int j = 0; j < 5; j++) {
-        int *n_input_fields = new int(90);
-
-        for (int i = 0; i < *n_input_fields; i++) {
-            int *iptr = new int(i);
-            ModelNode<int> *mn = nullptr;
-            ClarityNode *cln =
-                childOfMaindivBuilder_int.withStoredValueType(CppType::Int)
-                    .withName("cln_" + to_string(i))
-                    .withStoredValue(iptr)
-                    .extractModelNode<int>(mn)
-                    .trInput();
-            ns.push_back(iptr);
-            mns.push_back(mn);
-            clns.push_back(cln);
-        }
-        // destroy_everything();
-    }
-    time_t t2 = msecs_time();
-    //msecs_time();
-    time_t del_t =  t2 - t1;
-    cout << "Elapsed time: " << del_t << "\n";
-    
     ClarityNode *statusButton = childOfMaindivBuilder.button(
         "statusButton", "BOOM!", destroy_everything_cpp);
 
