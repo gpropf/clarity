@@ -58,8 +58,8 @@ int main() {
 
     printf("Setup complete!\n");
 
-val del = canvas1->getCLE()["domElement"];
-CLE.call<void>("canvasDrawFunction", del);
+//val del = canvas1->getCLE()["domElement"];
+//CLE.call<void>("canvasDrawFunction", del);
  
  //  canvas1_cle.call<void>("canvasDrawFunction");
     //canvasDrawFunction(canvas1_cle);

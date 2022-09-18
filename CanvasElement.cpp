@@ -10,6 +10,7 @@ CanvasElement::CanvasElement(int width, int height, const string &name,
     setAttribute("height", val(height_));
     val domElement = cle_["domElement"];
     drawFunction_ = drawFunction;
+    cle_.call<void>("drawGreenTestPattern");
     //drawFunction_();
     //  val canvasInit =
 }
