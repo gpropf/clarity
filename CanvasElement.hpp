@@ -9,10 +9,12 @@ class CanvasElement : public ClarityNode
 
 {
    public:
-    CanvasElement(int width, int height, const string &name = "");
+    CanvasElement(int width, int height, const string &name = "",
+                  val drawFunction_ = val(NULL));
 
    protected:
     int width_, height_;
+    val drawFunction_;
 };
 
 }  // namespace clarity

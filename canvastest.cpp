@@ -35,7 +35,8 @@ int main() {
     val utils_instance = val::global("Util").new_();
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
-    val drawTestPattern = CLE["draw_test_pattern"];
+    val canvasDrawFunction = CLE["canvasDrawFunction"];
+    val draw_test_pattern = CLE["draw_test_pattern"];
 
     CLNodeFactory<ClarityNode, double, double> builder("div", "maindiv",
                                                        CppType::NoData);
@@ -46,19 +47,23 @@ int main() {
         builder.createChildrenOf(maindiv);
 
     ClarityNode *canvas1 =
-        childOfMaindivBuilder.withName("canvas1")
-            .withTag("canvas")
-            .withAttributes({{"width", val(400)}, {"height", val(300)}})
-            .build();
+        childOfMaindivBuilder
+            .withName("canvas1")
+            // .withTag("canvas")
+            //  .withAttributes({{"width", val(400)}, {"height", val(300)}})
+            .canvas(400, 300, "canvas1", canvasDrawFunction);
 
-    ClarityNode *statusButton =
-        childOfMaindivBuilder.button("canvasButton", "Draw!", drawTestPattern);
+    ClarityNode *statusButton = childOfMaindivBuilder.button(
+        "canvasButton", "Draw!", canvasDrawFunction);
 
     printf("Setup complete!\n");
 
-    // clarity::ClarityNode::callbackMap["drawTestPattern"] = [=] {
-    //     drawTestPattern();
-    // };
+val del = canvas1->getCLE()["domElement"];
+CLE.call<void>("canvasDrawFunction", del);
+ 
+ //  canvas1_cle.call<void>("canvasDrawFunction");
+    //canvasDrawFunction(canvas1_cle);
+    // draw_test_pattern();
 
     return 0;
 }

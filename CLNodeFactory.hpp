@@ -1,6 +1,7 @@
 #ifndef CLNodeFactory_hpp
 #define CLNodeFactory_hpp
 
+#include "CanvasElement.hpp"
 #include "ModelNode.hpp"
 
 namespace clarity {
@@ -182,9 +183,15 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    inline Nc *build() {
-        Nc *newNode =
-            new Nc(name_, tag_, storedValueType_, useExistingDOMElement_);
+    inline Nc *build(Nc *existingNode = nullptr) {
+        Nc *newNode;
+        if (existingNode != nullptr) {
+            newNode = existingNode;
+        } else {
+            newNode =
+                new Nc(name_, tag_, storedValueType_, useExistingDOMElement_);
+        }
+
         newNode->setBoundField(boundField_);
         newNode->setAttributes(attrs_);
         if (parent_) {
@@ -566,6 +573,15 @@ class CLNodeFactory {
         outerDiv->appendChild(nodeToBeLabelled);
         outerDiv->appendChild(labelNode);
         return outerDiv;
+    }
+
+    inline ClarityNode *canvas(int width, int height, const string &name,
+                                 val draw_function) {
+        CanvasElement *cel =
+            new CanvasElement(width, height, name, draw_function);
+
+        ClarityNode *celr = build(cel);
+        return celr;
     }
 
     /**
