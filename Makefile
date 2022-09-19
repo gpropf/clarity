@@ -20,6 +20,10 @@ FRAMEWORK_DEPS = clarity.js Util.js clarity.html Makefile
 %.o : %.cpp %.hpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
 
+fewertparams: fewertparams.o ClarityNode.o CanvasElement.o
+	$(CC) -lembind fewertparams.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
+
+
 canvastest: canvastest.o ClarityNode.o CanvasElement.o
 	$(CC) -lembind canvastest.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
 

@@ -38,24 +38,22 @@ int main() {
     // val canvasDrawFunction = CLE["canvasDrawFunction"];
     // val draw_test_pattern = CLE["draw_test_pattern"];
 
-    CLNodeFactory<ClarityNode, double, double> builder("div", "maindiv",
-                                                       CppType::NoData);
+    CLNodeFactory<double, double> builder("div", "maindiv", CppType::NoData);
 
     ClarityNode *maindiv = builder.build();
 
-    CLNodeFactory<ClarityNode, double, double> builder_children =
+    CLNodeFactory<double, double> builder_children =
         builder.createChildrenOf(maindiv);
 
-    CLNodeFactory<CanvasElement, string, int> builder_cnvs;
-    CLNodeFactory<CanvasElement, string, int>::clone(builder_children,
-                                                     builder_cnvs);
+    CLNodeFactory<string, int> builder_cnvs;
+    CLNodeFactory<string, int>::clone(builder_children, builder_cnvs);
 
     CanvasElement *canvas1 =
         builder_children
             .withName("canvas1")
             // .withTag("canvas")
             .withAttributes({{"width", val(400)}, {"height", val(300)}})
-            .canvas2();
+            .canvas();
 
     // ClarityNode *statusButton = childOfMaindivBuilder.button(
     //     "canvasButton", "Draw!", canvasDrawFunction);

@@ -14,7 +14,7 @@ namespace clarity {
  * complex ones from those. It replaces a whole complex class heirarchy that
  * worked the same but was an inflexible mess.
  *
- * @tparam Nc Node Class: Tells you what kind of Node this factory builds.
+ 
  * @tparam V Value: The type of C++ data the nodes will hold.
  * @tparam N Numeric Type: When the V type is a number of some kind, this tells
  * us what type is used for linkMultiplierConstant values. Technically V and N
@@ -22,7 +22,7 @@ namespace clarity {
  * that there are two different tparams for this probably means we need a bit of
  * a refactoring.
  */
-template <class Nc, typename V, typename N>
+template <typename V, typename N>
 class CLNodeFactory {
    public:
     string tag_;   //!< Tag to be used with elements this factory builds.
@@ -66,21 +66,21 @@ class CLNodeFactory {
      * nodes it produces. You feed in a 'from' factory and get back your 'to'
      * factory with all the non-tparam values copied over.
      *
-     * @tparam Nc_from Node class of the 'from' factory.
+    
      * @tparam V_from V for 'from' factory.
      * @tparam N_from N for 'from' factory.
-     * @tparam Nc_to Node class of the 'to' factory.
+    
      * @tparam V_to V for 'to' factory.
      * @tparam N_to N for 'from' factory.
      * @param clnf_from 'from' factory
      * @param clnf_to 'to' factory
      * @return CLNodeFactory
      */
-    template <class Nc_from, typename V_from, typename N_from, class Nc_to,
+    template <typename V_from, typename N_from,
               typename V_to, typename N_to>
     static CLNodeFactory clone(
-        const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from,
-        CLNodeFactory<Nc_to, V_to, N_to> &clnf_to) {
+        const CLNodeFactory<V_from, N_from> &clnf_from,
+        CLNodeFactory<V_to, N_to> &clnf_to) {
         clnf_to.tag_ = clnf_from.tag_;
         clnf_to.name_ = clnf_from.name_;
         clnf_to.storedValueType_ = clnf_from.storedValueType_;
@@ -168,15 +168,15 @@ class CLNodeFactory {
      * methods use this at least once. The build method uses all the current
      * settings to construct a control element.
      *
-     * @return Nc*
+     * @return ClarityNode*
      */
-    inline Nc *build(Nc *existingNode = nullptr) {
-        Nc *newNode;
+    inline ClarityNode *build(ClarityNode *existingNode = nullptr) {
+        ClarityNode *newNode;
         if (existingNode != nullptr) {
             newNode = existingNode;
         } else {
             newNode =
-                new Nc(name_, tag_, storedValueType_, useExistingDOMElement_);
+                new ClarityNode(name_, tag_, storedValueType_, useExistingDOMElement_);
         }
 
         newNode->setBoundField(boundField_);
@@ -198,20 +198,18 @@ class CLNodeFactory {
 
 
     /**
-     * @brief The method that makes it all possible. Virtually all the other
-     * methods use this at least once. The build method uses all the current
-     * settings to construct a control element.
+     * @brief This is the template version of 'build'. Unlike 'build', which makes a ClarityNode, this can make any
      *
-     * @return Nc2*
+     * @return Nc*
      */
-    template <class Nc2>
-    inline Nc2 *build2(Nc2 *existingNode = nullptr) {
-        Nc2 *newNode;
+    template <class Nc>
+    inline Nc *buildt(Nc *existingNode = nullptr) {
+        Nc *newNode;
         if (existingNode != nullptr) {
             newNode = existingNode;
         } else {
             newNode =
-                new Nc2(name_, tag_, storedValueType_, useExistingDOMElement_);
+                new Nc(name_, tag_, storedValueType_, useExistingDOMElement_);
         }
 
         newNode->setBoundField(boundField_);
@@ -268,7 +266,7 @@ class CLNodeFactory {
      * @param parent
      * @return CLNodeFactory
      */
-    inline CLNodeFactory createChildrenOf(Nc *parent) {
+    inline CLNodeFactory createChildrenOf(ClarityNode *parent) {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
@@ -317,14 +315,14 @@ class CLNodeFactory {
      * @param parent Cannot be null.
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withParent(Nc *parent) const & {
+    inline CLNodeFactory withParent(ClarityNode *parent) const & {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
     }
 
-    inline CLNodeFactory withParent(Nc *parent) && {
+    inline CLNodeFactory withParent(ClarityNode *parent) && {
         assert(parent != nullptr);
         CLNodeFactory cpy(move(*this));
         cpy.parent_ = parent;
@@ -591,25 +589,25 @@ class CLNodeFactory {
         return outerDiv;
     }    
 
-    /**
-     * @brief Creates a JS canvas element with a simple test pattern.
-     * 
-     * @return CanvasElement* 
-     */
-    inline CanvasElement *canvas() {                
-        CanvasElement *cel = withTag("canvas").build();        
-         cel->setDrawFuntionName("canvasTestPattern");
-         cel->refreshView();        
-        return cel;
-    }
+    // /**
+    //  * @brief Creates a JS canvas element with a simple test pattern.
+    //  * 
+    //  * @return CanvasElement* 
+    //  */
+    // inline CanvasElement *canvas() {                
+    //     CanvasElement *cel = withTag("canvas").build();        
+    //      cel->setDrawFuntionName("canvasTestPattern");
+    //      cel->refreshView();        
+    //     return cel;
+    // }
 
     /**
      * @brief Creates a JS canvas element with a simple test pattern.
      * 
      * @return CanvasElement* 
      */
-    inline CanvasElement *canvas2() {                
-        CanvasElement *cel = withTag("canvas").template build2<CanvasElement>();        
+    inline CanvasElement *canvas() {                
+        CanvasElement *cel = withTag("canvas").template buildt<CanvasElement>();        
          cel->setDrawFuntionName("canvasTestPattern");
          cel->refreshView();        
         return cel;
