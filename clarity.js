@@ -132,7 +132,7 @@ class CLElement {
 
 
 
-  drawGreenTestPattern() {
+  canvasTestPattern() {
     var domElement = this.domElement_;
     if (domElement.getContext) {
       domElement.style.display = 'none';

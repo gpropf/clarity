@@ -598,7 +598,7 @@ class CLNodeFactory {
         //    CanvasElement *cel = dynamic_cast<CanvasElement *>(build());
         CanvasElement *cel = withTag("canvas").build();
         // new CanvasElement(drawFuntionName);
-         cel->setDrawFuntionName("drawGreenTestPattern");
+         cel->setDrawFuntionName("canvasTestPattern");
          cel->refreshView();
         // return dynamic_cast<CanvasElement*>(build(cel));
         //CanvasElement *celr = dynamic_cast<CanvasElement*>(cel);
