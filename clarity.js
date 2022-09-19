@@ -91,14 +91,14 @@ class CLElement {
   }
 
 
-drawBlueTestPattern() {
-  var domElement = this.domElement_;
-   // let domElement = this.domElement;
+  drawBlueTestPattern() {
+    var domElement = this.domElement_;
+    // let domElement = this.domElement;
     if (domElement.getContext) {
       domElement.style.display = 'none';
       domElement.style.display = 'block';
       let ctx = domElement.getContext('2d');
-      ctx.scale(2,2);
+      ctx.scale(2, 2);
       ctx.fillStyle = 'blue';
       ctx.fillRect(10, 10, 60, 60);
       ctx.fillRect(100, 10, 90, 60);
@@ -134,41 +134,20 @@ drawBlueTestPattern() {
 
   drawGreenTestPattern() {
     var domElement = this.domElement_;
-     if (domElement.getContext) {
-       domElement.style.display = 'none';
-       domElement.style.display = 'block';
-       let ctx = domElement.getContext('2d');
-       ctx.scale(1.1,1.1);
-       ctx.fillStyle = 'green';
-       ctx.fillRect(10, 10, 40, 80);
-       ctx.fillRect(100, 20, 90, 60);
- 
-       ctx.beginPath();
-       ctx.arc(250, 40, 32, 0, 1 * Math.PI);
-       ctx.fill();
- 
-       ctx.beginPath();
-       ctx.moveTo(10, 160);
-       ctx.lineTo(90, 160);
-       ctx.lineTo(50, 110);
-       ctx.closePath();
-       ctx.fill();
- 
-       ctx.save();
-       ctx.scale(2, 1);
-       ctx.beginPath();
-       ctx.arc(72, 130, 25, 0, 3/2 * Math.PI);
-       ctx.fill();
-       ctx.restore();
- 
-       ctx.beginPath();
-       ctx.arc(250, 120, 40, 0, Math.PI);
-       ctx.fill();
-       //alert(ctx);
-       console.log("drawGreenTestPattern()");
- 
-     }
-   }
+    if (domElement.getContext) {
+      domElement.style.display = 'none';
+      domElement.style.display = 'block';
+      let ctx = domElement.getContext('2d');
+      let [w, h, hw, hh] = [domElement.width, domElement.height, domElement.width/2, domElement.height/2];
+      let [qw,qh] = [w/4,h/4];
+      ctx.scale(1, 1);
+      ctx.fillStyle = 'green';      
+      ctx.fillRect(0, 0, w,h);
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(qw,qh,hw,hh);
+      console.log("drawGreenTestPattern()");
+    }
+  }
 
 
   /**
