@@ -576,9 +576,18 @@ class CLNodeFactory {
     }
 
     inline ClarityNode *canvas(int width, int height, const string &name,
-                                 val draw_function) {
+                               val draw_function) {
         CanvasElement *cel =
             new CanvasElement(width, height, name, draw_function);
+
+        ClarityNode *celr = build(cel);
+        return celr;
+    }
+
+    inline ClarityNode *canvas(int width, int height, const string &name,
+                               const string &drawFuntionName = "") {
+        CanvasElement *cel =
+            new CanvasElement(width, height, name, drawFuntionName);
 
         ClarityNode *celr = build(cel);
         return celr;

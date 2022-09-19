@@ -35,8 +35,8 @@ int main() {
     val utils_instance = val::global("Util").new_();
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
-    val canvasDrawFunction = CLE["canvasDrawFunction"];
-    val draw_test_pattern = CLE["draw_test_pattern"];
+    //val canvasDrawFunction = CLE["canvasDrawFunction"];
+   // val draw_test_pattern = CLE["draw_test_pattern"];
 
     CLNodeFactory<ClarityNode, double, double> builder("div", "maindiv",
                                                        CppType::NoData);
@@ -51,10 +51,10 @@ int main() {
             .withName("canvas1")
             // .withTag("canvas")
             //  .withAttributes({{"width", val(400)}, {"height", val(300)}})
-            .canvas(400, 300, "canvas1", canvasDrawFunction);
+            .canvas(400, 300, "canvas1", "drawBlueTestPattern");
 
-    ClarityNode *statusButton = childOfMaindivBuilder.button(
-        "canvasButton", "Draw!", canvasDrawFunction);
+    // ClarityNode *statusButton = childOfMaindivBuilder.button(
+    //     "canvasButton", "Draw!", canvasDrawFunction);
 
     printf("Setup complete!\n");
 

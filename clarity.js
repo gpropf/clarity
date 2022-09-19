@@ -38,7 +38,7 @@ class CLElement {
         ctx.arc(250, 120, 40, 0, Math.PI);
         ctx.fill();
         //alert(ctx);
-        console.log("The test pattern should be visible on the CanvasNode")
+        console.log("extraInitCode['canvas']()")
 
       }
     }
@@ -91,7 +91,8 @@ class CLElement {
   }
 
 
-static canvasDrawFunction(domElement) {
+drawBlueTestPattern() {
+  var domElement = this.domElement_;
    // let domElement = this.domElement;
     if (domElement.getContext) {
       domElement.style.display = 'none';
@@ -123,7 +124,7 @@ static canvasDrawFunction(domElement) {
       ctx.arc(250, 120, 40, 0, Math.PI);
       ctx.fill();
       //alert(ctx);
-      console.log("The test pattern should be visible on the CanvasNode");
+      console.log("drawBlueTestPattern()");
 
     }
   }
@@ -162,7 +163,7 @@ static canvasDrawFunction(domElement) {
        ctx.arc(250, 120, 40, 0, Math.PI);
        ctx.fill();
        //alert(ctx);
-       console.log("The test pattern should be visible on the CanvasNode");
+       console.log("drawGreenTestPattern()");
  
      }
    }
