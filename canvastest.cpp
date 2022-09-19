@@ -35,34 +35,38 @@ int main() {
     val utils_instance = val::global("Util").new_();
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
-    //val canvasDrawFunction = CLE["canvasDrawFunction"];
-   // val draw_test_pattern = CLE["draw_test_pattern"];
+    // val canvasDrawFunction = CLE["canvasDrawFunction"];
+    // val draw_test_pattern = CLE["draw_test_pattern"];
 
     CLNodeFactory<ClarityNode, double, double> builder("div", "maindiv",
                                                        CppType::NoData);
 
     ClarityNode *maindiv = builder.build();
 
-    CLNodeFactory<ClarityNode, double, double> childOfMaindivBuilder =
+    CLNodeFactory<ClarityNode, double, double> builder_chlidren =
         builder.createChildrenOf(maindiv);
 
-    ClarityNode *canvas1 =
-        childOfMaindivBuilder
+    CLNodeFactory<CanvasElement, string, int> builder_cnvs;
+    CLNodeFactory<CanvasElement, string, int>::clone(builder_chlidren,
+                                                     builder_cnvs);
+
+    CanvasElement *canvas1 =
+        builder_cnvs
             .withName("canvas1")
             // .withTag("canvas")
-            //  .withAttributes({{"width", val(400)}, {"height", val(300)}})
-            .canvas(400, 300, "canvas1", "drawBlueTestPattern");
+            .withAttributes({{"width", val(400)}, {"height", val(300)}})
+            .canvas();
 
     // ClarityNode *statusButton = childOfMaindivBuilder.button(
     //     "canvasButton", "Draw!", canvasDrawFunction);
 
     printf("Setup complete!\n");
 
-//val del = canvas1->getCLE()["domElement"];
-//CLE.call<void>("canvasDrawFunction", del);
- 
- //  canvas1_cle.call<void>("canvasDrawFunction");
-    //canvasDrawFunction(canvas1_cle);
+    // val del = canvas1->getCLE()["domElement"];
+    // CLE.call<void>("canvasDrawFunction", del);
+
+    //  canvas1_cle.call<void>("canvasDrawFunction");
+    // canvasDrawFunction(canvas1_cle);
     // draw_test_pattern();
 
     return 0;

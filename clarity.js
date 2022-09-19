@@ -98,6 +98,7 @@ drawBlueTestPattern() {
       domElement.style.display = 'none';
       domElement.style.display = 'block';
       let ctx = domElement.getContext('2d');
+      ctx.scale(2,2);
       ctx.fillStyle = 'blue';
       ctx.fillRect(10, 10, 60, 60);
       ctx.fillRect(100, 10, 90, 60);
@@ -137,6 +138,7 @@ drawBlueTestPattern() {
        domElement.style.display = 'none';
        domElement.style.display = 'block';
        let ctx = domElement.getContext('2d');
+       ctx.scale(1.1,1.1);
        ctx.fillStyle = 'green';
        ctx.fillRect(10, 10, 40, 80);
        ctx.fillRect(100, 20, 90, 60);

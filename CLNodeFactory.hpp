@@ -575,22 +575,34 @@ class CLNodeFactory {
         return outerDiv;
     }
 
-    inline ClarityNode *canvas(int width, int height, const string &name,
-                               val draw_function) {
-        CanvasElement *cel =
-            new CanvasElement(width, height, name, draw_function);
+    // inline ClarityNode *canvas(int width, int height, const string &name,
+    //                            val draw_function) {
+    //     CanvasElement *cel =
+    //         new CanvasElement(width, height, name, draw_function);
 
-        ClarityNode *celr = build(cel);
-        return celr;
-    }
+    //     ClarityNode *celr = build(cel);
+    //     return celr;
+    // }
 
-    inline ClarityNode *canvas(int width, int height, const string &name,
-                               const string &drawFuntionName = "") {
-        CanvasElement *cel =
-            new CanvasElement(width, height, name, drawFuntionName);
+    // inline CanvasElement *canvas(const string &drawFuntionName = "") {
+    //     //CanvasElement *cel = dynamic_cast<CanvasElement*> (build());
+    //     CanvasElement *cel = new CanvasElement(drawFuntionName);
+    //         //new CanvasElement(drawFuntionName);
 
-        ClarityNode *celr = build(cel);
-        return celr;
+    //     return dynamic_cast<CanvasElement*>(build(cel));
+    //     //return cel;
+    // }
+
+    inline CanvasElement *canvas() {
+        
+        //    CanvasElement *cel = dynamic_cast<CanvasElement *>(build());
+        CanvasElement *cel = withTag("canvas").build();
+        // new CanvasElement(drawFuntionName);
+         cel->setDrawFuntionName("drawGreenTestPattern");
+         cel->refreshView();
+        // return dynamic_cast<CanvasElement*>(build(cel));
+        //CanvasElement *celr = dynamic_cast<CanvasElement*>(cel);
+        return cel;
     }
 
     /**
