@@ -93,14 +93,7 @@ class CLNodeFactory {
         clnf_to.useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
         clnf_to.attrs_ = clnf_from.attrs_;
         return clnf_to;
-    }
-
-    // template <class Nc_from, typename V_from, typename N_from, class Nc_to,
-    //           typename V_to, typename N_to>
-    // CLNodeFactory<Nc_from, V_from, N_from> clone2() {
-    //     CLNodeFactory<Nc_to, V_to, N_to> clnf_to(*this);
-    //     return clnf_to;
-    // }
+    }    
 
     /**
      * @brief Construct a new CLNodeFactory object
@@ -120,13 +113,7 @@ class CLNodeFactory {
      */
     inline CLNodeFactory(const string &tag, const string &name,
                          CppType storedValueType)
-        : tag_(tag), name_(name), storedValueType_(storedValueType) {}
-
-    // template <class Nc_out, class Nc_in, typename V_out, typename V_in>
-    // static CLNodeFactory<Nc_out, V_out> morph(
-    //     const CLNodeFactory<Nc_in, V_in> &clnf) {
-    //     return CLNodeFactory<Nc_out, V_out>(clnf);
-    // }
+        : tag_(tag), name_(name), storedValueType_(storedValueType) {}    
 
     /**
      * @brief Construct a new CLNodeFactory object
@@ -249,15 +236,7 @@ class CLNodeFactory {
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
-    }
-
-    // inline CLNodeFactory createAttributesOf(Nc *parent) {
-    //     return createChildrenOf(parent).withExistingDOMElement();
-    // }
-
-    // inline CLNodeFactory createAttributesOf(
-    //     int parentId) {  // FIXME: do we need this?
-    // }
+    }    
 
     /**
      * @brief Sets the HTML tag to use when creating the node.
