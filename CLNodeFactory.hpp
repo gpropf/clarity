@@ -573,35 +573,17 @@ class CLNodeFactory {
         outerDiv->appendChild(nodeToBeLabelled);
         outerDiv->appendChild(labelNode);
         return outerDiv;
-    }
+    }    
 
-    // inline ClarityNode *canvas(int width, int height, const string &name,
-    //                            val draw_function) {
-    //     CanvasElement *cel =
-    //         new CanvasElement(width, height, name, draw_function);
-
-    //     ClarityNode *celr = build(cel);
-    //     return celr;
-    // }
-
-    // inline CanvasElement *canvas(const string &drawFuntionName = "") {
-    //     //CanvasElement *cel = dynamic_cast<CanvasElement*> (build());
-    //     CanvasElement *cel = new CanvasElement(drawFuntionName);
-    //         //new CanvasElement(drawFuntionName);
-
-    //     return dynamic_cast<CanvasElement*>(build(cel));
-    //     //return cel;
-    // }
-
-    inline CanvasElement *canvas() {
-        
-        //    CanvasElement *cel = dynamic_cast<CanvasElement *>(build());
-        CanvasElement *cel = withTag("canvas").build();
-        // new CanvasElement(drawFuntionName);
+    /**
+     * @brief Creates a JS canvas element with a simple test pattern.
+     * 
+     * @return CanvasElement* 
+     */
+    inline CanvasElement *canvas() {                
+        CanvasElement *cel = withTag("canvas").build();        
          cel->setDrawFuntionName("canvasTestPattern");
-         cel->refreshView();
-        // return dynamic_cast<CanvasElement*>(build(cel));
-        //CanvasElement *celr = dynamic_cast<CanvasElement*>(cel);
+         cel->refreshView();        
         return cel;
     }
 
