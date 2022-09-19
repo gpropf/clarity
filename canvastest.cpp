@@ -43,19 +43,19 @@ int main() {
 
     ClarityNode *maindiv = builder.build();
 
-    CLNodeFactory<ClarityNode, double, double> builder_chlidren =
+    CLNodeFactory<ClarityNode, double, double> builder_children =
         builder.createChildrenOf(maindiv);
 
     CLNodeFactory<CanvasElement, string, int> builder_cnvs;
-    CLNodeFactory<CanvasElement, string, int>::clone(builder_chlidren,
+    CLNodeFactory<CanvasElement, string, int>::clone(builder_children,
                                                      builder_cnvs);
 
     CanvasElement *canvas1 =
-        builder_cnvs
+        builder_children
             .withName("canvas1")
             // .withTag("canvas")
             .withAttributes({{"width", val(400)}, {"height", val(300)}})
-            .canvas();
+            .canvas2();
 
     // ClarityNode *statusButton = childOfMaindivBuilder.button(
     //     "canvasButton", "Draw!", canvasDrawFunction);

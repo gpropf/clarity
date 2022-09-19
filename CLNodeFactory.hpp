@@ -196,6 +196,43 @@ class CLNodeFactory {
         return newNode;
     }
 
+
+    /**
+     * @brief The method that makes it all possible. Virtually all the other
+     * methods use this at least once. The build method uses all the current
+     * settings to construct a control element.
+     *
+     * @return Nc2*
+     */
+    template <class Nc2>
+    inline Nc2 *build2(Nc2 *existingNode = nullptr) {
+        Nc2 *newNode;
+        if (existingNode != nullptr) {
+            newNode = existingNode;
+        } else {
+            newNode =
+                new Nc2(name_, tag_, storedValueType_, useExistingDOMElement_);
+        }
+
+        newNode->setBoundField(boundField_);
+        newNode->setAttributes(attrs_);
+        if (parent_) {
+            parent_->appendChild(newNode);
+        }
+        if (modelNode_) {
+            if (a2b_xfmr_ != val(NULL)) {
+                modelNode_->addPeer2(newNode, a2b_xfmr_, b2a_xfmr_);
+            } else {
+                modelNode_->addPeer2(newNode, linkMultiplierConstant_);
+            }
+            if (!useExistingDOMElement_)
+                modelNode_->pushValToPeers2(modelNode_);
+        }
+        return newNode;
+    }
+
+
+
     /**
      * @brief Create the element with the listed attrs.
      *
@@ -561,6 +598,18 @@ class CLNodeFactory {
      */
     inline CanvasElement *canvas() {                
         CanvasElement *cel = withTag("canvas").build();        
+         cel->setDrawFuntionName("canvasTestPattern");
+         cel->refreshView();        
+        return cel;
+    }
+
+    /**
+     * @brief Creates a JS canvas element with a simple test pattern.
+     * 
+     * @return CanvasElement* 
+     */
+    inline CanvasElement *canvas2() {                
+        CanvasElement *cel = withTag("canvas").template build2<CanvasElement>();        
          cel->setDrawFuntionName("canvasTestPattern");
          cel->refreshView();        
         return cel;
