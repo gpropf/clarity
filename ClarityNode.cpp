@@ -119,7 +119,7 @@ void clarity::ClarityNode::pullValFromPeers(ClarityNode *excludedPeer) {
 
 void clarity::ClarityNode::pullValFromPeersById(int id) {
     ClarityNode *cnn = getCLElementById(id);
-    cnn->pushValToPeers(cnn);
+    cnn->pullValFromPeers(cnn);
 }
 
 void clarity::ClarityNode::addPeer(ClarityNode *peer, val a2b_xfmr,
