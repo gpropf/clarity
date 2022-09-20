@@ -23,6 +23,17 @@ class CanvasElement : public ClarityNode {
     string drawFuntionName_;
 };
 
+/**
+ * @brief Grid representation of a 2D array of values using a CanvasElement as
+ * it's base object. We obviously need some kind of direct "pull" method to
+ * actively get the array data and map it into the canvas quickly.
+ *
+ */
+class CanvasGrid : public CanvasElement {
+    // void setVal(const val &inval) {}
+    // val getVal() const {}
+};
+
 }  // namespace clarity
 
 #endif

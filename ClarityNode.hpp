@@ -18,8 +18,7 @@ namespace clarity {
  *
  */
 
-class ClarityNode {    
-
+class ClarityNode {
    public:
     static map<string, std::function<void()>> callbackMap;
 
@@ -74,7 +73,6 @@ class ClarityNode {
         }
     };
 
-    
     EMSCRIPTEN_KEEPALIVE void addEventListenerByName(
         const string &eventName, const string &callbackName);
     EMSCRIPTEN_KEEPALIVE void addJSEventListener(const string &eventName,
@@ -160,7 +158,6 @@ class ClarityNode {
     // inline virtual void setVal(const val &inval) { clean_ = false; }
 
     inline virtual void setVal(const val &inval) {
-        
         clean_ = false;
         val domElement = cle_["domElement"];
         cle_.call<void>("printVal", inval);
@@ -201,7 +198,7 @@ class ClarityNode {
 
     // virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
     virtual void pushValToPeers2(ClarityNode *excludedPeer = nullptr);
-    static void pushValToPeersById(int id);
+   // static void pushValToPeersById(int id);
     static void pushValToPeersById2(int id);
     // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
 
@@ -239,9 +236,15 @@ class ClarityNode {
     val cle_ = val::global("CLElement").new_();
 
     CppType storedValueType_;  //!< C++ Data type
+    vector<int> dataDimensionality_{
+        1};  //!< There is a digit for each dimension.
+             //!< Single valued datums have a single 1
+             //!< here. A 2D grid that is 6 wide and 5
+             //!< high will have 6,5 and so on.
     /** \brief A node's parent is the DOM element that contains it. In the case
      * of the WebAttrNode this is the WebElemNode for which this is an
      * attribute. */
+
     ClarityNode *parent_;
     int id_ = -1;  //!< Unique identifier - needs to be immutable once set.
     string name_;  //!< Human readable name of node. Mutable, not required.

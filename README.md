@@ -5,3 +5,4 @@ Clarity is a web development framework written in C++ using emscripten to facili
 ## Design
 
 ### An Interface is a Graph
+
