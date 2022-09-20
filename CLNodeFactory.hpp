@@ -186,9 +186,9 @@ class CLNodeFactory {
         }
         if (modelNode_) {
             if (a2b_xfmr_ != val(NULL)) {
-                modelNode_->addPeer2(newNode, a2b_xfmr_, b2a_xfmr_);
+                modelNode_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);
             } else {
-                modelNode_->addPeer2(newNode, linkMultiplierConstant_);
+                modelNode_->addPeer(newNode, linkMultiplierConstant_);
             }
             if (!useExistingDOMElement_)
                 modelNode_->pushValToPeers(modelNode_);

@@ -205,14 +205,14 @@ class ClarityNode {
     void pullValFromPeers(ClarityNode *excludedPeer);
 
     template <typename T>
-    void addPeer2(ClarityNode *peer, const T linkMultiplierConstant = 1) {
+    void addPeer(ClarityNode *peer, const T linkMultiplierConstant = 1) {
         auto dl = make_shared<DualLink>(this, peer, linkMultiplierConstant);
         dlpeers_.push_back(dl);
         peer->appendDualLink(dl);
     }
     //   void addPeer2(ClarityNode *peer);
 
-    void addPeer2(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr = val(NULL));
+    void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr = val(NULL));
     inline void appendDualLink(shared_ptr<DualLink> dl) {
         dlpeers_.push_back(dl);
     }
