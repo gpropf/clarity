@@ -60,12 +60,13 @@ void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
 
     auto [peer, xfmr] = dl.getOtherNode(this);
     if (internalVal.isNumber()) {
-        val product = ClarityNode::DualLink::CLElement_.call<val>(
+        val transformedVal = ClarityNode::DualLink::CLElement_.call<val>(
             "applyTransformFn", xfmr, internalVal);
-        peer->setVal(product);
+        peer->setVal(transformedVal);
     } else {
         peer->setVal(internalVal);
     }
+    
 
     clean_ = true;
 }
@@ -92,9 +93,9 @@ void clarity::ClarityNode::pullValFromPeer(DualLink &dl) {
     auto [peer, xfmr] = dl.getOtherNode(this);
     val internalVal = peer->getVal();
     if (internalVal.isNumber()) {
-        val product = ClarityNode::DualLink::CLElement_.call<val>(
+        val transformedVal = ClarityNode::DualLink::CLElement_.call<val>(
             "applyTransformFn", xfmr, internalVal);
-        setVal(product);
+        setVal(transformedVal);
     } else {
         setVal(internalVal);
     }
