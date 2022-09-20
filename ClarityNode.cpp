@@ -117,6 +117,11 @@ void clarity::ClarityNode::pullValFromPeers(ClarityNode *excludedPeer) {
     }
 }
 
+void clarity::ClarityNode::pullValFromPeersById(int id) {
+    ClarityNode *cnn = getCLElementById(id);
+    cnn->pushValToPeers(cnn);
+}
+
 void clarity::ClarityNode::addPeer(ClarityNode *peer, val a2b_xfmr,
                                     val b2a_xfmr) {
     auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);

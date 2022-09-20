@@ -203,6 +203,7 @@ class ClarityNode {
     // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
     void pullValFromPeer(DualLink &dl);
     void pullValFromPeers(ClarityNode *excludedPeer);
+    static void pullValFromPeersById(int id);
 
     template <typename T>
     void addPeer(ClarityNode *peer, const T linkMultiplierConstant = 1) {
