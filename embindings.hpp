@@ -9,8 +9,8 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .function("pushValToPeers2", &ClarityNode::pushValToPeers,
                   allow_raw_pointers())
         .function("getVal", &ClarityNode::getVal, allow_raw_pointers())
-        .class_function("pushValToPeersById2",
-                        &ClarityNode::pushValToPeersById2,
+        .class_function("pushValToPeersById",
+                        &ClarityNode::pushValToPeersById,
                         allow_raw_pointers())
         .class_function("getCLElementById",
                         &ClarityNode::getCLElementById,

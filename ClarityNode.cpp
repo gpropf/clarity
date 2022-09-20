@@ -14,7 +14,7 @@ inline string clarity::ClarityNode::nodeStats(const string &msg) const {
     return s;
 }
 
-void clarity::ClarityNode::pushValToPeersById2(int id) {
+void clarity::ClarityNode::pushValToPeersById(int id) {
     ClarityNode *cnn = getCLElementById(id);
     cnn->pushValToPeers(cnn);
 }
