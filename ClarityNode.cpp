@@ -16,7 +16,7 @@ inline string clarity::ClarityNode::nodeStats(const string &msg) const {
 
 void clarity::ClarityNode::pushValToPeersById2(int id) {
     ClarityNode *cnn = getCLElementById(id);
-    cnn->pushValToPeers2(cnn);
+    cnn->pushValToPeers(cnn);
 }
 
 inline void clarity::ClarityNode::init() {
@@ -52,7 +52,7 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
     ClarityNode::switchboard[id_] = this;
 }
 
-void clarity::ClarityNode::pushValToPeer2(DualLink &dl, const string &tabs) {
+void clarity::ClarityNode::pushValToPeer(DualLink &dl, const string &tabs) {
     if (clean_) {
     }
 
@@ -70,16 +70,48 @@ void clarity::ClarityNode::pushValToPeer2(DualLink &dl, const string &tabs) {
     clean_ = true;
 }
 
-void clarity::ClarityNode::pushValToPeers2(ClarityNode *excludedPeer) {
+void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
     if (excludedPeer == nullptr) {
         for (auto dl : dlpeers_) {
-            pushValToPeer2(*dl);
+            pushValToPeer(*dl);
         }
     } else {
         for (auto dl : dlpeers_) {
             auto [peer, xfmr] = dl->getOtherNode(this);
             if (peer != excludedPeer) {
-                pushValToPeer2(*dl);
+                pushValToPeer(*dl);
+            }
+        }
+    }
+}
+
+void clarity::ClarityNode::pullValFromPeer(DualLink &dl) {
+    if (clean_) {
+    }    
+
+    auto [peer, xfmr] = dl.getOtherNode(this);
+    val internalVal = peer->getVal();
+    if (internalVal.isNumber()) {
+        val product = ClarityNode::DualLink::CLElement_.call<val>(
+            "applyTransformFn", xfmr, internalVal);
+        setVal(product);
+    } else {
+        setVal(internalVal);
+    }
+
+    clean_ = true;
+}
+
+void clarity::ClarityNode::pullValFromPeers(ClarityNode *excludedPeer) {
+    if (excludedPeer == nullptr) {
+        for (auto dl : dlpeers_) {
+            pullValFromPeer(*dl);
+        }
+    } else {
+        for (auto dl : dlpeers_) {
+            auto [peer, xfmr] = dl->getOtherNode(this);
+            if (peer != excludedPeer) {
+                pullValFromPeer(*dl);
             }
         }
     }

@@ -191,7 +191,7 @@ class CLNodeFactory {
                 modelNode_->addPeer2(newNode, linkMultiplierConstant_);
             }
             if (!useExistingDOMElement_)
-                modelNode_->pushValToPeers2(modelNode_);
+                modelNode_->pushValToPeers(modelNode_);
         }
         return newNode;
     }
@@ -591,7 +591,7 @@ class CLNodeFactory {
             withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
-        modelNode_->pushValToPeers2(modelNode_);
+        modelNode_->pushValToPeers(modelNode_);
         return attributeNode;
     }
 

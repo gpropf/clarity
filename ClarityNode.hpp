@@ -194,13 +194,15 @@ class ClarityNode {
     virtual string nodeStats(const string &msg = "") const;
 
     // virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
-    virtual void pushValToPeer2(DualLink &al, const string &tabs = "");
+    virtual void pushValToPeer(DualLink &al, const string &tabs = "");
 
     // virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
-    virtual void pushValToPeers2(ClarityNode *excludedPeer = nullptr);
-   // static void pushValToPeersById(int id);
+    virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
+    // static void pushValToPeersById(int id);
     static void pushValToPeersById2(int id);
     // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
+    void pullValFromPeer(DualLink &dl);
+    void pullValFromPeers(ClarityNode *excludedPeer);
 
     template <typename T>
     void addPeer2(ClarityNode *peer, const T linkMultiplierConstant = 1) {

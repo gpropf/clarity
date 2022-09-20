@@ -49,7 +49,7 @@ class ModelNode : public ClarityNode {
         assert(dynval_ != nullptr);
         *reinterpret_cast<T *>(dynval_) =
             this->cle_.template call<T>("jsToCPPVal", inval);
-        pushValToPeers2(this);
+        pushValToPeers(this);
     }
 
     T *dynval_;  //!< The C++ data object that acts as the 'model'
