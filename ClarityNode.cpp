@@ -53,9 +53,11 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
 }
 
 void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
-    if (clean_) {
-    }
+    // if (clean_) {
+    //     return;
+    // }
 
+    //clean_ = true;
     val internalVal = getVal();
 
     auto [peer, xfmr] = dl.getOtherNode(this);
@@ -66,12 +68,17 @@ void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
     } else {
         peer->setVal(internalVal);
     }
-    
-
-    clean_ = true;
+    //clean_ = true;
+    //peer->pushValToPeers(peer);
+    //clean_ = false;
 }
 
 void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
+    if (clean_) {
+        return;
+    }
+
+    clean_ = true;
     if (excludedPeer == nullptr) {
         for (auto dl : dlpeers_) {
             pushValToPeer(*dl);
@@ -84,11 +91,12 @@ void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
             }
         }
     }
+    clean_ = false;
 }
 
 void clarity::ClarityNode::pullValFromPeer(DualLink &dl) {
     if (clean_) {
-    }    
+    }
 
     auto [peer, xfmr] = dl.getOtherNode(this);
     val internalVal = peer->getVal();
@@ -124,7 +132,7 @@ void clarity::ClarityNode::pullValFromPeersById(int id) {
 }
 
 void clarity::ClarityNode::addPeer(ClarityNode *peer, val a2b_xfmr,
-                                    val b2a_xfmr) {
+                                   val b2a_xfmr) {
     auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);
     dlpeers_.push_back(dl);
     peer->appendDualLink(dl);

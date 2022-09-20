@@ -227,7 +227,7 @@ class ClarityNode {
     /** \brief The node is clean if it has not been recently changed. This
        feature is mainly designed to prevent infinite update loops if the node
        graph is not acyclic. It doesn't do anything yet.*/
-    bool clean_ = true;
+    bool clean_ = false;
     /** \brief Hands out the numeric ids for all nodes.*/
     static TicketMachine tm;
     /** \brief Keeps track of all nodes in the system. If you have the id of a
