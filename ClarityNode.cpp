@@ -81,12 +81,15 @@ void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
     clean_ = true;
     if (excludedPeer == nullptr) {
         for (auto dl : dlpeers_) {
+            auto [peer, xfmr] = dl->getOtherNode(this);
+            peer->pushValToPeers(this);
             pushValToPeer(*dl);
         }
     } else {
         for (auto dl : dlpeers_) {
             auto [peer, xfmr] = dl->getOtherNode(this);
             if (peer != excludedPeer) {
+                peer->pushValToPeers(this);
                 pushValToPeer(*dl);
             }
         }
