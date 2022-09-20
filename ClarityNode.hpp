@@ -2,7 +2,6 @@
 #define ClarityNode_hpp
 
 #include "clarity.hpp"
-//#include "CLNodeFactory.hpp"
 
 namespace clarity {
 
@@ -19,12 +18,17 @@ namespace clarity {
  *
  */
 
-class ClarityNode {
-    // friend class CLNodeFactory;
+class ClarityNode {    
 
    public:
     static map<string, std::function<void()>> callbackMap;
 
+    /**
+     * @brief Represents the 'edges' in our control graph. These edges can be
+     * active and contain a JS value that can act as a transformation on the
+     * values moving between nodes.
+     *
+     */
     class DualLink {
        public:
         ClarityNode *nodeA_;
@@ -70,32 +74,7 @@ class ClarityNode {
         }
     };
 
-    // /**
-    //  * @brief Represents the 'edges' in our control graph. These edges can be
-    //  * active and contain a JS value that can act as a transformation on the
-    //  * values moving between nodes.
-    //  *
-    //  *
-    //  */
-    // class ActiveLink {
-    //    public:
-    //     static val CLElement_;
-    //     ActiveLink(ClarityNode *peer, val constantOrFunction = val(1));
-
-    //     template <typename T>
-    //     ActiveLink(ClarityNode *peer, const T constantOrFunction)
-    //         : peer_(peer), constantOrFunction_(val(constantOrFunction)) {
-    //         transformFn_ = CLElement_.call<val>("generateTransformFn",
-    //                                             constantOrFunction_);
-    //     }
-
-    //     void printAL() { cout << "AL peer ID: " << peer_->getId() << "\n"; }
-
-    //     ClarityNode *peer_;
-    //     val constantOrFunction_;
-    //     val transformFn_;
-    // };
-
+    
     EMSCRIPTEN_KEEPALIVE void addEventListenerByName(
         const string &eventName, const string &callbackName);
     EMSCRIPTEN_KEEPALIVE void addJSEventListener(const string &eventName,
@@ -181,8 +160,7 @@ class ClarityNode {
     // inline virtual void setVal(const val &inval) { clean_ = false; }
 
     inline virtual void setVal(const val &inval) {
-        // cout << "<<<<<<<<<<<<< CNN::setVal(const val &inval)
-        // >>>>>>>>>>>>>\n";
+        
         clean_ = false;
         val domElement = cle_["domElement"];
         cle_.call<void>("printVal", inval);
@@ -265,7 +243,7 @@ class ClarityNode {
      * of the WebAttrNode this is the WebElemNode for which this is an
      * attribute. */
     ClarityNode *parent_;
-    int id_ = -1;  //!< Unique identifier - immutable.
+    int id_ = -1;  //!< Unique identifier - needs to be immutable once set.
     string name_;  //!< Human readable name of node. Mutable, not required.
     /** \brief List of peers linked through JS functions which are applied when
      * data is moved between nodes. */

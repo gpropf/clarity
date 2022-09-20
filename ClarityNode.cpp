@@ -1,4 +1,3 @@
-//#include "clarity.hpp"
 #include "ClarityNode.hpp"
 
 bool ClarityNode::appendChild(ClarityNode *child) {
@@ -7,13 +6,6 @@ bool ClarityNode::appendChild(ClarityNode *child) {
     cle_.call<void>("appendChild", child->getCLE());
     return true;  // FIXME: need to check for duplicate ids.
 }
-
-// clarity::ClarityNode::ActiveLink::ActiveLink(ClarityNode *peer, val
-// scalarConst)
-//     : peer_(peer), constantOrFunction_(scalarConst) {
-//     transformFn_ =
-//         CLElement_.call<val>("generateTransformFn", constantOrFunction_);
-// }
 
 inline string clarity::ClarityNode::nodeStats(const string &msg) const {
     string s = "NS: Node name: " + name_ + ", Node id: " + to_string(id_) +
@@ -24,14 +16,12 @@ inline string clarity::ClarityNode::nodeStats(const string &msg) const {
 
 void clarity::ClarityNode::pushValToPeersById2(int id) {
     ClarityNode *cnn = getCLElementById(id);
-    // cnn->pushValToPeers(cnn);
     cnn->pushValToPeers2(cnn);
 }
 
 inline void clarity::ClarityNode::init() {
     id_ = tm.getNext();
     ClarityNode::switchboard[id_] = this;
-    //cout << "CLN line 33: id_ = " << id_ << "\n";
 }
 
 inline clarity::ClarityNode::ClarityNode(const string &name,
@@ -58,44 +48,15 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
     // For some reason the code that sets the name in clarity.js doesn't "take"
     // so we re-set it here.
 
-    // tag_ = tag;
-    // name_ = name;
     boundField_ = "value";
     ClarityNode::switchboard[id_] = this;
 }
-
-// void clarity::ClarityNode::pushValToPeer(ActiveLink &al, const string &tabs)
-// {
-//     if (clean_) {
-//     }
-
-//     val internalVal = getVal();
-
-//     // al.printAL();
-//     // cout << tabs << "void clarity::ControlNetworkNode::pushValToPeer\n";
-//     // cout << tabs << al.peer_->nodeStats();
-
-//     if (internalVal.isNumber()) {
-//         val product = al.CLElement_.call<val>("applyTransformFn",
-//                                               al.transformFn_, internalVal);
-//         al.peer_->setVal(product);
-//     } else {
-//         al.peer_->setVal(internalVal);
-//     }
-
-//     clean_ = true;
-// }
 
 void clarity::ClarityNode::pushValToPeer2(DualLink &dl, const string &tabs) {
     if (clean_) {
     }
 
     val internalVal = getVal();
-
-    // al.printAL();
-    // cout << tabs << "pushValToPeer2(): ";
-    // cout << tabs << "nodeA: " << dl.nodeA_->getId()
-    //     << ", nodeB: " << dl.nodeB_->getId() << "\n";
 
     auto [peer, xfmr] = dl.getOtherNode(this);
     if (internalVal.isNumber()) {
@@ -109,38 +70,12 @@ void clarity::ClarityNode::pushValToPeer2(DualLink &dl, const string &tabs) {
     clean_ = true;
 }
 
-// void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
-//     cout << "ControlNetworkNode::pushValToPeers, id = " << id_ << " Node has
-//     "
-//          << to_string(countPeers()) << " peers!!!!!!!!!!!!!!!!!!!!!!!\n";
-//     // cout << "ControlNetworkNode::pushValToPeers ==>> " << nodeStats();
-//     if (excludedPeer == nullptr) {
-//         cout << "\tNo peers excluded.\n";
-//         for (auto peer : peers_) {
-//             pushValToPeer(peer);
-//         }
-//     } else {
-//         cout << "\tExcluded peer exists!\n";
-//         for (auto peer : peers_) {
-//             if (peer.peer_ != excludedPeer) {
-//                 pushValToPeer(peer);
-//             }
-//         }
-//     }
-// }
-
 void clarity::ClarityNode::pushValToPeers2(ClarityNode *excludedPeer) {
-    // cout << "ControlNetworkNode::pushValToPeers2, id = " << id_ << " Node has
-    // "
-    //     << to_string(countPeers()) << " peers!!!!!!!!!!!!!!!!!!!!!!!\n";
-    // cout << "ControlNetworkNode::pushValToPeers ==>> " << nodeStats();
     if (excludedPeer == nullptr) {
-        // cout << "\tNo peers excluded.\n";
         for (auto dl : dlpeers_) {
             pushValToPeer2(*dl);
         }
     } else {
-        // cout << "\tExcluded peer exists!\n";
         for (auto dl : dlpeers_) {
             auto [peer, xfmr] = dl->getOtherNode(this);
             if (peer != excludedPeer) {
@@ -149,19 +84,6 @@ void clarity::ClarityNode::pushValToPeers2(ClarityNode *excludedPeer) {
         }
     }
 }
-
-// void clarity::ClarityNode::addPeer(ClarityNode::ActiveLink al,
-//                                    bool alreadyAdded) {
-//     peers_.push_back(al);
-//     if (alreadyAdded) {
-//         return;
-//     }
-//     al.peer_->addPeer(
-//         ActiveLink(this, cle_.call<val>("invertValue",
-//         al.constantOrFunction_)), true);
-//     // cout << nodeStats(". ControlNetworkNode::addPeer: There are " +
-//     //                   to_string(countPeers()) + " peer nodes.\n");
-// }
 
 void clarity::ClarityNode::addPeer2(ClarityNode *peer, val a2b_xfmr,
                                     val b2a_xfmr) {
