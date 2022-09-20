@@ -52,7 +52,7 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
     ClarityNode::switchboard[id_] = this;
 }
 
-void clarity::ClarityNode::pushValToPeer(DualLink &dl, const string &tabs) {
+void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
     if (clean_) {
     }
 

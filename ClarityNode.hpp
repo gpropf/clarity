@@ -194,7 +194,7 @@ class ClarityNode {
     virtual string nodeStats(const string &msg = "") const;
 
     // virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
-    virtual void pushValToPeer(DualLink &al, const string &tabs = "");
+    virtual void pushValToPeer(DualLink &al);
 
     // virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
     virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
