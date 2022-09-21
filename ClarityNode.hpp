@@ -126,6 +126,9 @@ class ClarityNode {
     inline ClarityNode *getParent() const { return this->parent_; }
     inline void setParent(ClarityNode *parent) { this->parent_ = parent; }
 
+    template <typename V, typename C>
+    inline V &getRawVal(const vector<C> loc) const {}
+
     virtual val getVal() const {
         val domElement = cle_["domElement"];
 
@@ -155,6 +158,10 @@ class ClarityNode {
                 break;
         }
     }
+
+    template <typename V, typename C>
+    inline void setRawVal(V &v, vector<C> loc) {}
+
     // inline virtual void setVal(const val &inval) { clean_ = false; }
 
     inline virtual void setVal(const val &inval) {
@@ -192,6 +199,10 @@ class ClarityNode {
     }
 
     virtual string nodeStats(const string &msg = "") const;
+
+    const vector<int> &getDimensionality() const & {
+        return dataDimensionality_;
+    };
 
     // virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
     virtual void pushValToPeer(DualLink &al);
@@ -255,6 +266,7 @@ class ClarityNode {
      * data is moved between nodes. */
     // vector<ClarityNode::ActiveLink> peers_;
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
+    
 };
 
 }  // namespace clarity

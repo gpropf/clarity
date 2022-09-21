@@ -32,6 +32,14 @@ class CanvasElement : public ClarityNode {
 class CanvasGrid : public CanvasElement {
     // void setVal(const val &inval) {}
     // val getVal() const {}
+    CanvasGrid(const string &name, const string &tag,
+               const CppType storedValueType, bool useExistingDOMElement)
+        : CanvasElement(name, tag, storedValueType, useExistingDOMElement) {}
+
+   protected:
+    int width_, height_;  //!< Width and Height in screen pixels.
+    double scaleFactorH_ = 1.0;
+    double scaleFactorV_ = 1.0;
 };
 
 }  // namespace clarity
