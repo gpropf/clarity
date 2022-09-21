@@ -36,6 +36,19 @@ class CanvasGrid : public CanvasElement {
                const CppType storedValueType, bool useExistingDOMElement)
         : CanvasElement(name, tag, storedValueType, useExistingDOMElement) {}
 
+    inline virtual void setVal(const val &inval) {
+        clean_ = false;
+        // Needs to be given pointer to array data and dataDimensionality info.
+        // So this information should reside in inval.
+    }
+
+    virtual val getVal() const {
+        val domElement = cle_["domElement"];
+
+        // Needs to read the internal state of the CG object and transfer it
+        // back to the array.
+    }
+
    protected:
     int width_, height_;  //!< Width and Height in screen pixels.
     double scaleFactorH_ = 1.0;

@@ -9,7 +9,8 @@ namespace clarity {
 
 /**
  * @brief This class acts as the interface between the view we are building and
- * the data being modelled. These nodes do not have a representation on the screen.
+ * the data being modelled. These nodes do not have a representation on the
+ * screen.
  *
  * @tparam T
  */
@@ -42,6 +43,13 @@ class ModelNode : public ClarityNode {
         if (dynval_ == nullptr) {
             return val(NULL);
         }
+        if (*dataDimensionality_ != 1) {
+            // We clearly have something with more than one value. We need to
+            // construct a JS version of the dataDimensionality_ list and return
+            // it. This will then be sent to the CG's setVal method and used to
+            // initiate the data stream transfer.
+        }
+        // Single value case, proceed as usual.
         return val(cpp2js<T>(dynval_));
     }
 

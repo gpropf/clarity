@@ -198,11 +198,14 @@ class ClarityNode {
         return val(*reinterpret_cast<T *>(valptr));
     }
 
+    // template <typename T>
+    //  val cpp2js(void *valptr) {
+    //     return val(*reinterpret_cast<T *>(valptr));
+    // }
+
     virtual string nodeStats(const string &msg = "") const;
 
-    const vector<int> &getDimensionality() const & {
-        return dataDimensionality_;
-    };
+    const int *getDimensionality() const { return dataDimensionality_; };
 
     // virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
     virtual void pushValToPeer(DualLink &al);
@@ -250,13 +253,14 @@ class ClarityNode {
     val cle_ = val::global("CLElement").new_();
 
     CppType storedValueType_;  //!< C++ Data type
-    vector<int> dataDimensionality_{
-        1};  //!< There is a digit for each dimension.
-             //!< Single valued datums have a single 1
-             //!< here. A 2D grid that is 6 wide and 5
-             //!< high will have 6,5 and so on.
-    /** \brief A node's parent is the DOM element that contains it. In the case
-     * of the WebAttrNode this is the WebElemNode for which this is an
+    int *dataDimensionality_ =
+        new int[2];  //!< There is a digit for each dimension and the dimension
+                     //!< list is terminated with a 0. Single valued datums thus
+                     //!< have[1, 0]. A 2D grid that is 6 wide and 5
+                     //!< high will have[6, 5, 0] and so on.
+
+    /** \brief A node's parent is the DOM element that contains it. In the
+     * case of the WebAttrNode this is the WebElemNode for which this is an
      * attribute. */
 
     ClarityNode *parent_;
@@ -266,7 +270,6 @@ class ClarityNode {
      * data is moved between nodes. */
     // vector<ClarityNode::ActiveLink> peers_;
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
-    
 };
 
 }  // namespace clarity
