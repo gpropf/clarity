@@ -55,12 +55,14 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
     ClarityNode::switchboard[id_] = this;
 }
 
+/**
+ * @brief The most critical way this is used is to move data to/from ModelNodes.
+ * In moving data from a ModelNode the initial getVal call occurs in a ModelNode
+ * and the setVal calls are in the corresponding ClarityNodes.
+ *
+ * @param dl
+ */
 void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
-    // if (clean_) {
-    //     return;
-    // }
-
-    //clean_ = true;
     val internalVal = getVal();
 
     auto [peer, xfmr] = dl.getOtherNode(this);
@@ -71,9 +73,6 @@ void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
     } else {
         peer->setVal(internalVal);
     }
-    //clean_ = true;
-    //peer->pushValToPeers(peer);
-    //clean_ = false;
 }
 
 void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
