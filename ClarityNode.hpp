@@ -235,6 +235,7 @@ class ClarityNode {
     inline int countPeers() const { return dlpeers_.size(); }
 
    protected:
+    
     string tag_; //!< HTML tag.
     string boundField_; //!< The field that holds the data for this node.
     vector<ClarityNode *> children_; //!< Mostly homolougous with the associated DOM element tree.
@@ -267,7 +268,7 @@ class ClarityNode {
      */
     int *dataDimensionality_ = new int[2];
 
-    Datum *datum_;    
+    
 
     ClarityNode *parent_; //!< Parent node of this node. Can be null.
     int id_ = -1;  //!< Unique identifier - needs to be immutable once set.

@@ -24,6 +24,8 @@ namespace clarity {
  */
 template <class Nc, typename V, typename N>
 class CLNodeFactory {
+   
+
    public:
     string tag_;   //!< Tag to be used with elements this factory builds.
     string name_;  //!< Name to be used with elements this factory builds.
@@ -93,7 +95,7 @@ class CLNodeFactory {
         clnf_to.useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
         clnf_to.attrs_ = clnf_from.attrs_;
         return clnf_to;
-    }    
+    }
 
     /**
      * @brief Construct a new CLNodeFactory object
@@ -113,7 +115,7 @@ class CLNodeFactory {
      */
     inline CLNodeFactory(const string &tag, const string &name,
                          CppType storedValueType)
-        : tag_(tag), name_(name), storedValueType_(storedValueType) {}    
+        : tag_(tag), name_(name), storedValueType_(storedValueType) {}
 
     /**
      * @brief Construct a new CLNodeFactory object
@@ -190,8 +192,7 @@ class CLNodeFactory {
             } else {
                 modelNode_->addPeer(newNode, linkMultiplierConstant_);
             }
-            if (!useExistingDOMElement_)
-                modelNode_->pushValToPeers(modelNode_);
+            if (!useExistingDOMElement_) modelNode_->pushValToPeers(modelNode_);
         }
         return newNode;
     }
@@ -236,7 +237,7 @@ class CLNodeFactory {
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
-    }    
+    }
 
     /**
      * @brief Sets the HTML tag to use when creating the node.
@@ -251,7 +252,7 @@ class CLNodeFactory {
     }
 
     inline CLNodeFactory withTag(const string &tag) && {
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.tag_ = tag;
         return cpy;
     }
@@ -269,7 +270,7 @@ class CLNodeFactory {
     }
 
     inline CLNodeFactory withName(const string &name) && {
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.name_ = name;
         return cpy;
     }
@@ -289,7 +290,7 @@ class CLNodeFactory {
 
     inline CLNodeFactory withParent(Nc *parent) && {
         assert(parent != nullptr);
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.parent_ = parent;
         return cpy;
     }
@@ -313,7 +314,7 @@ class CLNodeFactory {
 
     inline CLNodeFactory withStoredValueType(
         clarity::CppType storedValueType) && {
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.storedValueType_ = storedValueType;
         if (cpy.modelNode_) {
             cpy.modelNode_->setStoredValueType(storedValueType);
@@ -342,7 +343,7 @@ class CLNodeFactory {
         assert(storedValue != nullptr);
         ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
                                             "modelnode_for_" + this->name_);
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.modelNode_ = mn;
         return cpy;
     }
@@ -365,7 +366,7 @@ class CLNodeFactory {
 
     inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) && {
         assert(modelNode != nullptr);
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.modelNode_ = modelNode;
         return cpy;
     }
@@ -389,7 +390,7 @@ class CLNodeFactory {
     inline CLNodeFactory withLinkMultiplierConstant(
         N linkMultiplierConstant) && {
         assert(linkMultiplierConstant != 0);
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
         return cpy;
     }
@@ -419,7 +420,7 @@ class CLNodeFactory {
 
     inline CLNodeFactory withTransformFns(val a2b_xfmr,
                                           val b2a_xfmr = val(NULL)) && {
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.a2b_xfmr_ = a2b_xfmr;
         cpy.b2a_xfmr_ = b2a_xfmr;
         return cpy;
@@ -439,7 +440,7 @@ class CLNodeFactory {
     }
 
     inline CLNodeFactory withExistingDOMElement() && {
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.useExistingDOMElement_ = true;
         return cpy;
     }
@@ -552,17 +553,17 @@ class CLNodeFactory {
         outerDiv->appendChild(nodeToBeLabelled);
         outerDiv->appendChild(labelNode);
         return outerDiv;
-    }    
+    }
 
     /**
      * @brief Creates a JS canvas element with a simple test pattern.
-     * 
-     * @return CanvasElement* 
+     *
+     * @return CanvasElement*
      */
-    inline CanvasElement *canvas() {                
-        CanvasElement *cel = withTag("canvas").build();        
-         cel->setDrawFuntionName("canvasTestPattern");
-         cel->refreshView();        
+    inline CanvasElement *canvas() {
+        CanvasElement *cel = withTag("canvas").build();
+        cel->setDrawFuntionName("canvasTestPattern");
+        cel->refreshView();
         return cel;
     }
 
