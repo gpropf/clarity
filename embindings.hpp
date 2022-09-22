@@ -6,7 +6,7 @@ EMSCRIPTEN_BINDINGS(clarity) {
     class_<ClarityNode>("ClarityNode")
         .function("toggleClean", &ClarityNode::toggleClean,
                   allow_raw_pointers())
-        .function("getVal", &ClarityNode::getVal, allow_raw_pointers())
+        //.function("getVal", &ClarityNode::getVal, allow_raw_pointers())
         .function("pushValToPeers", &ClarityNode::pushValToPeers,
                   allow_raw_pointers())
         .class_function("pushValToPeersById", &ClarityNode::pushValToPeersById,
@@ -23,8 +23,8 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .constructor<string, string, const CppType>(allow_raw_pointers())
         .property("tag", &ClarityNode::getTag)
         .property("id", &ClarityNode::getId)
-        .property("storedValueType", &ClarityNode::getStoredValueType,
-                  &ClarityNode::setStoredValueType)
+        // .property("storedValueType", &ClarityNode::getStoredValueType,
+        //           &ClarityNode::setStoredValueType)
         .class_function("runCallbackById", &ClarityNode::runCallbackById,
                         allow_raw_pointers());
 

@@ -18,10 +18,8 @@ namespace clarity {
  *
  */
 
-
 class ClarityNode {
    public:
-   Anytype datum_;
     static map<string, std::function<void()>> callbackMap;
 
     /**
@@ -120,9 +118,6 @@ class ClarityNode {
 
     EMSCRIPTEN_KEEPALIVE void setAttributes(const map<string, val> &attrs);
 
-    inline CppType getStoredValueType() const { return storedValueType_; }
-    EMSCRIPTEN_KEEPALIVE void setStoredValueType(CppType cppType);
-
     bool appendChild(ClarityNode *child);
 
     inline ClarityNode *getParent() const { return this->parent_; }
@@ -130,36 +125,6 @@ class ClarityNode {
 
     template <typename V, typename C>
     inline V &getRawVal(const vector<C> loc) const {}
-
-    virtual val getVal() const {
-        val domElement = cle_["domElement"];
-
-        string valueText = domElement[boundField_].as<string>();
-        // cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
-        switch (this->storedValueType_) {
-            case CppType::Int:
-                // cout << "ClarityNode::getVal() Int\n";
-                return val(stoi(valueText));
-                break;
-            case CppType::Float:
-                // cout << "ClarityNode::getVal() Float\n";
-                return val(stof(valueText));
-                break;
-            case CppType::Double:
-                // cout << "ClarityNode::getVal() Double\n";
-                return val(stod(valueText));
-                break;
-            case CppType::String:
-                // cout << "ClarityNode::getVal() String\n";
-                return val(valueText);
-                break;
-            case CppType::NoData:
-            default:
-                // cout << "ClarityNode::getVal() NoData\n";
-                return val(NULL);
-                break;
-        }
-    }
 
     template <typename V, typename C>
     inline void setRawVal(V &v, vector<C> loc) {}
@@ -185,6 +150,7 @@ class ClarityNode {
     }
 
     inline val getCLE() const { return cle_; }
+    inline val getDomElement() const { return cle_["domElement"]; }
     inline string getName() const { return name_; }
     inline virtual void printState() const { cle_.call<void>("printState"); }
     inline static ClarityNode *getCLElementById(const int id) {
@@ -206,8 +172,6 @@ class ClarityNode {
     // }
 
     virtual string nodeStats(const string &msg = "") const;
-
-    const int *getDimensionality() const { return dataDimensionality_; };
 
     // virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
     virtual void pushValToPeer(DualLink &al);
@@ -236,10 +200,15 @@ class ClarityNode {
     inline int countPeers() const { return dlpeers_.size(); }
 
    protected:
-    
-    string tag_; //!< HTML tag.
-    string boundField_; //!< The field that holds the data for this node.
-    vector<ClarityNode *> children_; //!< Mostly homolougous with the associated DOM element tree.
+    /** \brief Instance of the CLElement class that acts as a "proxy" in JS
+     * space. Also stores the DOM element that the translator connects to.*/
+    val cle_ = val::global("CLElement").new_();
+    DatumBase *datum_;  //!< The native (C++) data this node controls.
+    TranslatorBase *translator_;
+    string tag_;         //!< HTML tag.
+    string boundField_;  //!< The field that holds the data for this node.
+    vector<ClarityNode *> children_;  //!< Mostly homolougous with the
+                                      //!< associated DOM element tree.
 
     /** \brief A node is 'clean' when we're done changing it. This
        feature is mainly designed to prevent infinite update loops if the node
@@ -253,29 +222,12 @@ class ClarityNode {
      * node you can get a pointer to it here. */
     static map<const int, ClarityNode *> switchboard;
 
-    /** \brief Instance of the CLElement class that acts as a "proxy" in JS
-     * space. */
-    val cle_ = val::global("CLElement").new_();
-
-    CppType storedValueType_;  //!< C++ Data type
-
-    /**
-     * @brief There is a digit for each dimension and the dimension list is
-     * terminated with a 0. Single valued datums thus have[1, 0]. A 2D grid that
-     * is 6 wide and 5 high will have[6, 5, 0] and so on. This design was chosen
-     * so that a simple test for a 1 as the first value would differentiate all
-     * singular from all multiple values.
-     *
-     */
-    int *dataDimensionality_ = new int[2];
-
-    
-
-    ClarityNode *parent_; //!< Parent node of this node. Can be null.
+    ClarityNode *parent_;  //!< Parent node of this node. Can be null.
     int id_ = -1;  //!< Unique identifier - needs to be immutable once set.
     string name_;  //!< Human readable name of node. Mutable, not required.
-    
-    vector<shared_ptr<ClarityNode::DualLink>> dlpeers_; //!< Nodes that this node exchanges data with.
+
+    vector<shared_ptr<ClarityNode::DualLink>>
+        dlpeers_;  //!< Nodes that this node exchanges data with.
 };
 
 }  // namespace clarity

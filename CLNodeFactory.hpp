@@ -1,8 +1,9 @@
 #ifndef CLNodeFactory_hpp
 #define CLNodeFactory_hpp
 
+#include "clarity.hpp"
 #include "CanvasElement.hpp"
-#include "ModelNode.hpp"
+
 
 namespace clarity {
 
@@ -14,15 +15,11 @@ namespace clarity {
  * complex ones from those. It replaces a whole complex class heirarchy that
  * worked the same but was an inflexible mess.
  *
- * @tparam Nc Node Class: Tells you what kind of Node this factory builds.
- * @tparam V Value: The type of C++ data the nodes will hold.
- * @tparam N Numeric Type: When the V type is a number of some kind, this tells
- * us what type is used for linkMultiplierConstant values. Technically V and N
- * should be the same thing but we get problems when V is a string. The fact
- * that there are two different tparams for this probably means we need a bit of
- * a refactoring.
+
+
+ * @tparam N Numeric type of the link multiplier constant.
  */
-template <class Nc, typename V, typename N>
+template <typename N>
 class CLNodeFactory {
    
 
@@ -36,10 +33,7 @@ class CLNodeFactory {
                          //!< to be modified when the node value changes.
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
                                      //!< any new nodes as its children.
-    ModelNode<V> *modelNode_ =
-        nullptr;  //!< If we create a new MN or attach one, we set this. Note
-                  //!< that we can create ControlNetworkNodes with no MN.
-
+    
     N linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
                                     //!< values from node to node unchanged.
     val transformFn_ = val(NULL);   //!< See the docs on the ActiveLink class.
@@ -59,43 +53,43 @@ class CLNodeFactory {
                  //!< attribute and doing just about anything with SVG requires
                  //!< a lot of attributes.
 
-    /**
-     * @brief This is a bit of a kludge to allow us to switch the parameter
-     * values 'midstream' while building a GUI. The idea is to preserve the work
-     * you've already done, for instance in setting up a builder that produces
-     * only children of a certain node. You might want to preserve most of the
-     * settings in such a builder while changing the type of data or class of
-     * nodes it produces. You feed in a 'from' factory and get back your 'to'
-     * factory with all the non-tparam values copied over.
-     *
-     * @tparam Nc_from Node class of the 'from' factory.
-     * @tparam V_from V for 'from' factory.
-     * @tparam N_from N for 'from' factory.
-     * @tparam Nc_to Node class of the 'to' factory.
-     * @tparam V_to V for 'to' factory.
-     * @tparam N_to N for 'from' factory.
-     * @param clnf_from 'from' factory
-     * @param clnf_to 'to' factory
-     * @return CLNodeFactory
-     */
-    template <class Nc_from, typename V_from, typename N_from, class Nc_to,
-              typename V_to, typename N_to>
-    static CLNodeFactory clone(
-        const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from,
-        CLNodeFactory<Nc_to, V_to, N_to> &clnf_to) {
-        clnf_to.tag_ = clnf_from.tag_;
-        clnf_to.name_ = clnf_from.name_;
-        clnf_to.storedValueType_ = clnf_from.storedValueType_;
-        clnf_to.boundField_ = clnf_from.boundField_;
-        clnf_to.parent_ = clnf_from.parent_;
-        clnf_to.linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
-        clnf_to.transformFn_ = clnf_from.transformFn_;
-        clnf_to.a2b_xfmr_ = clnf_from.a2b_xfmr_;
-        clnf_to.b2a_xfmr_ = clnf_from.b2a_xfmr_;
-        clnf_to.useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
-        clnf_to.attrs_ = clnf_from.attrs_;
-        return clnf_to;
-    }
+    // /**
+    //  * @brief This is a bit of a kludge to allow us to switch the parameter
+    //  * values 'midstream' while building a GUI. The idea is to preserve the work
+    //  * you've already done, for instance in setting up a builder that produces
+    //  * only children of a certain node. You might want to preserve most of the
+    //  * settings in such a builder while changing the type of data or class of
+    //  * nodes it produces. You feed in a 'from' factory and get back your 'to'
+    //  * factory with all the non-tparam values copied over.
+    //  *
+    //  * @tparam Nc_from Node class of the 'from' factory.
+    //  * @tparam V_from V for 'from' factory.
+    //  * @tparam N_from N for 'from' factory.
+    //  * @tparam Nc_to Node class of the 'to' factory.
+    //  * @tparam V_to V for 'to' factory.
+    //  * @tparam N_to N for 'from' factory.
+    //  * @param clnf_from 'from' factory
+    //  * @param clnf_to 'to' factory
+    //  * @return CLNodeFactory
+    //  */
+    // template <class Nc_from, typename V_from, typename N_from, class Nc_to,
+    //           typename V_to, typename N_to>
+    // static CLNodeFactory clone(
+    //     const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from,
+    //     CLNodeFactory<Nc_to, V_to, N_to> &clnf_to) {
+    //     clnf_to.tag_ = clnf_from.tag_;
+    //     clnf_to.name_ = clnf_from.name_;
+    //     clnf_to.storedValueType_ = clnf_from.storedValueType_;
+    //     clnf_to.boundField_ = clnf_from.boundField_;
+    //     clnf_to.parent_ = clnf_from.parent_;
+    //     clnf_to.linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
+    //     clnf_to.transformFn_ = clnf_from.transformFn_;
+    //     clnf_to.a2b_xfmr_ = clnf_from.a2b_xfmr_;
+    //     clnf_to.b2a_xfmr_ = clnf_from.b2a_xfmr_;
+    //     clnf_to.useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
+    //     clnf_to.attrs_ = clnf_from.attrs_;
+    //     return clnf_to;
+    // }
 
     /**
      * @brief Construct a new CLNodeFactory object
@@ -113,9 +107,8 @@ class CLNodeFactory {
      * but is meant to make basic distinctions between, say, a string and a
      * float value.
      */
-    inline CLNodeFactory(const string &tag, const string &name,
-                         CppType storedValueType)
-        : tag_(tag), name_(name), storedValueType_(storedValueType) {}
+    inline CLNodeFactory(const string &tag, const string &name)
+        : tag_(tag), name_(name) {}
 
     /**
      * @brief Construct a new CLNodeFactory object
@@ -126,11 +119,10 @@ class CLNodeFactory {
      * @param storedValue If we use this, we are creating a corresponding MN to
      * hold the value.
      */
-    inline CLNodeFactory(const string &tag, const string &name,
-                         CppType storedValueType, V *storedValue)
-        : tag_(tag), name_(name), storedValueType_(storedValueType) {
-        withStoredValue(storedValue, true);
-    }
+    // inline CLNodeFactory(const string &tag, const string &name)
+    //     : tag_(tag), name_(name) {
+    //     withStoredValue(storedValue, true);
+    // }
 
     /**
      * @brief This is something I'm trying out that might be a bit novel and
@@ -159,26 +151,26 @@ class CLNodeFactory {
      * @param modelNode
      * @return CLNodeFactory
      */
-    template <typename T>
-    inline CLNodeFactory extractModelNode(ModelNode<T> *&modelNode) {
-        modelNode = modelNode_;
-        return *this;
-    }
+    // template <typename T>
+    // inline CLNodeFactory extractModelNode(ModelNode<T> *&modelNode) {
+    //     modelNode = modelNode_;
+    //     return *this;
+    // }
 
     /**
      * @brief The method that makes it all possible. Virtually all the other
      * methods use this at least once. The build method uses all the current
      * settings to construct a control element.
      *
-     * @return Nc*
+     * @return ClarityNode*
      */
-    inline Nc *build(Nc *existingNode = nullptr) {
-        Nc *newNode;
+    inline ClarityNode *build(ClarityNode *existingNode = nullptr) {
+        ClarityNode *newNode;
         if (existingNode != nullptr) {
             newNode = existingNode;
         } else {
             newNode =
-                new Nc(name_, tag_, storedValueType_, useExistingDOMElement_);
+                new ClarityNode(name_, tag_, storedValueType_, useExistingDOMElement_);
         }
 
         newNode->setBoundField(boundField_);
@@ -186,14 +178,14 @@ class CLNodeFactory {
         if (parent_) {
             parent_->appendChild(newNode);
         }
-        if (modelNode_) {
-            if (a2b_xfmr_ != val(NULL)) {
-                modelNode_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);
-            } else {
-                modelNode_->addPeer(newNode, linkMultiplierConstant_);
-            }
-            if (!useExistingDOMElement_) modelNode_->pushValToPeers(modelNode_);
-        }
+        // if (modelNode_) {
+        //     if (a2b_xfmr_ != val(NULL)) {
+        //         modelNode_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);
+        //     } else {
+        //         modelNode_->addPeer(newNode, linkMultiplierConstant_);
+        //     }
+        //     if (!useExistingDOMElement_) modelNode_->pushValToPeers(modelNode_);
+        // }
         return newNode;
     }
 
@@ -232,7 +224,7 @@ class CLNodeFactory {
      * @param parent
      * @return CLNodeFactory
      */
-    inline CLNodeFactory createChildrenOf(Nc *parent) {
+    inline CLNodeFactory createChildrenOf(ClarityNode *parent) {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
@@ -281,14 +273,14 @@ class CLNodeFactory {
      * @param parent Cannot be null.
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withParent(Nc *parent) const & {
+    inline CLNodeFactory withParent(ClarityNode *parent) const & {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
     }
 
-    inline CLNodeFactory withParent(Nc *parent) && {
+    inline CLNodeFactory withParent(ClarityNode *parent) && {
         assert(parent != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.parent_ = parent;
@@ -302,75 +294,27 @@ class CLNodeFactory {
      * @param storedValueType
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withStoredValueType(
-        clarity::CppType storedValueType) const & {
-        CLNodeFactory cpy(*this);
-        cpy.storedValueType_ = storedValueType;
-        if (cpy.modelNode_) {
-            cpy.modelNode_->setStoredValueType(storedValueType);
-        }
-        return cpy;
-    }
+    // inline CLNodeFactory withStoredValueType(
+    //     clarity::CppType storedValueType) const & {
+    //     CLNodeFactory cpy(*this);
+    //     cpy.storedValueType_ = storedValueType;
+    //     if (cpy.modelNode_) {
+    //         cpy.modelNode_->setStoredValueType(storedValueType);
+    //     }
+    //     return cpy;
+    // }
 
-    inline CLNodeFactory withStoredValueType(
-        clarity::CppType storedValueType) && {
-        CLNodeFactory cpy(std::move(*this));
-        cpy.storedValueType_ = storedValueType;
-        if (cpy.modelNode_) {
-            cpy.modelNode_->setStoredValueType(storedValueType);
-        }
-        return cpy;
-    }
+    // inline CLNodeFactory withStoredValueType(
+    //     clarity::CppType storedValueType) && {
+    //     CLNodeFactory cpy(std::move(*this));
+    //     cpy.storedValueType_ = storedValueType;
+    //     if (cpy.modelNode_) {
+    //         cpy.modelNode_->setStoredValueType(storedValueType);
+    //     }
+    //     return cpy;
+    // }
 
-    /**
-     * @brief Creates a ModelNode in which to store the provided value. During
-     * the build() call the ModelNode will be linked to the built node as a
-     * peer.
-     *
-     * @param storedValue
-     * @return CLNodeFactory
-     */
-    inline CLNodeFactory withStoredValue(V *storedValue) const & {
-        assert(storedValue != nullptr);
-        ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
-                                            "modelnode_for_" + this->name_);
-        CLNodeFactory cpy(*this);
-        cpy.modelNode_ = mn;
-        return cpy;
-    }
-
-    inline CLNodeFactory withStoredValue(V *storedValue) && {
-        assert(storedValue != nullptr);
-        ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
-                                            "modelnode_for_" + this->name_);
-        CLNodeFactory cpy(std::move(*this));
-        cpy.modelNode_ = mn;
-        return cpy;
-    }
-
-    /**
-     * @brief In the case where a ModelNode already exists we can store it in
-     * the factory and it will be linked to the built node as a peer in the
-     * build() method. Note that this method and withStoredValue() are
-     * incompatible.
-     *
-     * @param modelNode
-     * @return CLNodeFactory
-     */
-    inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) const & {
-        assert(modelNode != nullptr);
-        CLNodeFactory cpy(*this);
-        cpy.modelNode_ = modelNode;
-        return cpy;
-    }
-
-    inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) && {
-        assert(modelNode != nullptr);
-        CLNodeFactory cpy(std::move(*this));
-        cpy.modelNode_ = modelNode;
-        return cpy;
-    }
-
+  
     /**
      * @brief A numeric constant that will be used as a multiplier when
      * transferring the value in this node to its associated ModelNode. The
@@ -592,7 +536,7 @@ class CLNodeFactory {
             withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
-        modelNode_->pushValToPeers(modelNode_);
+      //  modelNode_->pushValToPeers(modelNode_);
         return attributeNode;
     }
 
