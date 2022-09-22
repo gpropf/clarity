@@ -32,6 +32,10 @@ int main() {
 
     double *a = new double(27.8);
 
+    int dims[2] = {1,0};
+
+    Datum<double> a_dtm(CppType::Double, a, dims);
+
     double *temp = new double(600.4);
     ModelNode<double> *a_mn =
         new ModelNode(a, CppType::Double, "independently_created_modelnode");
@@ -42,6 +46,7 @@ int main() {
                                                        CppType::NoData);
 
     ClarityNode *maindiv = builder.build();
+    maindiv->datum_ = a_dtm;
 
     CLNodeFactory<ClarityNode, double, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);

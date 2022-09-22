@@ -21,6 +21,7 @@ namespace clarity {
 
 class ClarityNode {
    public:
+   Anytype datum_;
     static map<string, std::function<void()>> callbackMap;
 
     /**

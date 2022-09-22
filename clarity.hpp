@@ -60,16 +60,18 @@ class Invertable {
     virtual Invertable *inverted() = 0;
 };
 
+class Anytype {};
+
 /**
  * @brief I created this class when I realized that I needed a way to
  * encapsulate data that took into account dimensionality (i.e. is this an
  * array, a matrix?, etc...) It's also probably for the best that the CppType
  * and the pointer to the datum are together now.
  *
- * @tparam V
+ * @tparam CppT
  */
-template <class V>
-class Datum {
+template <class CppT>
+class Datum : public Anytype {
     int *dataDimensionality_ =
         new int[2];  //!< There is a digit for each dimension and the dimension
                      //!< list is terminated with a 0. Single valued datums thus
@@ -80,7 +82,13 @@ class Datum {
                      //!< if the value is singular or more complex. Checking to
                      //!< see if the first digit is a 1 will do that.
     CppType cppType_ = CppType::NoData;
-    V *datum_; //!< The tparam is the type of each C++ value;
+    CppT *datum_;  //!< The tparam is the type of each C++ value;
+
+public:
+    Datum(CppType cppType, CppT *datum, int *dataDimensionality)
+        : cppType_(cppType),
+          datum_(datum),
+          dataDimensionality_(dataDimensionality) {}
 };
 
 class Translator {
