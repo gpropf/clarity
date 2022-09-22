@@ -13,7 +13,7 @@
 
 map<const int, ClarityNode *> ClarityNode::switchboard;
 map<string, std::function<void()>> ClarityNode::callbackMap;
-TicketMachine ClarityNode::tm;
+TicketMachine ClarityNode::tm_;
 val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
 
 vector<int *> ns;

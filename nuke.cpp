@@ -107,7 +107,7 @@ map<const int, clarity::ClarityNode *>
  *
  */
 map<string, std::function<void()>> clarity::WebElemNode::callbackMap;
-clarity::TicketMachine clarity::ClarityNode::tm;
+clarity::TicketMachine clarity::ClarityNode::tm_;
 val clarity::ClarityNode::ActiveLink::CLElement_ =
     val::global("CLElement");
 

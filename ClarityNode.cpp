@@ -20,7 +20,7 @@ void clarity::ClarityNode::pushValToPeersById(int id) {
 }
 
 inline void clarity::ClarityNode::init() {
-    id_ = tm.getNext();
+    id_ = tm_.getNext();
     // Set up all nodes as single valued by default.
     dataDimensionality_[0] = 1;
     dataDimensionality_[1] = 0;

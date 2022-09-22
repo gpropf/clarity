@@ -18,6 +18,7 @@ namespace clarity {
  *
  */
 
+
 class ClarityNode {
    public:
     static map<string, std::function<void()>> callbackMap;
@@ -234,16 +235,18 @@ class ClarityNode {
     inline int countPeers() const { return dlpeers_.size(); }
 
    protected:
-    string tag_;
-    string boundField_;
+    string tag_; //!< HTML tag.
+    string boundField_; //!< The field that holds the data for this node.
+    vector<ClarityNode *> children_; //!< Mostly homolougous with the associated DOM element tree.
 
-    vector<ClarityNode *> children_;
-    /** \brief The node is clean if it has not been recently changed. This
+    /** \brief A node is 'clean' when we're done changing it. This
        feature is mainly designed to prevent infinite update loops if the node
-       graph is not acyclic. It doesn't do anything yet.*/
+       graph is not acyclic. */
     bool clean_ = false;
+
     /** \brief Hands out the numeric ids for all nodes.*/
-    static TicketMachine tm;
+    static TicketMachine tm_;
+
     /** \brief Keeps track of all nodes in the system. If you have the id of a
      * node you can get a pointer to it here. */
     static map<const int, ClarityNode *> switchboard;
@@ -253,23 +256,24 @@ class ClarityNode {
     val cle_ = val::global("CLElement").new_();
 
     CppType storedValueType_;  //!< C++ Data type
-    int *dataDimensionality_ =
-        new int[2];  //!< There is a digit for each dimension and the dimension
-                     //!< list is terminated with a 0. Single valued datums thus
-                     //!< have[1, 0]. A 2D grid that is 6 wide and 5
-                     //!< high will have[6, 5, 0] and so on.
 
-    /** \brief A node's parent is the DOM element that contains it. In the
-     * case of the WebAttrNode this is the WebElemNode for which this is an
-     * attribute. */
+    /**
+     * @brief There is a digit for each dimension and the dimension list is
+     * terminated with a 0. Single valued datums thus have[1, 0]. A 2D grid that
+     * is 6 wide and 5 high will have[6, 5, 0] and so on. This design was chosen
+     * so that a simple test for a 1 as the first value would differentiate all
+     * singular from all multiple values.
+     *
+     */
+    int *dataDimensionality_ = new int[2];
 
-    ClarityNode *parent_;
+    Datum *datum_;    
+
+    ClarityNode *parent_; //!< Parent node of this node. Can be null.
     int id_ = -1;  //!< Unique identifier - needs to be immutable once set.
     string name_;  //!< Human readable name of node. Mutable, not required.
-    /** \brief List of peers linked through JS functions which are applied when
-     * data is moved between nodes. */
-    // vector<ClarityNode::ActiveLink> peers_;
-    vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
+    
+    vector<shared_ptr<ClarityNode::DualLink>> dlpeers_; //!< Nodes that this node exchanges data with.
 };
 
 }  // namespace clarity

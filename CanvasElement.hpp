@@ -46,7 +46,9 @@ class CanvasGrid : public CanvasElement {
         val domElement = cle_["domElement"];
 
         // Needs to read the internal state of the CG object and transfer it
-        // back to the array.
+        // back to the array in the MN.
+        
+        return domElement; // Fixme: I'm doing this just to shut the compiler up about not returning a value.
     }
 
    protected:
