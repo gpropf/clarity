@@ -277,10 +277,10 @@ class CLElement {
     return el
   }
 
-  createDOMElement(id, tag, cpptype, name) {
+  createDOMElement(id, tag, name) {
     this.id_ = id
     this.tag_ = tag
-    this.cpptype_ = cpptype
+    //this.cpptype_ = cpptype
     this.name_ = name
 
     // console.log(`ID ${id} from ticketMachine.`)

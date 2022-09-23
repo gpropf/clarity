@@ -146,6 +146,13 @@ class Translator : public TranslatorBase {
                 break;
         }
     }
+
+    // void setVal(const val &inval) {
+        
+    //     *reinterpret_cast<T *>(dynval_) =
+    //         this->cle_.template call<T>("jsToCPPVal", inval);
+    //     pushValToPeers(this);
+    // }
 };
 
 template <class CppT>

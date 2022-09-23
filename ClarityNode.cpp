@@ -38,12 +38,12 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
     : name_(name), tag_(tag) {
     init();
     if (!useExistingDOMElement_)
-        //cle_.call<void>("createDOMElement", id_, tag, storedValueType, name);
+        cle_.call<void>("createDOMElement", id_, tag, name);
     cle_.set("name", val(name));
     // For some reason the code that sets the name in clarity.js doesn't "take"
     // so we re-set it here.
 
-    boundField_ = "value";
+    //boundField_ = "value";
     ClarityNode::switchboard[id_] = this;
 }
 
