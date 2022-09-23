@@ -2,6 +2,7 @@
 #define ClarityNode_hpp
 
 #include "clarity.hpp"
+#include "ModelNode.hpp"
 
 namespace clarity {
 
@@ -147,9 +148,7 @@ class ClarityNode {
         boundField_ = boundField;
     }
 
-    inline void setDatum(DatumBase *datum) {
-        datum_ = datum;
-    }
+    
 
     inline val getCLE() const { return cle_; }
     inline val getDomElement() const { return cle_["domElement"]; }
@@ -205,8 +204,7 @@ class ClarityNode {
     /** \brief Instance of the CLElement class that acts as a "proxy" in JS
      * space. Also stores the DOM element that the translator connects to.*/
     val cle_ = val::global("CLElement").new_();
-    DatumBase *datum_;  //!< The native (C++) data this node controls.
-    TranslatorBase *translator_;
+    
     string tag_;         //!< HTML tag.
     string boundField_;  //!< The field that holds the data for this node.
     vector<ClarityNode *> children_;  //!< Mostly homolougous with the
@@ -230,6 +228,8 @@ class ClarityNode {
 
     vector<shared_ptr<ClarityNode::DualLink>>
         dlpeers_;  //!< Nodes that this node exchanges data with.
+
+     TranslatorBase *translator_;
 };
 
 }  // namespace clarity

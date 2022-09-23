@@ -88,6 +88,8 @@ class Datum : public DatumBase {
    public:
     inline CppType getCppType() const { return cppType_; }
 
+    Datum(CppT *datum) : datum_(datum) {}
+
     Datum(CppType cppType, CppT *datum, int *dataDimensionality)
         : cppType_(cppType),
           datum_(datum),
@@ -148,7 +150,7 @@ class Translator : public TranslatorBase {
     }
 
     // void setVal(const val &inval) {
-        
+
     //     *reinterpret_cast<T *>(dynval_) =
     //         this->cle_.template call<T>("jsToCPPVal", inval);
     //     pushValToPeers(this);

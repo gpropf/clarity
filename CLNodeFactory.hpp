@@ -34,6 +34,10 @@ class CLNodeFactory {
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
                                      //!< any new nodes as its children.
 
+    ModelNode *modelNode_ =
+        nullptr;  //!< If we create a new MN or attach one, we set this. Note
+                  //!< that we can create ControlNetworkNodes with no MN.
+
     N linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
                                     //!< values from node to node unchanged.
     val transformFn_ = val(NULL);   //!< See the docs on the ActiveLink class.
@@ -181,18 +185,14 @@ class CLNodeFactory {
             parent_->appendChild(newNode);
         }
 
-        if (datum_) {
-            newNode->setDatum(datum_);
+        if (modelNode_) {
+            if (a2b_xfmr_ != val(NULL)) {
+                modelNode_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);
+            } else {
+                modelNode_->addPeer(newNode, linkMultiplierConstant_);
+            }
+            if (!useExistingDOMElement_) modelNode_->pushValToPeers(modelNode_);
         }
-        // if (modelNode_) {
-        //     if (a2b_xfmr_ != val(NULL)) {
-        //         modelNode_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);
-        //     } else {
-        //         modelNode_->addPeer(newNode, linkMultiplierConstant_);
-        //     }
-        //     if (!useExistingDOMElement_)
-        //     modelNode_->pushValToPeers(modelNode_);
-        // }
         return newNode;
     }
 
@@ -366,6 +366,57 @@ class CLNodeFactory {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(std::move(*this));
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
+        return cpy;
+    }
+
+    /**
+     * @brief In the case where a ModelNode already exists we can store it in
+     * the factory and it will be linked to the built node as a peer in the
+     * build() method. Note that this method and withStoredValue() are
+     * incompatible.
+     *
+     * @param modelNode
+     * @return CLNodeFactory
+     */
+    inline CLNodeFactory withModelNode(ModelNode *modelNode) const & {
+        assert(modelNode != nullptr);
+        CLNodeFactory cpy(*this);
+        cpy.modelNode_ = modelNode;
+        return cpy;
+    }
+
+    inline CLNodeFactory withModelNode(ModelNode *modelNode) && {
+        assert(modelNode != nullptr);
+        CLNodeFactory cpy(move(*this));
+        cpy.modelNode_ = modelNode;
+        return cpy;
+    }
+
+    /**
+     * @brief Creates a ModelNode in which to store the provided value. During
+     * the build() call the ModelNode will be linked to the built node as a
+     * peer.
+     *
+     * @param storedValue
+     * @return CLNodeFactory
+     */
+    template <class CppT>
+    inline CLNodeFactory withStoredValue(CppT *storedValue) const & {
+        assert(storedValue != nullptr);
+        datum_ = new Datum<CppT>(storedValue);
+        ModelNode<CppT> *mn = new ModelNode<CppT>(
+            storedValue, storedValueType_, "modelnode_for_" + this->name_);
+        CLNodeFactory cpy(*this);
+        cpy.modelNode_ = mn;
+        return cpy;
+    }
+
+    inline CLNodeFactory withStoredValue(CppT *storedValue) && {
+        assert(storedValue != nullptr);
+        ModelNode<CppT> *mn = new ModelNode<CppT>(
+            storedValue, storedValueType_, "modelnode_for_" + this->name_);
+        CLNodeFactory cpy(move(*this));
+        cpy.modelNode_ = mn;
         return cpy;
     }
 
