@@ -2,6 +2,7 @@
 #define CLNodeFactory_hpp
 
 #include "ClarityNode.hpp"
+#include "ModelNode.hpp"
 #include "clarity.hpp"
 
 namespace clarity {
@@ -159,7 +160,7 @@ class CLNodeFactory {
      * @return CLNodeFactory
      */
     template <typename T>
-    inline CLNodeFactory extractModelNode(ModelNode<T> *&modelNode) {
+    inline CLNodeFactory extractModelNode(ModelNode *&modelNode) {
         modelNode = modelNode_;
         return *this;
     }
@@ -404,18 +405,18 @@ class CLNodeFactory {
     inline CLNodeFactory withStoredValue(CppT *storedValue) const & {
         assert(storedValue != nullptr);
         datum_ = new Datum<CppT>(storedValue);
-        ModelNode<CppT> *mn = new ModelNode<CppT>(
-            storedValue, storedValueType_, "modelnode_for_" + this->name_);
+        ModelNode *mn = new ModelNode(datum_, "modelnode_for_" + this->name_);
         CLNodeFactory cpy(*this);
         cpy.modelNode_ = mn;
         return cpy;
     }
 
+    template <class CppT>
     inline CLNodeFactory withStoredValue(CppT *storedValue) && {
         assert(storedValue != nullptr);
-        ModelNode<CppT> *mn = new ModelNode<CppT>(
-            storedValue, storedValueType_, "modelnode_for_" + this->name_);
-        CLNodeFactory cpy(move(*this));
+        datum_ = new Datum<CppT>(storedValue);
+        ModelNode *mn = new ModelNode(datum_, "modelnode_for_" + this->name_);
+        CLNodeFactory cpy(std::move(*this));
         cpy.modelNode_ = mn;
         return cpy;
     }

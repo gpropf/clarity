@@ -2,7 +2,7 @@
 #define ClarityNode_hpp
 
 #include "clarity.hpp"
-#include "ModelNode.hpp"
+//#include "ModelNode.hpp"
 
 namespace clarity {
 

@@ -12,9 +12,8 @@ namespace clarity {
  * the data being modelled. These nodes do not have a representation on the
  * screen.
  *
- * 
+ *
  */
-
 
 class ModelNode : public ClarityNode {
    public:
@@ -25,11 +24,8 @@ class ModelNode : public ClarityNode {
         }
     }
 
-  
-
-    ModelNode(DatumBase *datum, const string &name)
-        : datum_(datum), name_(name) {
-    
+    ModelNode(DatumBase *datum, const string &name) : datum_(datum) {
+        name_ = name;
     }
 
     virtual val getVal() const {
@@ -38,8 +34,10 @@ class ModelNode : public ClarityNode {
         // }
         // if (*dataDimensionality_ != 1) {
         //     // We clearly have something with more than one value. We need to
-        //     // construct a JS version of the dataDimensionality_ list and return
-        //     // it. This will then be sent to the CG's setVal method and used to
+        //     // construct a JS version of the dataDimensionality_ list and
+        //     return
+        //     // it. This will then be sent to the CG's setVal method and used
+        //     to
         //     // initiate the data stream transfer.
         // }
         // // Single value case, proceed as usual.
@@ -53,13 +51,10 @@ class ModelNode : public ClarityNode {
         pushValToPeers(this);
     }
 
-    inline void setDatum(DatumBase *datum) {
-        datum_ = datum;
-    }
+    inline void setDatum(DatumBase *datum) { datum_ = datum; }
 
    protected:
     DatumBase *datum_;  //!< The native (C++) data this node controls.
-   
 };
 }  // namespace clarity
 
