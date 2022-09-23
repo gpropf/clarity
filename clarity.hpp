@@ -163,7 +163,7 @@ class TranslatorInput : public Translator<CppT> {
 
    public:
     TranslatorInput(Datum<CppT> *datum, val domElement)
-        : Translator<CppT>(datum, domElement, "boundField") {}
+        : Translator<CppT>(datum, domElement, "value") {}
 };
 
 }  // namespace clarity

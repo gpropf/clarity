@@ -128,6 +128,10 @@ class ClarityNode {
     template <typename V, typename C>
     inline void setRawVal(V &v, vector<C> loc) {}
 
+    inline void setTranslator(TranslatorBase *translator) {
+        translator_ = translator;
+    }
+
     // inline virtual void setVal(const val &inval) { clean_ = false; }
 
     inline virtual void setVal(const val &inval) {
@@ -147,8 +151,6 @@ class ClarityNode {
     inline void setBoundField(const string &boundField) {
         boundField_ = boundField;
     }
-
-    
 
     inline val getCLE() const { return cle_; }
     inline val getDomElement() const { return cle_["domElement"]; }
@@ -182,9 +184,9 @@ class ClarityNode {
     // static void pushValToPeersById(int id);
     static void pushValToPeersById(int id);
     // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
-    //void pullValFromPeer(DualLink &dl);
-    //void pullValFromPeers(ClarityNode *excludedPeer);
-    //static void pullValFromPeersById(int id);
+    // void pullValFromPeer(DualLink &dl);
+    // void pullValFromPeers(ClarityNode *excludedPeer);
+    // static void pullValFromPeersById(int id);
 
     template <typename T>
     void addPeer(ClarityNode *peer, const T linkMultiplierConstant = 1) {
@@ -204,7 +206,7 @@ class ClarityNode {
     /** \brief Instance of the CLElement class that acts as a "proxy" in JS
      * space. Also stores the DOM element that the translator connects to.*/
     val cle_ = val::global("CLElement").new_();
-    
+
     string tag_;         //!< HTML tag.
     string boundField_;  //!< The field that holds the data for this node.
     vector<ClarityNode *> children_;  //!< Mostly homolougous with the
@@ -229,7 +231,7 @@ class ClarityNode {
     vector<shared_ptr<ClarityNode::DualLink>>
         dlpeers_;  //!< Nodes that this node exchanges data with.
 
-     TranslatorBase *translator_;
+    TranslatorBase *translator_;
 };
 
 }  // namespace clarity

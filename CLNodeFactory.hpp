@@ -200,7 +200,7 @@ class CLNodeFactory {
             } else {
                 modelNode_->addPeer(newNode, linkMultiplierConstant_);
             }
-            if (!useExistingDOMElement_) modelNode_->pushValToPeers(modelNode_);
+           // if (!useExistingDOMElement_) modelNode_->pushValToPeers(modelNode_);
         }
         return newNode;
     }

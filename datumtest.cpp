@@ -31,14 +31,17 @@ int main() {
     CLNodeFactory<double> builder("div", "maindiv");
 
     ClarityNode *maindiv = builder.build();
-    // TranslatorInput<double> *d1_tr =
-    //     new TranslatorInput<double>(d1_dtm, maindiv->getDomElement());
 
     CLNodeFactory<double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
     ClarityNode *d1_inp =
         childOfMaindivBuilder.withDatum(d1_dtm).withName("d1").textInput();
+
+    TranslatorInput<double> *d1_tr =
+        new TranslatorInput<double>(d1_dtm, d1_inp->getDomElement());
+
+    d1_inp->setTranslator(d1_tr);
 
     // ClarityNode *labelled_d1_trinp =
     //     childOfMaindivBuilder.labelGivenNode(d1_trinp, "CONST LABEL");
