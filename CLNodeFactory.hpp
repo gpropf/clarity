@@ -21,6 +21,9 @@ namespace clarity {
 template <typename N>
 class CLNodeFactory {
    public:
+    DatumBase *datum_;
+    TranslatorBase *translator_;
+
     string tag_;   //!< Tag to be used with elements this factory builds.
     string name_;  //!< Name to be used with elements this factory builds.
     CppType storedValueType_;  //!< storedValueType to be used with elements
@@ -172,10 +175,14 @@ class CLNodeFactory {
             newNode = new ClarityNode(name_, tag_, useExistingDOMElement_);
         }
 
-       // newNode->setBoundField(boundField_);
+        // newNode->setBoundField(boundField_);
         newNode->setAttributes(attrs_);
         if (parent_) {
             parent_->appendChild(newNode);
+        }
+
+        if (datum_) {
+            newNode->setDatum(datum_);
         }
         // if (modelNode_) {
         //     if (a2b_xfmr_ != val(NULL)) {
@@ -246,6 +253,30 @@ class CLNodeFactory {
     inline CLNodeFactory withTag(const string &tag) && {
         CLNodeFactory cpy(std::move(*this));
         cpy.tag_ = tag;
+        return cpy;
+    }
+
+    inline CLNodeFactory withDatum(DatumBase *datum) const & {
+        CLNodeFactory cpy(*this);
+        cpy.datum_ = datum;
+        return cpy;
+    }
+
+    inline CLNodeFactory withDatum(DatumBase *datum) && {
+        CLNodeFactory cpy(std::move(*this));
+        cpy.datum_ = datum;
+        return cpy;
+    }
+
+    inline CLNodeFactory withTranslator(TranslatorBase *translator) const & {
+        CLNodeFactory cpy(*this);
+        cpy.translator_ = translator;
+        return cpy;
+    }
+
+    inline CLNodeFactory withTranslator(TranslatorBase *translator) && {
+        CLNodeFactory cpy(std::move(*this));
+        cpy.translator_ = translator;
         return cpy;
     }
 
@@ -399,8 +430,8 @@ class CLNodeFactory {
     inline ClarityNode *button(const string &name, const string &text,
                                val onPressCallback = val(NULL)) {
         ClarityNode *button = withTag("button").build();
-       // button->setBoundField("textContent");
-      //  button->setVal(val(text));
+        // button->setBoundField("textContent");
+        //  button->setVal(val(text));
         val buttonDOMElement = button->getCLE()["domElement"];
         buttonDOMElement.call<void>("addEventListener", val("click"),
                                     onPressCallback);
@@ -417,7 +448,7 @@ class CLNodeFactory {
      */
     inline ClarityNode *label(ClarityNode *forNode, const string &text) {
         ClarityNode *label = withTag("label").build();
-       label->setBoundField("innerHTML");
+        label->setBoundField("innerHTML");
         label->setVal(val(text));
         label->setAttribute("for", val(forNode->getId()));
         return label;

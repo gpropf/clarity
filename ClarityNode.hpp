@@ -147,6 +147,10 @@ class ClarityNode {
         boundField_ = boundField;
     }
 
+    inline void setDatum(DatumBase *datum) {
+        datum_ = datum;
+    }
+
     inline val getCLE() const { return cle_; }
     inline val getDomElement() const { return cle_["domElement"]; }
     inline string getName() const { return name_; }
