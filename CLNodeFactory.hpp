@@ -154,11 +154,11 @@ class CLNodeFactory {
      * @param modelNode
      * @return CLNodeFactory
      */
-    // template <typename T>
-    // inline CLNodeFactory extractModelNode(ModelNode<T> *&modelNode) {
-    //     modelNode = modelNode_;
-    //     return *this;
-    // }
+    template <typename T>
+    inline CLNodeFactory extractModelNode(ModelNode<T> *&modelNode) {
+        modelNode = modelNode_;
+        return *this;
+    }
 
     /**
      * @brief The method that makes it all possible. Virtually all the other
