@@ -117,9 +117,9 @@ class Translator : public TranslatorBase {
     Datum<CppT> *datum_;  //!< The datum we interact with and translate to/from
 
    public:
-    virtual val datum2js(DatumBase &d) { return val(NULL); }  // FIXME
+    virtual val datum2js(Datum<CppT> *datum) { return val(NULL); }  // FIXME
 
-    virtual DatumBase *js2Datum(const val &jsval) { return nullptr; }
+    virtual Datum<CppT> *js2Datum(const val &jsval) { return nullptr; } // FIXME
 
     Translator(Datum<CppT> *datum, val domElement, string boundField_)
         : datum_(datum), domElement_(domElement), boundField_(boundField_) {}
