@@ -186,6 +186,14 @@ class CLNodeFactory {
             parent_->appendChild(newNode);
         }
 
+        if (translator_) {
+
+        }
+
+        if (datum_) {
+            modelNode_ = new ModelNode(datum_, "modelNode_for_" + newNode->getName());
+        }
+
         if (modelNode_) {
             if (a2b_xfmr_ != val(NULL)) {
                 modelNode_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);
@@ -510,13 +518,14 @@ class CLNodeFactory {
      * @brief A simple text input field.
      *
      * @return ClarityNode*
-     */
+     */    
     inline ClarityNode *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
         ClarityNode *inp = withTag("input")
                                .withBoundField("value")
                                .withAttributes(inputFieldAttrs)
                                .build();
+        //TranslatorInput<CppT> * translatorInput = new TranslatorInput<CppT>(datum_<CppT>, inp->getDomElement());
         return inp;
     }
 
