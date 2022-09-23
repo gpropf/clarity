@@ -11,16 +11,16 @@ EMSCRIPTEN_BINDINGS(clarity) {
                   allow_raw_pointers())
         .class_function("pushValToPeersById", &ClarityNode::pushValToPeersById,
                         allow_raw_pointers())
-        .function("pullValFromPeers", &ClarityNode::pullValFromPeers,
-                  allow_raw_pointers())
-        .class_function("pullValFromPeersById",
-                        &ClarityNode::pullValFromPeersById,
-                        allow_raw_pointers())
+        // .function("pullValFromPeers", &ClarityNode::pullValFromPeers,
+        //           allow_raw_pointers())
+        // .class_function("pullValFromPeersById",
+        //                 &ClarityNode::pullValFromPeersById,
+        //                 allow_raw_pointers())
         .class_function("getCLElementById", &ClarityNode::getCLElementById,
                         allow_raw_pointers())
         .class_function("markNodeDirtyById", &ClarityNode::markNodeDirtyById,
                         allow_raw_pointers())
-        .constructor<string, string, const CppType>(allow_raw_pointers())
+        .constructor<string, string>(allow_raw_pointers())
         .property("tag", &ClarityNode::getTag)
         .property("id", &ClarityNode::getId)
         // .property("storedValueType", &ClarityNode::getStoredValueType,

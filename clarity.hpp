@@ -86,13 +86,18 @@ class Datum : public DatumBase {
     CppT *datum_;  //!< The tparam is the type of each C++ value;
 
    public:
+    inline CppType getCppType() const { return cppType_; }
+
     Datum(CppType cppType, CppT *datum, int *dataDimensionality)
         : cppType_(cppType),
           datum_(datum),
           dataDimensionality_(dataDimensionality) {}
 };
 
-class TranslatorBase {};
+class TranslatorBase {
+   public:
+    virtual val text2jsval() { return val(NULL); };
+};
 
 template <class CppT>
 class Translator : public TranslatorBase {
@@ -103,7 +108,6 @@ class Translator : public TranslatorBase {
     string boundField_;  //!< Tells us what field in the domElement_ to use to
                          //!< get the jsval_ from;
 
-   public:
    protected:
     Datum<CppT> *datum_;  //!< The datum we interact with and translate to/from
 
@@ -115,10 +119,10 @@ class Translator : public TranslatorBase {
     Translator(Datum<CppT> *datum, val domElement, string boundField_)
         : datum_(datum), domElement_(domElement), boundField_(boundField_) {}
 
-    val text2jsval() const {
+    virtual val text2jsval() {
         string valueText = domElement_[boundField_].as<string>();
         // cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
-        switch (datum_->cppType_) {
+        switch (datum_->getCppType()) {
             case CppType::Int:
                 // cout << "ClarityNode::getVal() Int\n";
                 return val(stoi(valueText));

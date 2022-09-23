@@ -86,9 +86,8 @@ class ClarityNode {
 
     void EMSCRIPTEN_KEEPALIVE init();
     inline ClarityNode() { init(); }
-    EMSCRIPTEN_KEEPALIVE ClarityNode(const string &name,
-                                     const CppType storedValueType);
-    EMSCRIPTEN_KEEPALIVE ClarityNode(const CppType storedValueType);
+    EMSCRIPTEN_KEEPALIVE ClarityNode(const string &name);
+    // EMSCRIPTEN_KEEPALIVE ClarityNode(const CppType storedValueType);
 
     /**
      * @brief Construct a new Web Element object
@@ -99,7 +98,6 @@ class ClarityNode {
      *
      */
     ClarityNode(const string &name, const string &tag,
-                const CppType storedValueType,
                 bool useExistingDOMElement_ = false);
 
     ~ClarityNode() {
@@ -181,9 +179,9 @@ class ClarityNode {
     // static void pushValToPeersById(int id);
     static void pushValToPeersById(int id);
     // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
-    void pullValFromPeer(DualLink &dl);
-    void pullValFromPeers(ClarityNode *excludedPeer);
-    static void pullValFromPeersById(int id);
+    //void pullValFromPeer(DualLink &dl);
+    //void pullValFromPeers(ClarityNode *excludedPeer);
+    //static void pullValFromPeersById(int id);
 
     template <typename T>
     void addPeer(ClarityNode *peer, const T linkMultiplierConstant = 1) {

@@ -1,9 +1,8 @@
 #ifndef CLNodeFactory_hpp
 #define CLNodeFactory_hpp
 
+#include "ClarityNode.hpp"
 #include "clarity.hpp"
-#include "CanvasElement.hpp"
-
 
 namespace clarity {
 
@@ -21,8 +20,6 @@ namespace clarity {
  */
 template <typename N>
 class CLNodeFactory {
-   
-
    public:
     string tag_;   //!< Tag to be used with elements this factory builds.
     string name_;  //!< Name to be used with elements this factory builds.
@@ -33,7 +30,7 @@ class CLNodeFactory {
                          //!< to be modified when the node value changes.
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
                                      //!< any new nodes as its children.
-    
+
     N linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
                                     //!< values from node to node unchanged.
     val transformFn_ = val(NULL);   //!< See the docs on the ActiveLink class.
@@ -55,9 +52,12 @@ class CLNodeFactory {
 
     // /**
     //  * @brief This is a bit of a kludge to allow us to switch the parameter
-    //  * values 'midstream' while building a GUI. The idea is to preserve the work
-    //  * you've already done, for instance in setting up a builder that produces
-    //  * only children of a certain node. You might want to preserve most of the
+    //  * values 'midstream' while building a GUI. The idea is to preserve the
+    //  work
+    //  * you've already done, for instance in setting up a builder that
+    //  produces
+    //  * only children of a certain node. You might want to preserve most of
+    //  the
     //  * settings in such a builder while changing the type of data or class of
     //  * nodes it produces. You feed in a 'from' factory and get back your 'to'
     //  * factory with all the non-tparam values copied over.
@@ -169,8 +169,7 @@ class CLNodeFactory {
         if (existingNode != nullptr) {
             newNode = existingNode;
         } else {
-            newNode =
-                new ClarityNode(name_, tag_, storedValueType_, useExistingDOMElement_);
+            newNode = new ClarityNode(name_, tag_, useExistingDOMElement_);
         }
 
         newNode->setBoundField(boundField_);
@@ -184,7 +183,8 @@ class CLNodeFactory {
         //     } else {
         //         modelNode_->addPeer(newNode, linkMultiplierConstant_);
         //     }
-        //     if (!useExistingDOMElement_) modelNode_->pushValToPeers(modelNode_);
+        //     if (!useExistingDOMElement_)
+        //     modelNode_->pushValToPeers(modelNode_);
         // }
         return newNode;
     }
@@ -314,7 +314,6 @@ class CLNodeFactory {
     //     return cpy;
     // }
 
-  
     /**
      * @brief A numeric constant that will be used as a multiplier when
      * transferring the value in this node to its associated ModelNode. The
@@ -504,12 +503,12 @@ class CLNodeFactory {
      *
      * @return CanvasElement*
      */
-    inline CanvasElement *canvas() {
-        CanvasElement *cel = withTag("canvas").build();
-        cel->setDrawFuntionName("canvasTestPattern");
-        cel->refreshView();
-        return cel;
-    }
+    // inline ClarityNode *canvas() {
+    //     ClarityNode *cel = withTag("canvas").build();
+    //     cel->setDrawFuntionName("canvasTestPattern");
+    //     cel->refreshView();
+    //     return cel;
+    // }
 
     /**
      * @brief This is suppsed to create a dual text and range input control and
@@ -536,7 +535,7 @@ class CLNodeFactory {
             withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
-      //  modelNode_->pushValToPeers(modelNode_);
+        //  modelNode_->pushValToPeers(modelNode_);
         return attributeNode;
     }
 

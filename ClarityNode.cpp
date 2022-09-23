@@ -26,26 +26,19 @@ inline void clarity::ClarityNode::init() {
     ClarityNode::switchboard[id_] = this;
 }
 
-inline clarity::ClarityNode::ClarityNode(const string &name,
-                                         const CppType storedValueType)
-    : name_(name), storedValueType_(storedValueType) {
+inline clarity::ClarityNode::ClarityNode(const string &name)
+    : name_(name){
     init();
-    cle_.set("cpptype", val(storedValueType));
+    //cle_.set("cpptype", val(storedValueType));
 }
 
-inline clarity::ClarityNode::ClarityNode(const CppType storedValueType)
-    : storedValueType_(storedValueType) {
-    init();
-    cle_.set("cpptype", val(storedValueType));
-}
 
-ClarityNode::ClarityNode(const string &name, const string &tag,
-                         const CppType storedValueType,
+ClarityNode::ClarityNode(const string &name, const string &tag,                       
                          bool useExistingDOMElement_)
-    : name_(name), tag_(tag), storedValueType_(storedValueType) {
+    : name_(name), tag_(tag) {
     init();
     if (!useExistingDOMElement_)
-        cle_.call<void>("createDOMElement", id_, tag, storedValueType, name);
+        //cle_.call<void>("createDOMElement", id_, tag, storedValueType, name);
     cle_.set("name", val(name));
     // For some reason the code that sets the name in clarity.js doesn't "take"
     // so we re-set it here.
@@ -62,7 +55,7 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
  * @param dl
  */
 void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
-    val internalVal = getVal();
+    val internalVal = translator_->text2jsval();
 
     auto [peer, xfmr] = dl.getOtherNode(this);
     if (internalVal.isNumber()) {
@@ -98,42 +91,42 @@ void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
     clean_ = false;
 }
 
-void clarity::ClarityNode::pullValFromPeer(DualLink &dl) {
-    if (clean_) {
-    }
+// void clarity::ClarityNode::pullValFromPeer(DualLink &dl) {
+//     if (clean_) {
+//     }
 
-    auto [peer, xfmr] = dl.getOtherNode(this);
-    val internalVal = peer->getVal();
-    if (internalVal.isNumber()) {
-        val transformedVal = ClarityNode::DualLink::CLElement_.call<val>(
-            "applyTransformFn", xfmr, internalVal);
-        setVal(transformedVal);
-    } else {
-        setVal(internalVal);
-    }
+//     auto [peer, xfmr] = dl.getOtherNode(this);
+//     val internalVal = peer->getVal();
+//     if (internalVal.isNumber()) {
+//         val transformedVal = ClarityNode::DualLink::CLElement_.call<val>(
+//             "applyTransformFn", xfmr, internalVal);
+//         setVal(transformedVal);
+//     } else {
+//         setVal(internalVal);
+//     }
 
-    clean_ = true;
-}
+//     clean_ = true;
+// }
 
-void clarity::ClarityNode::pullValFromPeers(ClarityNode *excludedPeer) {
-    if (excludedPeer == nullptr) {
-        for (auto dl : dlpeers_) {
-            pullValFromPeer(*dl);
-        }
-    } else {
-        for (auto dl : dlpeers_) {
-            auto [peer, xfmr] = dl->getOtherNode(this);
-            if (peer != excludedPeer) {
-                pullValFromPeer(*dl);
-            }
-        }
-    }
-}
+// void clarity::ClarityNode::pullValFromPeers(ClarityNode *excludedPeer) {
+//     if (excludedPeer == nullptr) {
+//         for (auto dl : dlpeers_) {
+//             pullValFromPeer(*dl);
+//         }
+//     } else {
+//         for (auto dl : dlpeers_) {
+//             auto [peer, xfmr] = dl->getOtherNode(this);
+//             if (peer != excludedPeer) {
+//                 pullValFromPeer(*dl);
+//             }
+//         }
+//     }
+// }
 
-void clarity::ClarityNode::pullValFromPeersById(int id) {
-    ClarityNode *cnn = getCLElementById(id);
-    cnn->pullValFromPeers(cnn);
-}
+// void clarity::ClarityNode::pullValFromPeersById(int id) {
+//     ClarityNode *cnn = getCLElementById(id);
+//     cnn->pullValFromPeers(cnn);
+// }
 
 void clarity::ClarityNode::addPeer(ClarityNode *peer, val a2b_xfmr,
                                    val b2a_xfmr) {
@@ -153,10 +146,10 @@ inline void ClarityNode::setAttributes(const map<string, val> &attrs) {
     }
 }
 
-inline void ClarityNode::setStoredValueType(CppType cppType) {
-    storedValueType_ = cppType;
-    cle_.set("cpptype", cppType);
-}
+// inline void ClarityNode::setStoredValueType(CppType cppType) {
+//     storedValueType_ = cppType;
+//     cle_.set("cpptype", cppType);
+// }
 
 inline void ClarityNode::addEventListenerByName(const string &eventName,
                                                 const string &callbackName) {

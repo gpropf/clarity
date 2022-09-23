@@ -8,8 +8,8 @@ namespace clarity {
 class CanvasElement : public ClarityNode {
    public:
     CanvasElement(const string &name, const string &tag,
-                  const CppType storedValueType, bool useExistingDOMElement)
-        : ClarityNode(name, tag, storedValueType, useExistingDOMElement) {}
+                   bool useExistingDOMElement)
+        : ClarityNode(name, tag, useExistingDOMElement) {}
 
     inline void setDrawFuntionName(const string &drawFuntionName) {
         drawFuntionName_ = drawFuntionName;
