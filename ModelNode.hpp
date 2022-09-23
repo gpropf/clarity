@@ -26,6 +26,7 @@ class ModelNode : public ClarityNode {
 
     ModelNode(DatumBase *datum, const string &name) : datum_(datum) {
         name_ = name;
+        cout << "ModelNode, id = " << id_ << ", name = " << name << "\n";
     }
 
     virtual val getVal() const {
@@ -42,6 +43,7 @@ class ModelNode : public ClarityNode {
         // }
         // // Single value case, proceed as usual.
         // return val(cpp2js<T>(dynval_));
+        return val(NULL);
     }
 
     void setVal(const val &inval) {
@@ -54,7 +56,7 @@ class ModelNode : public ClarityNode {
     inline void setDatum(DatumBase *datum) { datum_ = datum; }
 
    protected:
-    DatumBase *datum_;  //!< The native (C++) data this node controls.
+    DatumBase *datum_ = nullptr;  //!< The native (C++) data this node controls.
 };
 }  // namespace clarity
 

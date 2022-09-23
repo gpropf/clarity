@@ -22,8 +22,8 @@ namespace clarity {
 template <typename N>
 class CLNodeFactory {
    public:
-    DatumBase *datum_;
-    TranslatorBase *translator_;
+    DatumBase *datum_ = nullptr;
+    TranslatorBase *translator_ = nullptr;
 
     string tag_;   //!< Tag to be used with elements this factory builds.
     string name_;  //!< Name to be used with elements this factory builds.
@@ -190,7 +190,7 @@ class CLNodeFactory {
 
         }
 
-        if (datum_) {
+        if (datum_ != nullptr) {
             modelNode_ = new ModelNode(datum_, "modelNode_for_" + newNode->getName());
         }
 

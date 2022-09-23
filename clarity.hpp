@@ -53,7 +53,10 @@ class TicketMachine {
     int id_ = 0;
 
    public:
-    inline const int getNext() { return ++id_; }
+    inline const int getNext() {
+        cout << "Issuing ticket #: " << id_ + 1 << "\n";
+        return ++id_;
+    }
 };
 
 class Invertable {
@@ -114,16 +117,17 @@ class Translator : public TranslatorBase {
     Datum<CppT> *datum_;  //!< The datum we interact with and translate to/from
 
    public:
-    virtual val datum2js(DatumBase &d) {}
+    virtual val datum2js(DatumBase &d) { return val(NULL); }  // FIXME
 
-    virtual DatumBase js2Datum(const val &jsval) {}
+    virtual DatumBase *js2Datum(const val &jsval) { return nullptr; }
 
     Translator(Datum<CppT> *datum, val domElement, string boundField_)
         : datum_(datum), domElement_(domElement), boundField_(boundField_) {}
 
     virtual val text2jsval() {
         string valueText = domElement_[boundField_].as<string>();
-        // cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
+        // cout << "ClarityNode::getVal() valueText = " << valueText <<
+        // "\n";
         switch (datum_->getCppType()) {
             case CppType::Int:
                 // cout << "ClarityNode::getVal() Int\n";
