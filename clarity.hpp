@@ -162,7 +162,10 @@ class Translator : public TranslatorBase {
 
     inline virtual val js2datum() {
         val jsval = text2jsval();
-        *reinterpret_cast<CppT *>(datum_->datum_) = jsval.as<CppT>();
+        CppT cppVal = jsval.as<CppT>();
+        cout << "js2datum():  Setting C++ val to: " << cppVal << "\n";
+        *reinterpret_cast<CppT *>(datum_->datum_) =
+            cppVal;  // jsval.as<CppT>();
         return jsval;
         //   this->cle_.template call<T>("jsToCPPVal", inval);
         // pushValToPeers(this);

@@ -53,9 +53,9 @@ class CLElement {
 
   printVal(v, prefix = "") {
     if (prefix != "")
-      console.log(prefix + ", JSVAL = " + v);
+      console.log(prefix + ", JSVAL = " + v + ", type: " + typeof(v));
     else
-      console.log("JSVAL = " + v);
+      console.log("JSVAL = " + v + ", type: " + typeof(v));
   }
 
   static zerofloor(n) {

@@ -135,6 +135,9 @@ class ClarityNode {
         cle_.call<void>("printVal", inval);
         domElement.set(boundField_, inval);
         domElement.call<void>("setAttribute", val(boundField_), inval);
+        if (translator_ != nullptr) {
+            translator_->js2datum();
+        }
     }
 
     inline virtual val getJSVal() const {
@@ -143,8 +146,10 @@ class ClarityNode {
         val domElement = cle_["domElement"];
         // cle_.call<void>("printVal", inval);
         // domElement.get(boundField_, inval);
-        val internalJSVal =
-            domElement.call<val>("getAttribute", val(boundField_));
+        // val internalJSVal =
+        //     domElement.call<val>("getAttribute", val(boundField_));
+
+        val internalJSVal = domElement[boundField_];
         cle_.call<void>("printVal", internalJSVal,
                         val("getJSVal: id_ = " + to_string(id_)));
         return internalJSVal;
