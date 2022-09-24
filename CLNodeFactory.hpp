@@ -193,6 +193,7 @@ class CLNodeFactory {
             // modelNode_ = new ModelNode(datum_, "modelNode_for_" +
             // newNode->getName());
             newNode->setDatum(datum_);
+            //newNode->pushValToPeersById(newNode->getId());
         }
 
         if (modelNode_) {
