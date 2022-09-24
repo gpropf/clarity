@@ -122,30 +122,17 @@ class ClarityNode {
     inline ClarityNode *getParent() const { return this->parent_; }
     inline void setParent(ClarityNode *parent) { this->parent_ = parent; }
 
-    template <typename V, typename C>
-    inline V &getRawVal(const vector<C> loc) const {}
-
-    template <typename V, typename C>
-    inline void setRawVal(V &v, vector<C> loc) {}
-
     inline void setTranslator(TranslatorBase *translator) {
         translator_ = translator;
     }
 
-    // inline virtual void setVal(const val &inval) { clean_ = false; }
-
     inline virtual void setVal(const val &inval) {
+        assert(boundField_ != "");
         clean_ = false;
         val domElement = cle_["domElement"];
-        cle_.call<void>("printVal", inval);
-        // cout << "boundField_ = " << boundField_ << "\n";
-        if (boundField_ != "") {
-            domElement.set(boundField_, inval);
-            domElement.call<void>("setAttribute", val(boundField_), inval);
-        } else {
-            // cout << "WARNING: boundField_ IS EMPTY for node " << id_ <<
-            // "!!\n\n";
-        }
+        // cle_.call<void>("printVal", inval);
+        domElement.set(boundField_, inval);
+        domElement.call<void>("setAttribute", val(boundField_), inval);
     }
 
     inline void setBoundField(const string &boundField) {
@@ -231,7 +218,8 @@ class ClarityNode {
     vector<shared_ptr<ClarityNode::DualLink>>
         dlpeers_;  //!< Nodes that this node exchanges data with.
 
-    TranslatorBase *translator_;
+    TranslatorBase *translator_ = nullptr;
+    DatumBase *datum_ = nullptr;  //!< The native (C++) data this node controls.
 };
 
 }  // namespace clarity

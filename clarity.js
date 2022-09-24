@@ -15,7 +15,7 @@ class CLElement {
         ctx.fillStyle = 'red';
         ctx.beginPath();
         ctx.arc(250, 40, 32, 0, 2 * Math.PI);
-        ctx.fill(); 
+        ctx.fill();
         console.log("extraInitCode['canvas']()")
       }
     }
@@ -52,7 +52,7 @@ class CLElement {
   }
 
   printVal(v) {
-    //console.log("JSVAL = " + v);
+    console.log("JSVAL = " + v);
   }
 
   static zerofloor(n) {
@@ -115,13 +115,13 @@ class CLElement {
       domElement.style.display = 'none';
       domElement.style.display = 'block';
       let ctx = domElement.getContext('2d');
-      let [w, h, hw, hh] = [domElement.width, domElement.height, domElement.width/2, domElement.height/2];
-      let [qw,qh] = [w/4,h/4];
+      let [w, h, hw, hh] = [domElement.width, domElement.height, domElement.width / 2, domElement.height / 2];
+      let [qw, qh] = [w / 4, h / 4];
       ctx.scale(1, 1);
-      ctx.fillStyle = 'green';      
-      ctx.fillRect(0, 0, w,h);
+      ctx.fillStyle = 'green';
+      ctx.fillRect(0, 0, w, h);
       ctx.fillStyle = 'blue';
-      ctx.fillRect(qw,qh,hw,hh);
+      ctx.fillRect(qw, qh, hw, hh);
       console.log("drawGreenTestPattern()");
     }
   }
