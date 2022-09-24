@@ -137,6 +137,15 @@ class ClarityNode {
         domElement.call<void>("setAttribute", val(boundField_), inval);
     }
 
+    inline virtual val getJSVal() const {
+        assert(boundField_ != "");
+        //clean_ = false;
+        val domElement = cle_["domElement"];
+        // cle_.call<void>("printVal", inval);
+        //domElement.get(boundField_, inval);
+        return domElement.call<val>("getAttribute", val(boundField_));
+    }
+
     inline void setBoundField(const string &boundField) {
         boundField_ = boundField;
     }

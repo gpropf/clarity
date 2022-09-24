@@ -26,18 +26,16 @@ void clarity::ClarityNode::pushValToPeersById(int id) {
 inline void clarity::ClarityNode::init() {
     id_ = tm_.getNext();
     // Set up all nodes as single valued by default.
-   
+
     ClarityNode::switchboard[id_] = this;
 }
 
-inline clarity::ClarityNode::ClarityNode(const string &name)
-    : name_(name){
+inline clarity::ClarityNode::ClarityNode(const string &name) : name_(name) {
     init();
-    //cle_.set("cpptype", val(storedValueType));
+    // cle_.set("cpptype", val(storedValueType));
 }
 
-
-ClarityNode::ClarityNode(const string &name, const string &tag,                       
+ClarityNode::ClarityNode(const string &name, const string &tag,
                          bool useExistingDOMElement_)
     : name_(name), tag_(tag) {
     init();
@@ -47,7 +45,7 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
     // For some reason the code that sets the name in clarity.js doesn't "take"
     // so we re-set it here.
 
-    //boundField_ = "value";
+    // boundField_ = "value";
     ClarityNode::switchboard[id_] = this;
 }
 
@@ -59,7 +57,11 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
  * @param dl
  */
 void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
-    val internalVal = translator_->text2jsval();
+    val internalVal;
+    if (translator_ != nullptr)
+        internalVal = translator_->text2jsval();
+    else
+        internalVal = getJSVal();
 
     auto [peer, xfmr] = dl.getOtherNode(this);
     if (internalVal.isNumber()) {
