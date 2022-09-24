@@ -6,3 +6,23 @@ Clarity is a web development framework written in C++ using emscripten to facili
 
 ### An Interface is a Graph
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#### Some common cryptic compiler errors and quickfixes ####
+
+`error: array 'new' cannot have initialization arguments return new T(v);`
+You forgot to enclose a string literal argument in a 'val' value. The compiler thinks the string is some kind of char array.
+

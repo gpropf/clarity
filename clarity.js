@@ -51,8 +51,11 @@ class CLElement {
     Module.ClarityNode.runCallbackById("make_trs_ints");
   }
 
-  printVal(v) {
-    console.log("JSVAL = " + v);
+  printVal(v, prefix = "") {
+    if (prefix != "")
+      console.log(prefix + ", JSVAL = " + v);
+    else
+      console.log("JSVAL = " + v);
   }
 
   static zerofloor(n) {

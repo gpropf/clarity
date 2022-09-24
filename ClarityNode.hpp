@@ -132,18 +132,22 @@ class ClarityNode {
         assert(boundField_ != "");
         clean_ = false;
         val domElement = cle_["domElement"];
-        // cle_.call<void>("printVal", inval);
+        cle_.call<void>("printVal", inval);
         domElement.set(boundField_, inval);
         domElement.call<void>("setAttribute", val(boundField_), inval);
     }
 
     inline virtual val getJSVal() const {
         assert(boundField_ != "");
-        //clean_ = false;
+        // clean_ = false;
         val domElement = cle_["domElement"];
         // cle_.call<void>("printVal", inval);
-        //domElement.get(boundField_, inval);
-        return domElement.call<val>("getAttribute", val(boundField_));
+        // domElement.get(boundField_, inval);
+        val internalJSVal =
+            domElement.call<val>("getAttribute", val(boundField_));
+        cle_.call<void>("printVal", internalJSVal,
+                        val("getJSVal: id_ = " + to_string(id_)));
+        return internalJSVal;
     }
 
     inline void setBoundField(const string &boundField) {

@@ -17,8 +17,8 @@ inline string clarity::ClarityNode::nodeStats(const string &msg) const {
 void clarity::ClarityNode::pushValToPeersById(int id) {
     ClarityNode *cnn = getCLElementById(id);
     if (cnn->translator_ != nullptr) {
-        val newJSVal = cnn->translator_->text2jsval();
-        cnn->translator_->js2datum();
+        //val newJSVal = cnn->translator_->text2jsval();
+        val newJSVal = cnn->translator_->js2datum();
     }
     cnn->pushValToPeers(cnn);
 }
@@ -62,6 +62,8 @@ void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
         internalVal = translator_->text2jsval();
     else
         internalVal = getJSVal();
+
+    cle_.call<void>("printVal", internalVal, val("pushValToPeer: id_ = " + to_string(id_)));
 
     auto [peer, xfmr] = dl.getOtherNode(this);
     if (internalVal.isNumber()) {

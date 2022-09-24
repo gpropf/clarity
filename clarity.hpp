@@ -102,9 +102,9 @@ class Datum : public DatumBase {
 
 class TranslatorBase {
    public:
-    virtual val text2jsval() { return val(NULL); }
-    virtual void js2datum() {}
-    virtual void datum2js() {}
+    inline virtual val text2jsval() { return val(NULL); }
+    inline virtual val js2datum() { return val(NULL); }
+    inline virtual void datum2js() {}
 
     inline virtual void setVal(const val &inval) {}
 };
@@ -160,10 +160,10 @@ class Translator : public TranslatorBase {
         }
     }
 
-    virtual void js2datum() {
-        // val jsval =
-        *reinterpret_cast<CppT *>(datum_->datum_) =
-            text2jsval().template as<CppT>();
+    inline virtual val js2datum() {
+        val jsval = text2jsval();
+        *reinterpret_cast<CppT *>(datum_->datum_) = jsval.as<CppT>();
+        return jsval;
         //   this->cle_.template call<T>("jsToCPPVal", inval);
         // pushValToPeers(this);
     }
@@ -177,10 +177,10 @@ class Translator : public TranslatorBase {
         domElement_.call<void>("setAttribute", val(boundField_), inval);
     }
 
-      virtual void datum2js() {
+    inline virtual void datum2js() {
         val jsval = val(*reinterpret_cast<CppT *>(datum_->datum_));
         setVal(jsval);
-      }
+    }
 };
 
 template <class CppT>
