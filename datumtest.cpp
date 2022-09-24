@@ -42,6 +42,7 @@ int main() {
         new TranslatorInput<double>(d1_dtm, d1_inp->getDomElement());
 
     d1_inp->setTranslator(d1_tr);
+    d1_tr->datum2js();
 
     // ClarityNode *labelled_d1_trinp =
     //     childOfMaindivBuilder.labelGivenNode(d1_trinp, "CONST LABEL");

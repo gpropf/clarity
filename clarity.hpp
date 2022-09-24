@@ -179,6 +179,7 @@ class Translator : public TranslatorBase {
 
       virtual void datum2js() {
         val jsval = val(*reinterpret_cast<CppT *>(datum_->datum_));
+        setVal(jsval);
       }
 };
 
