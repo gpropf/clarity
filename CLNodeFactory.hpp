@@ -180,18 +180,18 @@ class CLNodeFactory {
             newNode = new ClarityNode(name_, tag_, useExistingDOMElement_);
         }
 
-        // newNode->setBoundField(boundField_);
+        newNode->setBoundField(boundField_);
         newNode->setAttributes(attrs_);
         if (parent_) {
             parent_->appendChild(newNode);
         }
 
         if (translator_) {
-
         }
 
         if (datum_ != nullptr) {
-            //modelNode_ = new ModelNode(datum_, "modelNode_for_" + newNode->getName());
+            // modelNode_ = new ModelNode(datum_, "modelNode_for_" +
+            // newNode->getName());
             newNode->setDatum(datum_);
         }
 
@@ -201,7 +201,8 @@ class CLNodeFactory {
             } else {
                 modelNode_->addPeer(newNode, linkMultiplierConstant_);
             }
-           // if (!useExistingDOMElement_) modelNode_->pushValToPeers(modelNode_);
+            // if (!useExistingDOMElement_)
+            // modelNode_->pushValToPeers(modelNode_);
         }
         return newNode;
     }
@@ -519,14 +520,15 @@ class CLNodeFactory {
      * @brief A simple text input field.
      *
      * @return ClarityNode*
-     */    
+     */
     inline ClarityNode *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
         ClarityNode *inp = withTag("input")
                                .withBoundField("value")
                                .withAttributes(inputFieldAttrs)
                                .build();
-        //TranslatorInput<CppT> * translatorInput = new TranslatorInput<CppT>(datum_<CppT>, inp->getDomElement());
+        // TranslatorInput<CppT> * translatorInput = new
+        // TranslatorInput<CppT>(datum_<CppT>, inp->getDomElement());
         return inp;
     }
 

@@ -128,7 +128,7 @@ class ClarityNode {
         translator_ = translator;
     }
 
-    inline virtual void setVal(const val &inval) {
+    inline virtual void setVal(val inval) {
         assert(boundField_ != "");
         clean_ = false;
         val domElement = cle_["domElement"];
