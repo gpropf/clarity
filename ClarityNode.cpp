@@ -16,6 +16,10 @@ inline string clarity::ClarityNode::nodeStats(const string &msg) const {
 
 void clarity::ClarityNode::pushValToPeersById(int id) {
     ClarityNode *cnn = getCLElementById(id);
+    if (cnn->translator_ != nullptr) {
+        val newJSVal = cnn->translator_->text2jsval();
+        cnn->translator_->js2datum();
+    }
     cnn->pushValToPeers(cnn);
 }
 

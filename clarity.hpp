@@ -76,6 +76,7 @@ class DatumBase {};
 template <class CppT>
 class Datum : public DatumBase {
    protected:
+   public:
     /**
      * @brief There is a digit for each dimension and the dimension list is
      * terminated with a 0. Single valued datums thus have[1, 0]. A 2D grid that
@@ -88,8 +89,8 @@ class Datum : public DatumBase {
     CppType cppType_ = CppType::NoData;
     CppT *datum_;  //!< The tparam is the type of each C++ value;
 
-   public:
-    inline CppType getCppType() const { return cppType_; }
+    // inline CppType getCppType() const { return cppType_; }
+    // inline void setVal(CppT v) { *datum_ = v; }
 
     Datum(CppT *datum) : datum_(datum) {}
 
@@ -101,7 +102,11 @@ class Datum : public DatumBase {
 
 class TranslatorBase {
    public:
-    virtual val text2jsval() { return val(NULL); };
+    virtual val text2jsval() { return val(NULL); }
+    virtual void js2datum() {}
+    virtual void datum2js() {}
+
+    inline virtual void setVal(const val &inval) {}
 };
 
 template <class CppT>
@@ -117,9 +122,11 @@ class Translator : public TranslatorBase {
     Datum<CppT> *datum_;  //!< The datum we interact with and translate to/from
 
    public:
-    virtual val datum2js(Datum<CppT> *datum) { return val(NULL); }  // FIXME
+    // virtual val datum2js(Datum<CppT> *datum) { return val(NULL); }  // FIXME
 
-    virtual Datum<CppT> *js2Datum(const val &jsval) { return nullptr; } // FIXME
+    // virtual Datum<CppT> *js2Datum(const val &jsval) {
+    //     return nullptr;
+    // }  // FIXME
 
     Translator(Datum<CppT> *datum, val domElement, string boundField_)
         : datum_(datum), domElement_(domElement), boundField_(boundField_) {}
@@ -128,7 +135,7 @@ class Translator : public TranslatorBase {
         string valueText = domElement_[boundField_].as<string>();
         // cout << "ClarityNode::getVal() valueText = " << valueText <<
         // "\n";
-        switch (datum_->getCppType()) {
+        switch (datum_->cppType_) {
             case CppType::Int:
                 // cout << "ClarityNode::getVal() Int\n";
                 return val(stoi(valueText));
@@ -153,12 +160,26 @@ class Translator : public TranslatorBase {
         }
     }
 
-    // void setVal(const val &inval) {
+    virtual void js2datum() {
+        // val jsval =
+        *reinterpret_cast<CppT *>(datum_->datum_) =
+            text2jsval().template as<CppT>();
+        //   this->cle_.template call<T>("jsToCPPVal", inval);
+        // pushValToPeers(this);
+    }
 
-    //     *reinterpret_cast<T *>(dynval_) =
-    //         this->cle_.template call<T>("jsToCPPVal", inval);
-    //     pushValToPeers(this);
-    // }
+    inline virtual void setVal(const val &inval) {
+        assert(boundField_ != "");
+        // clean_ = false;
+
+        // cle_.call<void>("printVal", inval);
+        domElement_.set(boundField_, inval);
+        domElement_.call<void>("setAttribute", val(boundField_), inval);
+    }
+
+      virtual void datum2js() {
+        val jsval = val(*reinterpret_cast<CppT *>(datum_->datum_));
+      }
 };
 
 template <class CppT>

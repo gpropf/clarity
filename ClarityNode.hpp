@@ -122,6 +122,8 @@ class ClarityNode {
     inline ClarityNode *getParent() const { return this->parent_; }
     inline void setParent(ClarityNode *parent) { this->parent_ = parent; }
 
+    inline void setDatum(DatumBase *datum) { datum_ = datum; }
+
     inline void setTranslator(TranslatorBase *translator) {
         translator_ = translator;
     }

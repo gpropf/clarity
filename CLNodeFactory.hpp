@@ -191,7 +191,8 @@ class CLNodeFactory {
         }
 
         if (datum_ != nullptr) {
-            modelNode_ = new ModelNode(datum_, "modelNode_for_" + newNode->getName());
+            //modelNode_ = new ModelNode(datum_, "modelNode_for_" + newNode->getName());
+            newNode->setDatum(datum_);
         }
 
         if (modelNode_) {
