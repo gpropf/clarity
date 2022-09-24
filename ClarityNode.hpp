@@ -190,6 +190,8 @@ class ClarityNode {
     virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
     // static void pushValToPeersById(int id);
     static void pushValToPeersById(int id);
+    void js2datumWithPushToPeers();
+    static void js2datumWithPushToPeersById(int id);
     // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
     // void pullValFromPeer(DualLink &dl);
     // void pullValFromPeers(ClarityNode *excludedPeer);

@@ -23,6 +23,21 @@ void clarity::ClarityNode::pushValToPeersById(int id) {
     cnn->pushValToPeers(cnn);
 }
 
+void clarity::ClarityNode::js2datumWithPushToPeersById(int id) {
+    ClarityNode *cnn = getCLElementById(id);
+    cnn->js2datumWithPushToPeers();
+}
+
+void clarity::ClarityNode::js2datumWithPushToPeers() {
+    
+    if (translator_ != nullptr) {
+        //val newJSVal = cnn->translator_->text2jsval();
+        val newJSVal = translator_->js2datum();
+    }
+    pushValToPeers(this);
+}
+
+
 inline void clarity::ClarityNode::init() {
     id_ = tm_.getNext();
     // Set up all nodes as single valued by default.
