@@ -41,6 +41,11 @@ int main() {
     TranslatorInput<double> *d1_tr =
         new TranslatorInput<double>(d1_dtm, d1_inp->getDomElement());
 
+    ClarityNode *d1_rinp =
+        childOfMaindivBuilder.withName("range_d1").rangeInput();
+
+    d1_inp->addPeer<double>(d1_rinp);
+
     d1_inp->setTranslator(d1_tr);
     d1_tr->datum2js();
 
