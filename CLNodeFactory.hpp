@@ -2,7 +2,7 @@
 #define CLNodeFactory_hpp
 
 #include "ClarityNode.hpp"
-#include "ModelNode.hpp"
+//#include "ModelNode.hpp"
 #include "clarity.hpp"
 
 namespace clarity {
@@ -35,9 +35,9 @@ class CLNodeFactory {
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
                                      //!< any new nodes as its children.
 
-    ModelNode *modelNode_ =
-        nullptr;  //!< If we create a new MN or attach one, we set this. Note
-                  //!< that we can create ControlNetworkNodes with no MN.
+    // ModelNode *modelNode_ =
+    //     nullptr;  //!< If we create a new MN or attach one, we set this. Note
+    //               //!< that we can create ControlNetworkNodes with no MN.
 
     N linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
                                     //!< values from node to node unchanged.
@@ -159,11 +159,11 @@ class CLNodeFactory {
      * @param modelNode
      * @return CLNodeFactory
      */
-    template <typename T>
-    inline CLNodeFactory extractModelNode(ModelNode *&modelNode) {
-        modelNode = modelNode_;
-        return *this;
-    }
+    // template <typename T>
+    // inline CLNodeFactory extractModelNode(ModelNode *&modelNode) {
+    //     modelNode = modelNode_;
+    //     return *this;
+    // }
 
     /**
      * @brief The method that makes it all possible. Virtually all the other
@@ -196,15 +196,15 @@ class CLNodeFactory {
             //newNode->pushValToPeersById(newNode->getId());
         }
 
-        if (modelNode_) {
-            if (a2b_xfmr_ != val(NULL)) {
-                modelNode_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);
-            } else {
-                modelNode_->addPeer(newNode, linkMultiplierConstant_);
-            }
-            // if (!useExistingDOMElement_)
-            // modelNode_->pushValToPeers(modelNode_);
-        }
+        // if (modelNode_) {
+        //     if (a2b_xfmr_ != val(NULL)) {
+        //         modelNode_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);
+        //     } else {
+        //         modelNode_->addPeer(newNode, linkMultiplierConstant_);
+        //     }
+        //     // if (!useExistingDOMElement_)
+        //     // modelNode_->pushValToPeers(modelNode_);
+        // }
         return newNode;
     }
 
@@ -390,19 +390,19 @@ class CLNodeFactory {
      * @param modelNode
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withModelNode(ModelNode *modelNode) const & {
-        assert(modelNode != nullptr);
-        CLNodeFactory cpy(*this);
-        cpy.modelNode_ = modelNode;
-        return cpy;
-    }
+    // inline CLNodeFactory withModelNode(ModelNode *modelNode) const & {
+    //     assert(modelNode != nullptr);
+    //     CLNodeFactory cpy(*this);
+    //     cpy.modelNode_ = modelNode;
+    //     return cpy;
+    // }
 
-    inline CLNodeFactory withModelNode(ModelNode *modelNode) && {
-        assert(modelNode != nullptr);
-        CLNodeFactory cpy(move(*this));
-        cpy.modelNode_ = modelNode;
-        return cpy;
-    }
+    // inline CLNodeFactory withModelNode(ModelNode *modelNode) && {
+    //     assert(modelNode != nullptr);
+    //     CLNodeFactory cpy(move(*this));
+    //     cpy.modelNode_ = modelNode;
+    //     return cpy;
+    // }
 
     /**
      * @brief Creates a ModelNode in which to store the provided value. During
@@ -412,25 +412,25 @@ class CLNodeFactory {
      * @param storedValue
      * @return CLNodeFactory
      */
-    template <class CppT>
-    inline CLNodeFactory withStoredValue(CppT *storedValue) const & {
-        assert(storedValue != nullptr);
-        datum_ = new Datum<CppT>(storedValue);
-        ModelNode *mn = new ModelNode(datum_, "modelnode_for_" + this->name_);
-        CLNodeFactory cpy(*this);
-        cpy.modelNode_ = mn;
-        return cpy;
-    }
+    // template <class CppT>
+    // inline CLNodeFactory withStoredValue(CppT *storedValue) const & {
+    //     assert(storedValue != nullptr);
+    //     datum_ = new Datum<CppT>(storedValue);
+    //     //ModelNode *mn = new ModelNode(datum_, "modelnode_for_" + this->name_);
+    //     CLNodeFactory cpy(*this);
+    //     //cpy.modelNode_ = mn;
+    //     return cpy;
+    // }
 
-    template <class CppT>
-    inline CLNodeFactory withStoredValue(CppT *storedValue) && {
-        assert(storedValue != nullptr);
-        datum_ = new Datum<CppT>(storedValue);
-        ModelNode *mn = new ModelNode(datum_, "modelnode_for_" + this->name_);
-        CLNodeFactory cpy(std::move(*this));
-        cpy.modelNode_ = mn;
-        return cpy;
-    }
+    // template <class CppT>
+    // inline CLNodeFactory withStoredValue(CppT *storedValue) && {
+    //     assert(storedValue != nullptr);
+    //     datum_ = new Datum<CppT>(storedValue);
+    //     ModelNode *mn = new ModelNode(datum_, "modelnode_for_" + this->name_);
+    //     CLNodeFactory cpy(std::move(*this));
+    //     cpy.modelNode_ = mn;
+    //     return cpy;
+    // }
 
     /**
      * @brief It is sometimes necessary to apply a complex transform rather than
