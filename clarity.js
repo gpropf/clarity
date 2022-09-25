@@ -308,7 +308,7 @@ class CLElement {
       var outerThis = this
       this.domElement_.addEventListener('change', function (e) {
         // console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)
-        Module.ClarityNode.pushValToPeersById(outerThis.id_)
+        Module.ClarityNode.js2datumWithPushToPeersById(outerThis.id_)
         //Module.ClarityNode.pullValFromPeersById(outerThis.id_)
         Module.ClarityNode.markNodeDirtyById(outerThis.id_)
       })

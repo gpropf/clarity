@@ -11,6 +11,8 @@ EMSCRIPTEN_BINDINGS(clarity) {
                   allow_raw_pointers())
         .class_function("pushValToPeersById", &ClarityNode::pushValToPeersById,
                         allow_raw_pointers())
+        .class_function("js2datumWithPushToPeersById", &ClarityNode::js2datumWithPushToPeersById,
+                        allow_raw_pointers())
         // .function("pullValFromPeers", &ClarityNode::pullValFromPeers,
         //           allow_raw_pointers())
         // .class_function("pullValFromPeersById",
