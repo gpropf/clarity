@@ -58,6 +58,7 @@ int main() {
     d1_tr->datum2js();
     d2_tr->datum2js();
 
+   // d2_inp->pushValToPeers(d2_inp);
     // ClarityNode *labelled_d1_trinp =
     //     childOfMaindivBuilder.labelGivenNode(d1_trinp, "CONST LABEL");
 

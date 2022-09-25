@@ -555,17 +555,9 @@ class CLNodeFactory {
      */
     inline ClarityNode *trInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
-        ClarityNode *tinp = withTag("input")
-                                .withBoundField("value")
-                                .withAttributes(inputFieldAttrs)
-                                .build();
-
-        inputFieldAttrs["type"] = val("range");
-        // inputFieldAttrs.find("type") = "range";
-        ClarityNode *rinp = withTag("input")
-                                .withBoundField("value")
-                                .withAttributes(inputFieldAttrs)
-                                .build();
+        ClarityNode *tinp = withName("text_input_" + name_).textInput();        
+        ClarityNode *rinp = withName("range_input_" + name_).rangeInput();
+        tinp->addPeer<double>(rinp);
         ClarityNode *outerDiv = withTag("div").withName("tr_" + name_).build();
         outerDiv->appendChild(tinp);
         outerDiv->appendChild(rinp);
