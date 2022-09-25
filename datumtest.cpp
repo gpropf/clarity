@@ -27,6 +27,7 @@ int main() {
 
     int dims[2] = {1, 0};
     Datum<double> *d1_dtm = new Datum<double>(CppType::Double, d1, dims);
+    Datum<double> *d2_dtm = new Datum<double>(CppType::Double, d2, dims);
 
     CLNodeFactory<double> builder("div", "maindiv");
 
@@ -46,8 +47,16 @@ int main() {
 
     d1_inp->addPeer<double>(d1_rinp);
 
+    ClarityNode *d2_inp =
+        childOfMaindivBuilder.withDatum(d2_dtm).withName("d2").trInput();
+
+    TranslatorInput<double> *d2_tr =
+        new TranslatorInput<double>(d2_dtm, d2_inp->getDomElement());
+
     d1_inp->setTranslator(d1_tr);
+    d2_inp->setTranslator(d2_tr);
     d1_tr->datum2js();
+    d2_tr->datum2js();
 
     // ClarityNode *labelled_d1_trinp =
     //     childOfMaindivBuilder.labelGivenNode(d1_trinp, "CONST LABEL");
