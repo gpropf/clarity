@@ -25,6 +25,8 @@ class CLElement {
     return a * b
   }
 
+  
+
   invertValue(v) {
     return 1 / v
   }

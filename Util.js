@@ -4,7 +4,9 @@ class Util {
 
     constructor() { }
 
-   
+    static locateEvent(ev) {
+        alert(ev.x);
+    }
 
     utiltest(x) {
         console.log("x is:" + x);
@@ -14,7 +16,7 @@ class Util {
     static make_trs() {
         console.log("Making the fields!");
         Module.Util.make_trs();
-      }
+    }
 
 }
 

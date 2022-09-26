@@ -20,6 +20,7 @@ using namespace emscripten;
 namespace clarity {
 
 static val CLElement_ = val::global("CLElement");
+static val Util_ = val::global("Util");
 // static val CLElement_;
 
 /**
@@ -255,10 +256,11 @@ class TranslatorCanvasGrid8 : public Translator<CppT> {
    public:
     TranslatorCanvasGrid8(Datum<CppT> *datum, val domElement)
         : Translator<CppT>(datum, domElement, "SPECIAL") {
-        //EM_JS(void, clickAlert, (), { alert('hello world!'); });
-        EM_ASM(function clickAlert() { alert("Hello World!"); });
+        // EM_JS(void, clickAlert, (), { alert('hello world!'); });
+        //EM_ASM(function clickAlert() { alert("Hello World!"); });
+        
         this->domElement_.template call<val>("addEventListener", val("click"),
-                                             clickAlert);
+                                             Util_["locateEvent"]);
     }
 
     static const array<string, 8> colors;
