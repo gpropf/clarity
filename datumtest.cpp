@@ -94,10 +94,31 @@ int main() {
                                     .withAttributes({})
                                     .attributeNode("r", cir1);
 
-    // d2_inp->pushValToPeers(d2_inp);
-    // ClarityNode *labelled_d1_trinp =
-    //     childOfMaindivBuilder.labelGivenNode(d1_trinp, "CONST LABEL");
     d1_tinp->addPeer<double>(circleRadius, 1.0);
+
+    // Canvas Grid Test ----------------------------------------------
+
+    int width = 20;
+    int height = 15;
+    int totalCels = width * height;
+    unsigned char *raster = new unsigned char[totalCels];
+    const int rasterDims[3] = {width, height, 0};
+    Datum<unsigned char> *raster_dtm =
+        new Datum<unsigned char>(CppType::Int, raster, rasterDims);
+    for (int i = 0; i < totalCels; i++) raster[i] = i % 27;
+
+    ClarityNode *canvas1 =
+        childOfMaindivBuilder.withName("canvas1")
+            .withAttributes({{"width", val(400)},
+                             {"height", val(300)},
+                             {"style", val("border: 2px solid blue")}})
+            .canvas();
+
+    TranslatorCanvasGrid<unsigned char> *canvas1_tr =
+        new TranslatorCanvasGrid<unsigned char>(raster_dtm,
+                                                canvas1->getDomElement());
+
+    canvas1_tr->datum2js();
 
     d1_tr_tinp->datum2js();
     d1_tinp->pushValToPeers(d1_tinp);

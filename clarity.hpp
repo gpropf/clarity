@@ -155,14 +155,12 @@ class Translator : public TranslatorBase {
         datum_ = nullptr;
     }
 
-    inline void setDatum(Datum<CppT> *d) {
-        datum_ = d;
-    }
+    inline void setDatum(Datum<CppT> *d) { datum_ = d; }
 
     // Translator(Datum<CppT> *d) {
     //     jsval_ = val(NULL);
     //     domElement_ = val(NULL);
-        
+
     //     datum_ = d;
     // }
 
@@ -195,6 +193,11 @@ class Translator : public TranslatorBase {
         }
     }
 
+    /**
+     * @brief Update the datum with the value from the domElement.
+     *
+     * @return val
+     */
     inline virtual val js2datum() {
         val jsval = text2jsval();
         CppT cppVal = jsval.as<CppT>();
@@ -205,6 +208,11 @@ class Translator : public TranslatorBase {
         // pushValToPeers(this);
     }
 
+    /**
+     * @brief Set the appropriate field in the domElement to the incoming val.
+     *
+     * @param inval
+     */
     inline virtual void setVal(const val &inval) {
         assert(boundField_ != "");
         CLElement_.call<void>("printVal_st", inval,
@@ -213,6 +221,10 @@ class Translator : public TranslatorBase {
         domElement_.call<void>("setAttribute", val(boundField_), inval);
     }
 
+    /**
+     * @brief Update the domElement with the value from the datum.
+     *
+     */
     inline virtual void datum2js() {
         val jsval = val(*reinterpret_cast<CppT *>(datum_->cptr_));
         setVal(jsval);
@@ -226,6 +238,48 @@ class TranslatorInput : public Translator<CppT> {
    public:
     TranslatorInput(Datum<CppT> *datum, val domElement)
         : Translator<CppT>(datum, domElement, "value") {}
+};
+
+template <class CppT>
+class TranslatorCanvasGrid : public Translator<CppT> {
+    // boundField_ = "value";
+   protected:
+    int pixelWidth_ = this->domElement_["width"].template as<int>();
+    int pixelHeight_ = this->domElement_["height"].template as<int>();
+    int gridWidth_ = this->datum_->dataDimensionality_[0];
+    int gridHeight_ = this->datum_->dataDimensionality_[1];
+    int cellWidth = pixelWidth_ / gridWidth_;
+    int cellHeight = pixelHeight_ / gridHeight_;
+
+   public:
+    TranslatorCanvasGrid(Datum<CppT> *datum, val domElement)
+        : Translator<CppT>(datum, domElement, "SPECIAL") {}
+
+    inline virtual void datum2js() {
+        val ctx = this->domElement_.template call<val>("getContext", val("2d"));
+        ctx.set("fillStyle", "blue");
+        int width = this->datum_->dataDimensionality_[0];
+        int height = this->datum_->dataDimensionality_[1];
+        cout << "pixelWidth_ = " << pixelWidth_ << "\n";
+        int cellCount = 0;
+        for (int i = 0; i < gridWidth_; i++) {
+            for (int j = 0; j < gridHeight_; j++) {
+                int addr = gridWidth_ * j + i;
+                unsigned char v = reinterpret_cast<unsigned char>(
+                    *(this->datum_->cptr_ + addr));
+                if (v > 3) {
+                    ctx.set("fillStyle", "rgba(" + to_string(cellCount % 13 * 20) +
+                                             "," + to_string(cellCount % 17 * 20) +
+                                             "," + to_string(cellCount % 23 * 20) + ", 255)");
+                    ctx.call<void>("fillRect", val(i * cellWidth),
+                                   val(j * cellHeight), val(cellWidth),
+                                   val(cellHeight));
+                }
+            }
+            // cout << "\n";
+            cellCount++;
+        }
+    }
 };
 
 }  // namespace clarity

@@ -582,12 +582,12 @@ class CLNodeFactory {
      *
      * @return CanvasElement*
      */
-    // inline ClarityNode *canvas() {
-    //     ClarityNode *cel = withTag("canvas").build();
-    //     cel->setDrawFuntionName("canvasTestPattern");
-    //     cel->refreshView();
-    //     return cel;
-    // }
+    inline ClarityNode *canvas() {
+        ClarityNode *cel = withTag("canvas").build();
+        // cel->setDrawFuntionName("canvasTestPattern");
+        // cel->refreshView();
+        return cel;
+    }
 
     /**
      * @brief This is suppsed to create a dual text and range input control and
