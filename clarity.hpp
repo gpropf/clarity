@@ -267,10 +267,10 @@ class TranslatorCanvasGrid : public Translator<CppT> {
                 int addr = gridWidth_ * j + i;
                 unsigned char v = reinterpret_cast<unsigned char>(
                     *(this->datum_->cptr_ + addr));
-                if (v > 3) {
-                    ctx.set("fillStyle", "rgba(" + to_string(cellCount % 13 * 20) +
-                                             "," + to_string(cellCount % 17 * 20) +
-                                             "," + to_string(cellCount % 23 * 20) + ", 255)");
+                if (true) {
+                    ctx.set("fillStyle", "rgba(" + to_string(v % 13 * 20) +
+                                             "," + to_string(v % 17 * 20) +
+                                             "," + to_string(v % 23 * 20) + ", 255)");
                     ctx.call<void>("fillRect", val(i * cellWidth),
                                    val(j * cellHeight), val(cellWidth),
                                    val(cellHeight));
