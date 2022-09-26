@@ -14,6 +14,10 @@
 map<const int, ClarityNode *> ClarityNode::switchboard;
 map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm_;
+template <>
+const array<string, 8> TranslatorCanvasGrid8<unsigned char>::colors = {
+    "#F5F5DC", "#00FF00", "#00AA00", "#FF00FF",
+    "#AA00AA", "#00AAFF", "#9090AA", "#888888"};
 // static val clarity::CLElement_ = val::global("CLElement");
 
 int main() {
@@ -105,7 +109,7 @@ int main() {
     const int rasterDims[3] = {width, height, 0};
     Datum<unsigned char> *raster_dtm =
         new Datum<unsigned char>(CppType::Int, raster, rasterDims);
-    for (int i = 0; i < totalCels; i++) raster[i] = i % 27;
+    for (int i = 0; i < totalCels; i++) raster[i] = i % 8;
 
     ClarityNode *canvas1 =
         childOfMaindivBuilder.withName("canvas1")
@@ -114,9 +118,9 @@ int main() {
                              {"style", val("border: 2px solid blue")}})
             .canvas();
 
-    TranslatorCanvasGrid<unsigned char> *canvas1_tr =
-        new TranslatorCanvasGrid<unsigned char>(raster_dtm,
-                                                canvas1->getDomElement());
+    TranslatorCanvasGrid8<unsigned char> *canvas1_tr =
+        new TranslatorCanvasGrid8<unsigned char>(raster_dtm,
+                                                 canvas1->getDomElement());
 
     canvas1_tr->datum2js();
 

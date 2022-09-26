@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include <array>
 #include <functional>
 #include <iostream>
 #include <map>
@@ -241,7 +242,7 @@ class TranslatorInput : public Translator<CppT> {
 };
 
 template <class CppT>
-class TranslatorCanvasGrid : public Translator<CppT> {
+class TranslatorCanvasGrid8 : public Translator<CppT> {
     // boundField_ = "value";
    protected:
     int pixelWidth_ = this->domElement_["width"].template as<int>();
@@ -252,8 +253,15 @@ class TranslatorCanvasGrid : public Translator<CppT> {
     int cellHeight = pixelHeight_ / gridHeight_;
 
    public:
-    TranslatorCanvasGrid(Datum<CppT> *datum, val domElement)
-        : Translator<CppT>(datum, domElement, "SPECIAL") {}
+    TranslatorCanvasGrid8(Datum<CppT> *datum, val domElement)
+        : Translator<CppT>(datum, domElement, "SPECIAL") {
+        //EM_JS(void, clickAlert, (), { alert('hello world!'); });
+        EM_ASM(function clickAlert() { alert("Hello World!"); });
+        this->domElement_.template call<val>("addEventListener", val("click"),
+                                             clickAlert);
+    }
+
+    static const array<string, 8> colors;
 
     inline virtual void datum2js() {
         val ctx = this->domElement_.template call<val>("getContext", val("2d"));
@@ -267,14 +275,17 @@ class TranslatorCanvasGrid : public Translator<CppT> {
                 int addr = gridWidth_ * j + i;
                 unsigned char v = reinterpret_cast<unsigned char>(
                     *(this->datum_->cptr_ + addr));
-                if (true) {
-                    ctx.set("fillStyle", "rgba(" + to_string(v % 13 * 20) +
-                                             "," + to_string(v % 17 * 20) +
-                                             "," + to_string(v % 23 * 20) + ", 255)");
-                    ctx.call<void>("fillRect", val(i * cellWidth),
-                                   val(j * cellHeight), val(cellWidth),
-                                   val(cellHeight));
-                }
+
+                // ctx.set("fillStyle", "rgba(" + to_string(v % 13 * 20) +
+                //                          "," + to_string(v % 17 * 20) +
+                //                          "," + to_string(v % 23 * 20) +
+                //                          ", 255)");
+
+                ctx.set("fillStyle", colors[v]);
+
+                ctx.call<void>("fillRect", val(i * cellWidth),
+                               val(j * cellHeight), val(cellWidth),
+                               val(cellHeight));
             }
             // cout << "\n";
             cellCount++;
