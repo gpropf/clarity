@@ -17,6 +17,10 @@ using namespace emscripten;
 // Run with 'python3 -m http.server 8000'
 
 namespace clarity {
+
+static val CLElement_ = val::global("CLElement");
+//static val CLElement_;
+
 /**
  * @brief Supported C++ types for WebElements.
  *
@@ -175,7 +179,7 @@ class Translator : public TranslatorBase {
 
     inline virtual void setVal(const val &inval) {
         assert(boundField_ != "");
-        //CLElement_.call<void>("printVal_st", inval, val("Translator::setVal()"));
+        CLElement_.call<void>("printVal_st", inval, val("Translator::setVal()"));
         domElement_.set(boundField_, inval);
         domElement_.call<void>("setAttribute", val(boundField_), inval);
     }

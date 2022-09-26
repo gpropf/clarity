@@ -38,7 +38,7 @@ class ClarityNode {
         val a2b_xfmr_;
         val b2a_xfmr_;
 
-        static val CLElement_;
+        
         val get_a2b_xfmr() const;
         val get_b2a_xfmr() const;
         void set_a2b_xfmr(val xfmr);

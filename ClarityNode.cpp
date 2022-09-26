@@ -82,7 +82,7 @@ void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
 
     auto [peer, xfmr] = dl.getOtherNode(this);
     if (internalVal.isNumber()) {
-        val transformedVal = ClarityNode::DualLink::CLElement_.call<val>(
+        val transformedVal = CLElement_.call<val>(
             "applyTransformFn", xfmr, internalVal);
         peer->setVal(transformedVal);
     } else {

@@ -14,7 +14,7 @@
 map<const int, ClarityNode *> ClarityNode::switchboard;
 map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm_;
-val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
+//static val clarity::CLElement_ = val::global("CLElement");
 
 int main() {
     val utils_instance = val::global("Util").new_();
