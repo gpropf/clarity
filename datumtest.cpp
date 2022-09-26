@@ -22,7 +22,7 @@ int main() {
     val doNothing = CLE["doNothing"];
     val blackbody_st = CLE["blackbody_st"];
 
-    double *d1 = new double(53.7);
+    double *d1 = new double(84.4);
     double *d2 = new double(600.4);
 
     int dims[2] = {1, 0};
@@ -45,18 +45,19 @@ int main() {
     ClarityNode *d1_rinp =
         childOfMaindivBuilder.withName("range_d1").rangeInput();
 
-    d1_inp->addPeer<double>(d1_rinp);
+    d1_inp->addPeer<double>(d1_rinp, 2.0);
 
-    ClarityNode *d2_inp =
-        childOfMaindivBuilder.withDatum(d2_dtm).withName("d2").trInput();
+    // ClarityNode *d2_inp =
+    //     childOfMaindivBuilder.withDatum(d2_dtm).withName("d2").trInput();
 
-    TranslatorInput<double> *d2_tr =
-        new TranslatorInput<double>(d2_dtm, d2_inp->getDomElement());
+    // TranslatorInput<double> *d2_tr =
+    //     new TranslatorInput<double>(d2_dtm, d2_inp->getDomElement());
 
     d1_inp->setTranslator(d1_tr);
-    d2_inp->setTranslator(d2_tr);
+   // d2_inp->setTranslator(d2_tr);
     d1_tr->datum2js();
-    d2_tr->datum2js();
+    d1_inp->pushValToPeers(d1_inp);
+ //   d2_tr->datum2js();
 
    // d2_inp->pushValToPeers(d2_inp);
     // ClarityNode *labelled_d1_trinp =

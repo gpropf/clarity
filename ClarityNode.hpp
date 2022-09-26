@@ -47,9 +47,9 @@ class ClarityNode {
         template <typename T>
         DualLink(ClarityNode *nodeA, ClarityNode *nodeB, const T multiplier = 1)
             : nodeA_(nodeA), nodeB_(nodeB) {
-            a2b_xfmr_ = CLElement_.call<val>("generateTransformFn", multiplier);
+            a2b_xfmr_ = CLElement_.call<val>("generateTransformFn", val(multiplier));
             b2a_xfmr_ =
-                CLElement_.call<val>("generateTransformFn", 1 / multiplier);
+                CLElement_.call<val>("generateTransformFn", val(1 / multiplier));
         };
 
         DualLink(ClarityNode *nodeA, ClarityNode *nodeB, val a2b_xfmr,
