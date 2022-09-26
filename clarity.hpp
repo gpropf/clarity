@@ -267,10 +267,10 @@ class TranslatorCanvasGrid8 : public Translator<CppT> {
         val cellDimensions = val::object();
         cellDimensions.set("w", cellWidth_);
         cellDimensions.set("h", cellHeight_);
-        Util_.set("cellDimensions", cellDimensions);
+        CLElement_.set("cellDimensions", cellDimensions);
 
         this->domElement_.template call<val>("addEventListener", val("click"),
-                                             Util_["locateEvent"]);
+                                             CLElement_["locateEvent"]);
     }
 
     static const array<string, 8> colors;

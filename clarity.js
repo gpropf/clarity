@@ -5,6 +5,19 @@ class CLElement {
 
   constructor() { }
 
+  static lastClick = { x: 0, y: 0 };
+  static cellDimensions = { w: 1, h: 1 };
+
+  static locateEvent(ev) {
+    let domrect = ev.target.getBoundingClientRect();
+    let x = ev.x - domrect.x;
+    let y = ev.y - domrect.y;
+    CLElement.lastClick.x = Math.floor(x / CLElement.cellDimensions.w);
+    CLElement.lastClick.y = Math.floor(y / CLElement.cellDimensions.h);
+    console.log(CLElement.lastClick)
+  }
+
+
   static tagToUrl = { "svg": "http://www.w3.org/2000/svg", "circle": "http://www.w3.org/2000/svg" };
   static extraInitCode = {
     "canvas": function (domElement) {
@@ -25,7 +38,7 @@ class CLElement {
     return a * b
   }
 
-  
+
 
   invertValue(v) {
     return 1 / v
@@ -55,11 +68,11 @@ class CLElement {
 
   static printVal_st(v, prefix = "") {
     if (prefix != "")
-      console.log(prefix + ", JSVAL = " + v + ", type: " + typeof(v));
+      console.log(prefix + ", JSVAL = " + v + ", type: " + typeof (v));
     else
-      console.log("JSVAL = " + v + ", type: " + typeof(v));
+      console.log("JSVAL = " + v + ", type: " + typeof (v));
   }
-  
+
   printVal(v, prefix = "") {
     CLElement.printVal_st(v, prefix);
   }
