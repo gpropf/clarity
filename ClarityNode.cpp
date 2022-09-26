@@ -17,7 +17,7 @@ inline string clarity::ClarityNode::nodeStats(const string &msg) const {
 void clarity::ClarityNode::pushValToPeersById(int id) {
     ClarityNode *cnn = getCLElementById(id);
     if (cnn->translator_ != nullptr) {
-        //val newJSVal = cnn->translator_->text2jsval();
+        // val newJSVal = cnn->translator_->text2jsval();
         val newJSVal = cnn->translator_->js2datum();
     }
     cnn->pushValToPeers(cnn);
@@ -29,14 +29,12 @@ void clarity::ClarityNode::js2datumWithPushToPeersById(int id) {
 }
 
 void clarity::ClarityNode::js2datumWithPushToPeers() {
-    
     if (translator_ != nullptr) {
-        //val newJSVal = cnn->translator_->text2jsval();
+        // val newJSVal = cnn->translator_->text2jsval();
         val newJSVal = translator_->js2datum();
     }
     pushValToPeers(this);
 }
-
 
 inline void clarity::ClarityNode::init() {
     id_ = tm_.getNext();
@@ -78,12 +76,13 @@ void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
     else
         internalVal = getJSVal();
 
-    cle_.call<void>("printVal", internalVal, val("pushValToPeer: id_ = " + to_string(id_)));
+    cle_.call<void>("printVal", internalVal,
+                    val("pushValToPeer: id_ = " + to_string(id_)));
 
     auto [peer, xfmr] = dl.getOtherNode(this);
     if (internalVal.isNumber()) {
-        val transformedVal = CLElement_.call<val>(
-            "applyTransformFn", xfmr, internalVal);
+        val transformedVal =
+            CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
         peer->setVal(transformedVal);
     } else {
         peer->setVal(internalVal);
@@ -99,15 +98,15 @@ void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
     if (excludedPeer == nullptr) {
         for (auto dl : dlpeers_) {
             auto [peer, xfmr] = dl->getOtherNode(this);
-            peer->pushValToPeers(this);
             pushValToPeer(*dl);
+            peer->pushValToPeers(this);
         }
     } else {
         for (auto dl : dlpeers_) {
             auto [peer, xfmr] = dl->getOtherNode(this);
             if (peer != excludedPeer) {
-                peer->pushValToPeers(this);
                 pushValToPeer(*dl);
+                peer->pushValToPeers(this);
             }
         }
     }
@@ -150,8 +149,6 @@ void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
 //     ClarityNode *cnn = getCLElementById(id);
 //     cnn->pullValFromPeers(cnn);
 // }
-
-
 
 inline void ClarityNode::setAttribute(const string &attr, const val &value) {
     val domElement = cle_["domElement"];

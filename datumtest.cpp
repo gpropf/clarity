@@ -47,7 +47,8 @@ int main() {
     ClarityNode *d1_rinp =
         childOfMaindivBuilder.withName("d1_rangeinput").rangeInput();
 
-    Datum<double> *d1_blank_dtm = new Datum<double>(CppType::Double, junkval, dims);
+    Datum<double> *d1_blank_dtm =
+        new Datum<double>(CppType::Double, junkval, dims);
 
     d1_tinp->addPeer<double>(d1_rinp, 2.0);
     TranslatorInput<double> *d1_tr_rinp =
@@ -62,8 +63,7 @@ int main() {
     d1_tinp->setTranslator(d1_tr_tinp);
     d1_rinp->setTranslator(d1_tr_rinp);
     // d2_inp->setTranslator(d2_tr);
-    d1_tr_tinp->datum2js();
-    d1_tinp->pushValToPeers(d1_tinp);
+
     //   d2_tr->datum2js();
 
     ClarityNode *svgarea =
@@ -97,6 +97,10 @@ int main() {
     // d2_inp->pushValToPeers(d2_inp);
     // ClarityNode *labelled_d1_trinp =
     //     childOfMaindivBuilder.labelGivenNode(d1_trinp, "CONST LABEL");
+    d1_tinp->addPeer<double>(circleRadius, 1.0);
+
+    d1_tr_tinp->datum2js();
+    d1_tinp->pushValToPeers(d1_tinp);
 
     return 0;
 }
