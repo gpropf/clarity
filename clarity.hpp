@@ -102,6 +102,7 @@ class Datum : public DatumBase {
 
 class TranslatorBase {
    public:
+    //static val CLElement__;  // = val::global("CLElement");
     inline virtual val text2jsval() { return val(NULL); }
     inline virtual val js2datum() { return val(NULL); }
     inline virtual void datum2js() {}
@@ -122,7 +123,8 @@ class Translator : public TranslatorBase {
     Datum<CppT> *datum_;  //!< The datum we interact with and translate to/from
 
    public:
-    // virtual val datum2js(Datum<CppT> *datum) { return val(NULL); }  // FIXME
+    // static val CLElement_;
+    //  virtual val datum2js(Datum<CppT> *datum) { return val(NULL); }  // FIXME
 
     // virtual Datum<CppT> *js2Datum(const val &jsval) {
     //     return nullptr;
@@ -173,9 +175,7 @@ class Translator : public TranslatorBase {
 
     inline virtual void setVal(const val &inval) {
         assert(boundField_ != "");
-        // clean_ = false;
-
-        // cle_.call<void>("printVal", inval);
+        //CLElement_.call<void>("printVal_st", inval, val("Translator::setVal()"));
         domElement_.set(boundField_, inval);
         domElement_.call<void>("setAttribute", val(boundField_), inval);
     }
@@ -195,7 +195,11 @@ class TranslatorInput : public Translator<CppT> {
         : Translator<CppT>(datum, domElement, "value") {}
 };
 
+
+
 }  // namespace clarity
+
+
 
 using namespace clarity;
 

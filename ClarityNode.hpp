@@ -47,9 +47,10 @@ class ClarityNode {
         template <typename T>
         DualLink(ClarityNode *nodeA, ClarityNode *nodeB, const T multiplier = 1)
             : nodeA_(nodeA), nodeB_(nodeB) {
-            a2b_xfmr_ = CLElement_.call<val>("generateTransformFn", val(multiplier));
-            b2a_xfmr_ =
-                CLElement_.call<val>("generateTransformFn", val(1 / multiplier));
+            a2b_xfmr_ =
+                CLElement_.call<val>("generateTransformFn", val(multiplier));
+            b2a_xfmr_ = CLElement_.call<val>("generateTransformFn",
+                                             val(1 / multiplier));
         };
 
         DualLink(ClarityNode *nodeA, ClarityNode *nodeB, val a2b_xfmr,
@@ -205,7 +206,13 @@ class ClarityNode {
     }
     //   void addPeer2(ClarityNode *peer);
 
-    void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr = val(NULL));
+    // void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr = val(NULL));
+    void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr) {
+        auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);
+        dlpeers_.push_back(dl);
+        peer->appendDualLink(dl);
+    }
+
     inline void appendDualLink(shared_ptr<DualLink> dl) {
         dlpeers_.push_back(dl);
     }
@@ -241,7 +248,8 @@ class ClarityNode {
         dlpeers_;  //!< Nodes that this node exchanges data with.
 
     TranslatorBase *translator_ = nullptr;
-    DatumBase *datum_ = nullptr;  //!< The native (C++) data this node controls.
+    DatumBase *datum_ = nullptr;  //!< The native (C++) data this node
+    // controls.
 };
 
 }  // namespace clarity

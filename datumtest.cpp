@@ -22,12 +22,12 @@ int main() {
     val doNothing = CLE["doNothing"];
     val blackbody_st = CLE["blackbody_st"];
 
-    double *d1 = new double(84.4);
+    double *d1 = new double(54.4);
     double *d2 = new double(600.4);
 
     int dims[2] = {1, 0};
     Datum<double> *d1_dtm = new Datum<double>(CppType::Double, d1, dims);
-    Datum<double> *d2_dtm = new Datum<double>(CppType::Double, d2, dims);
+    //Datum<double> *d2_dtm = new Datum<double>(CppType::Double, d2, dims);
 
     CLNodeFactory<double> builder("div", "maindiv");
 
@@ -37,13 +37,13 @@ int main() {
         builder.createChildrenOf(maindiv);
 
     ClarityNode *d1_inp =
-        childOfMaindivBuilder.withDatum(d1_dtm).withName("d1").textInput();
+        childOfMaindivBuilder.withDatum(d1_dtm).withName("d1_textinput").textInput();
 
     TranslatorInput<double> *d1_tr =
         new TranslatorInput<double>(d1_dtm, d1_inp->getDomElement());
 
     ClarityNode *d1_rinp =
-        childOfMaindivBuilder.withName("range_d1").rangeInput();
+        childOfMaindivBuilder.withName("d1_rangeinput").rangeInput();
 
     d1_inp->addPeer<double>(d1_rinp, 2.0);
 

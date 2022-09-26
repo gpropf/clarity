@@ -189,22 +189,14 @@ class CLNodeFactory {
         if (translator_) {
         }
 
-        if (datum_ != nullptr) {
-            // modelNode_ = new ModelNode(datum_, "modelNode_for_" +
-            // newNode->getName());
-            newNode->setDatum(datum_);
-            //newNode->pushValToPeersById(newNode->getId());
+        if (translator_ != nullptr) {            
+            newNode->setTranslator(translator_);            
         }
 
-        // if (modelNode_) {
-        //     if (a2b_xfmr_ != val(NULL)) {
-        //         modelNode_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);
-        //     } else {
-        //         modelNode_->addPeer(newNode, linkMultiplierConstant_);
-        //     }
-        //     // if (!useExistingDOMElement_)
-        //     // modelNode_->pushValToPeers(modelNode_);
-        // }
+        if (datum_ != nullptr) {
+            newNode->setDatum(datum_);
+        }
+
         return newNode;
     }
 
@@ -416,8 +408,8 @@ class CLNodeFactory {
     // inline CLNodeFactory withStoredValue(CppT *storedValue) const & {
     //     assert(storedValue != nullptr);
     //     datum_ = new Datum<CppT>(storedValue);
-    //     //ModelNode *mn = new ModelNode(datum_, "modelnode_for_" + this->name_);
-    //     CLNodeFactory cpy(*this);
+    //     //ModelNode *mn = new ModelNode(datum_, "modelnode_for_" +
+    //     this->name_); CLNodeFactory cpy(*this);
     //     //cpy.modelNode_ = mn;
     //     return cpy;
     // }
@@ -426,10 +418,9 @@ class CLNodeFactory {
     // inline CLNodeFactory withStoredValue(CppT *storedValue) && {
     //     assert(storedValue != nullptr);
     //     datum_ = new Datum<CppT>(storedValue);
-    //     ModelNode *mn = new ModelNode(datum_, "modelnode_for_" + this->name_);
-    //     CLNodeFactory cpy(std::move(*this));
-    //     cpy.modelNode_ = mn;
-    //     return cpy;
+    //     ModelNode *mn = new ModelNode(datum_, "modelnode_for_" +
+    //     this->name_); CLNodeFactory cpy(std::move(*this)); cpy.modelNode_ =
+    //     mn; return cpy;
     // }
 
     /**
@@ -555,7 +546,7 @@ class CLNodeFactory {
      */
     inline ClarityNode *trInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
-        ClarityNode *tinp = withName("text_input_" + name_).textInput();        
+        ClarityNode *tinp = withName("text_input_" + name_).textInput();
         ClarityNode *rinp = withName("range_input_" + name_).rangeInput();
         tinp->addPeer<double>(rinp);
         ClarityNode *outerDiv = withTag("div").withName("tr_" + name_).build();

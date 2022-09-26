@@ -151,12 +151,7 @@ void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
 //     cnn->pullValFromPeers(cnn);
 // }
 
-void clarity::ClarityNode::addPeer(ClarityNode *peer, val a2b_xfmr,
-                                   val b2a_xfmr) {
-    auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);
-    dlpeers_.push_back(dl);
-    peer->appendDualLink(dl);
-}
+
 
 inline void ClarityNode::setAttribute(const string &attr, const val &value) {
     val domElement = cle_["domElement"];
