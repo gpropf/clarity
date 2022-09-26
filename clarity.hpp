@@ -96,22 +96,22 @@ template <class CppT>
 class Datum : public DatumBase {
    protected:
    public:
-    CppT *datum_ = nullptr;  //!< The tparam is the type of each C++ value;
+    CppT *cptr_ = nullptr;  //!< The tparam is the type of each C++ value;
 
     // inline CppType getCppType() const { return cppType_; }
     // inline void setVal(CppT v) { *datum_ = v; }
 
-    Datum(CppT *datum) : datum_(datum) {}
+    Datum(CppT *cptr) : cptr_(cptr) {}
 
-    Datum(CppType cppType, CppT *datum, const int *const dataDimensionality)
+    Datum(CppType cppType, CppT *cptr, const int *const dataDimensionality)
         : DatumBase(cppType, dataDimensionality) {
-        datum_ = datum;
+        cptr_ = cptr;
     }
 
-    Datum(Datum &d) {
-        cppType_ = d.cppType_;
-        dataDimensionality_ = d.dataDimensionality_;
-        datum_ = nullptr;
+    Datum(Datum *d) {
+        cppType_ = d->cppType_;
+        dataDimensionality_ = d->dataDimensionality_;
+        cptr_ = nullptr;
     }
 };
 
@@ -155,12 +155,16 @@ class Translator : public TranslatorBase {
         datum_ = nullptr;
     }
 
-    Translator(Datum<CppT> *d) {
-        jsval_ = val(NULL);
-        domElement_ = val(NULL);
-        
+    inline void setDatum(Datum<CppT> *d) {
         datum_ = d;
     }
+
+    // Translator(Datum<CppT> *d) {
+    //     jsval_ = val(NULL);
+    //     domElement_ = val(NULL);
+        
+    //     datum_ = d;
+    // }
 
     virtual val text2jsval() {
         string valueText = domElement_[boundField_].template as<string>();
@@ -195,7 +199,7 @@ class Translator : public TranslatorBase {
         val jsval = text2jsval();
         CppT cppVal = jsval.as<CppT>();
         cout << "js2datum():  Setting C++ val to: " << cppVal << "\n";
-        *reinterpret_cast<CppT *>(datum_->datum_) = cppVal;
+        *reinterpret_cast<CppT *>(datum_->cptr_) = cppVal;
         return jsval;
         //   this->cle_.template call<T>("jsToCPPVal", inval);
         // pushValToPeers(this);
@@ -210,7 +214,7 @@ class Translator : public TranslatorBase {
     }
 
     inline virtual void datum2js() {
-        val jsval = val(*reinterpret_cast<CppT *>(datum_->datum_));
+        val jsval = val(*reinterpret_cast<CppT *>(datum_->cptr_));
         setVal(jsval);
     }
 };

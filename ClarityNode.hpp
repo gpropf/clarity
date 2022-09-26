@@ -38,7 +38,6 @@ class ClarityNode {
         val a2b_xfmr_;
         val b2a_xfmr_;
 
-        
         val get_a2b_xfmr() const;
         val get_b2a_xfmr() const;
         void set_a2b_xfmr(val xfmr);
@@ -129,7 +128,7 @@ class ClarityNode {
         translator_ = translator;
     }
 
-    //inline TranslatorBase 
+    // inline TranslatorBase
 
     inline virtual void setVal(val inval) {
         assert(boundField_ != "");
@@ -179,10 +178,10 @@ class ClarityNode {
         return val(*reinterpret_cast<T *>(valptr));
     }
 
-    // template <typename T>
-    //  val cpp2js(void *valptr) {
-    //     return val(*reinterpret_cast<T *>(valptr));
-    // }
+    template <typename CppT>
+    inline Translator<CppT> *getTranslator() {
+        return translator_;
+    }
 
     virtual string nodeStats(const string &msg = "") const;
 
@@ -200,15 +199,18 @@ class ClarityNode {
     // void pullValFromPeers(ClarityNode *excludedPeer);
     // static void pullValFromPeersById(int id);
 
-template <typename CppT>
-    void imposeTranslationFramework(ClarityNode * n) {
-        Datum<CppT> *d = new Datum<CppT>(datum_);
-        Translator<CppT> *t = new Translator<CppT>(d);
+    template <typename CppT>
+    void imposeTranslationFramework(ClarityNode *n) {
+        
+        //Datum<CppT> *d = new Datum<CppT>(datum_);
+        //datum_
+        // Translator<CppT> *t = new Translator<CppT>(d);
+        //n->getTranslator<CppT>()->datum_ = d;
     }
-
 
     template <typename T>
     void addPeer(ClarityNode *peer, const T linkMultiplierConstant = 1) {
+        imposeTranslationFramework<T>(peer);
         auto dl = make_shared<DualLink>(this, peer, linkMultiplierConstant);
         dlpeers_.push_back(dl);
         peer->appendDualLink(dl);

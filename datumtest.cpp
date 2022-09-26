@@ -22,6 +22,7 @@ int main() {
     val doNothing = CLE["doNothing"];
     val blackbody_st = CLE["blackbody_st"];
 
+    double *junkval = new double(0);
     double *d1 = new double(54.4);
     double *d2 = new double(600.4);
 
@@ -36,17 +37,21 @@ int main() {
     CLNodeFactory<double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
-    ClarityNode *d1_inp = childOfMaindivBuilder.withDatum(d1_dtm)
-                              .withName("d1_textinput")
-                              .textInput();
+    ClarityNode *d1_tinp = childOfMaindivBuilder.withDatum(d1_dtm)
+                               .withName("d1_textinput")
+                               .textInput();
 
-    TranslatorInput<double> *d1_tr =
-        new TranslatorInput<double>(d1_dtm, d1_inp->getDomElement());
+    TranslatorInput<double> *d1_tr_tinp =
+        new TranslatorInput<double>(d1_dtm, d1_tinp->getDomElement());
 
     ClarityNode *d1_rinp =
         childOfMaindivBuilder.withName("d1_rangeinput").rangeInput();
 
-    d1_inp->addPeer<double>(d1_rinp, 2.0);
+    Datum<double> *d1_blank_dtm = new Datum<double>(CppType::Double, junkval, dims);
+
+    d1_tinp->addPeer<double>(d1_rinp, 2.0);
+    TranslatorInput<double> *d1_tr_rinp =
+        new TranslatorInput<double>(d1_blank_dtm, d1_rinp->getDomElement());
 
     // ClarityNode *d2_inp =
     //     childOfMaindivBuilder.withDatum(d2_dtm).withName("d2").trInput();
@@ -54,10 +59,11 @@ int main() {
     // TranslatorInput<double> *d2_tr =
     //     new TranslatorInput<double>(d2_dtm, d2_inp->getDomElement());
 
-    d1_inp->setTranslator(d1_tr);
+    d1_tinp->setTranslator(d1_tr_tinp);
+    d1_rinp->setTranslator(d1_tr_rinp);
     // d2_inp->setTranslator(d2_tr);
-    d1_tr->datum2js();
-    d1_inp->pushValToPeers(d1_inp);
+    d1_tr_tinp->datum2js();
+    d1_tinp->pushValToPeers(d1_tinp);
     //   d2_tr->datum2js();
 
     ClarityNode *svgarea =
