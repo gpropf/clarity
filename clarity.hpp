@@ -250,15 +250,25 @@ class TranslatorCanvasGrid8 : public Translator<CppT> {
     int pixelHeight_ = this->domElement_["height"].template as<int>();
     int gridWidth_ = this->datum_->dataDimensionality_[0];
     int gridHeight_ = this->datum_->dataDimensionality_[1];
-    int cellWidth = pixelWidth_ / gridWidth_;
-    int cellHeight = pixelHeight_ / gridHeight_;
+    int cellWidth_ = pixelWidth_ / gridWidth_;
+    int cellHeight_ = pixelHeight_ / gridHeight_;
 
    public:
+    int setValXY(int x, int y, CppT newVal) {
+        int addr = (y * gridWidth_ + x) * sizeof(CppT);
+        *(this->datum_->cptr_ + addr) = newVal;
+        return addr;
+    }
+
     TranslatorCanvasGrid8(Datum<CppT> *datum, val domElement)
         : Translator<CppT>(datum, domElement, "SPECIAL") {
         // EM_JS(void, clickAlert, (), { alert('hello world!'); });
-        //EM_ASM(function clickAlert() { alert("Hello World!"); });
-        
+        // EM_ASM(function clickAlert() { alert("Hello World!"); });
+        val cellDimensions = val::object();
+        cellDimensions.set("w", cellWidth_);
+        cellDimensions.set("h", cellHeight_);
+        Util_.set("cellDimensions", cellDimensions);
+
         this->domElement_.template call<val>("addEventListener", val("click"),
                                              Util_["locateEvent"]);
     }
@@ -285,9 +295,9 @@ class TranslatorCanvasGrid8 : public Translator<CppT> {
 
                 ctx.set("fillStyle", colors[v]);
 
-                ctx.call<void>("fillRect", val(i * cellWidth),
-                               val(j * cellHeight), val(cellWidth),
-                               val(cellHeight));
+                ctx.call<void>("fillRect", val(i * cellWidth_),
+                               val(j * cellHeight_), val(cellWidth_),
+                               val(cellHeight_));
             }
             // cout << "\n";
             cellCount++;

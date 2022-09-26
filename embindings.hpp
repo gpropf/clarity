@@ -30,6 +30,10 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .class_function("runCallbackById", &ClarityNode::runCallbackById,
                         allow_raw_pointers());
 
+    class_<TranslatorCanvasGrid8<unsigned char>>("TranslatorCanvasGrid8")
+        .function("setValXY", &TranslatorCanvasGrid8<unsigned char>::setValXY,
+                  allow_raw_pointers());
+
     enum_<CppType>("CppType")
         .value("Int", CppType::Int)
         .value("Float", CppType::Float)
