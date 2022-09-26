@@ -129,6 +129,8 @@ class ClarityNode {
         translator_ = translator;
     }
 
+    //inline TranslatorBase 
+
     inline virtual void setVal(val inval) {
         assert(boundField_ != "");
         clean_ = false;

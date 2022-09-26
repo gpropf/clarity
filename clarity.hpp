@@ -19,7 +19,7 @@ using namespace emscripten;
 namespace clarity {
 
 static val CLElement_ = val::global("CLElement");
-//static val CLElement_;
+// static val CLElement_;
 
 /**
  * @brief Supported C++ types for WebElements.
@@ -89,24 +89,31 @@ class Datum : public DatumBase {
      * singular from all multiple values.
      *
      */
-    int *dataDimensionality_ = new int[2];
-    CppType cppType_ = CppType::NoData;
-    CppT *datum_;  //!< The tparam is the type of each C++ value;
+    const int *const dataDimensionality_;  // = new int[2];
+    const CppType cppType_ = CppType::NoData;
+    CppT *const datum_;  //!< The tparam is the type of each C++ value;
 
     // inline CppType getCppType() const { return cppType_; }
     // inline void setVal(CppT v) { *datum_ = v; }
 
     Datum(CppT *datum) : datum_(datum) {}
 
-    Datum(CppType cppType, CppT *datum, int *dataDimensionality)
+    Datum(CppType cppType, CppT *const datum,
+          const int *const dataDimensionality)
         : cppType_(cppType),
           datum_(datum),
           dataDimensionality_(dataDimensionality) {}
+
+    Datum(Datum &d) {
+        cppType_ = d.cppType_;
+        dataDimensionality_ = d.dataDimensionality_;
+        datum_ = nullptr;
+    }
 };
 
 class TranslatorBase {
    public:
-    //static val CLElement__;  // = val::global("CLElement");
+    // static val CLElement__;  // = val::global("CLElement");
     inline virtual val text2jsval() { return val(NULL); }
     inline virtual val js2datum() { return val(NULL); }
     inline virtual void datum2js() {}
@@ -121,21 +128,19 @@ class Translator : public TranslatorBase {
     val domElement_;     //!< The element in the web page to store/retreive the
                          //!< data.
     string boundField_;  //!< Tells us what field in the domElement_ to use to
-                         //!< get the jsval_ from;
-
-   protected:
+                         //!< get the jsval_ from;   
     Datum<CppT> *datum_;  //!< The datum we interact with and translate to/from
 
    public:
-    // static val CLElement_;
-    //  virtual val datum2js(Datum<CppT> *datum) { return val(NULL); }  // FIXME
-
-    // virtual Datum<CppT> *js2Datum(const val &jsval) {
-    //     return nullptr;
-    // }  // FIXME
-
     Translator(Datum<CppT> *datum, val domElement, string boundField_)
         : datum_(datum), domElement_(domElement), boundField_(boundField_) {}
+
+    Translator(Translator &t) {
+        jsval_ = val(NULL);
+        domElement_ = val(NULL);
+        boundField_ = t.boundField;
+        datum_ = nullptr;
+    }
 
     virtual val text2jsval() {
         string valueText = domElement_[boundField_].as<string>();
@@ -170,8 +175,7 @@ class Translator : public TranslatorBase {
         val jsval = text2jsval();
         CppT cppVal = jsval.as<CppT>();
         cout << "js2datum():  Setting C++ val to: " << cppVal << "\n";
-        *reinterpret_cast<CppT *>(datum_->datum_) =
-            cppVal;  // jsval.as<CppT>();
+        *reinterpret_cast<CppT *>(datum_->datum_) = cppVal;
         return jsval;
         //   this->cle_.template call<T>("jsToCPPVal", inval);
         // pushValToPeers(this);
@@ -179,7 +183,8 @@ class Translator : public TranslatorBase {
 
     inline virtual void setVal(const val &inval) {
         assert(boundField_ != "");
-        CLElement_.call<void>("printVal_st", inval, val("Translator::setVal()"));
+        CLElement_.call<void>("printVal_st", inval,
+                              val("Translator::setVal()"));
         domElement_.set(boundField_, inval);
         domElement_.call<void>("setAttribute", val(boundField_), inval);
     }
@@ -199,11 +204,7 @@ class TranslatorInput : public Translator<CppT> {
         : Translator<CppT>(datum, domElement, "value") {}
 };
 
-
-
 }  // namespace clarity
-
-
 
 using namespace clarity;
 

@@ -25,7 +25,7 @@ int main() {
     double *d1 = new double(54.4);
     double *d2 = new double(600.4);
 
-    int dims[2] = {1, 0};
+    const int dims[2] = {1, 0};
     Datum<double> *d1_dtm = new Datum<double>(CppType::Double, d1, dims);
     // Datum<double> *d2_dtm = new Datum<double>(CppType::Double, d2, dims);
 
