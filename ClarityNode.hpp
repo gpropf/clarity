@@ -200,6 +200,13 @@ class ClarityNode {
     // void pullValFromPeers(ClarityNode *excludedPeer);
     // static void pullValFromPeersById(int id);
 
+template <typename CppT>
+    void imposeTranslationFramework(ClarityNode * n) {
+        Datum<CppT> *d = new Datum<CppT>(datum_);
+        Translator<CppT> *t = new Translator<CppT>(d);
+    }
+
+
     template <typename T>
     void addPeer(ClarityNode *peer, const T linkMultiplierConstant = 1) {
         auto dl = make_shared<DualLink>(this, peer, linkMultiplierConstant);

@@ -67,7 +67,22 @@ class Invertable {
     virtual Invertable *inverted() = 0;
 };
 
-class DatumBase {};
+class DatumBase {
+   public:
+    /**
+     * @brief There is a digit for each dimension and the dimension list is
+     * terminated with a 0. Single valued datums thus have[1, 0]. A 2D grid that
+     * is 6 wide and 5 high will have[6, 5, 0] and so on. This design was chosen
+     * so that a simple test for a 1 as the first value would differentiate all
+     * singular from all multiple values.
+     *
+     */
+    const int *const dataDimensionality_;
+    CppType cppType_ = CppType::NoData;
+
+    DatumBase(const CppType cppType, const int *const dataDimensionality)
+        : dataDimensionality_(dataDimensionality), cppType_(cppType) {}
+};
 
 /**
  * @brief I created this class when I realized that I needed a way to
@@ -81,28 +96,17 @@ template <class CppT>
 class Datum : public DatumBase {
    protected:
    public:
-    /**
-     * @brief There is a digit for each dimension and the dimension list is
-     * terminated with a 0. Single valued datums thus have[1, 0]. A 2D grid that
-     * is 6 wide and 5 high will have[6, 5, 0] and so on. This design was chosen
-     * so that a simple test for a 1 as the first value would differentiate all
-     * singular from all multiple values.
-     *
-     */
-    const int *const dataDimensionality_;  // = new int[2];
-    const CppType cppType_ = CppType::NoData;
-    CppT *const datum_;  //!< The tparam is the type of each C++ value;
+    CppT *datum_ = nullptr;  //!< The tparam is the type of each C++ value;
 
     // inline CppType getCppType() const { return cppType_; }
     // inline void setVal(CppT v) { *datum_ = v; }
 
     Datum(CppT *datum) : datum_(datum) {}
 
-    Datum(CppType cppType, CppT *const datum,
-          const int *const dataDimensionality)
-        : cppType_(cppType),
-          datum_(datum),
-          dataDimensionality_(dataDimensionality) {}
+    Datum(CppType cppType, CppT *datum, const int *const dataDimensionality)
+        : DatumBase(cppType, dataDimensionality) {
+        datum_ = datum;
+    }
 
     Datum(Datum &d) {
         cppType_ = d.cppType_;
@@ -117,33 +121,49 @@ class TranslatorBase {
     inline virtual val text2jsval() { return val(NULL); }
     inline virtual val js2datum() { return val(NULL); }
     inline virtual void datum2js() {}
-
     inline virtual void setVal(const val &inval) {}
-};
 
-template <class CppT>
-class Translator : public TranslatorBase {
+    TranslatorBase(val domElement, string boundField)
+        : domElement_(domElement), boundField_(boundField) {}
+
    protected:
     val jsval_;          //!< The actual data in JS form.
     val domElement_;     //!< The element in the web page to store/retreive the
                          //!< data.
     string boundField_;  //!< Tells us what field in the domElement_ to use to
-                         //!< get the jsval_ from;   
+                         //!< get the jsval_ from;
+};
+
+template <class CppT>
+class Translator : public TranslatorBase {
+   protected:
     Datum<CppT> *datum_;  //!< The datum we interact with and translate to/from
 
    public:
-    Translator(Datum<CppT> *datum, val domElement, string boundField_)
-        : datum_(datum), domElement_(domElement), boundField_(boundField_) {}
+    Translator(val domElement, string boundField)
+        : TranslatorBase(domElement, boundField) {}
+
+    Translator(Datum<CppT> *datum, val domElement, string boundField)
+        : Translator(domElement, boundField) {
+        datum_ = datum;
+    }
 
     Translator(Translator &t) {
         jsval_ = val(NULL);
         domElement_ = val(NULL);
-        boundField_ = t.boundField;
+        boundField_ = t.boundField_;
         datum_ = nullptr;
     }
 
+    Translator(Datum<CppT> *d) {
+        jsval_ = val(NULL);
+        domElement_ = val(NULL);
+        
+        datum_ = d;
+    }
+
     virtual val text2jsval() {
-        string valueText = domElement_[boundField_].as<string>();
+        string valueText = domElement_[boundField_].template as<string>();
         // cout << "ClarityNode::getVal() valueText = " << valueText <<
         // "\n";
         switch (datum_->cppType_) {
