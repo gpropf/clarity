@@ -2,7 +2,6 @@
 #define ClarityNode_hpp
 
 #include "clarity.hpp"
-//#include "ModelNode.hpp"
 
 namespace clarity {
 
@@ -12,10 +11,7 @@ namespace clarity {
  * others and complex web controls can be built up in a hierarchal fashion. The
  * class is not necessarily homologous to JavaScript Dom elements but the
  * "mirror" class CLElement is currently used to store a JS Dom element and
- * retain other state on the JS side. This is also the base class for all other
- * types. The CNN type should never be instantiated as it has no specific
- * behaviors and doesn't bind to anything on the webpage. In future it may
- * contain pure virtual methods and trying to instantiate it will be an error.
+ * retain other state on the JS side.
  *
  */
 
@@ -87,15 +83,13 @@ class ClarityNode {
 
     void EMSCRIPTEN_KEEPALIVE init();
     inline ClarityNode() { init(); }
-    EMSCRIPTEN_KEEPALIVE ClarityNode(const string &name);
-    // EMSCRIPTEN_KEEPALIVE ClarityNode(const CppType storedValueType);
+    EMSCRIPTEN_KEEPALIVE ClarityNode(const string &name);    
 
     /**
      * @brief Construct a new Web Element object
      *
      * @param name String name of element, may be empty.
      * @param tag HTML tag of this element
-     * @param storedValueType C++ type of data contained within
      *
      */
     ClarityNode(const string &name, const string &tag,
@@ -126,9 +120,7 @@ class ClarityNode {
 
     inline void setTranslator(TranslatorBase *translator) {
         translator_ = translator;
-    }
-
-    // inline TranslatorBase
+    }    
 
     inline virtual void setVal(val inval) {
         assert(boundField_ != "");
@@ -143,14 +135,8 @@ class ClarityNode {
     }
 
     inline virtual val getJSVal() const {
-        assert(boundField_ != "");
-        // clean_ = false;
+        assert(boundField_ != "");     
         val domElement = cle_["domElement"];
-        // cle_.call<void>("printVal", inval);
-        // domElement.get(boundField_, inval);
-        // val internalJSVal =
-        //     domElement.call<val>("getAttribute", val(boundField_));
-
         val internalJSVal = domElement[boundField_];
         cle_.call<void>("printVal", internalJSVal,
                         val("getJSVal: id_ = " + to_string(id_)));
@@ -168,9 +154,11 @@ class ClarityNode {
     inline static ClarityNode *getCLElementById(const int id) {
         return switchboard[id];
     }
+
     inline static void markNodeDirtyById(int id) {
         switchboard[id]->clean_ = false;
     }
+
     inline void toggleClean() { clean_ = !clean_; }
 
     template <typename T>
@@ -184,28 +172,19 @@ class ClarityNode {
     }
 
     virtual string nodeStats(const string &msg = "") const;
-
-    // virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
-    virtual void pushValToPeer(DualLink &al);
-
-    // virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
-    virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
-    // static void pushValToPeersById(int id);
+    
+    virtual void pushValToPeer(DualLink &al);    
+    virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);    
     static void pushValToPeersById(int id);
     void js2datumWithPushToPeers();
     static void js2datumWithPushToPeersById(int id);
-    // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
-    // void pullValFromPeer(DualLink &dl);
-    // void pullValFromPeers(ClarityNode *excludedPeer);
-    // static void pullValFromPeersById(int id);
 
     template <typename CppT>
     void imposeTranslationFramework(ClarityNode *n) {
-        
-        //Datum<CppT> *d = new Datum<CppT>(datum_);
-        //datum_
-        // Translator<CppT> *t = new Translator<CppT>(d);
-        //n->getTranslator<CppT>()->datum_ = d;
+        // Fixme: this was suppoed to propagate the translator from a 'master' node
+        // to a 'slave' node so that the slave would know how to interpret the user's input.
+        // Currently we just create dummy translators and pointers to unused values to do this.
+        // Making the value in the slave Datum null though, causes errors.        
     }
 
     template <typename T>
@@ -215,9 +194,7 @@ class ClarityNode {
         dlpeers_.push_back(dl);
         peer->appendDualLink(dl);
     }
-    //   void addPeer2(ClarityNode *peer);
-
-    // void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr = val(NULL));
+    
     void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr) {
         auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);
         dlpeers_.push_back(dl);
@@ -227,6 +204,7 @@ class ClarityNode {
     inline void appendDualLink(shared_ptr<DualLink> dl) {
         dlpeers_.push_back(dl);
     }
+
     inline int countPeers() const { return dlpeers_.size(); }
 
    protected:
