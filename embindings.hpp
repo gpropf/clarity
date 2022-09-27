@@ -11,7 +11,8 @@ EMSCRIPTEN_BINDINGS(clarity) {
                   allow_raw_pointers())
         .class_function("pushValToPeersById", &ClarityNode::pushValToPeersById,
                         allow_raw_pointers())
-        .class_function("js2datumWithPushToPeersById", &ClarityNode::js2datumWithPushToPeersById,
+        .class_function("js2datumWithPushToPeersById",
+                        &ClarityNode::js2datumWithPushToPeersById,
                         allow_raw_pointers())
         // .function("pullValFromPeers", &ClarityNode::pullValFromPeers,
         //           allow_raw_pointers())
@@ -32,6 +33,8 @@ EMSCRIPTEN_BINDINGS(clarity) {
 
     class_<TranslatorCanvasGrid8<unsigned char>>("TranslatorCanvasGrid8")
         .function("setValXY", &TranslatorCanvasGrid8<unsigned char>::setValXY,
+                  allow_raw_pointers())
+        .function("datum2js", &TranslatorCanvasGrid8<unsigned char>::datum2js,
                   allow_raw_pointers());
 
     enum_<CppType>("CppType")

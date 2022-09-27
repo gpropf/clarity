@@ -9,11 +9,15 @@ class CLElement {
   static cellDimensions = { w: 1, h: 1 };
 
   static locateEvent(ev) {
-    let domrect = ev.target.getBoundingClientRect();
+    let domElement = ev.target;
+    let domrect = domElement.getBoundingClientRect();
+    let translator = domElement.translatorRef;
     let x = ev.x - domrect.x;
     let y = ev.y - domrect.y;
     CLElement.lastClick.x = Math.floor(x / CLElement.cellDimensions.w);
     CLElement.lastClick.y = Math.floor(y / CLElement.cellDimensions.h);
+    translator.setValXY(CLElement.lastClick.x, CLElement.lastClick.y, 1);
+    translator.datum2js();
     console.log(CLElement.lastClick)
   }
 
