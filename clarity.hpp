@@ -243,7 +243,7 @@ class TranslatorInput : public Translator<CppT> {
 };
 
 template <class CppT>
-class TranslatorCanvasGrid8 : public Translator<CppT> {
+class TranslatorCanvasGrid : public Translator<CppT> {
     // boundField_ = "value";
    protected:
     int pixelWidth_ = this->domElement_["width"].template as<int>();
@@ -261,7 +261,7 @@ class TranslatorCanvasGrid8 : public Translator<CppT> {
         return addr;
     }
 
-    TranslatorCanvasGrid8(Datum<CppT> *datum, val domElement)
+    TranslatorCanvasGrid(Datum<CppT> *datum, val domElement)
         : Translator<CppT>(datum, domElement, "SPECIAL") {
         // EM_JS(void, clickAlert, (), { alert('hello world!'); });
         // EM_ASM(function clickAlert() { alert("Hello World!"); });

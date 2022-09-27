@@ -31,10 +31,10 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .class_function("runCallbackById", &ClarityNode::runCallbackById,
                         allow_raw_pointers());
 
-    class_<TranslatorCanvasGrid8<unsigned char>>("TranslatorCanvasGrid8")
-        .function("setValXY", &TranslatorCanvasGrid8<unsigned char>::setValXY,
+    class_<TranslatorCanvasGrid<unsigned char>>("TranslatorCanvasGrid")
+        .function("setValXY", &TranslatorCanvasGrid<unsigned char>::setValXY,
                   allow_raw_pointers())
-        .function("datum2js", &TranslatorCanvasGrid8<unsigned char>::datum2js,
+        .function("datum2js", &TranslatorCanvasGrid<unsigned char>::datum2js,
                   allow_raw_pointers());
 
     enum_<CppType>("CppType")
