@@ -11,7 +11,7 @@ class CLElement {
 
 
 
-  static locateEvent(ev) {
+  static setGridLocToCurrentVal(ev) {
     let domElement = ev.target;
     let domrect = domElement.getBoundingClientRect();
     let translator = domElement.translatorRef;

@@ -279,7 +279,7 @@ class TranslatorCanvasGrid8 : public Translator<CppT> {
         
 
         this->domElement_.template call<val>("addEventListener", val("click"),
-                                             CLElement_["locateEvent"]);
+                                             CLElement_["setGridLocToCurrentVal"]);
     }
 
     static const array<string, 8> colors;
