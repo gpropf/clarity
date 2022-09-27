@@ -252,11 +252,12 @@ class TranslatorCanvasGrid8 : public Translator<CppT> {
     int gridHeight_ = this->datum_->dataDimensionality_[1];
     int cellWidth_ = pixelWidth_ / gridWidth_;
     int cellHeight_ = pixelHeight_ / gridHeight_;
+    CppT currentCellVal_ = 0;
 
    public:
-    int setValXY(int x, int y, CppT newVal) {
+    int setValXY(int x, int y) {
         int addr = (y * gridWidth_ + x) * sizeof(CppT);
-        *(this->datum_->cptr_ + addr) = newVal;
+        *(this->datum_->cptr_ + addr) = currentCellVal_;
         return addr;
     }
 
@@ -282,6 +283,10 @@ class TranslatorCanvasGrid8 : public Translator<CppT> {
     }
 
     static const array<string, 8> colors;
+
+    inline void setCurrentCellVal(CppT v) {
+        currentCellVal_ = v;
+    }
 
     inline virtual void datum2js() {
         val ctx = this->domElement_.template call<val>("getContext", val("2d"));

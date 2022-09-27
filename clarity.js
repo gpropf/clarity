@@ -7,11 +7,9 @@ class CLElement {
 
 
   //static cellDimensions = { w: 1, h: 1 };
-  static wrapCoords(loc, grid) {
-    loc.x = loc.x % grid.w;
-    loc.y = loc.y % grid.h;
-    return loc;
-  }
+  
+
+
 
   static locateEvent(ev) {
     let domElement = ev.target;
@@ -19,10 +17,11 @@ class CLElement {
     let translator = domElement.translatorRef;
     let cellDimensions = domElement.cellDimensions;
     let gridDimensions = domElement.gridDimensions;
-    let loc = { x: (ev.x - domrect.x) , y: (ev.y - domrect.y)};   
-    let locIn = { x: Math.floor(loc.x / cellDimensions.w), y: Math.floor(loc.y / cellDimensions.h) }
-    let locOut = CLElement.wrapCoords(locIn, gridDimensions)
-    translator.setValXY(locOut.x, locOut.y, 1);
+    let loc = { x: (ev.x - domrect.x), y: (ev.y - domrect.y) };
+    var locIn = { x: Math.floor(loc.x / cellDimensions.w), y: Math.floor(loc.y / cellDimensions.h) };
+    //let locOut = Util.wrapCoords(locIn, gridDimensions);
+    var locOut = Util.capCoords(locIn, gridDimensions);
+    translator.setValXY(locOut.x, locOut.y);
     translator.datum2js();
     console.log(locOut);
   }

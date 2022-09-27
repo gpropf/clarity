@@ -122,6 +122,7 @@ int main() {
         new TranslatorCanvasGrid8<unsigned char>(raster_dtm,
                                                  canvas1->getDomElement());
 
+    canvas1_tr->setCurrentCellVal(3);
     canvas1_tr->datum2js();
 
     d1_tr_tinp->datum2js();
