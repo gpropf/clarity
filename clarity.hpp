@@ -74,9 +74,9 @@ class DatumBase {
     /**
      * @brief There is a digit for each dimension and the dimension list is
      * terminated with a 0. Single valued datums thus have[1, 0]. A 2D grid that
-     * is 6 wide and 5 high will have[6, 5, 0] and so on. This design was chosen
-     * so that a simple test for a 1 as the first value would differentiate all
-     * singular from all multiple values.
+     * is 6 wide and 5 high will be denoted by [6, 5, 0] and so on. This design
+     * was chosen so that a simple test for a 1 as the first value would
+     * differentiate all singular from all multiple values.
      *
      */
     const int *const dataDimensionality_;
@@ -271,22 +271,20 @@ class TranslatorCanvasGrid : public Translator<CppT> {
         val gridDimensions = val::object();
         gridDimensions.set("w", gridWidth_);
         gridDimensions.set("h", gridHeight_);
-        //CLElement_.set("cellDimensions", cellDimensions);
+        // CLElement_.set("cellDimensions", cellDimensions);
 
         this->domElement_.set("translatorRef", this);
         this->domElement_.set("cellDimensions", cellDimensions);
         this->domElement_.set("gridDimensions", gridDimensions);
-        
 
-        this->domElement_.template call<val>("addEventListener", val("click"),
-                                             CLElement_["setGridLocToCurrentVal"]);
+        this->domElement_.template call<val>(
+            "addEventListener", val("click"),
+            CLElement_["setGridLocToCurrentVal"]);
     }
 
     static const array<string, 8> colors;
 
-    inline void setCurrentCellVal(CppT v) {
-        currentCellVal_ = v;
-    }
+    inline void setCurrentCellVal(CppT v) { currentCellVal_ = v; }
 
     inline virtual void datum2js() {
         val ctx = this->domElement_.template call<val>("getContext", val("2d"));
