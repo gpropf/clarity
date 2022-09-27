@@ -268,8 +268,10 @@ class TranslatorCanvasGrid8 : public Translator<CppT> {
         cellDimensions.set("w", cellWidth_);
         cellDimensions.set("h", cellHeight_);
         CLElement_.set("cellDimensions", cellDimensions);
-        
+
         this->domElement_.set("translatorRef", this);
+        this->domElement_.set("cellDimensions", cellDimensions);
+        
 
         this->domElement_.template call<val>("addEventListener", val("click"),
                                              CLElement_["locateEvent"]);

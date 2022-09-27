@@ -102,14 +102,14 @@ int main() {
 
     // Canvas Grid Test ----------------------------------------------
 
-    int width = 20;
-    int height = 15;
+    int width = 30;
+    int height = 20;
     int totalCels = width * height;
     unsigned char *raster = new unsigned char[totalCels];
     const int rasterDims[3] = {width, height, 0};
     Datum<unsigned char> *raster_dtm =
         new Datum<unsigned char>(CppType::Int, raster, rasterDims);
-    for (int i = 0; i < totalCels; i++) raster[i] = i % 8;
+    for (int i = 0; i < totalCels; i++) raster[i] = 0;
 
     ClarityNode *canvas1 =
         childOfMaindivBuilder.withName("canvas1")

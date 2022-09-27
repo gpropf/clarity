@@ -5,20 +5,21 @@ class CLElement {
 
   constructor() { }
 
-  static lastClick = { x: 0, y: 0 };
-  static cellDimensions = { w: 1, h: 1 };
+
+  //static cellDimensions = { w: 1, h: 1 };
 
   static locateEvent(ev) {
     let domElement = ev.target;
     let domrect = domElement.getBoundingClientRect();
     let translator = domElement.translatorRef;
+    let cellDimensions = domElement.cellDimensions;
     let x = ev.x - domrect.x;
-    let y = ev.y - domrect.y;
-    CLElement.lastClick.x = Math.floor(x / CLElement.cellDimensions.w);
-    CLElement.lastClick.y = Math.floor(y / CLElement.cellDimensions.h);
-    translator.setValXY(CLElement.lastClick.x, CLElement.lastClick.y, 1);
+    let y = ev.y - domrect.y;    
+    let gridX = Math.floor(x / cellDimensions.w);
+    let gridY = Math.floor(y / cellDimensions.h);
+    translator.setValXY(gridX, gridY, 1);
     translator.datum2js();
-    console.log(CLElement.lastClick)
+    console.log(gridX,gridY);
   }
 
 
