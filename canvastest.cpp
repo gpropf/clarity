@@ -11,14 +11,14 @@
 #include "embindings.hpp"
 #include "speedtest.hpp"
 
-map<const int, ClarityNode *> ClarityNode::switchboard;
-map<string, std::function<void()>> ClarityNode::callbackMap;
-TicketMachine ClarityNode::tm_;
-val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
+map<const int, ClarityNodeBase *> ClarityNodeBase::switchboard;
+map<string, std::function<void()>> ClarityNodeBase::callbackMap;
+TicketMachine ClarityNodeBase::tm_;
+val ClarityNodeBase::DualLink::CLElement_ = val::global("CLElement");
 
 vector<int *> ns;
 vector<ModelNode<int> *> mns;
-vector<ClarityNode *> clns;
+vector<ClarityNodeBase *> clns;
 
 time_t msecs_time() {
     struct timeval time_now {};
@@ -36,12 +36,12 @@ int main() {
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
     
-    CLNodeFactory<ClarityNode, double, double> builder("div", "maindiv",
+    CLNodeFactory<ClarityNodeBase, double, double> builder("div", "maindiv",
                                                        CppType::NoData);
 
-    ClarityNode *maindiv = builder.build();
+    ClarityNodeBase *maindiv = builder.build();
 
-    CLNodeFactory<ClarityNode, double, double> builder_chlidren =
+    CLNodeFactory<ClarityNodeBase, double, double> builder_chlidren =
         builder.createChildrenOf(maindiv);
 
     CLNodeFactory<CanvasElement, string, int> builder_cnvs;

@@ -34,7 +34,7 @@ class CLNodeFactory {
 
     string boundField_;  //!< Different types of elements need different fields
                          //!< to be modified when the node value changes.
-    ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
+    ClarityNodeBase *parent_ = nullptr;  //!< If we have this set, we are creating
                                      //!< any new nodes as its children.
 
     // ModelNode *modelNode_ =
@@ -174,12 +174,12 @@ class CLNodeFactory {
      *
      * @return ClarityNode*
      */
-    inline ClarityNode *build(ClarityNode *existingNode = nullptr) {
-        ClarityNode *newNode;
+    inline ClarityNodeBase *build(ClarityNodeBase *existingNode = nullptr) {
+        ClarityNodeBase *newNode;
         if (existingNode != nullptr) {
             newNode = existingNode;
         } else {
-            newNode = new ClarityNode(name_, tag_, useExistingDOMElement_);
+            newNode = new ClarityNodeBase(name_, tag_, useExistingDOMElement_);
         }
 
         newNode->setBoundField(boundField_);
@@ -237,7 +237,7 @@ class CLNodeFactory {
      * @param parent
      * @return CLNodeFactory
      */
-    inline CLNodeFactory createChildrenOf(ClarityNode *parent) {
+    inline CLNodeFactory createChildrenOf(ClarityNodeBase *parent) {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
@@ -317,14 +317,14 @@ class CLNodeFactory {
      * @param parent Cannot be null.
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withParent(ClarityNode *parent) const & {
+    inline CLNodeFactory withParent(ClarityNodeBase *parent) const & {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
     }
 
-    inline CLNodeFactory withParent(ClarityNode *parent) && {
+    inline CLNodeFactory withParent(ClarityNodeBase *parent) && {
         assert(parent != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.parent_ = parent;
@@ -490,9 +490,9 @@ class CLNodeFactory {
      * @param onPressCallback JS function to run when button is pressed.
      * @return ClarityNode*
      */
-    inline ClarityNode *button(const string &name, const string &text,
+    inline ClarityNodeBase *button(const string &name, const string &text,
                                val onPressCallback = val(NULL)) {
-        ClarityNode *button = withTag("button").build();
+        ClarityNodeBase *button = withTag("button").build();
         // button->setBoundField("textContent");
         //  button->setVal(val(text));
         val buttonDOMElement = button->getCLE()["domElement"];
@@ -509,8 +509,8 @@ class CLNodeFactory {
      * @param text
      * @return ClarityNode*
      */
-    inline ClarityNode *label(ClarityNode *forNode, const string &text) {
-        ClarityNode *label = withTag("label").build();
+    inline ClarityNodeBase *label(ClarityNodeBase *forNode, const string &text) {
+        ClarityNodeBase *label = withTag("label").build();
         label->setBoundField("innerHTML");
         label->setVal(val(text));
         label->setAttribute("for", val(forNode->getId()));
@@ -522,9 +522,9 @@ class CLNodeFactory {
      *
      * @return ClarityNode*
      */
-    inline ClarityNode *textInput() {
+    inline ClarityNodeBase *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
-        ClarityNode *inp = withTag("input")
+        ClarityNodeBase *inp = withTag("input")
                                .withBoundField("value")
                                .withAttributes(inputFieldAttrs)
                                .build();
@@ -538,9 +538,9 @@ class CLNodeFactory {
      *
      * @return ClarityNode*
      */
-    inline ClarityNode *rangeInput() {
+    inline ClarityNodeBase *rangeInput() {
         map<string, val> inputFieldAttrs = {{"type", val("range")}};
-        ClarityNode *inp = withTag("input")
+        ClarityNodeBase *inp = withTag("input")
                                .withBoundField("value")
                                .withAttributes(inputFieldAttrs)
                                .build();
@@ -553,12 +553,12 @@ class CLNodeFactory {
      *
      * @return ClarityNode*
      */
-    inline ClarityNode *trInput() {
+    inline ClarityNodeBase *trInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
-        ClarityNode *tinp = withName("text_input_" + name_).textInput();
-        ClarityNode *rinp = withName("range_input_" + name_).rangeInput();
+        ClarityNodeBase *tinp = withName("text_input_" + name_).textInput();
+        ClarityNodeBase *rinp = withName("range_input_" + name_).rangeInput();
         tinp->addPeer<double>(rinp);
-        ClarityNode *outerDiv = withTag("div").withName("tr_" + name_).build();
+        ClarityNodeBase *outerDiv = withTag("div").withName("tr_" + name_).build();
         outerDiv->appendChild(tinp);
         outerDiv->appendChild(rinp);
         return outerDiv;
@@ -572,13 +572,13 @@ class CLNodeFactory {
      * @param labelText
      * @return ClarityNode*
      */
-    inline ClarityNode *labelGivenNode(ClarityNode *nodeToBeLabelled,
+    inline ClarityNodeBase *labelGivenNode(ClarityNodeBase *nodeToBeLabelled,
                                        const string &labelText) {
-        ClarityNode *outerDiv =
+        ClarityNodeBase *outerDiv =
             withTag("div")
                 .withName("labeldiv_" + nodeToBeLabelled->getName())
                 .build();
-        ClarityNode *labelNode =
+        ClarityNodeBase *labelNode =
             withName("labelfor_" + nodeToBeLabelled->getName())
                 .label(nodeToBeLabelled, labelText);
         outerDiv->appendChild(nodeToBeLabelled);
@@ -591,8 +591,8 @@ class CLNodeFactory {
      *
      * @return CanvasElement*
      */
-    inline ClarityNode *canvas() {
-        ClarityNode *cel = withTag("canvas").build();
+    inline ClarityNodeBase *canvas() {
+        ClarityNodeBase *cel = withTag("canvas").build();
         // cel->setDrawFuntionName("canvasTestPattern");
         // cel->refreshView();
         return cel;
@@ -606,8 +606,8 @@ class CLNodeFactory {
      * @param labelText
      * @return ClarityNode*
      */
-    inline ClarityNode *labelledTRInputNode(const string &labelText) {
-        ClarityNode *trInputNode = trInput();
+    inline ClarityNodeBase *labelledTRInputNode(const string &labelText) {
+        ClarityNodeBase *trInputNode = trInput();
         return labelGivenNode(trInputNode, labelText);
     }
 
@@ -618,8 +618,8 @@ class CLNodeFactory {
      * @param attributeName
      * @return ClarityNode*
      */
-    inline ClarityNode *attributeNode(const string &attributeName) {
-        ClarityNode *attributeNode =
+    inline ClarityNodeBase *attributeNode(const string &attributeName) {
+        ClarityNodeBase *attributeNode =
             withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
@@ -635,9 +635,9 @@ class CLNodeFactory {
      * @param parent
      * @return ClarityNode*
      */
-    inline ClarityNode *attributeNode(const string &attributeName,
-                                      ClarityNode *parent) {
-        ClarityNode *attributeNode =
+    inline ClarityNodeBase *attributeNode(const string &attributeName,
+                                      ClarityNodeBase *parent) {
+        ClarityNodeBase *attributeNode =
             withParent(parent).attributeNode(attributeName);
         return attributeNode;
     }

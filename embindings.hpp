@@ -1,34 +1,34 @@
-using clarity::ClarityNode;
+using clarity::ClarityNodeBase;
 
 using std::string;
 
 EMSCRIPTEN_BINDINGS(clarity) {
-    class_<ClarityNode>("ClarityNode")
-        .function("toggleClean", &ClarityNode::toggleClean,
+    class_<ClarityNodeBase>("ClarityNode")
+        .function("toggleClean", &ClarityNodeBase::toggleClean,
                   allow_raw_pointers())
         //.function("getVal", &ClarityNode::getVal, allow_raw_pointers())
-        .function("pushValToPeers", &ClarityNode::pushValToPeers,
+        .function("pushValToPeers", &ClarityNodeBase::pushValToPeers,
                   allow_raw_pointers())
-        .class_function("pushValToPeersById", &ClarityNode::pushValToPeersById,
+        .class_function("pushValToPeersById", &ClarityNodeBase::pushValToPeersById,
                         allow_raw_pointers())
         .class_function("js2datumWithPushToPeersById",
-                        &ClarityNode::js2datumWithPushToPeersById,
+                        &ClarityNodeBase::js2datumWithPushToPeersById,
                         allow_raw_pointers())
         // .function("pullValFromPeers", &ClarityNode::pullValFromPeers,
         //           allow_raw_pointers())
         // .class_function("pullValFromPeersById",
         //                 &ClarityNode::pullValFromPeersById,
         //                 allow_raw_pointers())
-        .class_function("getCLElementById", &ClarityNode::getCLElementById,
+        .class_function("getCLElementById", &ClarityNodeBase::getCLElementById,
                         allow_raw_pointers())
-        .class_function("markNodeDirtyById", &ClarityNode::markNodeDirtyById,
+        .class_function("markNodeDirtyById", &ClarityNodeBase::markNodeDirtyById,
                         allow_raw_pointers())
         .constructor<string, string>(allow_raw_pointers())
-        .property("tag", &ClarityNode::getTag)
-        .property("id", &ClarityNode::getId)
+        .property("tag", &ClarityNodeBase::getTag)
+        .property("id", &ClarityNodeBase::getId)
         // .property("storedValueType", &ClarityNode::getStoredValueType,
         //           &ClarityNode::setStoredValueType)
-        .class_function("runCallbackById", &ClarityNode::runCallbackById,
+        .class_function("runCallbackById", &ClarityNodeBase::runCallbackById,
                         allow_raw_pointers());
 
     class_<TranslatorCanvasGrid<unsigned char>>("TranslatorCanvasGrid")

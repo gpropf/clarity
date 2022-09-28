@@ -16,7 +16,7 @@ namespace clarity {
  */
 
 
-class ClarityNode {
+class ClarityNodeBase {
    public:
     static map<string, std::function<void()>> callbackMap;
 
@@ -28,8 +28,8 @@ class ClarityNode {
      */
     class DualLink {
        public:
-        ClarityNode *nodeA_;
-        ClarityNode *nodeB_;
+        ClarityNodeBase *nodeA_;
+        ClarityNodeBase *nodeB_;
         int intMultiplier = 1;
         double dblMultiplier = 1.0;
         val a2b_xfmr_;
@@ -41,7 +41,7 @@ class ClarityNode {
         void set_b2a_xfmr(val xfmr);
 
         template <typename T>
-        DualLink(ClarityNode *nodeA, ClarityNode *nodeB, const T multiplier = 1)
+        DualLink(ClarityNodeBase *nodeA, ClarityNodeBase *nodeB, const T multiplier = 1)
             : nodeA_(nodeA), nodeB_(nodeB) {
             a2b_xfmr_ =
                 CLElement_.call<val>("generateTransformFn", val(multiplier));
@@ -49,7 +49,7 @@ class ClarityNode {
                                              val(1 / multiplier));
         };
 
-        DualLink(ClarityNode *nodeA, ClarityNode *nodeB, val a2b_xfmr,
+        DualLink(ClarityNodeBase *nodeA, ClarityNodeBase *nodeB, val a2b_xfmr,
                  val b2a_xfmr = val(NULL))
             : nodeA_(nodeA),
               nodeB_(nodeB),
@@ -61,7 +61,7 @@ class ClarityNode {
                  << ", B = " << nodeB_->getId() << "\n";
         }
 
-        inline pair<ClarityNode *, val> getOtherNode(ClarityNode *thisNode) {
+        inline pair<ClarityNodeBase *, val> getOtherNode(ClarityNodeBase *thisNode) {
             if (nodeA_ == thisNode) {
                 return pair(nodeB_, b2a_xfmr_);
             }
@@ -83,8 +83,8 @@ class ClarityNode {
     inline static void runCallbackById(const string &id) { callbackMap[id](); }
 
     void EMSCRIPTEN_KEEPALIVE init();
-    inline ClarityNode() { init(); }
-    EMSCRIPTEN_KEEPALIVE ClarityNode(const string &name);    
+    inline ClarityNodeBase() { init(); }
+    EMSCRIPTEN_KEEPALIVE ClarityNodeBase(const string &name);    
 
     /**
      * @brief Construct a new Web Element object
@@ -93,10 +93,10 @@ class ClarityNode {
      * @param tag HTML tag of this element
      *
      */
-    ClarityNode(const string &name, const string &tag,
+    ClarityNodeBase(const string &name, const string &tag,
                 bool useExistingDOMElement_ = false);
 
-    ~ClarityNode() {
+    ~ClarityNodeBase() {
         cout << "DESTROYING CLARITYNODE " << id_ << "\n";
 
         for (auto dl : dlpeers_) {
@@ -112,10 +112,10 @@ class ClarityNode {
 
     EMSCRIPTEN_KEEPALIVE void setAttributes(const map<string, val> &attrs);
 
-    bool appendChild(ClarityNode *child);
+    bool appendChild(ClarityNodeBase *child);
 
-    inline ClarityNode *getParent() const { return this->parent_; }
-    inline void setParent(ClarityNode *parent) { this->parent_ = parent; }
+    inline ClarityNodeBase *getParent() const { return this->parent_; }
+    inline void setParent(ClarityNodeBase *parent) { this->parent_ = parent; }
 
     inline void setDatum(DatumBase *datum) { datum_ = datum; }
 
@@ -152,7 +152,7 @@ class ClarityNode {
     inline val getDomElement() const { return cle_["domElement"]; }
     inline string getName() const { return name_; }
     inline virtual void printState() const { cle_.call<void>("printState"); }
-    inline static ClarityNode *getCLElementById(const int id) {
+    inline static ClarityNodeBase *getCLElementById(const int id) {
         return switchboard[id];
     }
 
@@ -175,13 +175,13 @@ class ClarityNode {
     virtual string nodeStats(const string &msg = "") const;
     
     virtual void pushValToPeer(DualLink &al);    
-    virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);    
+    virtual void pushValToPeers(ClarityNodeBase *excludedPeer = nullptr);    
     static void pushValToPeersById(int id);
     void js2datumWithPushToPeers();
     static void js2datumWithPushToPeersById(int id);
 
     template <typename CppT>
-    void imposeTranslationFramework(ClarityNode *n) {
+    void imposeTranslationFramework(ClarityNodeBase *n) {
         // Fixme: this was suppoed to propagate the translator from a 'master' node
         // to a 'slave' node so that the slave would know how to interpret the user's input.
         // Currently we just create dummy translators and pointers to unused values to do this.
@@ -189,14 +189,14 @@ class ClarityNode {
     }
 
     template <typename T>
-    void addPeer(ClarityNode *peer, const T linkMultiplierConstant = 1) {
+    void addPeer(ClarityNodeBase *peer, const T linkMultiplierConstant = 1) {
         imposeTranslationFramework<T>(peer);
         auto dl = make_shared<DualLink>(this, peer, linkMultiplierConstant);
         dlpeers_.push_back(dl);
         peer->appendDualLink(dl);
     }
     
-    void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr) {
+    void addPeer(ClarityNodeBase *peer, val a2b_xfmr, val b2a_xfmr) {
         auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);
         dlpeers_.push_back(dl);
         peer->appendDualLink(dl);
@@ -215,7 +215,7 @@ class ClarityNode {
 
     string tag_;         //!< HTML tag.
     string boundField_;  //!< The field that holds the data for this node.
-    vector<ClarityNode *> children_;  //!< Mostly homolougous with the
+    vector<ClarityNodeBase *> children_;  //!< Mostly homolougous with the
                                       //!< associated DOM element tree.
 
     /** \brief A node is 'clean' when we're done changing it. This
@@ -228,13 +228,13 @@ class ClarityNode {
 
     /** \brief Keeps track of all nodes in the system. If you have the id of a
      * node you can get a pointer to it here. */
-    static map<const int, ClarityNode *> switchboard;
+    static map<const int, ClarityNodeBase *> switchboard;
 
-    ClarityNode *parent_;  //!< Parent node of this node. Can be null.
+    ClarityNodeBase *parent_;  //!< Parent node of this node. Can be null.
     int id_ = -1;  //!< Unique identifier - needs to be immutable once set.
     string name_;  //!< Human readable name of node. Mutable, not required.
 
-    vector<shared_ptr<ClarityNode::DualLink>>
+    vector<shared_ptr<ClarityNodeBase::DualLink>>
         dlpeers_;  //!< Nodes that this node exchanges data with.
 
     TranslatorBase *translator_ = nullptr;

@@ -11,14 +11,14 @@
 #include "embindings.hpp"
 #include "speedtest.hpp"
 
-map<const int, ClarityNode *> ClarityNode::switchboard;
-map<string, std::function<void()>> ClarityNode::callbackMap;
-TicketMachine ClarityNode::tm_;
-val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
+map<const int, ClarityNodeBase *> ClarityNodeBase::switchboard;
+map<string, std::function<void()>> ClarityNodeBase::callbackMap;
+TicketMachine ClarityNodeBase::tm_;
+val ClarityNodeBase::DualLink::CLElement_ = val::global("CLElement");
 
 vector<int *> ns;
 vector<ModelNode<int> *> mns;
-vector<ClarityNode *> clns;
+vector<ClarityNodeBase *> clns;
 
 time_t msecs_time() {
     struct timeval time_now {};
@@ -60,7 +60,7 @@ void make_trs(CLNodeFactory<Nc, V, N> builder) {
         for (int i = 0; i < *n_input_fields; i++) {
             int *iptr = new int(i);
             ModelNode<int> *mn = nullptr;
-            ClarityNode *cln = builder.withStoredValueType(CppType::Int)
+            ClarityNodeBase *cln = builder.withStoredValueType(CppType::Int)
                                    .withName("cln_" + to_string(i))
                                    .withStoredValue(iptr)
                                    .template extractModelNode<V>(mn)
@@ -96,59 +96,59 @@ int main() {
     double *d1 = new double(27.8);
     double *d2 = new double(600.4);
 
-    CLNodeFactory<ClarityNode, double, double> builder("div", "maindiv",
+    CLNodeFactory<ClarityNodeBase, double, double> builder("div", "maindiv",
                                                        CppType::NoData);
 
-    ClarityNode *maindiv = builder.build();
+    ClarityNodeBase *maindiv = builder.build();
 
-    CLNodeFactory<ClarityNode, double, double> childOfMaindivBuilder =
+    CLNodeFactory<ClarityNodeBase, double, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
     ModelNode<double> *d1_mn;
-    ClarityNode *d1_trinp =
+    ClarityNodeBase *d1_trinp =
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
             .withName("d1")
             .withStoredValue(d1)
             .extractModelNode<double>(d1_mn)
             .trInput();
 
-    ClarityNode *labelled_d1_trinp =
+    ClarityNodeBase *labelled_d1_trinp =
         childOfMaindivBuilder.labelGivenNode(d1_trinp, "CONST LABEL");
 
-    CLNodeFactory<ClarityNode, int, int> childOfMaindivBuilder_int;
-    CLNodeFactory<ClarityNode, int, int>::clone(childOfMaindivBuilder,
+    CLNodeFactory<ClarityNodeBase, int, int> childOfMaindivBuilder_int;
+    CLNodeFactory<ClarityNodeBase, int, int>::clone(childOfMaindivBuilder,
                                                 childOfMaindivBuilder_int);
 
     childOfMaindivBuilder_int =
         childOfMaindivBuilder_int.withStoredValueType(CppType::Int);
 
-    ClarityNode *fieldsets_inp =
+    ClarityNodeBase *fieldsets_inp =
         childOfMaindivBuilder_int  // .withStoredValueType(CppType::Int)
             .withStoredValue(n_fieldsets)
             .textInput();
-    ClarityNode *labelled_fieldsets_inp =
+    ClarityNodeBase *labelled_fieldsets_inp =
         childOfMaindivBuilder_int.labelGivenNode(fieldsets_inp, "fieldsets");
 
-    ClarityNode *n_input_fields_inp =
+    ClarityNodeBase *n_input_fields_inp =
         childOfMaindivBuilder_int  // .withStoredValueType(CppType::Int)
             .withStoredValue(n_input_fields)
             .textInput();
-    ClarityNode *labelled_n_input_fields_inp =
+    ClarityNodeBase *labelled_n_input_fields_inp =
         childOfMaindivBuilder_int.labelGivenNode(n_input_fields_inp, "fields per set");
 
-    ClarityNode *statusButton = childOfMaindivBuilder.button(
+    ClarityNodeBase *statusButton = childOfMaindivBuilder.button(
         "statusButton", "BOOM!", destroy_everything_cpp);
 
-    ClarityNode *make_trs_button = childOfMaindivBuilder.button(
+    ClarityNodeBase *make_trs_button = childOfMaindivBuilder.button(
         "make_trs_button", "Make the fields!", make_trs_ints);
 
     printf("Setup complete!\n");
 
-    clarity::ClarityNode::callbackMap["destroy_everything"] = [=] {
+    clarity::ClarityNodeBase::callbackMap["destroy_everything"] = [=] {
         destroy_everything();
     };
 
-    clarity::ClarityNode::callbackMap["make_trs_ints"] = [=] {
+    clarity::ClarityNodeBase::callbackMap["make_trs_ints"] = [=] {
         make_trs(childOfMaindivBuilder_int);
     };
 

@@ -97,8 +97,8 @@ NukeControl::NukeControl(const string &name, const string &tag,
         &(nm.thermalEnergyLossRateConstant_));
 }
 
-map<const int, clarity::ClarityNode *>
-    clarity::ClarityNode::switchboard;
+map<const int, clarity::ClarityNodeBase *>
+    clarity::ClarityNodeBase::switchboard;
 
 /**
  * @brief callbackMap holds C++ functions that can be triggered from JS
@@ -107,8 +107,8 @@ map<const int, clarity::ClarityNode *>
  *
  */
 map<string, std::function<void()>> clarity::WebElemNode::callbackMap;
-clarity::TicketMachine clarity::ClarityNode::tm_;
-val clarity::ClarityNode::ActiveLink::CLElement_ =
+clarity::TicketMachine clarity::ClarityNodeBase::tm_;
+val clarity::ClarityNodeBase::ActiveLink::CLElement_ =
     val::global("CLElement");
 
 void NukeModel::iterate() {
@@ -117,7 +117,7 @@ void NukeModel::iterate() {
 }
 
 int main() {
-    using ActiveLink = ClarityNode::ActiveLink;
+    using ActiveLink = ClarityNodeBase::ActiveLink;
 
     double *n = new double(50);
     clarity::ModelNode<double> *nm =

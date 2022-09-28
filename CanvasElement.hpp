@@ -5,11 +5,11 @@
 
 namespace clarity {
 
-class CanvasElement : public ClarityNode {
+class CanvasElement : public ClarityNodeBase {
    public:
     CanvasElement(const string &name, const string &tag,
                    bool useExistingDOMElement)
-        : ClarityNode(name, tag, useExistingDOMElement) {}
+        : ClarityNodeBase(name, tag, useExistingDOMElement) {}
 
     inline void setDrawFuntionName(const string &drawFuntionName) {
         drawFuntionName_ = drawFuntionName;

@@ -6,11 +6,11 @@
 #include "clarity.hpp"
 #include "embindings.hpp"
 
-map<const int, ClarityNode *> ClarityNode::switchboard;
-map<string, std::function<void()>> ClarityNode::callbackMap;
-TicketMachine ClarityNode::tm_;
+map<const int, ClarityNodeBase *> ClarityNodeBase::switchboard;
+map<string, std::function<void()>> ClarityNodeBase::callbackMap;
+TicketMachine ClarityNodeBase::tm_;
 //val ClarityNode::ActiveLink::CLElement_ = val::global("CLElement");
-val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
+val ClarityNodeBase::DualLink::CLElement_ = val::global("CLElement");
 
 // double *testmem(double *dptr) {
 //     dptr = new double(37);
@@ -42,16 +42,16 @@ int main() {
 
     // val blackbody_st = a_mn->getCLE()["blackbody_st"];
 
-    CLNodeFactory<ClarityNode, double, double> builder("div", "maindiv",
+    CLNodeFactory<ClarityNodeBase, double, double> builder("div", "maindiv",
                                                        CppType::NoData);
 
-    ClarityNode *maindiv = builder.build();
+    ClarityNodeBase *maindiv = builder.build();
     maindiv->datum_ = a_dtm;
 
-    CLNodeFactory<ClarityNode, double, double> childOfMaindivBuilder =
+    CLNodeFactory<ClarityNodeBase, double, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
-    ClarityNode *canvas1 =
+    ClarityNodeBase *canvas1 =
         childOfMaindivBuilder.withName("canvas1")
             .withTag("canvas")
             .withAttributes({{"width", val(400)}, {"height", val(300)}})
@@ -59,13 +59,13 @@ int main() {
 
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
 
-    CLNodeFactory<ClarityNode, double, double> inputBuilder =
+    CLNodeFactory<ClarityNodeBase, double, double> inputBuilder =
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
             .withTag("input")
             .withBoundField("value")
             .withAttributes(inputFieldAttrs);
 
-    ClarityNode *input_a =
+    ClarityNodeBase *input_a =
         inputBuilder.withName("input_a_text").withModelNode(a_mn).build();
 
     double *ival;
@@ -74,21 +74,21 @@ int main() {
     cout << "Value created in CLNF is: " << *ival << "\n";
 
     ModelNode<double> *temp_mn2;
-    ClarityNode *input_temp =
+    ClarityNodeBase *input_temp =
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
             .withName("input_temp_text")
             .withStoredValue(temp)
             .extractModelNode<double>(temp_mn2)
             .textInput();
 
-    CLNodeFactory<ClarityNode, string, int> childOfMaindivBuilder_str;
-    CLNodeFactory<ClarityNode, string, int>::clone(childOfMaindivBuilder,
+    CLNodeFactory<ClarityNodeBase, string, int> childOfMaindivBuilder_str;
+    CLNodeFactory<ClarityNodeBase, string, int>::clone(childOfMaindivBuilder,
                                                    childOfMaindivBuilder_str);
 
     string *flexLabelText = new string("Flex Text");
 
     ModelNode<string> *flexLabel_mn;
-    ClarityNode *flexLabel =
+    ClarityNodeBase *flexLabel =
         childOfMaindivBuilder_str.withStoredValueType(CppType::String)
             .withStoredValue(flexLabelText)
             .extractModelNode<string>(flexLabel_mn)
@@ -96,7 +96,7 @@ int main() {
 
     val passthru = flexLabel_mn->getCLE()["passthru"];
 
-    ClarityNode *inputFlexTextLabel =
+    ClarityNodeBase *inputFlexTextLabel =
         childOfMaindivBuilder_str.withModelNode(flexLabel_mn)
             .withStoredValueType(CppType::String)
             //.withTransformFns(passthru, passthru)
@@ -104,14 +104,14 @@ int main() {
 
     //<class Nc_in, class Nc_out, typename V_in, typename V_out>
 
-    ClarityNode *input_temp_tr =
+    ClarityNodeBase *input_temp_tr =
         childOfMaindivBuilder.withStoredValueType(CppType::Double)
             .withLinkMultiplierConstant(10)
             .withName("input_temp_range")
             .withModelNode(temp_mn2)
             .trInput();
 
-    ClarityNode *svgarea =
+    ClarityNodeBase *svgarea =
         childOfMaindivBuilder.withName("svgarea")
             .withTag("svg")
             .withAttributes({{"width", val("300")},
@@ -120,10 +120,10 @@ int main() {
                              {"style", val("border: 1px solid black")}})
             .build();
 
-    ClarityNode *statusButton =
+    ClarityNodeBase *statusButton =
         childOfMaindivBuilder.button("statusButton", "Print Status", doNothing);
 
-    ClarityNode *cir1 = childOfMaindivBuilder.withName("cir1")
+    ClarityNodeBase *cir1 = childOfMaindivBuilder.withName("cir1")
                             .withParent(svgarea)
                             .withTag("circle")
                             .withAttributes({{"r", val("30")},
@@ -134,7 +134,7 @@ int main() {
                                              {"stroke-width", val(4)}})
                             .build();
 
-    ClarityNode *circleRadius = childOfMaindivBuilder.withModelNode(a_mn)
+    ClarityNodeBase *circleRadius = childOfMaindivBuilder.withModelNode(a_mn)
                                     .withName("RADIUS")
                                     .withLinkMultiplierConstant(1)
                                     .withAttributes({})
@@ -142,22 +142,22 @@ int main() {
 
     val blackbody = a_mn->getCLE()["blackbody"];
 
-    ClarityNode *circleFill = childOfMaindivBuilder.withModelNode(temp_mn2)
+    ClarityNodeBase *circleFill = childOfMaindivBuilder.withModelNode(temp_mn2)
                                   .withStoredValueType(CppType::String)
                                   .withName("CIRCLEFILL")
                                   .withTransformFns(blackbody, blackbody)
                                   .withAttributes({})
                                   .attributeNode("fill", cir1);
 
-    ClarityNode *range_a = inputBuilder.withModelNode(a_mn)
+    ClarityNodeBase *range_a = inputBuilder.withModelNode(a_mn)
                                .withName("range_a")
                                .withAttributes({{"type", val("range")}})
                                .build();
 
-    ClarityNode *range_a_lbld =
+    ClarityNodeBase *range_a_lbld =
         childOfMaindivBuilder.labelGivenNode(input_temp_tr, "Temperature");
 
-    ClarityNode::callbackMap["printStats"] = [=] {
+    ClarityNodeBase::callbackMap["printStats"] = [=] {
         cout << "callbackMap[\"iterateModel\"]\n";
     };
 

@@ -11,9 +11,9 @@
 #include "embindings.hpp"
 #include "speedtest.hpp"
 
-map<const int, ClarityNode *> ClarityNode::switchboard;
-map<string, std::function<void()>> ClarityNode::callbackMap;
-TicketMachine ClarityNode::tm_;
+map<const int, ClarityNodeBase *> ClarityNodeBase::switchboard;
+map<string, std::function<void()>> ClarityNodeBase::callbackMap;
+TicketMachine ClarityNodeBase::tm_;
 template <>
 const array<string, 8> TranslatorCanvasGrid<unsigned char>::colors = {
     "#F5F5DC", "#00FF00", "#00AA00", "#FF00FF",
@@ -34,21 +34,21 @@ int main() {
     Datum<double> *d1_dtm = new Datum<double>(CppType::Double, d1, dims);
     // Datum<double> *d2_dtm = new Datum<double>(CppType::Double, d2, dims);
 
-    CLNodeFactory<ClarityNode, double, double> builder("div", "maindiv");
+    CLNodeFactory<ClarityNodeBase, double, double> builder("div", "maindiv");
 
-    ClarityNode *maindiv = builder.build();
+    ClarityNodeBase *maindiv = builder.build();
 
-    CLNodeFactory<ClarityNode, double,double> childOfMaindivBuilder =
+    CLNodeFactory<ClarityNodeBase, double,double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
-    ClarityNode *d1_tinp = childOfMaindivBuilder.withDatum(d1_dtm)
+    ClarityNodeBase *d1_tinp = childOfMaindivBuilder.withDatum(d1_dtm)
                                .withName("d1_textinput")
                                .textInput();
 
     TranslatorInput<double> *d1_tr_tinp =
         new TranslatorInput<double>(d1_dtm, d1_tinp->getDomElement());
 
-    ClarityNode *d1_rinp =
+    ClarityNodeBase *d1_rinp =
         childOfMaindivBuilder.withName("d1_rangeinput").rangeInput();
 
     Datum<double> *d1_blank_dtm =
@@ -70,7 +70,7 @@ int main() {
 
     //   d2_tr->datum2js();
 
-    ClarityNode *svgarea =
+    ClarityNodeBase *svgarea =
         childOfMaindivBuilder.withName("svgarea")
             .withTag("svg")
             .withAttributes({{"width", val("300")},
@@ -79,10 +79,10 @@ int main() {
                              {"style", val("border: 1px solid black")}})
             .build();
 
-    ClarityNode *statusButton =
+    ClarityNodeBase *statusButton =
         childOfMaindivBuilder.button("statusButton", "Print Status", doNothing);
 
-    ClarityNode *cir1 = childOfMaindivBuilder.withName("cir1")
+    ClarityNodeBase *cir1 = childOfMaindivBuilder.withName("cir1")
                             .withParent(svgarea)
                             .withTag("circle")
                             .withAttributes({{"r", val("30")},
@@ -93,7 +93,7 @@ int main() {
                                              {"stroke-width", val(4)}})
                             .build();
 
-    ClarityNode *circleRadius = childOfMaindivBuilder.withName("RADIUS")
+    ClarityNodeBase *circleRadius = childOfMaindivBuilder.withName("RADIUS")
                                     .withLinkMultiplierConstant(1)
                                     .withAttributes({})
                                     .attributeNode("r", cir1);
@@ -111,7 +111,7 @@ int main() {
         new Datum<unsigned char>(CppType::Int, raster, rasterDims);
     for (int i = 0; i < totalCels; i++) raster[i] = 0;
 
-    ClarityNode *canvas1 =
+    ClarityNodeBase *canvas1 =
         childOfMaindivBuilder.withName("canvas1")
             .withAttributes({{"width", val(400)},
                              {"height", val(300)},

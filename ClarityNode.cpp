@@ -1,21 +1,21 @@
 #include "ClarityNode.hpp"
 
-bool ClarityNode::appendChild(ClarityNode *child) {
+bool ClarityNodeBase::appendChild(ClarityNodeBase *child) {
     children_.push_back(child);
     child->setParent(this);
     cle_.call<void>("appendChild", child->getCLE());
     return true;  // FIXME: need to check for duplicate ids.
 }
 
-inline string clarity::ClarityNode::nodeStats(const string &msg) const {
+inline string clarity::ClarityNodeBase::nodeStats(const string &msg) const {
     string s = "NS: Node name: " + name_ + ", Node id: " + to_string(id_) +
                ", Node type: " + typeid(*this).name() +
                ", peer count = " + to_string(countPeers()) + msg + "\n";
     return s;
 }
 
-void clarity::ClarityNode::pushValToPeersById(int id) {
-    ClarityNode *cnn = getCLElementById(id);
+void clarity::ClarityNodeBase::pushValToPeersById(int id) {
+    ClarityNodeBase *cnn = getCLElementById(id);
     if (cnn->translator_ != nullptr) {
         // val newJSVal = cnn->translator_->text2jsval();
         val newJSVal = cnn->translator_->js2datum();
@@ -23,12 +23,12 @@ void clarity::ClarityNode::pushValToPeersById(int id) {
     cnn->pushValToPeers(cnn);
 }
 
-void clarity::ClarityNode::js2datumWithPushToPeersById(int id) {
-    ClarityNode *cnn = getCLElementById(id);
+void clarity::ClarityNodeBase::js2datumWithPushToPeersById(int id) {
+    ClarityNodeBase *cnn = getCLElementById(id);
     cnn->js2datumWithPushToPeers();
 }
 
-void clarity::ClarityNode::js2datumWithPushToPeers() {
+void clarity::ClarityNodeBase::js2datumWithPushToPeers() {
     if (translator_ != nullptr) {
         // val newJSVal = cnn->translator_->text2jsval();
         val newJSVal = translator_->js2datum();
@@ -36,19 +36,19 @@ void clarity::ClarityNode::js2datumWithPushToPeers() {
     pushValToPeers(this);
 }
 
-inline void clarity::ClarityNode::init() {
+inline void clarity::ClarityNodeBase::init() {
     id_ = tm_.getNext();
     // Set up all nodes as single valued by default.
 
-    ClarityNode::switchboard[id_] = this;
+    ClarityNodeBase::switchboard[id_] = this;
 }
 
-inline clarity::ClarityNode::ClarityNode(const string &name) : name_(name) {
+inline clarity::ClarityNodeBase::ClarityNodeBase(const string &name) : name_(name) {
     init();
     // cle_.set("cpptype", val(storedValueType));
 }
 
-ClarityNode::ClarityNode(const string &name, const string &tag,
+ClarityNodeBase::ClarityNodeBase(const string &name, const string &tag,
                          bool useExistingDOMElement_)
     : name_(name), tag_(tag) {
     init();
@@ -59,7 +59,7 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
     // so we re-set it here.
 
     // boundField_ = "value";
-    ClarityNode::switchboard[id_] = this;
+    ClarityNodeBase::switchboard[id_] = this;
 }
 
 /**
@@ -69,7 +69,7 @@ ClarityNode::ClarityNode(const string &name, const string &tag,
  *
  * @param dl
  */
-void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
+void clarity::ClarityNodeBase::pushValToPeer(DualLink &dl) {
     val internalVal;
     if (translator_ != nullptr)
         internalVal = translator_->text2jsval();
@@ -89,7 +89,7 @@ void clarity::ClarityNode::pushValToPeer(DualLink &dl) {
     }
 }
 
-void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
+void clarity::ClarityNodeBase::pushValToPeers(ClarityNodeBase *excludedPeer) {
     if (clean_) {
         return;
     }
@@ -150,12 +150,12 @@ void clarity::ClarityNode::pushValToPeers(ClarityNode *excludedPeer) {
 //     cnn->pullValFromPeers(cnn);
 // }
 
-inline void ClarityNode::setAttribute(const string &attr, const val &value) {
+inline void ClarityNodeBase::setAttribute(const string &attr, const val &value) {
     val domElement = cle_["domElement"];
     domElement.call<void>("setAttribute", attr, value);
 }
 
-inline void ClarityNode::setAttributes(const map<string, val> &attrs) {
+inline void ClarityNodeBase::setAttributes(const map<string, val> &attrs) {
     for (auto [attrName, value] : attrs) {
         setAttribute(attrName, value);
     }
@@ -166,12 +166,12 @@ inline void ClarityNode::setAttributes(const map<string, val> &attrs) {
 //     cle_.set("cpptype", cppType);
 // }
 
-inline void ClarityNode::addEventListenerByName(const string &eventName,
+inline void ClarityNodeBase::addEventListenerByName(const string &eventName,
                                                 const string &callbackName) {
     cle_.call<void>("addEventListenerById", eventName, callbackName);
 }
 
-inline void ClarityNode::addJSEventListener(const string &eventName,
+inline void ClarityNodeBase::addJSEventListener(const string &eventName,
                                             val eventCallback) {
     cle_.call<void>("addEventListener", eventName, eventCallback);
 }
