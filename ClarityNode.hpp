@@ -245,6 +245,19 @@ class ClarityNodeBase {
 
 template <typename Dt>
 class ClarityNode : public ClarityNodeBase {
+   public:
+    val toJS() { return val(*cptr_); }
+
+    void fromJS(val jsval) { cptr_ = jsval.as<Dt>(); }
+
+    template <class C>
+    void fromString(string sval) {}
+
+    template <>
+    void fromString<int>(string sval) {
+        *cptr_ = stoi(sval);
+    }
+
    protected:
     Dt *cptr_;
 };
