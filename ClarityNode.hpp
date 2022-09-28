@@ -15,7 +15,6 @@ namespace clarity {
  *
  */
 
-
 class ClarityNodeBase {
    public:
     static map<string, std::function<void()>> callbackMap;
@@ -41,7 +40,8 @@ class ClarityNodeBase {
         void set_b2a_xfmr(val xfmr);
 
         template <typename T>
-        DualLink(ClarityNodeBase *nodeA, ClarityNodeBase *nodeB, const T multiplier = 1)
+        DualLink(ClarityNodeBase *nodeA, ClarityNodeBase *nodeB,
+                 const T multiplier = 1)
             : nodeA_(nodeA), nodeB_(nodeB) {
             a2b_xfmr_ =
                 CLElement_.call<val>("generateTransformFn", val(multiplier));
@@ -61,7 +61,8 @@ class ClarityNodeBase {
                  << ", B = " << nodeB_->getId() << "\n";
         }
 
-        inline pair<ClarityNodeBase *, val> getOtherNode(ClarityNodeBase *thisNode) {
+        inline pair<ClarityNodeBase *, val> getOtherNode(
+            ClarityNodeBase *thisNode) {
             if (nodeA_ == thisNode) {
                 return pair(nodeB_, b2a_xfmr_);
             }
@@ -84,7 +85,7 @@ class ClarityNodeBase {
 
     void EMSCRIPTEN_KEEPALIVE init();
     inline ClarityNodeBase() { init(); }
-    EMSCRIPTEN_KEEPALIVE ClarityNodeBase(const string &name);    
+    EMSCRIPTEN_KEEPALIVE ClarityNodeBase(const string &name);
 
     /**
      * @brief Construct a new Web Element object
@@ -94,7 +95,7 @@ class ClarityNodeBase {
      *
      */
     ClarityNodeBase(const string &name, const string &tag,
-                bool useExistingDOMElement_ = false);
+                    bool useExistingDOMElement_ = false);
 
     ~ClarityNodeBase() {
         cout << "DESTROYING CLARITYNODE " << id_ << "\n";
@@ -121,7 +122,7 @@ class ClarityNodeBase {
 
     inline void setTranslator(TranslatorBase *translator) {
         translator_ = translator;
-    }    
+    }
 
     inline virtual void setVal(val inval) {
         assert(boundField_ != "");
@@ -136,7 +137,7 @@ class ClarityNodeBase {
     }
 
     inline virtual val getJSVal() const {
-        assert(boundField_ != "");     
+        assert(boundField_ != "");
         val domElement = cle_["domElement"];
         val internalJSVal = domElement[boundField_];
         cle_.call<void>("printVal", internalJSVal,
@@ -173,19 +174,20 @@ class ClarityNodeBase {
     }
 
     virtual string nodeStats(const string &msg = "") const;
-    
-    virtual void pushValToPeer(DualLink &al);    
-    virtual void pushValToPeers(ClarityNodeBase *excludedPeer = nullptr);    
+
+    virtual void pushValToPeer(DualLink &al);
+    virtual void pushValToPeers(ClarityNodeBase *excludedPeer = nullptr);
     static void pushValToPeersById(int id);
     void js2datumWithPushToPeers();
     static void js2datumWithPushToPeersById(int id);
 
     template <typename CppT>
     void imposeTranslationFramework(ClarityNodeBase *n) {
-        // Fixme: this was suppoed to propagate the translator from a 'master' node
-        // to a 'slave' node so that the slave would know how to interpret the user's input.
-        // Currently we just create dummy translators and pointers to unused values to do this.
-        // Making the value in the slave Datum null though, causes errors.        
+        // Fixme: this was suppoed to propagate the translator from a 'master'
+        // node to a 'slave' node so that the slave would know how to interpret
+        // the user's input. Currently we just create dummy translators and
+        // pointers to unused values to do this. Making the value in the slave
+        // Datum null though, causes errors.
     }
 
     template <typename T>
@@ -195,7 +197,7 @@ class ClarityNodeBase {
         dlpeers_.push_back(dl);
         peer->appendDualLink(dl);
     }
-    
+
     void addPeer(ClarityNodeBase *peer, val a2b_xfmr, val b2a_xfmr) {
         auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);
         dlpeers_.push_back(dl);
@@ -216,7 +218,7 @@ class ClarityNodeBase {
     string tag_;         //!< HTML tag.
     string boundField_;  //!< The field that holds the data for this node.
     vector<ClarityNodeBase *> children_;  //!< Mostly homolougous with the
-                                      //!< associated DOM element tree.
+                                          //!< associated DOM element tree.
 
     /** \brief A node is 'clean' when we're done changing it. This
        feature is mainly designed to prevent infinite update loops if the node
@@ -239,8 +241,12 @@ class ClarityNodeBase {
 
     TranslatorBase *translator_ = nullptr;
     DatumBase *datum_ = nullptr;  //!< The native (C++) data this node controls.
+};
 
-    //C * cptr_;
+template <typename Dt>
+class ClarityNode : public ClarityNodeBase {
+   protected:
+    Dt *cptr_;
 };
 
 }  // namespace clarity
