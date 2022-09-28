@@ -7,6 +7,13 @@ Clarity is a web development framework written in C++ using emscripten to facili
 ### An Interface is a Graph
 
 
+### Three Component Model (Holy Trinity) ###
+
+#### ControlNodes ####
+
+#### DOM Elements ####
+
+#### Translators ####
 
 
 
@@ -17,6 +24,11 @@ Clarity is a web development framework written in C++ using emscripten to facili
 
 
 
+
+### TODO ###
+
+1. Streamline and standardize 3-layer translation process
+2. 
 
 
 

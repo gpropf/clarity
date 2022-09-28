@@ -117,9 +117,13 @@ class Datum : public DatumBase {
     }
 };
 
+/**
+ * @brief The (non-templated) base class for all the translators. Doesn't really
+ * do anything.
+ *
+ */
 class TranslatorBase {
-   public:
-    // static val CLElement__;  // = val::global("CLElement");
+   public:    
     inline virtual val text2jsval() { return val(NULL); }
     inline virtual val js2datum() { return val(NULL); }
     inline virtual void datum2js() {}
@@ -136,6 +140,11 @@ class TranslatorBase {
                          //!< get the jsval_ from;
 };
 
+/**
+ * @brief The first templated child class of TranslatorBase.
+ * 
+ * @tparam CppT 
+ */
 template <class CppT>
 class Translator : public TranslatorBase {
    protected:
@@ -158,13 +167,6 @@ class Translator : public TranslatorBase {
     }
 
     inline void setDatum(Datum<CppT> *d) { datum_ = d; }
-
-    // Translator(Datum<CppT> *d) {
-    //     jsval_ = val(NULL);
-    //     domElement_ = val(NULL);
-
-    //     datum_ = d;
-    // }
 
     virtual val text2jsval() {
         string valueText = domElement_[boundField_].template as<string>();
