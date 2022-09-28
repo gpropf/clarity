@@ -34,11 +34,11 @@ int main() {
     Datum<double> *d1_dtm = new Datum<double>(CppType::Double, d1, dims);
     // Datum<double> *d2_dtm = new Datum<double>(CppType::Double, d2, dims);
 
-    CLNodeFactory<double> builder("div", "maindiv");
+    CLNodeFactory<ClarityNode, double, double> builder("div", "maindiv");
 
     ClarityNode *maindiv = builder.build();
 
-    CLNodeFactory<double> childOfMaindivBuilder =
+    CLNodeFactory<ClarityNode, double,double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
     ClarityNode *d1_tinp = childOfMaindivBuilder.withDatum(d1_dtm)
@@ -131,15 +131,15 @@ int main() {
     // ----------------- Stuff from the old testbed.cpp program
     // -----------------
 
-    Datum<string> flexText_dtm =
-        new Datum(CppType::String, new string("Flex Text"), dims);
+    // Datum<string> flexText_dtm =
+    //     new Datum(CppType::String, new string("Flex Text"), dims);
     
-    double *input_temp = new double(320);
+    // double *input_temp = new double(320);
 
-    ClarityNode *temp_tinp = childOfMaindivBuilder.withName("temp").textInput();
+    // ClarityNode *temp_tinp = childOfMaindivBuilder.withName("temp").textInput();
 
-    ClarityNode *flexLabel =
-        childOfMaindivBuilder.label(temp_tinp, "Temperature");
+    // ClarityNode *flexLabel =
+    //     childOfMaindivBuilder.label(temp_tinp, "Temperature");
 
     // ClarityNode *inputFlexTextLabel =
     //     childOfMaindivBuilder.withDatum(flexText_dtm)

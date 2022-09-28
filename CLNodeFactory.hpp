@@ -17,9 +17,9 @@ namespace clarity {
  *
 
 
- * @tparam N Numeric type of the link multiplier constant.
+ * @tparam Lt Numeric type of the link multiplier constant.
  */
-template <typename N>
+template <typename Nt, typename Dt, typename Lt>
 class CLNodeFactory {
    public:
     DatumBase *datum_ = nullptr;
@@ -41,7 +41,7 @@ class CLNodeFactory {
     //     nullptr;  //!< If we create a new MN or attach one, we set this. Note
     //               //!< that we can create ControlNetworkNodes with no MN.
 
-    N linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
+    Lt linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
                                     //!< values from node to node unchanged.
     val transformFn_ = val(NULL);   //!< See the docs on the ActiveLink class.
     val a2b_xfmr_ = val(NULL);
@@ -74,10 +74,10 @@ class CLNodeFactory {
     //  *
     //  * @tparam Nc_from Node class of the 'from' factory.
     //  * @tparam V_from V for 'from' factory.
-    //  * @tparam N_from N for 'from' factory.
+    //  * @tparam N_from Lt for 'from' factory.
     //  * @tparam Nc_to Node class of the 'to' factory.
     //  * @tparam V_to V for 'to' factory.
-    //  * @tparam N_to N for 'from' factory.
+    //  * @tparam N_to Lt for 'from' factory.
     //  * @param clnf_from 'from' factory
     //  * @param clnf_to 'to' factory
     //  * @return CLNodeFactory
@@ -367,7 +367,7 @@ class CLNodeFactory {
      * @return CLNodeFactory
      */
     inline CLNodeFactory withLinkMultiplierConstant(
-        N linkMultiplierConstant) const & {
+        Lt linkMultiplierConstant) const & {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(*this);
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
@@ -375,7 +375,7 @@ class CLNodeFactory {
     }
 
     inline CLNodeFactory withLinkMultiplierConstant(
-        N linkMultiplierConstant) && {
+        Lt linkMultiplierConstant) && {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(std::move(*this));
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;

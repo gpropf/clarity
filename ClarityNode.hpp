@@ -15,6 +15,7 @@ namespace clarity {
  *
  */
 
+
 class ClarityNode {
    public:
     static map<string, std::function<void()>> callbackMap;
@@ -237,8 +238,9 @@ class ClarityNode {
         dlpeers_;  //!< Nodes that this node exchanges data with.
 
     TranslatorBase *translator_ = nullptr;
-    DatumBase *datum_ = nullptr;  //!< The native (C++) data this node
-    // controls.
+    DatumBase *datum_ = nullptr;  //!< The native (C++) data this node controls.
+
+    //C * cptr_;
 };
 
 }  // namespace clarity
