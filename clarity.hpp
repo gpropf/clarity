@@ -80,10 +80,10 @@ class DatumBase {
      *
      */
     const int *const dataDimensionality_;
-    CppType cppType_ = CppType::NoData;
+    //CppType cppType_ = CppType::NoData;
 
-    DatumBase(const CppType cppType, const int *const dataDimensionality)
-        : dataDimensionality_(dataDimensionality), cppType_(cppType) {}
+    DatumBase(const int *const dataDimensionality)
+        : dataDimensionality_(dataDimensionality) {}
 };
 
 /**
@@ -100,8 +100,17 @@ class Datum : public DatumBase {
    public:
     CppT *cptr_ = nullptr;
 
-    // inline CppType getCppType() const { return cppType_; }
-    // inline void setVal(CppT v) { *datum_ = v; }
+    val toJS() { return val(*cptr_); }
+
+    void fromJS(val jsval) { cptr_ = jsval.as<CppT>(); }
+
+    template <class C>
+    void fromString(string sval) {}
+
+    template <>
+    void fromString<int>(string sval) {
+        *cptr_ = stoi(sval);
+    }
 
     Datum(CppT *cptr) : cptr_(cptr) {}
 
@@ -208,8 +217,6 @@ class Translator : public TranslatorBase {
         cout << "js2datum():  Setting C++ val to: " << cppVal << "\n";
         *reinterpret_cast<CppT *>(datum_->cptr_) = cppVal;
         return jsval;
-        //   this->cle_.template call<T>("jsToCPPVal", inval);
-        // pushValToPeers(this);
     }
 
     /**
