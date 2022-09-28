@@ -25,6 +25,8 @@ class CLNodeFactory {
     DatumBase *datum_ = nullptr;
     TranslatorBase *translator_ = nullptr;
 
+    void *valPtr_ = nullptr;
+
     string tag_;   //!< Tag to be used with elements this factory builds.
     string name_;  //!< Name to be used with elements this factory builds.
     CppType storedValueType_;  //!< storedValueType to be used with elements
@@ -283,6 +285,13 @@ class CLNodeFactory {
         cpy.translator_ = translator;
         return cpy;
     }
+
+    template <typename CppT>
+    inline CLNodeFactory withCppVal(CppT * cppVal) {
+        reinterpret_cast<CppT *>(valPtr_) = cppVal;
+    }
+
+
 
     /**
      * @brief Sets the name of the node to create.

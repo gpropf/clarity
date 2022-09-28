@@ -120,13 +120,31 @@ int main() {
 
     TranslatorCanvasGrid<unsigned char> *canvas1_tr =
         new TranslatorCanvasGrid<unsigned char>(raster_dtm,
-                                                 canvas1->getDomElement());
+                                                canvas1->getDomElement());
 
     canvas1_tr->setCurrentCellVal(3);
     canvas1_tr->datum2js();
 
     d1_tr_tinp->datum2js();
     d1_tinp->pushValToPeers(d1_tinp);
+
+    // ----------------- Stuff from the old testbed.cpp program
+    // -----------------
+
+    Datum<string> flexText_dtm =
+        new Datum(CppType::String, new string("Flex Text"), dims);
+    
+    double *input_temp = new double(320);
+
+    ClarityNode *temp_tinp = childOfMaindivBuilder.withName("temp").textInput();
+
+    ClarityNode *flexLabel =
+        childOfMaindivBuilder.label(temp_tinp, "Temperature");
+
+    // ClarityNode *inputFlexTextLabel =
+    //     childOfMaindivBuilder.withDatum(flexText_dtm)
+    //         //.withTransformFns(passthru, passthru)
+    //         .textInput();
 
     return 0;
 }

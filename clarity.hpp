@@ -98,7 +98,7 @@ template <class CppT>
 class Datum : public DatumBase {
    protected:
    public:
-    CppT *cptr_ = nullptr;  //!< The tparam is the type of each C++ value;
+    CppT *cptr_ = nullptr;
 
     // inline CppType getCppType() const { return cppType_; }
     // inline void setVal(CppT v) { *datum_ = v; }
@@ -110,11 +110,11 @@ class Datum : public DatumBase {
         cptr_ = cptr;
     }
 
-    Datum(Datum *d) {
-        cppType_ = d->cppType_;
-        dataDimensionality_ = d->dataDimensionality_;
+    Datum(Datum *d) : DatumBase(d->cppType_, d->dataDimensionality_) {
         cptr_ = nullptr;
     }
+
+    inline CppT *getPtr() const { return cptr_; }
 };
 
 /**
@@ -123,7 +123,7 @@ class Datum : public DatumBase {
  *
  */
 class TranslatorBase {
-   public:    
+   public:
     inline virtual val text2jsval() { return val(NULL); }
     inline virtual val js2datum() { return val(NULL); }
     inline virtual void datum2js() {}
@@ -142,8 +142,8 @@ class TranslatorBase {
 
 /**
  * @brief The first templated child class of TranslatorBase.
- * 
- * @tparam CppT 
+ *
+ * @tparam CppT
  */
 template <class CppT>
 class Translator : public TranslatorBase {
