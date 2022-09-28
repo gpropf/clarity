@@ -1,6 +1,12 @@
 
 // Run with 'python3 -m http.server 8000'
 
+/**
+ * This class is a sort of shadow of the ClarityNode class in C++. It handles the stuff
+ * we need to do on the JavaScript side, specifically anything to do with direct DOM
+ * manipulation.
+ * 
+ */
 class CLElement {
 
   constructor() { }
