@@ -27,11 +27,11 @@ class ModelNode : public ClarityNode {
 
     ModelNode(CppType storedValueType) : ClarityNode(storedValueType) {}
 
-    ModelNode(T *dynval) : dynval_(dynval) {}
+    ModelNode(T *dynval) : cppVal_(dynval) {}
 
     ModelNode(T *dynval, CppType storedValueType)
         : ClarityNode(storedValueType) {
-        dynval_ = dynval;
+        cppVal_ = dynval;
     }
 
     ModelNode(T *dynval, CppType storedValueType, const string &name)
@@ -40,7 +40,7 @@ class ModelNode : public ClarityNode {
     }
 
     virtual val getVal() const {
-        if (dynval_ == nullptr) {
+        if (cppVal_ == nullptr) {
             return val(NULL);
         }
         if (*dataDimensionality_ != 1) {
@@ -50,17 +50,17 @@ class ModelNode : public ClarityNode {
             // initiate the data stream transfer.
         }
         // Single value case, proceed as usual.
-        return val(cpp2js<T>(dynval_));
+        return val(cpp2js<T>(cppVal_));
     }
 
     void setVal(const val &inval) {
-        assert(dynval_ != nullptr);
-        *reinterpret_cast<T *>(dynval_) =
+        assert(cppVal_ != nullptr);
+        *reinterpret_cast<T *>(cppVal_) =
             this->cle_.template call<T>("jsToCPPVal", inval);
         pushValToPeers(this);
     }
 
-    T *dynval_;  //!< The C++ data object that acts as the 'model'
+    T *cppVal_;  //!< The C++ data object that acts as the 'model'
 };
 }  // namespace clarity
 
