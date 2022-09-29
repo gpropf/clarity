@@ -10,7 +10,9 @@ class CanvasElement : public ClarityNode<Dt> {
    public:
     CanvasElement(const string &name, const string &tag,
                   bool useExistingDOMElement)
-        : ClarityNode<Dt> (name, tag, useExistingDOMElement) {}
+        : ClarityNode<Dt>(name, tag, useExistingDOMElement) {
+        this->boundField_ = "FOO";
+    }
 
     inline void setDrawFuntionName(const string &drawFuntionName) {
         drawFuntionName_ = drawFuntionName;
@@ -64,8 +66,11 @@ class CanvasGrid : public CanvasElement<Dt> {
                             // up about not returning a value.
     }
 
-    void cppValToDomElement() { cout <<"cppValToDomElement!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n"; }
-    //void cppValToDomElement();
+    void cppValToDomElement() {
+        cout << "cppValToDomElement!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                "!!!!!!!!!\n";
+    }
+    // void cppValToDomElement();
 
    protected:
     int width_, height_;  //!< Width and Height in screen pixels.

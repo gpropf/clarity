@@ -24,9 +24,9 @@ class CLNodeFactory {
    public:
     Dt *cppVal_ = nullptr;
     DatumBase *datum_ = nullptr;
-   // TranslatorBase *translator_ = nullptr;
+    // TranslatorBase *translator_ = nullptr;
 
-    void *valPtr_ = nullptr;
+    // void *cppVal_ = nullptr;
 
     string tag_;   //!< Tag to be used with elements this factory builds.
     string name_;  //!< Name to be used with elements this factory builds.
@@ -185,7 +185,10 @@ class CLNodeFactory {
             newNode = new Nt(name_, tag_, useExistingDOMElement_);
         }
 
-        newNode->setBoundField(boundField_);
+        if (boundField_ != "") {
+            newNode->setBoundField(boundField_);
+        }
+        
         newNode->setAttributes(attrs_);
         if (parent_) {
             parent_->appendChild(newNode);
@@ -303,8 +306,19 @@ class CLNodeFactory {
     // }
 
     template <typename CppT>
-    inline CLNodeFactory withCppVal(CppT *cppVal) {
-        reinterpret_cast<CppT *>(valPtr_) = cppVal;
+    inline CLNodeFactory withCppVal(CppT *cppVal) const & {
+        // *reinterpret_cast<CppT *>(valPtr_) = *cppVal;
+        CLNodeFactory cpy(*this);
+        cpy.cppVal_ = cppVal;
+        return cpy;
+    }
+
+    template <typename CppT>
+    inline CLNodeFactory withCppVal(CppT *cppVal) && {
+        // *reinterpret_cast<CppT *>(valPtr_) = *cppVal;
+        CLNodeFactory cpy(std::move(*this));
+        cpy.cppVal_ = cppVal;
+        return cpy;
     }
 
     /**
