@@ -67,6 +67,7 @@ val ClarityNode<double>::domElementText2JSVal() {
     return dval;
 }
 
+
 /**
  * @brief The most critical way this is used is to move data to/from ModelNodes.
  * In moving data from a ModelNode the initial getVal call occurs in a ModelNode

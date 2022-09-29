@@ -10,6 +10,7 @@
 #include "clarity.hpp"
 #include "embindings.hpp"
 #include "speedtest.hpp"
+#include "CanvasElement.hpp"
 
 map<const int, ClarityNodeBase *> ClarityNodeBase::switchboard;
 map<string, std::function<void()>> ClarityNodeBase::callbackMap;
@@ -113,19 +114,23 @@ int main() {
         new Datum<unsigned char>(CppType::Int, raster, rasterDims);
     for (int i = 0; i < totalCels; i++) raster[i] = 0;
 
-    ClarityNodeBase *canvas1 =
-        childOfMaindivBuilder.withName("canvas1")
+    CLNodeFactory<CanvasGrid<unsigned char>, unsigned char, double> canvasBuilder("div",
+                                                               "canvasDiv");
+
+    CanvasGrid<unsigned char> *canvas1 =
+        canvasBuilder.withName("canvas1")
             .withAttributes({{"width", val(400)},
                              {"height", val(300)},
                              {"style", val("border: 2px solid blue")}})
-            .canvas();
+            .build();
 
-    TranslatorCanvasGrid<unsigned char> *canvas1_tr =
-        new TranslatorCanvasGrid<unsigned char>(raster_dtm,
-                                                canvas1->getDomElement());
+    // TranslatorCanvasGrid<unsigned char> *canvas1_tr =
+    //     new TranslatorCanvasGrid<unsigned char>(raster_dtm,
+    //                                             canvas1->getDomElement());
 
-    canvas1_tr->setCurrentCellVal(3);
-
+    // canvas1_tr->setCurrentCellVal(3);
+    
+    canvas1->cppValToDomElement();
     //----------------------------------
     // canvas1_tr->datum2js();
 

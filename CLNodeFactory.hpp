@@ -176,7 +176,7 @@ class CLNodeFactory {
      *
      * @return ClarityNode*
      */
-    Nt *build(ClarityNode<Dt> *existingNode = nullptr) {
+    Nt *build(Nt *existingNode = nullptr) {
         Nt *newNode;
 
         if (existingNode != nullptr) {

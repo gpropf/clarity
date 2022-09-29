@@ -302,9 +302,9 @@ class ClarityNode : public ClarityNodeBase {
    public:
     val toJS() { return val(*cppVal_); }
 
-    void loadCppValFromJS(val jsval) { *cppVal_ = jsval.as<Dt>(); }
+    virtual void loadCppValFromJS(val jsval) { *cppVal_ = jsval.as<Dt>(); }
 
-    void loadCppValFromString(string sval) {}
+    virtual void loadCppValFromString(string sval) {}
 
     val domElementText2JSVal() { return val(getDomStringVal()); }
 
