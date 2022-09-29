@@ -114,10 +114,10 @@ int main() {
         new Datum<unsigned char>(CppType::Int, raster, rasterDims);
     for (int i = 0; i < totalCels; i++) raster[i] = 0;
 
-    CLNodeFactory<CanvasElement<unsigned char>, unsigned char, double>
+    CLNodeFactory<CanvasGrid<unsigned char>, unsigned char, double>
         canvasBuilder("div", "canvasDiv");
 
-    CanvasElement<unsigned char> *canvas1 =
+    CanvasGrid<unsigned char> *canvas1 =
         canvasBuilder.withName("canvas1")
             .withCppVal(raster)
             .withAttributes({{"width", val(400)},
