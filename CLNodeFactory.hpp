@@ -634,8 +634,8 @@ class CLNodeFactory {
      * @param attributeName
      * @return ClarityNode*
      */
-    inline ClarityNodeBase *attributeNode(const string &attributeName) {
-        ClarityNodeBase *attributeNode =
+    inline ClarityNode<Dt> *attributeNode(const string &attributeName) {
+        ClarityNode<Dt> *attributeNode =
             withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
@@ -651,9 +651,9 @@ class CLNodeFactory {
      * @param parent
      * @return ClarityNode*
      */
-    inline ClarityNodeBase *attributeNode(const string &attributeName,
+    inline ClarityNode<Dt> *attributeNode(const string &attributeName,
                                           ClarityNodeBase *parent) {
-        ClarityNodeBase *attributeNode =
+        ClarityNode<Dt> *attributeNode =
             withParent(parent).attributeNode(attributeName);
         return attributeNode;
     }

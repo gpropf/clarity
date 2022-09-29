@@ -42,7 +42,9 @@ int main() {
     CLNodeFactory<ClarityNode<double>, double, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
-    ClarityNode<double> *d1_tinp = childOfMaindivBuilder.withValue(d1).withName("d1_textinput").textInput();
+    ClarityNode<double> *d1_tinp = childOfMaindivBuilder.withValue(d1)
+                                       .withName("d1_textinput")
+                                       .textInput();
 
     // TranslatorInput<double> *d1_tr_tinp =
     //     new TranslatorInput<double>(d1_dtm, d1_tinp->getDomElement());
@@ -68,37 +70,37 @@ int main() {
     // d2_inp->setTranslator(d2_tr);
 
     //   d2_tr->datum2js();
-//----------------------------------
-    // ClarityNodeBase *svgarea =
-    //     childOfMaindivBuilder.withName("svgarea")
-    //         .withTag("svg")
-    //         .withAttributes({{"width", val("300")},
-    //                          {"height", val("200")},
-    //                          {"viewBox", val("0 0 200 200")},
-    //                          {"style", val("border: 1px solid black")}})
-    //         .build();
+    //----------------------------------
+    ClarityNodeBase *svgarea =
+        childOfMaindivBuilder.withName("svgarea")
+            .withTag("svg")
+            .withAttributes({{"width", val("300")},
+                             {"height", val("200")},
+                             {"viewBox", val("0 0 200 200")},
+                             {"style", val("border: 1px solid black")}})
+            .build();
 
-    // ClarityNodeBase *statusButton =
-    //     childOfMaindivBuilder.button("statusButton", "Print Status", doNothing);
+    ClarityNodeBase *statusButton =
+        childOfMaindivBuilder.button("statusButton", "Print Status", doNothing);
 
-    // ClarityNodeBase *cir1 =
-    //     childOfMaindivBuilder.withName("cir1")
-    //         .withParent(svgarea)
-    //         .withTag("circle")
-    //         .withAttributes({{"r", val("30")},
-    //                          {"cx", val(100)},
-    //                          {"cy", val(100)},
-    //                          {"stroke", val("green")},
-    //                          {"fill", val("rgb(50,199,77)")},
-    //                          {"stroke-width", val(4)}})
-    //         .build();
+    ClarityNodeBase *cir1 =
+        childOfMaindivBuilder.withName("cir1")
+            .withParent(svgarea)
+            .withTag("circle")
+            .withAttributes({{"r", val("30")},
+                             {"cx", val(100)},
+                             {"cy", val(100)},
+                             {"stroke", val("green")},
+                             {"fill", val("rgb(50,199,77)")},
+                             {"stroke-width", val(4)}})
+            .build();
 
-    // ClarityNodeBase *circleRadius = childOfMaindivBuilder.withName("RADIUS")
-    //                                     .withLinkMultiplierConstant(1)
-    //                                     .withAttributes({})
-    //                                     .attributeNode("r", cir1);
+    ClarityNode<double> *circleRadius = childOfMaindivBuilder.withName("RADIUS")
+                                            .withLinkMultiplierConstant(1)
+                                            .withAttributes({})
+                                            .attributeNode("r", cir1);
 
-    // d1_tinp->addPeer<double>(circleRadius, 1.0);
+    d1_tinp->addPeer<double>(circleRadius, 1.0);
 
     // // Canvas Grid Test ----------------------------------------------
 
@@ -125,9 +127,10 @@ int main() {
     // canvas1_tr->setCurrentCellVal(3);
 
     //----------------------------------
-    //canvas1_tr->datum2js();
+    // canvas1_tr->datum2js();
 
-   // d1_tr_tinp->datum2js();
+    // d1_tr_tinp->datum2js();
+    d1_tinp->cppValToDomElement();
     d1_tinp->pushValToPeers(d1_tinp);
 
     // ----------------- Stuff from the old testbed.cpp program

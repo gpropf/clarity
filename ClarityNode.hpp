@@ -257,6 +257,8 @@ class ClarityNodeBase {
     virtual void loadCppValFromString(string sval) {
     }  // FIXME: this should be an abstract base class
 
+    
+
     virtual val domElementText2JSVal() { return val(NULL); }
 
    protected:
@@ -315,6 +317,10 @@ class ClarityNode : public ClarityNodeBase {
     inline ClarityNode() : ClarityNodeBase() { init(); }
 
     inline void setCppVal(Dt *v) { cppVal_ = v; }
+
+    virtual void cppValToDomElement() {
+        setVal(val(*cppVal_));
+    }
 
    protected:
     Dt *cppVal_ = nullptr;
