@@ -22,8 +22,9 @@ namespace clarity {
 template <class Nt, typename Dt, typename Lt>
 class CLNodeFactory {
    public:
+    Dt *cppVal_ = nullptr;
     DatumBase *datum_ = nullptr;
-    TranslatorBase *translator_ = nullptr;
+   // TranslatorBase *translator_ = nullptr;
 
     void *valPtr_ = nullptr;
 
@@ -34,16 +35,17 @@ class CLNodeFactory {
 
     string boundField_;  //!< Different types of elements need different fields
                          //!< to be modified when the node value changes.
-    ClarityNodeBase *parent_ = nullptr;  //!< If we have this set, we are creating
-                                     //!< any new nodes as its children.
+    ClarityNodeBase *parent_ =
+        nullptr;  //!< If we have this set, we are creating
+                  //!< any new nodes as its children.
 
     // ModelNode *modelNode_ =
     //     nullptr;  //!< If we create a new MN or attach one, we set this. Note
     //               //!< that we can create ControlNetworkNodes with no MN.
 
     Lt linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
-                                    //!< values from node to node unchanged.
-    val transformFn_ = val(NULL);   //!< See the docs on the ActiveLink class.
+                                     //!< values from node to node unchanged.
+    val transformFn_ = val(NULL);    //!< See the docs on the ActiveLink class.
     val a2b_xfmr_ = val(NULL);
     val b2a_xfmr_ = val(NULL);
     bool useExistingDOMElement_ =
@@ -174,8 +176,7 @@ class CLNodeFactory {
      *
      * @return ClarityNode*
      */
-    inline Nt *build(ClarityNode<Dt> *existingNode = nullptr) {
-        
+    Nt *build(ClarityNode<Dt> *existingNode = nullptr) {
         Nt *newNode;
 
         if (existingNode != nullptr) {
@@ -190,15 +191,16 @@ class CLNodeFactory {
             parent_->appendChild(newNode);
         }
 
-        if (translator_) {
-        }
-
-        if (translator_ != nullptr) {            
-            newNode->setTranslator(translator_);            
-        }
+        // if (translator_ != nullptr) {
+        //     newNode->setTranslator(translator_);
+        // }
 
         if (datum_ != nullptr) {
             newNode->setDatum(datum_);
+        }
+
+        if (cppVal_ != nullptr) {
+            newNode->setCppVal(cppVal_);
         }
 
         return newNode;
@@ -276,24 +278,34 @@ class CLNodeFactory {
         return cpy;
     }
 
-    inline CLNodeFactory withTranslator(TranslatorBase *translator) const & {
+    inline CLNodeFactory withValue(Dt *v) const & {
         CLNodeFactory cpy(*this);
-        cpy.translator_ = translator;
+        cpy.cppVal_ = v;
         return cpy;
     }
 
-    inline CLNodeFactory withTranslator(TranslatorBase *translator) && {
+    inline CLNodeFactory withValue(Dt *v) && {
         CLNodeFactory cpy(std::move(*this));
-        cpy.translator_ = translator;
+        cpy.cppVal_ = v;
         return cpy;
     }
+
+    // inline CLNodeFactory withTranslator(TranslatorBase *translator) const & {
+    //     CLNodeFactory cpy(*this);
+    //     cpy.translator_ = translator;
+    //     return cpy;
+    // }
+
+    // inline CLNodeFactory withTranslator(TranslatorBase *translator) && {
+    //     CLNodeFactory cpy(std::move(*this));
+    //     cpy.translator_ = translator;
+    //     return cpy;
+    // }
 
     template <typename CppT>
-    inline CLNodeFactory withCppVal(CppT * cppVal) {
+    inline CLNodeFactory withCppVal(CppT *cppVal) {
         reinterpret_cast<CppT *>(valPtr_) = cppVal;
     }
-
-
 
     /**
      * @brief Sets the name of the node to create.
@@ -493,7 +505,7 @@ class CLNodeFactory {
      * @return ClarityNode*
      */
     inline ClarityNodeBase *button(const string &name, const string &text,
-                               val onPressCallback = val(NULL)) {
+                                   val onPressCallback = val(NULL)) {
         ClarityNodeBase *button = withTag("button").build();
         // button->setBoundField("textContent");
         //  button->setVal(val(text));
@@ -511,7 +523,8 @@ class CLNodeFactory {
      * @param text
      * @return ClarityNode*
      */
-    inline ClarityNodeBase *label(ClarityNodeBase *forNode, const string &text) {
+    inline ClarityNodeBase *label(ClarityNodeBase *forNode,
+                                  const string &text) {
         ClarityNodeBase *label = withTag("label").build();
         label->setBoundField("innerHTML");
         label->setVal(val(text));
@@ -524,12 +537,12 @@ class CLNodeFactory {
      *
      * @return ClarityNode*
      */
-    inline ClarityNodeBase *textInput() {
+    inline ClarityNode<Dt> *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
-        ClarityNodeBase *inp = withTag("input")
-                               .withBoundField("value")
-                               .withAttributes(inputFieldAttrs)
-                               .build();
+        ClarityNode<Dt> *inp = withTag("input")
+                                   .withBoundField("value")
+                                   .withAttributes(inputFieldAttrs)
+                                   .build();
         // TranslatorInput<CppT> * translatorInput = new
         // TranslatorInput<CppT>(datum_<CppT>, inp->getDomElement());
         return inp;
@@ -540,12 +553,12 @@ class CLNodeFactory {
      *
      * @return ClarityNode*
      */
-    inline ClarityNodeBase *rangeInput() {
+    inline ClarityNode<Dt> *rangeInput() {
         map<string, val> inputFieldAttrs = {{"type", val("range")}};
-        ClarityNodeBase *inp = withTag("input")
-                               .withBoundField("value")
-                               .withAttributes(inputFieldAttrs)
-                               .build();
+        ClarityNode<Dt> *inp = withTag("input")
+                                   .withBoundField("value")
+                                   .withAttributes(inputFieldAttrs)
+                                   .build();
         return inp;
     }
 
@@ -560,7 +573,8 @@ class CLNodeFactory {
         ClarityNodeBase *tinp = withName("text_input_" + name_).textInput();
         ClarityNodeBase *rinp = withName("range_input_" + name_).rangeInput();
         tinp->addPeer<double>(rinp);
-        ClarityNodeBase *outerDiv = withTag("div").withName("tr_" + name_).build();
+        ClarityNodeBase *outerDiv =
+            withTag("div").withName("tr_" + name_).build();
         outerDiv->appendChild(tinp);
         outerDiv->appendChild(rinp);
         return outerDiv;
@@ -575,7 +589,7 @@ class CLNodeFactory {
      * @return ClarityNode*
      */
     inline ClarityNodeBase *labelGivenNode(ClarityNodeBase *nodeToBeLabelled,
-                                       const string &labelText) {
+                                           const string &labelText) {
         ClarityNodeBase *outerDiv =
             withTag("div")
                 .withName("labeldiv_" + nodeToBeLabelled->getName())
@@ -638,7 +652,7 @@ class CLNodeFactory {
      * @return ClarityNode*
      */
     inline ClarityNodeBase *attributeNode(const string &attributeName,
-                                      ClarityNodeBase *parent) {
+                                          ClarityNodeBase *parent) {
         ClarityNodeBase *attributeNode =
             withParent(parent).attributeNode(attributeName);
         return attributeNode;

@@ -199,6 +199,13 @@ class CLElement {
     }
   }
 
+  static CLE_parseFloat(s) {
+    // FIXME: This shouldn't be needed but I don't know how to get plain old parseFloat
+    // to work using the val::call method.
+    return parseFloat(s);
+  }
+
+
   /**
    * 
    * @param {*} temp: In degrees Kelvin 

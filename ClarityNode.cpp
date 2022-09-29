@@ -16,10 +16,7 @@ inline string clarity::ClarityNodeBase::nodeStats(const string &msg) const {
 
 void clarity::ClarityNodeBase::pushValToPeersById(int id) {
     ClarityNodeBase *cnn = getCLElementById(id);
-    if (cnn->translator_ != nullptr) {
-        // val newJSVal = cnn->translator_->text2jsval();
-        val newJSVal = cnn->translator_->js2datum();
-    }
+    cnn->js2datum();
     cnn->pushValToPeers(cnn);
 }
 
@@ -29,23 +26,40 @@ void clarity::ClarityNodeBase::js2datumWithPushToPeersById(int id) {
 }
 
 void clarity::ClarityNodeBase::js2datumWithPushToPeers() {
-    if (translator_ != nullptr) {
-        // val newJSVal = cnn->translator_->text2jsval();
-        val newJSVal = translator_->js2datum();
-    }
+    // if (translator_ != nullptr) {
+    //     // val newJSVal = cnn->translator_->text2jsval();
+    //     val newJSVal = fromString(getJSVal())
+
+    //     translator_->js2datum();
+    // }
+
     pushValToPeers(this);
 }
 
 inline void clarity::ClarityNodeBase::init() {
     id_ = tm_.getNext();
+    cle_ = val::global("CLElement").new_();
+    domElement_ = cle_["domElement"];
     // Set up all nodes as single valued by default.
 
     ClarityNodeBase::switchboard[id_] = this;
 }
 
 template <>
-void ClarityNode<int>::fromString(string sval) {
-    *cptr_ = stoi(sval);
+void ClarityNode<int>::loadCppValFromString(string sval) {
+    *cppVal_ = stoi(sval);
+}
+
+template <>
+void ClarityNode<double>::loadCppValFromString(string sval) {
+    *cppVal_ = stod(sval);
+}
+
+template <>
+val ClarityNode<double>::domElementText2JSVal() {
+    val domText = getJSVal();
+    val dval = CLElement_.call<val>("CLE_parseFloat", domText);
+    return dval;
 }
 
 /**
@@ -57,10 +71,11 @@ void ClarityNode<int>::fromString(string sval) {
  */
 void clarity::ClarityNodeBase::pushValToPeer(DualLink &dl) {
     val internalVal;
-    if (translator_ != nullptr)
-        internalVal = translator_->text2jsval();
-    else
-        internalVal = getJSVal();
+    // if (translator_ != nullptr)
+    //     internalVal = translator_->text2jsval();
+    // else
+    //internalVal = getJSVal();
+    internalVal = domElementText2JSVal();
 
     cle_.call<void>("printVal", internalVal,
                     val("pushValToPeer: id_ = " + to_string(id_)));

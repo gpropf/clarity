@@ -137,9 +137,9 @@ class ClarityNodeBase {
 
     inline void setDatum(DatumBase *datum) { datum_ = datum; }
 
-    inline void setTranslator(TranslatorBase *translator) {
-        translator_ = translator;
-    }
+    // inline void setTranslator(TranslatorBase *translator) {
+    //     translator_ = translator;
+    // }
 
     inline virtual void setVal(val inval) {
         assert(boundField_ != "");
@@ -148,9 +148,10 @@ class ClarityNodeBase {
         cle_.call<void>("printVal", inval);
         domElement.set(boundField_, inval);
         domElement.call<void>("setAttribute", val(boundField_), inval);
-        if (translator_ != nullptr) {
-            translator_->js2datum();
-        }
+        // if (translator_ != nullptr) {
+        //     translator_->js2datum();
+        // }
+        // fromJS(inval);
     }
 
     inline virtual val getJSVal() const {
@@ -159,7 +160,26 @@ class ClarityNodeBase {
         val internalJSVal = domElement[boundField_];
         cle_.call<void>("printVal", internalJSVal,
                         val("getJSVal: id_ = " + to_string(id_)));
+        // internalJSVal = CLElement_.call<val>("Math.parseFloat",
+        // internalJSVal); // FIXME!!
         return internalJSVal;
+    }
+
+    inline virtual void js2datum() {
+        loadCppValFromString(getDomStringVal());
+        // val jsval = text2jsval();
+        // CppT cppVal = jsval.as<CppT>();
+        // cout << "js2datum():  Setting C++ val to: " << cppVal << "\n";
+        // *reinterpret_cast<CppT *>(datum_->cptr_) = cppVal;
+        // return jsval;
+        //   this->cle_.template call<T>("jsToCPPVal", inval);
+        // pushValToPeers(this);
+    }
+
+    string getDomStringVal() {
+        assert(boundField_ != "");
+        string valueText = domElement_[boundField_].template as<string>();
+        return valueText;
     }
 
     inline void setBoundField(const string &boundField) {
@@ -185,10 +205,10 @@ class ClarityNodeBase {
         return val(*reinterpret_cast<T *>(valptr));
     }
 
-    template <typename CppT>
-    inline Translator<CppT> *getTranslator() {
-        return translator_;
-    }
+    // template <typename CppT>
+    // inline Translator<CppT> *getTranslator() {
+    //     return translator_;
+    // }
 
     virtual string nodeStats(const string &msg = "") const;
 
@@ -227,10 +247,25 @@ class ClarityNodeBase {
 
     inline int countPeers() const { return dlpeers_.size(); }
 
+    virtual val toJS() {
+        return val(NULL);
+    }  // FIXME: this should be an abstract base class
+
+    virtual void loadCppValFromJS(val jsval) {
+    }  // FIXME: this should be an abstract base class
+
+    virtual void loadCppValFromString(string sval) {
+    }  // FIXME: this should be an abstract base class
+
+    virtual val domElementText2JSVal() { return val(NULL); }
+
    protected:
     /** \brief Instance of the CLElement class that acts as a "proxy" in JS
      * space. Also stores the DOM element that the translator connects to.*/
-    val cle_ = val::global("CLElement").new_();
+    // val cle_ = val::global("CLElement").new_();
+    val cle_ = val(NULL);
+
+    val domElement_ = val(NULL);
 
     string tag_;         //!< HTML tag.
     string boundField_;  //!< The field that holds the data for this node.
@@ -256,18 +291,20 @@ class ClarityNodeBase {
     vector<shared_ptr<ClarityNodeBase::DualLink>>
         dlpeers_;  //!< Nodes that this node exchanges data with.
 
-    TranslatorBase *translator_ = nullptr;
+    // TranslatorBase *translator_ = nullptr;
     DatumBase *datum_ = nullptr;  //!< The native (C++) data this node controls.
 };
 
 template <typename Dt>
 class ClarityNode : public ClarityNodeBase {
    public:
-    val toJS() { return val(*cptr_); }
+    val toJS() { return val(*cppVal_); }
 
-    void fromJS(val jsval) { cptr_ = jsval.as<Dt>(); }
+    void loadCppValFromJS(val jsval) { *cppVal_ = jsval.as<Dt>(); }
 
-    void fromString(string sval) {}
+    void loadCppValFromString(string sval) {}
+
+    val domElementText2JSVal() { return val(getDomStringVal()); }
 
     inline ClarityNode(const string &name, const string &tag,
                        bool useExistingDOMElement_)
@@ -277,11 +314,11 @@ class ClarityNode : public ClarityNodeBase {
 
     inline ClarityNode() : ClarityNodeBase() { init(); }
 
+    inline void setCppVal(Dt *v) { cppVal_ = v; }
+
    protected:
-    Dt *cptr_;
+    Dt *cppVal_ = nullptr;
 };
-
-
 
 }  // namespace clarity
 
