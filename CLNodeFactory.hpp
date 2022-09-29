@@ -19,7 +19,7 @@ namespace clarity {
 
  * @tparam Lt Numeric type of the link multiplier constant.
  */
-template <typename Nt, typename Dt, typename Lt>
+template <class Nt, typename Dt, typename Lt>
 class CLNodeFactory {
    public:
     DatumBase *datum_ = nullptr;
@@ -174,12 +174,14 @@ class CLNodeFactory {
      *
      * @return ClarityNode*
      */
-    inline ClarityNodeBase *build(ClarityNodeBase *existingNode = nullptr) {
-        ClarityNodeBase *newNode;
+    inline Nt *build(ClarityNode<Dt> *existingNode = nullptr) {
+        
+        Nt *newNode;
+
         if (existingNode != nullptr) {
             newNode = existingNode;
         } else {
-            newNode = new ClarityNodeBase(name_, tag_, useExistingDOMElement_);
+            newNode = new Nt(name_, tag_, useExistingDOMElement_);
         }
 
         newNode->setBoundField(boundField_);

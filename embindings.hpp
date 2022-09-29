@@ -3,7 +3,7 @@ using clarity::ClarityNodeBase;
 using std::string;
 
 EMSCRIPTEN_BINDINGS(clarity) {
-    class_<ClarityNodeBase>("ClarityNode")
+    class_<ClarityNodeBase>("ClarityNodeBase")
         .function("toggleClean", &ClarityNodeBase::toggleClean,
                   allow_raw_pointers())
         //.function("getVal", &ClarityNode::getVal, allow_raw_pointers())
@@ -23,7 +23,7 @@ EMSCRIPTEN_BINDINGS(clarity) {
                         allow_raw_pointers())
         .class_function("markNodeDirtyById", &ClarityNodeBase::markNodeDirtyById,
                         allow_raw_pointers())
-        .constructor<string, string>(allow_raw_pointers())
+        //.constructor<string, string>(allow_raw_pointers())
         .property("tag", &ClarityNodeBase::getTag)
         .property("id", &ClarityNodeBase::getId)
         // .property("storedValueType", &ClarityNode::getStoredValueType,

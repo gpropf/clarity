@@ -34,11 +34,11 @@ int main() {
     Datum<double> *d1_dtm = new Datum<double>(CppType::Double, d1, dims);
     // Datum<double> *d2_dtm = new Datum<double>(CppType::Double, d2, dims);
 
-    CLNodeFactory<ClarityNodeBase, double, double> builder("div", "maindiv");
+    CLNodeFactory<ClarityNode<double>, double, double> builder("div", "maindiv");
 
     ClarityNodeBase *maindiv = builder.build();
 
-    CLNodeFactory<ClarityNodeBase, double,double> childOfMaindivBuilder =
+    CLNodeFactory<ClarityNode<double>, double,double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
     ClarityNodeBase *d1_tinp = childOfMaindivBuilder.withDatum(d1_dtm)

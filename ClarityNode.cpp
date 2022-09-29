@@ -43,23 +43,9 @@ inline void clarity::ClarityNodeBase::init() {
     ClarityNodeBase::switchboard[id_] = this;
 }
 
-inline clarity::ClarityNodeBase::ClarityNodeBase(const string &name) : name_(name) {
-    init();
-    // cle_.set("cpptype", val(storedValueType));
-}
-
-ClarityNodeBase::ClarityNodeBase(const string &name, const string &tag,
-                         bool useExistingDOMElement_)
-    : name_(name), tag_(tag) {
-    init();
-    if (!useExistingDOMElement_)
-        cle_.call<void>("createDOMElement", id_, tag, name);
-    cle_.set("name", val(name));
-    // For some reason the code that sets the name in clarity.js doesn't "take"
-    // so we re-set it here.
-
-    // boundField_ = "value";
-    ClarityNodeBase::switchboard[id_] = this;
+template <>
+void ClarityNode<int>::fromString(string sval) {
+    *cptr_ = stoi(sval);
 }
 
 /**
@@ -150,7 +136,8 @@ void clarity::ClarityNodeBase::pushValToPeers(ClarityNodeBase *excludedPeer) {
 //     cnn->pullValFromPeers(cnn);
 // }
 
-inline void ClarityNodeBase::setAttribute(const string &attr, const val &value) {
+inline void ClarityNodeBase::setAttribute(const string &attr,
+                                          const val &value) {
     val domElement = cle_["domElement"];
     domElement.call<void>("setAttribute", attr, value);
 }
@@ -166,12 +153,12 @@ inline void ClarityNodeBase::setAttributes(const map<string, val> &attrs) {
 //     cle_.set("cpptype", cppType);
 // }
 
-inline void ClarityNodeBase::addEventListenerByName(const string &eventName,
-                                                const string &callbackName) {
+inline void ClarityNodeBase::addEventListenerByName(
+    const string &eventName, const string &callbackName) {
     cle_.call<void>("addEventListenerById", eventName, callbackName);
 }
 
 inline void ClarityNodeBase::addJSEventListener(const string &eventName,
-                                            val eventCallback) {
+                                                val eventCallback) {
     cle_.call<void>("addEventListener", eventName, eventCallback);
 }

@@ -85,7 +85,7 @@ class ClarityNodeBase {
 
     void EMSCRIPTEN_KEEPALIVE init();
     inline ClarityNodeBase() { init(); }
-    EMSCRIPTEN_KEEPALIVE ClarityNodeBase(const string &name);
+    // EMSCRIPTEN_KEEPALIVE ClarityNodeBase(const string &name);
 
     /**
      * @brief Construct a new Web Element object
@@ -94,8 +94,25 @@ class ClarityNodeBase {
      * @param tag HTML tag of this element
      *
      */
+
+    inline ClarityNodeBase(const string &name) : name_(name) {
+        init();
+        // cle_.set("cpptype", val(storedValueType));
+    }
+
     ClarityNodeBase(const string &name, const string &tag,
-                    bool useExistingDOMElement_ = false);
+                    bool useExistingDOMElement_)
+        : name_(name), tag_(tag) {
+        init();
+        if (!useExistingDOMElement_)
+            cle_.call<void>("createDOMElement", id_, tag, name);
+        cle_.set("name", val(name));
+        // For some reason the code that sets the name in clarity.js doesn't
+        // "take" so we re-set it here.
+
+        // boundField_ = "value";
+        ClarityNodeBase::switchboard[id_] = this;
+    }
 
     ~ClarityNodeBase() {
         cout << "DESTROYING CLARITYNODE " << id_ << "\n";
@@ -250,17 +267,21 @@ class ClarityNode : public ClarityNodeBase {
 
     void fromJS(val jsval) { cptr_ = jsval.as<Dt>(); }
 
-    template <class C>
     void fromString(string sval) {}
 
-    template <>
-    void fromString<int>(string sval) {
-        *cptr_ = stoi(sval);
-    }
+    inline ClarityNode(const string &name, const string &tag,
+                       bool useExistingDOMElement_)
+        : ClarityNodeBase(name, tag, useExistingDOMElement_) {}
+
+    inline ClarityNode(const string &name) : ClarityNodeBase(name) {}
+
+    inline ClarityNode() : ClarityNodeBase() { init(); }
 
    protected:
     Dt *cptr_;
 };
+
+
 
 }  // namespace clarity
 

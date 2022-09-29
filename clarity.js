@@ -2,7 +2,7 @@
 // Run with 'python3 -m http.server 8000'
 
 /**
- * This class is a sort of shadow of the ClarityNode class in C++. It handles the stuff
+ * This class is a sort of shadow of the ClarityNodeBase class in C++. It handles the stuff
  * we need to do on the JavaScript side, specifically anything to do with direct DOM
  * manipulation.
  * 
@@ -113,12 +113,12 @@ class CLElement {
 
   static destroy_everything() {
     console.log("destroy_everything():BOOM!");
-    Module.ClarityNode.runCallbackById("destroy_everything")
+    Module.ClarityNodeBase.runCallbackById("destroy_everything")
   }
 
   static make_trs_ints() {
     console.log("JS:make_trs_ints()");
-    Module.ClarityNode.runCallbackById("make_trs_ints");
+    Module.ClarityNodeBase.runCallbackById("make_trs_ints");
   }
 
   static printVal_st(v, prefix = "") {
@@ -294,7 +294,7 @@ class CLElement {
 
   addEventListenerById(eventName, id) {
     this.domElement_.addEventListener(eventName, (e) => {
-      Module.ClarityNode.runCallbackById(id)
+      Module.ClarityNodeBase.runCallbackById(id)
     })
   }
 
@@ -349,9 +349,9 @@ class CLElement {
       var outerThis = this
       this.domElement_.addEventListener('change', function (e) {
         // console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)
-        Module.ClarityNode.js2datumWithPushToPeersById(outerThis.id_)
-        //Module.ClarityNode.pullValFromPeersById(outerThis.id_)
-        Module.ClarityNode.markNodeDirtyById(outerThis.id_)
+        Module.ClarityNodeBase.js2datumWithPushToPeersById(outerThis.id_)
+        //Module.ClarityNodeBase.pullValFromPeersById(outerThis.id_)
+        Module.ClarityNodeBase.markNodeDirtyById(outerThis.id_)
       })
     }
   }
@@ -360,7 +360,7 @@ class CLElement {
 //let myVar = setInterval(myTimer, 300);
 function myTimer() {
   const d = new Date();
-  Module.ClarityNode.runCallbackById("tick")
+  Module.ClarityNodeBase.runCallbackById("tick")
 }
 
 window.CLElement = CLElement
