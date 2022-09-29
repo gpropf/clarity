@@ -47,6 +47,7 @@ class CanvasGrid : public CanvasElement {
 
         // Needs to read the internal state of the CG object and transfer it
         // back to the array.
+        return val(NULL); // FIXME
     }
 
    protected:

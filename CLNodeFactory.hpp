@@ -251,7 +251,7 @@ class CLNodeFactory {
     }
 
     inline CLNodeFactory withTag(const string &tag) && {
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.tag_ = tag;
         return cpy;
     }
@@ -269,7 +269,7 @@ class CLNodeFactory {
     }
 
     inline CLNodeFactory withName(const string &name) && {
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.name_ = name;
         return cpy;
     }
@@ -289,7 +289,7 @@ class CLNodeFactory {
 
     inline CLNodeFactory withParent(Nc *parent) && {
         assert(parent != nullptr);
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.parent_ = parent;
         return cpy;
     }
@@ -313,7 +313,7 @@ class CLNodeFactory {
 
     inline CLNodeFactory withStoredValueType(
         clarity::CppType storedValueType) && {
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.storedValueType_ = storedValueType;
         if (cpy.modelNode_) {
             cpy.modelNode_->setStoredValueType(storedValueType);
@@ -342,7 +342,7 @@ class CLNodeFactory {
         assert(storedValue != nullptr);
         ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
                                             "modelnode_for_" + this->name_);
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.modelNode_ = mn;
         return cpy;
     }
@@ -365,7 +365,7 @@ class CLNodeFactory {
 
     inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) && {
         assert(modelNode != nullptr);
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.modelNode_ = modelNode;
         return cpy;
     }
@@ -389,7 +389,7 @@ class CLNodeFactory {
     inline CLNodeFactory withLinkMultiplierConstant(
         N linkMultiplierConstant) && {
         assert(linkMultiplierConstant != 0);
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
         return cpy;
     }
@@ -419,7 +419,7 @@ class CLNodeFactory {
 
     inline CLNodeFactory withTransformFns(val a2b_xfmr,
                                           val b2a_xfmr = val(NULL)) && {
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.a2b_xfmr_ = a2b_xfmr;
         cpy.b2a_xfmr_ = b2a_xfmr;
         return cpy;
@@ -439,7 +439,7 @@ class CLNodeFactory {
     }
 
     inline CLNodeFactory withExistingDOMElement() && {
-        CLNodeFactory cpy(move(*this));
+        CLNodeFactory cpy(std::move(*this));
         cpy.useExistingDOMElement_ = true;
         return cpy;
     }
