@@ -104,27 +104,27 @@ int main() {
 
     // // Canvas Grid Test ----------------------------------------------
 
-    // int width = 30;
-    // int height = 20;
-    // int totalCels = width * height;
-    // unsigned char *raster = new unsigned char[totalCels];
-    // const int rasterDims[3] = {width, height, 0};
-    // Datum<unsigned char> *raster_dtm =
-    //     new Datum<unsigned char>(CppType::Int, raster, rasterDims);
-    // for (int i = 0; i < totalCels; i++) raster[i] = 0;
+    int width = 30;
+    int height = 20;
+    int totalCels = width * height;
+    unsigned char *raster = new unsigned char[totalCels];
+    const int rasterDims[3] = {width, height, 0};
+    Datum<unsigned char> *raster_dtm =
+        new Datum<unsigned char>(CppType::Int, raster, rasterDims);
+    for (int i = 0; i < totalCels; i++) raster[i] = 0;
 
-    // ClarityNodeBase *canvas1 =
-    //     childOfMaindivBuilder.withName("canvas1")
-    //         .withAttributes({{"width", val(400)},
-    //                          {"height", val(300)},
-    //                          {"style", val("border: 2px solid blue")}})
-    //         .canvas();
+    ClarityNodeBase *canvas1 =
+        childOfMaindivBuilder.withName("canvas1")
+            .withAttributes({{"width", val(400)},
+                             {"height", val(300)},
+                             {"style", val("border: 2px solid blue")}})
+            .canvas();
 
-    // TranslatorCanvasGrid<unsigned char> *canvas1_tr =
-    //     new TranslatorCanvasGrid<unsigned char>(raster_dtm,
-    //                                             canvas1->getDomElement());
+    TranslatorCanvasGrid<unsigned char> *canvas1_tr =
+        new TranslatorCanvasGrid<unsigned char>(raster_dtm,
+                                                canvas1->getDomElement());
 
-    // canvas1_tr->setCurrentCellVal(3);
+    canvas1_tr->setCurrentCellVal(3);
 
     //----------------------------------
     // canvas1_tr->datum2js();

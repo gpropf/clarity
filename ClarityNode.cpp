@@ -56,6 +56,11 @@ void ClarityNode<double>::loadCppValFromString(string sval) {
 }
 
 template <>
+void ClarityNode<float>::loadCppValFromString(string sval) {
+    *cppVal_ = stof(sval);
+}
+
+template <>
 val ClarityNode<double>::domElementText2JSVal() {
     val domText = getJSVal();
     val dval = CLElement_.call<val>("CLE_parseFloat", domText);
