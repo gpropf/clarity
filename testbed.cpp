@@ -49,13 +49,14 @@ int main() {
     CLNodeFactory<ClarityNode, double, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
-    ClarityNode *canvas1 =
+    CanvasGrid *canvas1 =
         childOfMaindivBuilder.withName("canvas1")
             .withTag("canvas")
             .withAttributes({{"style", val("border: 1px solid green")},
                              {"width", val(400)},
                              {"height", val(300)}})
-            .build();
+            .canvasGrid(30, 20, 400, 300);
+            //.canvas();
 
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
 

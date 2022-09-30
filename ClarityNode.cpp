@@ -42,14 +42,16 @@ inline clarity::ClarityNode::ClarityNode(const CppType storedValueType)
 
 ClarityNode::ClarityNode(const string &name, const string &tag,
                          const CppType storedValueType,
-                         bool useExistingDOMElement_)
+                         bool useExistingDOMElement)
     : name_(name), tag_(tag), storedValueType_(storedValueType) {
     init();
-    if (!useExistingDOMElement_)
+    if (!useExistingDOMElement)
         cle_.call<void>("createDOMElement", id_, tag, storedValueType, name);
     cle_.set("name", val(name));
     // For some reason the code that sets the name in clarity.js doesn't "take"
     // so we re-set it here.
+
+    domElement_ = cle_["domElement"];
 
     boundField_ = "value";
     ClarityNode::switchboard[id_] = this;

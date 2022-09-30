@@ -93,7 +93,7 @@ class CLNodeFactory {
         clnf_to.useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
         clnf_to.attrs_ = clnf_from.attrs_;
         return clnf_to;
-    }    
+    }
 
     /**
      * @brief Construct a new CLNodeFactory object
@@ -113,7 +113,7 @@ class CLNodeFactory {
      */
     inline CLNodeFactory(const string &tag, const string &name,
                          CppType storedValueType)
-        : tag_(tag), name_(name), storedValueType_(storedValueType) {}    
+        : tag_(tag), name_(name), storedValueType_(storedValueType) {}
 
     /**
      * @brief Construct a new CLNodeFactory object
@@ -190,8 +190,7 @@ class CLNodeFactory {
             } else {
                 modelNode_->addPeer(newNode, linkMultiplierConstant_);
             }
-            if (!useExistingDOMElement_)
-                modelNode_->pushValToPeers(modelNode_);
+            if (!useExistingDOMElement_) modelNode_->pushValToPeers(modelNode_);
         }
         return newNode;
     }
@@ -236,7 +235,7 @@ class CLNodeFactory {
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
-    }    
+    }
 
     /**
      * @brief Sets the HTML tag to use when creating the node.
@@ -450,11 +449,11 @@ class CLNodeFactory {
      * @param name
      * @param text
      * @param onPressCallback JS function to run when button is pressed.
-     * @return ClarityNode*
+     * @return Nc*
      */
-    inline ClarityNode *button(const string &name, const string &text,
-                               val onPressCallback = val(NULL)) {
-        ClarityNode *button = withTag("button").build();
+    inline Nc *button(const string &name, const string &text,
+                      val onPressCallback = val(NULL)) {
+        Nc *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setVal(val(text));
         val buttonDOMElement = button->getCLE()["domElement"];
@@ -469,10 +468,10 @@ class CLNodeFactory {
      *
      * @param forNode
      * @param text
-     * @return ClarityNode*
+     * @return Nc*
      */
-    inline ClarityNode *label(ClarityNode *forNode, const string &text) {
-        ClarityNode *label = withTag("label").build();
+    inline Nc *label(Nc *forNode, const string &text) {
+        Nc *label = withTag("label").build();
         label->setBoundField("innerHTML");
         label->setVal(val(text));
         label->setAttribute("for", val(forNode->getId()));
@@ -482,28 +481,28 @@ class CLNodeFactory {
     /**
      * @brief A simple text input field.
      *
-     * @return ClarityNode*
+     * @return Nc*
      */
-    inline ClarityNode *textInput() {
+    inline Nc *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
-        ClarityNode *inp = withTag("input")
-                               .withBoundField("value")
-                               .withAttributes(inputFieldAttrs)
-                               .build();
+        Nc *inp = withTag("input")
+                      .withBoundField("value")
+                      .withAttributes(inputFieldAttrs)
+                      .build();
         return inp;
     }
 
     /**
      * @brief A range (slider) control.
      *
-     * @return ClarityNode*
+     * @return Nc*
      */
-    inline ClarityNode *rangeInput() {
+    inline Nc *rangeInput() {
         map<string, val> inputFieldAttrs = {{"type", val("range")}};
-        ClarityNode *inp = withTag("input")
-                               .withBoundField("value")
-                               .withAttributes(inputFieldAttrs)
-                               .build();
+        Nc *inp = withTag("input")
+                      .withBoundField("value")
+                      .withAttributes(inputFieldAttrs)
+                      .build();
         return inp;
     }
 
@@ -511,22 +510,22 @@ class CLNodeFactory {
      * @brief Text/Range input control. Creates a text field  and corresponding
      * range (slider) input that both control the same value.
      *
-     * @return ClarityNode*
+     * @return Nc*
      */
-    inline ClarityNode *trInput() {
+    inline Nc *trInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
-        ClarityNode *tinp = withTag("input")
-                                .withBoundField("value")
-                                .withAttributes(inputFieldAttrs)
-                                .build();
+        Nc *tinp = withTag("input")
+                       .withBoundField("value")
+                       .withAttributes(inputFieldAttrs)
+                       .build();
 
         inputFieldAttrs["type"] = val("range");
         // inputFieldAttrs.find("type") = "range";
-        ClarityNode *rinp = withTag("input")
-                                .withBoundField("value")
-                                .withAttributes(inputFieldAttrs)
-                                .build();
-        ClarityNode *outerDiv = withTag("div").withName("tr_" + name_).build();
+        Nc *rinp = withTag("input")
+                       .withBoundField("value")
+                       .withAttributes(inputFieldAttrs)
+                       .build();
+        Nc *outerDiv = withTag("div").withName("tr_" + name_).build();
         outerDiv->appendChild(tinp);
         outerDiv->appendChild(rinp);
         return outerDiv;
@@ -538,32 +537,38 @@ class CLNodeFactory {
      *
      * @param nodeToBeLabelled
      * @param labelText
-     * @return ClarityNode*
+     * @return Nc*
      */
-    inline ClarityNode *labelGivenNode(ClarityNode *nodeToBeLabelled,
-                                       const string &labelText) {
-        ClarityNode *outerDiv =
-            withTag("div")
-                .withName("labeldiv_" + nodeToBeLabelled->getName())
-                .build();
-        ClarityNode *labelNode =
-            withName("labelfor_" + nodeToBeLabelled->getName())
-                .label(nodeToBeLabelled, labelText);
+    inline Nc *labelGivenNode(Nc *nodeToBeLabelled, const string &labelText) {
+        Nc *outerDiv = withTag("div")
+                           .withName("labeldiv_" + nodeToBeLabelled->getName())
+                           .build();
+        Nc *labelNode = withName("labelfor_" + nodeToBeLabelled->getName())
+                            .label(nodeToBeLabelled, labelText);
         outerDiv->appendChild(nodeToBeLabelled);
         outerDiv->appendChild(labelNode);
         return outerDiv;
-    }    
+    }
 
     /**
      * @brief Creates a JS canvas element with a simple test pattern.
-     * 
-     * @return CanvasElement* 
+     *
+     * @return Nc*
      */
-    inline CanvasElement *canvas() {                
-        CanvasElement *cel = withTag("canvas").build();        
-         cel->setDrawFuntionName("canvasTestPattern");
-         cel->refreshView();        
+    inline CanvasElement *canvas() {
+        CanvasElement *cel =
+            static_cast<CanvasGrid *>(withTag("canvas").build());
+        cel->setDrawFuntionName("canvasTestPattern");
+        cel->refreshView();
         return cel;
+    }
+
+    inline CanvasGrid *canvasGrid(int gridWidth_, int gridHeight_, int pixelWidth_,
+                          int pixelHeight_) {
+        CanvasGrid *cg = static_cast<CanvasGrid *>(withTag("canvas").build());
+        // cg->setDrawFuntionName("canvasTestPattern");
+        // cg->refreshView();
+        return cg;
     }
 
     /**
@@ -572,10 +577,10 @@ class CLNodeFactory {
      * storedValue_, not exactly what I wanted.
      *
      * @param labelText
-     * @return ClarityNode*
+     * @return Nc*
      */
-    inline ClarityNode *labelledTRInputNode(const string &labelText) {
-        ClarityNode *trInputNode = trInput();
+    inline Nc *labelledTRInputNode(const string &labelText) {
+        Nc *trInputNode = trInput();
         return labelGivenNode(trInputNode, labelText);
     }
 
@@ -584,10 +589,10 @@ class CLNodeFactory {
      * attribute of another node and thus do not have their own DOM element.
      *
      * @param attributeName
-     * @return ClarityNode*
+     * @return Nc*
      */
-    inline ClarityNode *attributeNode(const string &attributeName) {
-        ClarityNode *attributeNode =
+    inline Nc *attributeNode(const string &attributeName) {
+        Nc *attributeNode =
             withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
@@ -601,12 +606,10 @@ class CLNodeFactory {
      *
      * @param attributeName
      * @param parent
-     * @return ClarityNode*
+     * @return Nc*
      */
-    inline ClarityNode *attributeNode(const string &attributeName,
-                                      ClarityNode *parent) {
-        ClarityNode *attributeNode =
-            withParent(parent).attributeNode(attributeName);
+    inline Nc *attributeNode(const string &attributeName, Nc *parent) {
+        Nc *attributeNode = withParent(parent).attributeNode(attributeName);
         return attributeNode;
     }
 };

@@ -57,6 +57,37 @@ class CanvasGrid : public CanvasElement {
     int width_, height_;  //!< Width and Height in screen pixels.
     double scaleFactorH_ = 1.0;
     double scaleFactorV_ = 1.0;
+    int gridWidth_, gridHeight_, pixelWidth_, pixelHeight_, cellWidth_,
+        cellHeight_;
+    unsigned char *dataptr_;
+
+    void init() {
+        cout << "CG init called.\n";
+    }
+
+    virtual void drawGrid() const {
+        val ctx = this->domElement_.template call<val>("getContext", val("2d"));
+        ctx.set("fillStyle", "blue");
+        // int width = this->datum_->dataDimensionality_[0];
+        // int height = this->datum_->dataDimensionality_[1];
+        cout << "pixelWidth_ = " << pixelWidth_ << "\n";
+        int cellCount = 0;
+        for (int i = 0; i < gridWidth_; i++) {
+            for (int j = 0; j < gridHeight_; j++) {
+                int addr = gridWidth_ * j + i;
+                unsigned char v =
+                    reinterpret_cast<unsigned char>(*(dataptr_ + addr));
+
+                ctx.set("fillStyle", colors[v]);
+
+                ctx.call<void>("fillRect", val(i * cellWidth_),
+                               val(j * cellHeight_), val(cellWidth_),
+                               val(cellHeight_));
+            }
+            // cout << "\n";
+            cellCount++;
+        }
+    }
 };
 
 }  // namespace clarity

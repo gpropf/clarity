@@ -100,7 +100,7 @@ class ClarityNode {
      */
     ClarityNode(const string &name, const string &tag,
                 const CppType storedValueType,
-                bool useExistingDOMElement_ = false);
+                bool useExistingDOMElement = false);
 
     ~ClarityNode() {
         cout << "DESTROYING CLARITYNODE " << id_ << "\n";
@@ -263,6 +263,7 @@ class ClarityNode {
     /** \brief Instance of the CLElement class that acts as a "proxy" in JS
      * space. */
     val cle_ = val::global("CLElement").new_();
+    val domElement_; //!< This will be initialized if the node has its own DOM element.
 
     CppType storedValueType_;  //!< C++ Data type
     int *dataDimensionality_ =
