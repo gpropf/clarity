@@ -1,6 +1,7 @@
 #ifndef CLNodeFactory_hpp
 #define CLNodeFactory_hpp
 
+#include "ClarityNode.hpp"
 #include "CanvasElement.hpp"
 #include "ModelNode.hpp"
 
@@ -563,9 +564,11 @@ class CLNodeFactory {
         return cel;
     }
 
-    inline CanvasGrid *canvasGrid(int gridWidth_, int gridHeight_, int pixelWidth_,
-                          int pixelHeight_) {
+    inline CanvasGrid *canvasGrid(int gridWidth, int gridHeight, int pixelWidth,
+                          int pixelHeight) {
         CanvasGrid *cg = static_cast<CanvasGrid *>(withTag("canvas").build());
+        cg->init();
+        //cg->gridWidth_ = gridWidth;
         // cg->setDrawFuntionName("canvasTestPattern");
         // cg->refreshView();
         return cg;
