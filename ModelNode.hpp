@@ -53,12 +53,24 @@ class ModelNode : public ClarityNode {
         return val(cpp2js<T>(cppVal_));
     }
 
+    T jsToCppVal(val jsval) {
+        T cppVal = jsval.as<T>();
+        *reinterpret_cast<T *>(cppVal_) = cppVal;
+        return cppVal;
+    }
+
+
+
     void setVal(const val &inval) {
         assert(cppVal_ != nullptr);
-        *reinterpret_cast<T *>(cppVal_) =
-            this->cle_.template call<T>("jsToCPPVal", inval);
+        // *reinterpret_cast<T *>(cppVal_) =
+        //     this->cle_.template call<T>("jsToCPPVal", inval);
+        T newCppVal = jsToCppVal(inval);
+        cout << "New C++ value from JS val: " << newCppVal << "\n";
         pushValToPeers(this);
     }
+
+
 
     T *cppVal_;  //!< The C++ data object that acts as the 'model'
 };

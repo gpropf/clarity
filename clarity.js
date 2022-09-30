@@ -182,24 +182,24 @@ class CLElement {
     return r;
   }
 
-  jsToCPPVal(jsval) {
-    switch (this.cpptype_) {
-      case Module.CppType.Int:
-        // console.log("jsToCPPVal: Int")
-        return parseInt(jsval)
-      case Module.CppType.Float:
-        // console.log("jsToCPPVal: Float")
-        return parseFloat(jsval)
-      case Module.CppType.Double:
-        // console.log("jsToCPPVal: Double")
-        return parseFloat(jsval)
-      case Module.CppType.NoData:
-        // console.log("jsToCPPVal: NoData")
-        return null
-      default:
-        return jsval
-    }
-  }
+  // jsToCPPVal(jsval) {
+  //   switch (this.cpptype_) {
+  //     case Module.CppType.Int:
+  //       // console.log("jsToCPPVal: Int")
+  //       return parseInt(jsval)
+  //     case Module.CppType.Float:
+  //       // console.log("jsToCPPVal: Float")
+  //       return parseFloat(jsval)
+  //     case Module.CppType.Double:
+  //       // console.log("jsToCPPVal: Double")
+  //       return parseFloat(jsval)
+  //     case Module.CppType.NoData:
+  //       // console.log("jsToCPPVal: NoData")
+  //       return null
+  //     default:
+  //       return jsval
+  //   }
+  // }
   //object.freeze(CPP_Type);
 
   appendChild(child) {

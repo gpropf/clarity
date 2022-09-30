@@ -11,6 +11,9 @@ map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm;
 // val ClarityNode::ActiveLink::CLElement_ = val::global("CLElement");
 val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
+const array<string, 8> CanvasGrid::colors = {
+    "#F5F5DC", "#00FF00", "#00AA00", "#FF00FF",
+    "#AA00AA", "#00AAFF", "#9090AA", "#888888"};
 
 // double *testmem(double *dptr) {
 //     dptr = new double(37);

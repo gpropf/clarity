@@ -129,11 +129,23 @@ class ClarityNode {
     template <typename V, typename C>
     inline V &getRawVal(const vector<C> loc) const {}
 
-    virtual val getVal() const {
-        val domElement = cle_["domElement"];
+    // val stringToJSVal(string s) {
+    //     return val(s);
+    // }
 
-        string valueText = domElement[boundField_].as<string>();
-        // cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
+    inline string getDOMText() const {
+        val domElement = cle_["domElement"];
+        string domText = domElement[boundField_].as<string>();
+        return domText;
+    }
+
+    virtual val getVal() const {
+        // val domElement = cle_["domElement"];
+
+        string valueText = getDOMText();
+
+        // domElement[boundField_].as<string>();
+        cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
         switch (this->storedValueType_) {
             case CppType::Int:
                 // cout << "ClarityNode::getVal() Int\n";

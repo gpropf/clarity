@@ -32,6 +32,9 @@ class CanvasElement : public ClarityNode {
 class CanvasGrid : public CanvasElement {
     // void setVal(const val &inval) {}
     // val getVal() const {}
+
+    static const array<string, 8> colors;
+
     CanvasGrid(const string &name, const string &tag,
                const CppType storedValueType, bool useExistingDOMElement)
         : CanvasElement(name, tag, storedValueType, useExistingDOMElement) {}
@@ -47,7 +50,7 @@ class CanvasGrid : public CanvasElement {
 
         // Needs to read the internal state of the CG object and transfer it
         // back to the array.
-        return val(NULL); // FIXME
+        return val(NULL);  // FIXME
     }
 
    protected:
