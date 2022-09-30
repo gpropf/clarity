@@ -1,8 +1,8 @@
 #ifndef CLNodeFactory_hpp
 #define CLNodeFactory_hpp
 
-#include "ClarityNode.hpp"
 #include "CanvasElement.hpp"
+#include "ClarityNode.hpp"
 #include "ModelNode.hpp"
 
 namespace clarity {
@@ -171,7 +171,7 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    inline Nc *build(Nc *existingNode = nullptr) {
+    Nc *build(Nc *existingNode = nullptr) {
         Nc *newNode;
         if (existingNode != nullptr) {
             newNode = existingNode;
@@ -565,10 +565,14 @@ class CLNodeFactory {
     }
 
     inline CanvasGrid *canvasGrid(int gridWidth, int gridHeight, int pixelWidth,
-                          int pixelHeight) {
-        CanvasGrid *cg = static_cast<CanvasGrid *>(withTag("canvas").build());
-        cg->init();
-        //cg->gridWidth_ = gridWidth;
+                                  int pixelHeight) {
+        CanvasGrid *cg = new CanvasGrid(name_, "canvas", storedValueType_,
+                                        useExistingDOMElement_, gridWidth,
+                                        gridHeight, pixelWidth, pixelHeight);
+        cg = static_cast<CanvasGrid*>(build(cg));
+        cg->initcg();
+        
+        // cg->gridWidth_ = gridWidth;
         // cg->setDrawFuntionName("canvasTestPattern");
         // cg->refreshView();
         return cg;

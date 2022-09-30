@@ -338,6 +338,26 @@ class CLElement {
     console.log(typeof (v));
   }
 
+  static setGridLocToCurrentVal(ev) { // FIXME: Need to rework to remove translator stuff.
+    let domElement = ev.target;
+    let domrect = domElement.getBoundingClientRect();
+    
+    let gw = domElement.gw;
+    let cw = domElement.cw;
+    let gh = domElement.gh;
+    let ch = domElement.ch;
+    //let cellDimensions = domElement.cellDimensions;
+    //let gridDimensions = domElement.gridDimensions;
+    var gridDimensions = { w: gw, h: gh };
+    let loc = { x: (ev.x - domrect.x), y: (ev.y - domrect.y) };
+    var locIn = { x: Math.floor(loc.x / cw), y: Math.floor(loc.y / ch) };
+    //let locOut = Util.wrapCoords(locIn, gridDimensions);
+    var locOut = Util.capCoords(locIn, gridDimensions);
+    domElement.gridRef.setValXY(locOut.x, locOut.y);
+    console.log(locOut);
+  }
+
+
 }
 
 //let myVar = setInterval(myTimer, 300);

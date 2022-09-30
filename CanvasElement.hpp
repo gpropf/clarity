@@ -30,8 +30,8 @@ class CanvasElement : public ClarityNode {
 class CanvasGrid : public CanvasElement {
     // void setVal(const val &inval) {}
     // val getVal() const {}
-    class CLNodeFactory;
-    friend class CLNodeFactory;
+    //  class CLNodeFactory;
+    // friend class CLNodeFactory;
 
     static const array<string, 8> colors;
 
@@ -49,11 +49,18 @@ class CanvasGrid : public CanvasElement {
     int gridWidth_, gridHeight_, pixelWidth_, pixelHeight_, cellWidth_,
         cellHeight_;
     unsigned char *dataptr_;
+    unsigned char currentCellVal_ = 0;
 
     virtual void drawGrid() const;
 
    public:
+    EMSCRIPTEN_KEEPALIVE
+    CanvasGrid(const string &name, const string &tag,
+               const CppType storedValueType, bool useExistingDOMElement,
+               int gridWidth, int gridHeight, int pixelWidth, int pixelHeight);
+
     EMSCRIPTEN_KEEPALIVE void initcg();
+    int setValXY(int x, int y);
 };
 
 }  // namespace clarity
