@@ -11,7 +11,9 @@ map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm;
 // val ClarityNode::ActiveLink::CLElement_ = val::global("CLElement");
 val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
-const array<string, 8> CanvasGrid::colors = {
+
+template<>
+const array<string, 8> CanvasGrid<unsigned char>::colors = {
     "#F5F5DC", "#00FF00", "#00AA00", "#FF00FF",
     "#AA00AA", "#00AAFF", "#9090AA", "#888888"};
 
@@ -49,8 +51,12 @@ int main() {
     CLNodeFactory<ClarityNode, double, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
-    CanvasGrid *canvas1 =
-        childOfMaindivBuilder.withName("canvas1")
+    CLNodeFactory<CanvasGrid<unsigned char>, unsigned char, double> canvasBuilder("div", "canvasDiv",
+                                                       CppType::NoData);
+        
+
+    CanvasGrid<unsigned char> *canvas1 =
+        canvasBuilder.withName("canvas1")
             .withTag("canvas")
             .withAttributes({{"style", val("border: 1px solid green")},
                              {"width", val(400)},

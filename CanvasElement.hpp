@@ -27,20 +27,14 @@ class CanvasElement : public ClarityNode {
  * actively get the array data and map it into the canvas quickly.
  *
  */
+template <typename V>
 class CanvasGrid : public CanvasElement {
     // void setVal(const val &inval) {}
     // val getVal() const {}
     //  class CLNodeFactory;
     // friend class CLNodeFactory;
 
-    static const array<string, 8> colors;
-
-    CanvasGrid(const string &name, const string &tag,
-               const CppType storedValueType, bool useExistingDOMElement);
-
-    virtual void setVal(const val &inval);
-
-    virtual val getVal() const;
+    val CLElement_ = val::global("CLElement");
 
    protected:
     int width_, height_;  //!< Width and Height in screen pixels.
@@ -48,19 +42,108 @@ class CanvasGrid : public CanvasElement {
     double scaleFactorV_ = 1.0;
     int gridWidth_, gridHeight_, pixelWidth_, pixelHeight_, cellWidth_,
         cellHeight_;
-    unsigned char *dataptr_;
-    unsigned char currentCellVal_ = 0;
+    V *dataptr_;
+    V currentCellVal_ = 0;
 
-    virtual void drawGrid() const;
+    
+    static const array<string, 8> colors;
+
+    inline virtual void setVal(const val &inval) {
+        this->clean_ = false;
+        // Needs to be given pointer to array data and dataDimensionality info.
+        // So this information should reside in inval.
+    }
 
    public:
     EMSCRIPTEN_KEEPALIVE
+    // CanvasGrid(const string &name, const string &tag,
+    //            const CppType storedValueType, bool useExistingDOMElement,
+    //            int gridWidth, int gridHeight, int pixelWidth, int
+    //            pixelHeight);
+
+    // CanvasGrid(const string &name, const string &tag,
+    //            const CppType storedValueType, bool useExistingDOMElement);
+
+    val getVal() const {
+        val domElement = cle_["domElement"];
+
+        // Needs to read the internal state of the CG object and transfer it
+        // back to the array.
+        return val(NULL);  // FIXME
+    }
+
+    void initcg() {
+        cout << "CG init called.\n";
+        dataptr_ = new V[gridWidth_ * gridHeight_];
+        int cellCount = 0;
+        for (int i = 0; i < gridWidth_; i++) {
+            for (int j = 0; j < gridHeight_; j++) {
+                int addr = gridWidth_ * j + i;
+                *(dataptr_ + addr) = 1;
+            }
+            // cout << "\n";
+            cellCount++;
+        }
+        domElement_.call<void>("addEventListener", val("click"),
+                               CLElement_["setGridLocToCurrentVal"]);
+        // addJSEventListener("click", CLElement_["setGridLocToCurrentVal"] );
+        drawGrid();
+    }
+
+    int setValXY(int x, int y) {
+        int addr = (y * gridWidth_ + x) * sizeof(V);
+        *(this->dataptr_ + addr) = currentCellVal_;
+        drawGrid();
+        return addr;
+    }
+
+    void drawGrid() const {
+        val ctx = this->domElement_.template call<val>("getContext", val("2d"));
+        val domElement = cle_["domElement"];
+        domElement.set(
+            "gridRef",
+            const_cast<CanvasGrid *>(
+                this));  // Very bizarre errors when trying to use domElement_.
+        domElement.set("gw", gridWidth_);
+        domElement.set("gh", gridHeight_);
+        domElement.set("cw", cellWidth_);
+        domElement.set("ch", cellHeight_);
+        ctx.set("fillStyle", "blue");
+        // int width = this->datum_->dataDimensionality_[0];
+        // int height = this->datum_->dataDimensionality_[1];
+        cout << "pixelWidth_ = " << pixelWidth_ << "\n";
+        int cellCount = 0;
+        for (int i = 0; i < gridWidth_; i++) {
+            for (int j = 0; j < gridHeight_; j++) {
+                int addr = gridWidth_ * j + i;
+                V v =
+                    reinterpret_cast<V>(*(dataptr_ + addr));
+
+                ctx.set("fillStyle", colors[v]);
+
+                ctx.call<void>("fillRect", val(i * cellWidth_),
+                               val(j * cellHeight_), val(cellWidth_),
+                               val(cellHeight_));
+            }
+            cellCount++;
+        }
+    }
+
+    CanvasGrid(const string &name, const string &tag,
+               const CppType storedValueType, bool useExistingDOMElement)
+        : CanvasElement(name, tag, storedValueType, useExistingDOMElement) {}
+
     CanvasGrid(const string &name, const string &tag,
                const CppType storedValueType, bool useExistingDOMElement,
-               int gridWidth, int gridHeight, int pixelWidth, int pixelHeight);
-
-    EMSCRIPTEN_KEEPALIVE void initcg();
-    int setValXY(int x, int y);
+               int gridWidth, int gridHeight, int pixelWidth, int pixelHeight)
+        : CanvasGrid(name, tag, storedValueType, useExistingDOMElement) {
+        gridWidth_ = gridWidth;
+        gridHeight_ = gridHeight;
+        pixelWidth_ = pixelWidth;
+        pixelHeight_ = pixelHeight;
+        cellWidth_ = pixelWidth_ / gridWidth_;
+        cellHeight_ = pixelHeight_ / gridHeight_;
+    }
 };
 
 }  // namespace clarity

@@ -558,18 +558,20 @@ class CLNodeFactory {
      */
     inline CanvasElement *canvas() {
         CanvasElement *cel =
-            static_cast<CanvasGrid *>(withTag("canvas").build());
+            static_cast<CanvasElement *>(withTag("canvas").build());
         cel->setDrawFuntionName("canvasTestPattern");
         cel->refreshView();
         return cel;
     }
 
-    inline CanvasGrid *canvasGrid(int gridWidth, int gridHeight, int pixelWidth,
+    inline CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight, int pixelWidth,
                                   int pixelHeight) {
-        CanvasGrid *cg = new CanvasGrid(name_, "canvas", storedValueType_,
+        CanvasGrid<V> *cg = new CanvasGrid<V>(name_, "canvas", storedValueType_,
                                         useExistingDOMElement_, gridWidth,
                                         gridHeight, pixelWidth, pixelHeight);
-        cg = static_cast<CanvasGrid*>(build(cg));
+        cg = static_cast<CanvasGrid<V>*>(build(cg));
+        
+        
         cg->initcg();
         
         // cg->gridWidth_ = gridWidth;
