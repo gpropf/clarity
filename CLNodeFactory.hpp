@@ -96,6 +96,21 @@ class CLNodeFactory {
         return clnf_to;
     }
 
+    template <class Nc_from, typename V_from, typename N_from>
+    CLNodeFactory(CLNodeFactory<Nc_from, V_from, N_from> clnf_from) {
+        tag_ = clnf_from.tag_;
+        name_ = clnf_from.name_;
+        storedValueType_ = clnf_from.storedValueType_;
+        boundField_ = clnf_from.boundField_;
+        parent_ = clnf_from.parent_;
+        linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
+        transformFn_ = clnf_from.transformFn_;
+        a2b_xfmr_ = clnf_from.a2b_xfmr_;
+        b2a_xfmr_ = clnf_from.b2a_xfmr_;
+        useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
+        attrs_ = clnf_from.attrs_;
+    }
+
     /**
      * @brief Construct a new CLNodeFactory object
      *
@@ -564,16 +579,15 @@ class CLNodeFactory {
         return cel;
     }
 
-    inline CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight, int pixelWidth,
-                                  int pixelHeight) {
-        CanvasGrid<V> *cg = new CanvasGrid<V>(name_, "canvas", storedValueType_,
-                                        useExistingDOMElement_, gridWidth,
-                                        gridHeight, pixelWidth, pixelHeight);
-        cg = static_cast<CanvasGrid<V>*>(build(cg));
-        
-        
+    inline CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight,
+                                     int pixelWidth, int pixelHeight) {
+        CanvasGrid<V> *cg = new CanvasGrid<V>(
+            name_, "canvas", storedValueType_, useExistingDOMElement_,
+            gridWidth, gridHeight, pixelWidth, pixelHeight);
+        cg = static_cast<CanvasGrid<V> *>(build(cg));
+
         cg->initcg();
-        
+
         // cg->gridWidth_ = gridWidth;
         // cg->setDrawFuntionName("canvasTestPattern");
         // cg->refreshView();

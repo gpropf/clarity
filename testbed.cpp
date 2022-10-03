@@ -88,9 +88,14 @@ int main() {
             .extractModelNode<double>(temp_mn2)
             .textInput();
 
-    CLNodeFactory<ClarityNode, string, int> childOfMaindivBuilder_str;
-    CLNodeFactory<ClarityNode, string, int>::clone(childOfMaindivBuilder,
-                                                   childOfMaindivBuilder_str);
+    // CLNodeFactory<ClarityNode, string, int> childOfMaindivBuilder_str;
+    // CLNodeFactory<ClarityNode, string, int>::clone(childOfMaindivBuilder,
+    //                                                childOfMaindivBuilder_str);
+
+    CLNodeFactory<ClarityNode, string, int> childOfMaindivBuilder_str(childOfMaindivBuilder);
+
+    // cout << "TEST of move constructor: " << foo.name_ << "\n";
+    // cout << "TEST of move constructor: " << childOfMaindivBuilder.name_ << "\n";
 
     string *flexLabelText = new string("Flex Text");
 
