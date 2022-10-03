@@ -73,10 +73,10 @@ class ClarityNode {
         }
     };
 
-    EMSCRIPTEN_KEEPALIVE void addEventListenerByName(
-        const string &eventName, const string &callbackName);
-    EMSCRIPTEN_KEEPALIVE void addJSEventListener(const string &eventName,
-                                                 val eventCallback);
+    // EMSCRIPTEN_KEEPALIVE void addEventListenerByName(
+    //     const string &eventName, const string &callbackName);
+    // EMSCRIPTEN_KEEPALIVE void addJSEventListener(const string &eventName,
+    //                                              val eventCallback);
 
     inline string getTag() const { return tag_; }
     inline int getId() const { return id_; }
@@ -84,11 +84,19 @@ class ClarityNode {
 
     inline static void runCallbackById(const string &id) { callbackMap[id](); }
 
-    void EMSCRIPTEN_KEEPALIVE init();
+    // void EMSCRIPTEN_KEEPALIVE init();
     inline ClarityNode() { init(); }
-    EMSCRIPTEN_KEEPALIVE ClarityNode(const string &name,
-                                     const CppType storedValueType);
-    EMSCRIPTEN_KEEPALIVE ClarityNode(const CppType storedValueType);
+    inline ClarityNode(const CppType storedValueType)
+        : storedValueType_(storedValueType) {
+        init();
+        cle_.set("cpptype", val(storedValueType));
+    }
+    inline ClarityNode(const string &name, const CppType storedValueType)
+        : name_(name), storedValueType_(storedValueType) {
+        init();
+        cle_.set("cpptype", val(storedValueType));
+    }
+    
 
     /**
      * @brief Construct a new Web Element object
@@ -99,8 +107,22 @@ class ClarityNode {
      *
      */
     ClarityNode(const string &name, const string &tag,
-                const CppType storedValueType,
-                bool useExistingDOMElement = false);
+                const CppType storedValueType, bool useExistingDOMElement)
+        : name_(name), tag_(tag), storedValueType_(storedValueType) {
+        init();
+        if (!useExistingDOMElement)
+            cle_.call<void>("createDOMElement", id_, tag, storedValueType,
+                            name);
+        cle_.set("name", val(name));
+        // For some reason the code that sets the name in clarity.js doesn't
+        // "take" so we re-set it here.
+
+        domElement_ = cle_["domElement"];
+
+        boundField_ = "value";
+        ClarityNode::switchboard[id_] = this;
+    }
+
 
     ~ClarityNode() {
         cout << "DESTROYING CLARITYNODE " << id_ << "\n";
@@ -113,15 +135,15 @@ class ClarityNode {
         if (!domElement.isUndefined()) cle_["domElement"].call<void>("remove");
     }
 
-    EMSCRIPTEN_KEEPALIVE void setAttribute(const string &attr,
-                                           const val &value);
+    // EMSCRIPTEN_KEEPALIVE void setAttribute(const string &attr,
+    //                                        const val &value);
 
-    EMSCRIPTEN_KEEPALIVE void setAttributes(const map<string, val> &attrs);
+    // EMSCRIPTEN_KEEPALIVE void setAttributes(const map<string, val> &attrs);
 
     inline CppType getStoredValueType() const { return storedValueType_; }
-    EMSCRIPTEN_KEEPALIVE void setStoredValueType(CppType cppType);
+    // EMSCRIPTEN_KEEPALIVE void setStoredValueType(CppType cppType);
 
-    bool appendChild(ClarityNode *child);
+    // bool appendChild(ClarityNode *child);
 
     inline ClarityNode *getParent() const { return this->parent_; }
     inline void setParent(ClarityNode *parent) { this->parent_ = parent; }
@@ -215,21 +237,21 @@ class ClarityNode {
     //     return val(*reinterpret_cast<T *>(valptr));
     // }
 
-    virtual string nodeStats(const string &msg = "") const;
+    // virtual string nodeStats(const string &msg = "") const;
 
     const int *getDimensionality() const { return dataDimensionality_; };
 
     // virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
-    virtual void pushValToPeer(DualLink &al);
+    // virtual void pushValToPeer(DualLink &al);
 
     // virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
-    virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
+    // virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
     // static void pushValToPeersById(int id);
-    static void pushValToPeersById(int id);
+    // static void pushValToPeersById(int id);
     // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
-    void pullValFromPeer(DualLink &dl);
-    void pullValFromPeers(ClarityNode *excludedPeer);
-    static void pullValFromPeersById(int id);
+    // void pullValFromPeer(DualLink &dl);
+    // void pullValFromPeers(ClarityNode *excludedPeer);
+    // static void pullValFromPeersById(int id);
 
     template <typename T>
     void addPeer(ClarityNode *peer, const T linkMultiplierConstant = 1) {
@@ -239,11 +261,155 @@ class ClarityNode {
     }
     //   void addPeer2(ClarityNode *peer);
 
-    void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr = val(NULL));
+    // void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr = val(NULL));
     inline void appendDualLink(shared_ptr<DualLink> dl) {
         dlpeers_.push_back(dl);
     }
     inline int countPeers() const { return dlpeers_.size(); }
+
+    //=========== From cpp file
+
+    bool appendChild(ClarityNode *child) {
+        children_.push_back(child);
+        child->setParent(this);
+        cle_.call<void>("appendChild", child->getCLE());
+        return true;  // FIXME: need to check for duplicate ids.
+    }
+
+    inline string nodeStats(const string &msg) const {
+        string s = "NS: Node name: " + name_ + ", Node id: " + to_string(id_) +
+                   ", Node type: " + typeid(*this).name() +
+                   ", peer count = " + to_string(countPeers()) + msg + "\n";
+        return s;
+    }
+
+    static void pushValToPeersById(int id) {
+        ClarityNode *cnn = getCLElementById(id);
+        cnn->pushValToPeers(cnn);
+    }
+
+    inline void init() {
+        id_ = tm.getNext();
+        // Set up all nodes as single valued by default.
+        dataDimensionality_[0] = 1;
+        dataDimensionality_[1] = 0;
+        ClarityNode::switchboard[id_] = this;
+    }
+
+    
+    /**
+     * @brief The most critical way this is used is to move data to/from
+     * ModelNodes. In moving data from a ModelNode the initial getVal call
+     * occurs in a ModelNode and the setVal calls are in the corresponding
+     * ClarityNodes.
+     *
+     * @param dl
+     */
+    virtual void pushValToPeer(DualLink &dl) {
+        val internalVal = getVal();
+
+        auto [peer, xfmr] = dl.getOtherNode(this);
+        if (internalVal.isNumber()) {
+            val transformedVal = ClarityNode::DualLink::CLElement_.call<val>(
+                "applyTransformFn", xfmr, internalVal);
+            peer->setVal(transformedVal);
+        } else {
+            peer->setVal(internalVal);
+        }
+    }
+
+    virtual void pushValToPeers(ClarityNode *excludedPeer) {
+        if (clean_) {
+            return;
+        }
+
+        clean_ = true;
+        if (excludedPeer == nullptr) {
+            for (auto dl : dlpeers_) {
+                auto [peer, xfmr] = dl->getOtherNode(this);
+                peer->pushValToPeers(this);
+                pushValToPeer(*dl);
+            }
+        } else {
+            for (auto dl : dlpeers_) {
+                auto [peer, xfmr] = dl->getOtherNode(this);
+                if (peer != excludedPeer) {
+                    peer->pushValToPeers(this);
+                    pushValToPeer(*dl);
+                }
+            }
+        }
+        clean_ = false;
+    }
+
+    void pullValFromPeer(DualLink &dl) {
+        if (clean_) {
+        }
+
+        auto [peer, xfmr] = dl.getOtherNode(this);
+        val internalVal = peer->getVal();
+        if (internalVal.isNumber()) {
+            val transformedVal = ClarityNode::DualLink::CLElement_.call<val>(
+                "applyTransformFn", xfmr, internalVal);
+            setVal(transformedVal);
+        } else {
+            setVal(internalVal);
+        }
+
+        clean_ = true;
+    }
+
+    void pullValFromPeers(ClarityNode *excludedPeer) {
+        if (excludedPeer == nullptr) {
+            for (auto dl : dlpeers_) {
+                pullValFromPeer(*dl);
+            }
+        } else {
+            for (auto dl : dlpeers_) {
+                auto [peer, xfmr] = dl->getOtherNode(this);
+                if (peer != excludedPeer) {
+                    pullValFromPeer(*dl);
+                }
+            }
+        }
+    }
+
+    static void pullValFromPeersById(int id) {
+        ClarityNode *cnn = getCLElementById(id);
+        cnn->pullValFromPeers(cnn);
+    }
+
+    void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr) {
+        auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);
+        dlpeers_.push_back(dl);
+        peer->appendDualLink(dl);
+    }
+
+    inline void setAttribute(const string &attr, const val &value) {
+        val domElement = cle_["domElement"];
+        domElement.call<void>("setAttribute", attr, value);
+    }
+
+    inline void setAttributes(const map<string, val> &attrs) {
+        for (auto [attrName, value] : attrs) {
+            setAttribute(attrName, value);
+        }
+    }
+
+    inline void setStoredValueType(CppType cppType) {
+        storedValueType_ = cppType;
+        cle_.set("cpptype", cppType);
+    }
+
+    inline void addEventListenerByName(const string &eventName,
+                                       const string &callbackName) {
+        cle_.call<void>("addEventListenerById", eventName, callbackName);
+    }
+
+    inline void addJSEventListener(const string &eventName, val eventCallback) {
+        cle_.call<void>("addEventListener", eventName, eventCallback);
+    }
+    // ========= End from Cpp file
 
    protected:
     string tag_;
@@ -263,7 +429,8 @@ class ClarityNode {
     /** \brief Instance of the CLElement class that acts as a "proxy" in JS
      * space. */
     val cle_ = val::global("CLElement").new_();
-    val domElement_; //!< This will be initialized if the node has its own DOM element.
+    val domElement_;  //!< This will be initialized if the node has its own DOM
+                      //!< element.
 
     CppType storedValueType_;  //!< C++ Data type
     int *dataDimensionality_ =
