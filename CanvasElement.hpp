@@ -15,6 +15,8 @@ class CanvasElement : public ClarityNode {
 
     void refreshView();
 
+    virtual void refreshDOMValueFromModel(){};
+
    protected:
     int width_, height_;
     val drawFunction_;
@@ -55,14 +57,8 @@ class CanvasGrid : public CanvasElement {
     }
 
    public:
-    EMSCRIPTEN_KEEPALIVE
-    // CanvasGrid(const string &name, const string &tag,
-    //            const CppType storedValueType, bool useExistingDOMElement,
-    //            int gridWidth, int gridHeight, int pixelWidth, int
-    //            pixelHeight);
-
-    // CanvasGrid(const string &name, const string &tag,
-    //            const CppType storedValueType, bool useExistingDOMElement);
+    //EMSCRIPTEN_KEEPALIVE
+    virtual void refreshDOMValueFromModel(){};
 
     val getVal() const {
         val domElement = cle_["domElement"];

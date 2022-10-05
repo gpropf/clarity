@@ -36,7 +36,7 @@ int main() {
 
     double *a = new double(27.8);
 
-    double *temp = new double(600.4);
+    double *temp = new double(88.4);
     ModelNode<double> *a_mn =
         new ModelNode(a, "independently_created_modelnode");
 
@@ -108,9 +108,11 @@ int main() {
                                  //  .withModelNode(temp_mn2)
                                  .rangeInput();
 
-     temp_rinp->addPeer(hybridTemp_tinp, 1);
-     //temp_rinp->pushValToPeers(temp_rinp);
+    temp_rinp->addPeer(hybridTemp_tinp, 1);
+    //temp_rinp->pushValToPeers(temp_rinp);
     //hybridTemp_tinp->addPeer(temp_rinp, 1);
+    hybridTemp_tinp->refreshDOMValueFromModel();
+    hybridTemp_tinp->pushValToPeers(hybridTemp_tinp);
 
     printf("Setup complete!\n");
 

@@ -27,15 +27,11 @@ class ModelNode : public ClarityNode {
 
     ModelNode() : ClarityNode() {}
 
-   
+    virtual void refreshDOMValueFromModel(){};
 
-    ModelNode(T *dynval)
-        : ClarityNode() {
-        cppVal_ = dynval;
-    }
+    ModelNode(T *dynval) : ClarityNode() { cppVal_ = dynval; }
 
-    ModelNode(T *dynval, const string &name)
-        : ModelNode(dynval) {
+    ModelNode(T *dynval, const string &name) : ModelNode(dynval) {
         name_ = name;
     }
 
@@ -59,8 +55,6 @@ class ModelNode : public ClarityNode {
         return cppVal;
     }
 
-
-
     void setVal(const val &inval) {
         assert(cppVal_ != nullptr);
         // *reinterpret_cast<T *>(cppVal_) =
@@ -69,8 +63,6 @@ class ModelNode : public ClarityNode {
         cout << "New C++ value from JS val: " << newCppVal << "\n";
         pushValToPeers(this);
     }
-
-
 
     T *cppVal_;  //!< The C++ data object that acts as the 'model'
 };

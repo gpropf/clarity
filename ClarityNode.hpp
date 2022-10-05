@@ -120,16 +120,7 @@ class ClarityNode {
         ClarityNode::switchboard[id_] = this;
     }
 
-    ~ClarityNode() {
-        cout << "DESTROYING CLARITYNODE " << id_ << "\n";
-
-        for (auto dl : dlpeers_) {
-            dl.reset();
-        }
-        dlpeers_.clear();
-        val domElement = cle_["domElement"];
-        if (!domElement.isUndefined()) cle_["domElement"].call<void>("remove");
-    }
+    
 
     // EMSCRIPTEN_KEEPALIVE void setAttribute(const string &attr,
     //                                        const val &value);
@@ -341,6 +332,8 @@ class ClarityNode {
         clean_ = false;
     }
 
+    virtual void refreshDOMValueFromModel() = 0;
+
     void pullValFromPeer(DualLink &dl) {
         if (clean_) {
         }
@@ -502,11 +495,29 @@ class HybridNode : public ClarityNode {
     }
 
     virtual val getVal() const {
+        if (cppVal_ != nullptr) {
+            return mn_getVal();
+        }
         val domVal = ClarityNode::getVal();
-        // if (cppVal_ != nullptr) {
-        //     mn_getVal();
-        // }
         return domVal;
+    }
+
+    virtual void refreshDOMValueFromModel(){
+        if (cppVal_ != nullptr) {
+            val jsval = val(*cppVal_);
+            ClarityNode::setVal(jsval);
+        }
+    };
+
+    ~HybridNode() {
+        cout << "DESTROYING HybridNode " << id_ << "\n";
+
+        for (auto dl : dlpeers_) {
+            dl.reset();
+        }
+        dlpeers_.clear();
+        val domElement = cle_["domElement"];
+        if (!domElement.isUndefined()) cle_["domElement"].template call<void>("remove");
     }
 
    protected:
