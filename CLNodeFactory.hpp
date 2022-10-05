@@ -194,7 +194,7 @@ class CLNodeFactory {
             newNode = existingNode;
         } else {
             newNode =
-                new Nc(name_, tag_, storedValueType_, useExistingDOMElement_);
+                new Nc(name_, tag_, useExistingDOMElement_);
         }
 
         newNode->setBoundField(boundField_);
@@ -322,25 +322,25 @@ class CLNodeFactory {
      * @param storedValueType
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withStoredValueType(
-        clarity::CppType storedValueType) const & {
-        CLNodeFactory cpy(*this);
-        cpy.storedValueType_ = storedValueType;
-        if (cpy.modelNode_) {
-            cpy.modelNode_->setStoredValueType(storedValueType);
-        }
-        return cpy;
-    }
+    // inline CLNodeFactory withStoredValueType(
+    //     clarity::CppType storedValueType) const & {
+    //     CLNodeFactory cpy(*this);
+    //     cpy.storedValueType_ = storedValueType;
+    //     if (cpy.modelNode_) {
+    //         cpy.modelNode_->setStoredValueType(storedValueType);
+    //     }
+    //     return cpy;
+    // }
 
-    inline CLNodeFactory withStoredValueType(
-        clarity::CppType storedValueType) && {
-        CLNodeFactory cpy(std::move(*this));
-        cpy.storedValueType_ = storedValueType;
-        if (cpy.modelNode_) {
-            cpy.modelNode_->setStoredValueType(storedValueType);
-        }
-        return cpy;
-    }
+    // inline CLNodeFactory withStoredValueType(
+    //     clarity::CppType storedValueType) && {
+    //     CLNodeFactory cpy(std::move(*this));
+    //     cpy.storedValueType_ = storedValueType;
+    //     if (cpy.modelNode_) {
+    //         cpy.modelNode_->setStoredValueType(storedValueType);
+    //     }
+    //     return cpy;
+    // }
 
     /**
      * @brief Creates a ModelNode in which to store the provided value. During

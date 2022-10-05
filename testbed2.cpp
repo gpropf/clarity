@@ -38,7 +38,7 @@ int main() {
 
     double *temp = new double(600.4);
     ModelNode<double> *a_mn =
-        new ModelNode(a, CppType::Double, "independently_created_modelnode");
+        new ModelNode(a, "independently_created_modelnode");
 
     // val blackbody_st = a_mn->getCLE()["blackbody_st"];
 
@@ -66,8 +66,7 @@ int main() {
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
 
     CLNodeFactory<HybridNode<double>, double, double> inputBuilder =
-        childOfMaindivBuilder.withStoredValueType(CppType::Double)
-            .withTag("input")
+        childOfMaindivBuilder.withTag("input")
             .withBoundField("value")
             .withAttributes(inputFieldAttrs);
 
@@ -97,23 +96,20 @@ int main() {
     //         .trInput();
 
     HybridNode<double> *hybridTemp_tinp =
-        childOfMaindivBuilder.withStoredValueType(CppType::Double)
-            .withLinkMultiplierConstant(1)
+        childOfMaindivBuilder.withLinkMultiplierConstant(1)
             .withName("hybridTemp_tinp")
             .withCppVal(temp)
             .textInput();
 
     hybridTemp_tinp->setCppVal(temp);
 
-    ClarityNode *temp_rinp =
-        childOfMaindivBuilder.withStoredValueType(CppType::Double)
-            .withLinkMultiplierConstant(1)
-            .withName("temp_rinp")
-            //  .withModelNode(temp_mn2)
-            .rangeInput();
+    ClarityNode *temp_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
+                                 .withName("temp_rinp")
+                                 //  .withModelNode(temp_mn2)
+                                 .rangeInput();
 
-    //temp_rinp->addPeer(hybridTemp_tinp, 1);
-    hybridTemp_tinp->addPeer(temp_rinp,1);
+    // temp_rinp->addPeer(hybridTemp_tinp, 1);
+    hybridTemp_tinp->addPeer(temp_rinp, 1);
 
     printf("Setup complete!\n");
 

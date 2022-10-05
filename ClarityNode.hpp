@@ -86,15 +86,14 @@ class ClarityNode {
 
     // void EMSCRIPTEN_KEEPALIVE init();
     inline ClarityNode() { init(); }
-    inline ClarityNode(const CppType storedValueType)
-        : storedValueType_(storedValueType) {
+    // inline ClarityNode(const CppType storedValueType)
+    //     : storedValueType_(storedValueType) {
+    //     init();
+    //     cle_.set("cpptype", val(storedValueType));
+    // }
+    inline ClarityNode(const string &name) : name_(name) {
         init();
-        cle_.set("cpptype", val(storedValueType));
-    }
-    inline ClarityNode(const string &name, const CppType storedValueType)
-        : name_(name), storedValueType_(storedValueType) {
-        init();
-        cle_.set("cpptype", val(storedValueType));
+        // cle_.set("cpptype", val(storedValueType));
     }
 
     /**
@@ -106,11 +105,11 @@ class ClarityNode {
      *
      */
     ClarityNode(const string &name, const string &tag,
-                const CppType storedValueType, bool useExistingDOMElement)
-        : name_(name), tag_(tag), storedValueType_(storedValueType) {
+                bool useExistingDOMElement)
+        : name_(name), tag_(tag) {
         init();
         if (!useExistingDOMElement)
-            cle_.call<void>("createDOMElement", id_, tag, storedValueType,
+            cle_.call<void>("createDOMElement", id_, tag, val("storedValueType"),
                             name);
         cle_.set("name", val(name));
         // For some reason the code that sets the name in clarity.js doesn't
@@ -138,8 +137,8 @@ class ClarityNode {
 
     // EMSCRIPTEN_KEEPALIVE void setAttributes(const map<string, val> &attrs);
 
-    inline CppType getStoredValueType() const { return storedValueType_; }
-    // EMSCRIPTEN_KEEPALIVE void setStoredValueType(CppType cppType);
+    // inline CppType getStoredValueType() const { return storedValueType_; }
+    //  EMSCRIPTEN_KEEPALIVE void setStoredValueType(CppType cppType);
 
     // bool appendChild(ClarityNode *child);
 
@@ -395,10 +394,10 @@ class ClarityNode {
         }
     }
 
-    inline void setStoredValueType(CppType cppType) {
-        storedValueType_ = cppType;
-        cle_.set("cpptype", cppType);
-    }
+    // inline void setStoredValueType(CppType cppType) {
+    //     storedValueType_ = cppType;
+    //     cle_.set("cpptype", cppType);
+    // }
 
     inline void addEventListenerByName(const string &eventName,
                                        const string &callbackName) {
@@ -431,7 +430,7 @@ class ClarityNode {
     val domElement_;  //!< This will be initialized if the node has its own DOM
                       //!< element.
 
-    CppType storedValueType_;  //!< C++ Data type
+    // CppType storedValueType_;  //!< C++ Data type
     int *dataDimensionality_ =
         new int[2];  //!< There is a digit for each dimension and the dimension
                      //!< list is terminated with a 0. Single valued datums thus
@@ -455,8 +454,8 @@ template <typename Vt>
 class HybridNode : public ClarityNode {
    public:
     HybridNode(const string &name, const string &tag,
-               const CppType storedValueType, bool useExistingDOMElement)
-        : ClarityNode(name, tag, storedValueType, useExistingDOMElement) {}
+               bool useExistingDOMElement)
+        : ClarityNode(name, tag, useExistingDOMElement) {}
 
     inline void setCppVal(Vt *cppVal) { cppVal_ = cppVal; }
 
@@ -504,7 +503,7 @@ class HybridNode : public ClarityNode {
         //     mn_getVal();
         // }
         return domVal;
-    }    
+    }
 
    protected:
     Vt *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'

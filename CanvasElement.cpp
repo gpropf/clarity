@@ -8,7 +8,7 @@ val CLElement_ = val::global("CLElement");
 CanvasElement::CanvasElement(const string &name, const string &tag,
                              const CppType storedValueType,
                              bool useExistingDOMElement)
-    : ClarityNode(name, tag, storedValueType, useExistingDOMElement) {}
+    : ClarityNode(name, tag, useExistingDOMElement) {}
 
 inline void CanvasElement::setDrawFuntionName(const string &drawFuntionName) {
     drawFuntionName_ = drawFuntionName;

@@ -15,7 +15,7 @@ class CLElement {
         ctx.fillStyle = 'red';
         ctx.beginPath();
         ctx.arc(250, 40, 32, 0, 2 * Math.PI);
-        ctx.fill(); 
+        ctx.fill();
         console.log("extraInitCode['canvas']()")
       }
     }
@@ -115,13 +115,13 @@ class CLElement {
       domElement.style.display = 'none';
       domElement.style.display = 'block';
       let ctx = domElement.getContext('2d');
-      let [w, h, hw, hh] = [domElement.width, domElement.height, domElement.width/2, domElement.height/2];
-      let [qw,qh] = [w/4,h/4];
+      let [w, h, hw, hh] = [domElement.width, domElement.height, domElement.width / 2, domElement.height / 2];
+      let [qw, qh] = [w / 4, h / 4];
       ctx.scale(1, 1);
-      ctx.fillStyle = 'green';      
-      ctx.fillRect(0, 0, w,h);
+      ctx.fillStyle = 'green';
+      ctx.fillRect(0, 0, w, h);
       ctx.fillStyle = 'blue';
-      ctx.fillRect(qw,qh,hw,hh);
+      ctx.fillRect(qw, qh, hw, hh);
       console.log("drawGreenTestPattern()");
     }
   }
@@ -180,27 +180,7 @@ class CLElement {
     var r = f.call(f, v);
     //console.log("Value " + v + ", Transformed into " + r + " by function " + f.name);
     return r;
-  }
-
-  // jsToCPPVal(jsval) {
-  //   switch (this.cpptype_) {
-  //     case Module.CppType.Int:
-  //       // console.log("jsToCPPVal: Int")
-  //       return parseInt(jsval)
-  //     case Module.CppType.Float:
-  //       // console.log("jsToCPPVal: Float")
-  //       return parseFloat(jsval)
-  //     case Module.CppType.Double:
-  //       // console.log("jsToCPPVal: Double")
-  //       return parseFloat(jsval)
-  //     case Module.CppType.NoData:
-  //       // console.log("jsToCPPVal: NoData")
-  //       return null
-  //     default:
-  //       return jsval
-  //   }
-  // }
-  //object.freeze(CPP_Type);
+  }  
 
   appendChild(child) {
     if (child.domElement && child.domElement instanceof Element)
@@ -217,15 +197,7 @@ class CLElement {
 
   get owner() {
     return this.owner_
-  }
-
-  set cpptype(cpptype) {
-    this.cpptype_ = cpptype
-  }
-
-  get cpptype() {
-    return this.cpptype_
-  }
+  }  
 
   get tag() {
     return this.tag_
@@ -277,10 +249,9 @@ class CLElement {
     return el
   }
 
-  createDOMElement(id, tag, cpptype, name) {
+  createDOMElement(id, tag, name) {
     this.id_ = id
-    this.tag_ = tag
-    this.cpptype_ = cpptype
+    this.tag_ = tag   
     this.name_ = name
 
     // console.log(`ID ${id} from ticketMachine.`)
@@ -342,7 +313,7 @@ class CLElement {
   static setGridLocToCurrentVal(ev) { // FIXME: Need to rework to remove translator stuff.
     let domElement = ev.target;
     let domrect = domElement.getBoundingClientRect();
-    
+
     let gw = domElement.gw;
     let cw = domElement.cw;
     let gh = domElement.gh;

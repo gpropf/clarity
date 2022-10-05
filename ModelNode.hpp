@@ -25,17 +25,17 @@ class ModelNode : public ClarityNode {
         }
     }
 
-    ModelNode(CppType storedValueType) : ClarityNode(storedValueType) {}
+    ModelNode() : ClarityNode() {}
 
-    ModelNode(T *dynval) : cppVal_(dynval) {}
+   
 
-    ModelNode(T *dynval, CppType storedValueType)
-        : ClarityNode(storedValueType) {
+    ModelNode(T *dynval)
+        : ClarityNode() {
         cppVal_ = dynval;
     }
 
-    ModelNode(T *dynval, CppType storedValueType, const string &name)
-        : ModelNode(dynval, storedValueType) {
+    ModelNode(T *dynval, const string &name)
+        : ModelNode(dynval) {
         name_ = name;
     }
 
