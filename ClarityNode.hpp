@@ -277,12 +277,14 @@ class ClarityNode {
     inline string nodeStats(const string &msg) const {
         string s = "NS: Node name: " + name_ + ", Node id: " + to_string(id_) +
                    ", Node type: " + typeid(*this).name() +
-                   ", peer count = " + to_string(countPeers()) + msg + "\n";
+                   ", peer count = " + to_string(countPeers()) + ". " + msg +
+                   "\n";
         return s;
     }
 
     static void pushValToPeersById(int id) {
         ClarityNode *cnn = getCLElementById(id);
+        cout << cnn->nodeStats("[pushValToPeersById]");
         cnn->pushValToPeers(cnn);
     }
 
@@ -488,12 +490,15 @@ class HybridNode : public ClarityNode {
 
     inline virtual void setVal(const val &inval) {
         cout << "HybridNode::setVal()\n";
-        if (cppVal_ != nullptr) {
-            cout << "This node has a cppVal!\n";
-            // nodeStats("HybridNode::setVal()");
-            mn_setVal(inval);
-        }
         ClarityNode::setVal(inval);
+        if (cppVal_ != nullptr) {
+            cout << nodeStats(
+                "HybridNode::setVal() --> This node has a cppVal!\n");
+            mn_setVal(inval);
+        } else {
+            cout << nodeStats(
+                "HybridNode::setVal() --> This node DOES NOT HAVE a cppVal!\n");
+        }
     }
 
     virtual val getVal() const {

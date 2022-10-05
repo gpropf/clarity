@@ -52,7 +52,7 @@ class CLElement {
   }
 
   printVal(v) {
-    //console.log("JSVAL = " + v);
+    console.log("printval(v):" + "id: " + this.id + ". JSVAL = " + v);
   }
 
   static zerofloor(n) {

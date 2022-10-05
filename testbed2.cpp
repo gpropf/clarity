@@ -108,8 +108,9 @@ int main() {
                                  //  .withModelNode(temp_mn2)
                                  .rangeInput();
 
-    // temp_rinp->addPeer(hybridTemp_tinp, 1);
-    hybridTemp_tinp->addPeer(temp_rinp, 1);
+     temp_rinp->addPeer(hybridTemp_tinp, 1);
+     //temp_rinp->pushValToPeers(temp_rinp);
+    //hybridTemp_tinp->addPeer(temp_rinp, 1);
 
     printf("Setup complete!\n");
 
