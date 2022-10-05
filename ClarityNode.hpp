@@ -164,31 +164,33 @@ class ClarityNode {
 
         string valueText = getDOMText();
 
-        // domElement[boundField_].as<string>();
-        cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
-        switch (this->storedValueType_) {
-            case CppType::Int:
-                // cout << "ClarityNode::getVal() Int\n";
-                return val(stoi(valueText));
-                break;
-            case CppType::Float:
-                // cout << "ClarityNode::getVal() Float\n";
-                return val(stof(valueText));
-                break;
-            case CppType::Double:
-                // cout << "ClarityNode::getVal() Double\n";
-                return val(stod(valueText));
-                break;
-            case CppType::String:
-                // cout << "ClarityNode::getVal() String\n";
-                return val(valueText);
-                break;
-            case CppType::NoData:
-            default:
-                // cout << "ClarityNode::getVal() NoData\n";
-                return val(NULL);
-                break;
-        }
+        // // domElement[boundField_].as<string>();
+        // cout << "ClarityNode::getVal() valueText = " << valueText << "\n";
+        // switch (this->storedValueType_) {
+        //     case CppType::Int:
+        //         // cout << "ClarityNode::getVal() Int\n";
+        //         return val(stoi(valueText));
+        //         break;
+        //     case CppType::Float:
+        //         // cout << "ClarityNode::getVal() Float\n";
+        //         return val(stof(valueText));
+        //         break;
+        //     case CppType::Double:
+        //         // cout << "ClarityNode::getVal() Double\n";
+        //         return val(stod(valueText));
+        //         break;
+        //     case CppType::String:
+        //         // cout << "ClarityNode::getVal() String\n";
+        //         return val(valueText);
+        //         break;
+        //     case CppType::NoData:
+        //     default:
+        //         // cout << "ClarityNode::getVal() NoData\n";
+        //         return val(NULL);
+        //         break;
+        // }
+
+        return val("NO SPECIALIZED TEMPLATE");
     }
 
     template <typename V, typename C>
@@ -502,7 +504,7 @@ class HybridNode : public ClarityNode {
         //     mn_getVal();
         // }
         return domVal;
-    }
+    }    
 
    protected:
     Vt *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'
