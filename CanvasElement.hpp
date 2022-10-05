@@ -52,7 +52,7 @@ class CanvasGrid : public CanvasElement<V> {
     double scaleFactorV_ = 1.0;
     int gridWidth_, gridHeight_, pixelWidth_, pixelHeight_, cellWidth_,
         cellHeight_;
-    V *dataptr_;
+    
     V currentCellVal_ = 0;
 
     static const array<string, 8> colors;
@@ -77,12 +77,12 @@ class CanvasGrid : public CanvasElement<V> {
 
     void initcg() {
         cout << "CG init called.\n";
-        dataptr_ = new V[gridWidth_ * gridHeight_];
+        HybridNode<V>::cppVal_ = new V[gridWidth_ * gridHeight_];
         int cellCount = 0;
         for (int i = 0; i < gridWidth_; i++) {
             for (int j = 0; j < gridHeight_; j++) {
                 int addr = gridWidth_ * j + i;
-                *(dataptr_ + addr) = 1;
+                *(HybridNode<V>::cppVal_ + addr) = 1;
             }
             // cout << "\n";
             cellCount++;
@@ -96,7 +96,7 @@ class CanvasGrid : public CanvasElement<V> {
 
     int setValXY(int x, int y) {
         int addr = (y * gridWidth_ + x) * sizeof(V);
-        *(this->dataptr_ + addr) = currentCellVal_;
+        *(this->cppVal_ + addr) = currentCellVal_;
         drawGrid();
         return addr;
     }
@@ -120,7 +120,7 @@ class CanvasGrid : public CanvasElement<V> {
         for (int i = 0; i < gridWidth_; i++) {
             for (int j = 0; j < gridHeight_; j++) {
                 int addr = gridWidth_ * j + i;
-                V v = reinterpret_cast<V>(*(dataptr_ + addr));
+                V v = reinterpret_cast<V>(*(HybridNode<V>::cppVal_ + addr));
 
                 ctx.set("fillStyle", colors[v]);
 
