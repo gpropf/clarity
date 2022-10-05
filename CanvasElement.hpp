@@ -6,16 +6,24 @@
 
 namespace clarity {
 
-class CanvasElement : public ClarityNode {
+template <typename V>
+class CanvasElement : public HybridNode<V> {
    public:
     CanvasElement(const string &name, const string &tag,
-                  const CppType storedValueType, bool useExistingDOMElement);
+                  bool useExistingDOMElement)
+        : HybridNode<V>(name, tag, useExistingDOMElement) {}
 
-    void setDrawFuntionName(const string &drawFuntionName);
-
-    void refreshView();
+    // void setDrawFuntionName(const string &drawFuntionName);
 
     virtual void refreshDOMValueFromModel(){};
+
+    inline void setDrawFuntionName(const string &drawFuntionName) {
+        drawFuntionName_ = drawFuntionName;
+    }
+
+    inline void refreshView() {
+        this->cle_.template call<void>(drawFuntionName_.c_str());
+    }
 
    protected:
     int width_, height_;
@@ -30,7 +38,7 @@ class CanvasElement : public ClarityNode {
  *
  */
 template <typename V>
-class CanvasGrid : public CanvasElement {
+class CanvasGrid : public CanvasElement<V> {
     // void setVal(const val &inval) {}
     // val getVal() const {}
     //  class CLNodeFactory;
@@ -47,8 +55,9 @@ class CanvasGrid : public CanvasElement {
     V *dataptr_;
     V currentCellVal_ = 0;
 
-    
     static const array<string, 8> colors;
+
+   public:
 
     inline virtual void setVal(const val &inval) {
         this->clean_ = false;
@@ -56,12 +65,10 @@ class CanvasGrid : public CanvasElement {
         // So this information should reside in inval.
     }
 
-   public:
-    //EMSCRIPTEN_KEEPALIVE
     virtual void refreshDOMValueFromModel(){};
 
     val getVal() const {
-        val domElement = cle_["domElement"];
+        val domElement = this->cle_["domElement"];
 
         // Needs to read the internal state of the CG object and transfer it
         // back to the array.
@@ -80,8 +87,9 @@ class CanvasGrid : public CanvasElement {
             // cout << "\n";
             cellCount++;
         }
-        domElement_.call<void>("addEventListener", val("click"),
-                               CLElement_["setGridLocToCurrentVal"]);
+        this->domElement_.template call<void>(
+            "addEventListener", val("click"),
+            CLElement_["setGridLocToCurrentVal"]);
         // addJSEventListener("click", CLElement_["setGridLocToCurrentVal"] );
         drawGrid();
     }
@@ -95,7 +103,7 @@ class CanvasGrid : public CanvasElement {
 
     void drawGrid() const {
         val ctx = this->domElement_.template call<val>("getContext", val("2d"));
-        val domElement = cle_["domElement"];
+        val domElement = this->cle_["domElement"];
         domElement.set(
             "gridRef",
             const_cast<CanvasGrid *>(
@@ -112,8 +120,7 @@ class CanvasGrid : public CanvasElement {
         for (int i = 0; i < gridWidth_; i++) {
             for (int j = 0; j < gridHeight_; j++) {
                 int addr = gridWidth_ * j + i;
-                V v =
-                    reinterpret_cast<V>(*(dataptr_ + addr));
+                V v = reinterpret_cast<V>(*(dataptr_ + addr));
 
                 ctx.set("fillStyle", colors[v]);
 
@@ -126,13 +133,13 @@ class CanvasGrid : public CanvasElement {
     }
 
     CanvasGrid(const string &name, const string &tag,
-               const CppType storedValueType, bool useExistingDOMElement)
-        : CanvasElement(name, tag, storedValueType, useExistingDOMElement) {}
+               bool useExistingDOMElement)
+        : CanvasElement<V>(name, tag, useExistingDOMElement) {}
 
     CanvasGrid(const string &name, const string &tag,
-               const CppType storedValueType, bool useExistingDOMElement,
-               int gridWidth, int gridHeight, int pixelWidth, int pixelHeight)
-        : CanvasGrid(name, tag, storedValueType, useExistingDOMElement) {
+               bool useExistingDOMElement, int gridWidth, int gridHeight,
+               int pixelWidth, int pixelHeight)
+        : CanvasGrid(name, tag, useExistingDOMElement) {
         gridWidth_ = gridWidth;
         gridHeight_ = gridHeight;
         pixelWidth_ = pixelWidth;

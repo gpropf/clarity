@@ -109,10 +109,22 @@ int main() {
                                  .rangeInput();
 
     temp_rinp->addPeer(hybridTemp_tinp, 1);
-    //temp_rinp->pushValToPeers(temp_rinp);
-    //hybridTemp_tinp->addPeer(temp_rinp, 1);
+    // temp_rinp->pushValToPeers(temp_rinp);
+    // hybridTemp_tinp->addPeer(temp_rinp, 1);
     hybridTemp_tinp->refreshDOMValueFromModel();
     hybridTemp_tinp->pushValToPeers(hybridTemp_tinp);
+
+    CLNodeFactory<CanvasGrid<unsigned char>, unsigned char, double>
+        canvasBuilder("div", "canvasDiv", CppType::NoData);
+
+    CanvasGrid<unsigned char> *canvas1 =
+        canvasBuilder.withName("canvas1")
+            .withTag("canvas")
+            .withAttributes({{"style", val("border: 1px solid green")},
+                             {"width", val(400)},
+                             {"height", val(300)}})
+            .canvasGrid(30, 20, 400, 300);
+    //.canvas();
 
     printf("Setup complete!\n");
 

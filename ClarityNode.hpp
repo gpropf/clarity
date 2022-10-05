@@ -444,14 +444,14 @@ class ClarityNode {
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
 };
 
-template <typename Vt>
+template <typename V>
 class HybridNode : public ClarityNode {
    public:
     HybridNode(const string &name, const string &tag,
                bool useExistingDOMElement)
         : ClarityNode(name, tag, useExistingDOMElement) {}
 
-    inline void setCppVal(Vt *cppVal) { cppVal_ = cppVal; }
+    inline void setCppVal(V *cppVal) { cppVal_ = cppVal; }
 
     virtual val mn_getVal() const {
         if (cppVal_ == nullptr) {
@@ -464,19 +464,19 @@ class HybridNode : public ClarityNode {
             // initiate the data stream transfer.
         }
         // Single value case, proceed as usual.
-        return val(cpp2js<Vt>(cppVal_));
+        return val(cpp2js<V>(cppVal_));
     }
 
-    Vt mn_jsToCppVal(val jsval) {
-        Vt cppVal = jsval.as<Vt>();
-        *reinterpret_cast<Vt *>(cppVal_) = cppVal;
+    V mn_jsToCppVal(val jsval) {
+        V cppVal = jsval.as<V>();
+        *reinterpret_cast<V *>(cppVal_) = cppVal;
         return cppVal;
     }
 
     void mn_setVal(const val &inval) {
         assert(cppVal_ != nullptr);
 
-        Vt newCppVal = mn_jsToCppVal(inval);
+        V newCppVal = mn_jsToCppVal(inval);
         cout << "New C++ value from JS val: " << newCppVal << "\n";
         pushValToPeers(this);
     }
@@ -521,7 +521,7 @@ class HybridNode : public ClarityNode {
     }
 
    protected:
-    Vt *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'
+    V *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'
 };
 
 }  // namespace clarity

@@ -5,18 +5,14 @@
 
 val CLElement_ = val::global("CLElement");
 
-CanvasElement::CanvasElement(const string &name, const string &tag,
-                             const CppType storedValueType,
-                             bool useExistingDOMElement)
-    : ClarityNode(name, tag, useExistingDOMElement) {}
+//template <typename V>
 
-inline void CanvasElement::setDrawFuntionName(const string &drawFuntionName) {
-    drawFuntionName_ = drawFuntionName;
-}
 
-inline void CanvasElement::refreshView() {
-    cle_.call<void>(drawFuntionName_.c_str());
-}
+//template <typename V>
+
+
+//template <typename V>
+
 
 /**
  * @brief Grid representation of a 2D array of values using a CanvasElement as
@@ -24,9 +20,3 @@ inline void CanvasElement::refreshView() {
  * actively get the array data and map it into the canvas quickly.
  *
  */
-
-
-
-
-
-
