@@ -26,8 +26,8 @@ canvastest: canvastest.o ClarityNode.o CanvasElement.o
 speedtest: speedtest.o ClarityNode.o
 	$(CC) -lembind speedtest.o ClarityNode.o $(CFLAGS) -o $(JSOUT)
 
-testbed: testbed.o ClarityNode.o CanvasElement.o
-	$(CC) -lembind testbed.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
+testbed2: testbed2.o ClarityNode.o CanvasElement.o
+	$(CC) -lembind testbed2.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
 
 libclr.a: $(LIBCLR_OBJS)
 	$(AR) rcs libclr.a $(LIBCLR_OBJS)
