@@ -103,10 +103,11 @@ int main() {
 
     hybridTemp_tinp->setCppVal(temp);
 
-    ClarityNode *temp_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
-                                 .withName("temp_rinp")
-                                 //  .withModelNode(temp_mn2)
-                                 .rangeInput();
+    HybridNode<double> *temp_rinp =
+        childOfMaindivBuilder.withLinkMultiplierConstant(1)
+            .withName("temp_rinp")
+            //  .withModelNode(temp_mn2)
+            .rangeInput();
 
     temp_rinp->addPeer(hybridTemp_tinp, 1);
     // temp_rinp->pushValToPeers(temp_rinp);
@@ -125,6 +126,29 @@ int main() {
                              {"height", val(300)}})
             .canvasGrid(30, 20, 400, 300);
     //.canvas();
+
+    CLNodeFactory<HybridNode<string>, string, int> childOfMaindivBuilder_str(
+        childOfMaindivBuilder);
+
+    string *flexLabelText = new string("Flex Text");
+
+    HybridNode<string> *flexLabel =
+        childOfMaindivBuilder_str
+            .withCppVal(flexLabelText)
+            // .extractModelNode<string>(flexLabel_mn)
+            .label(hybridTemp_tinp, *flexLabelText);
+
+    val passthru = flexLabel->getCLE()["passthru"];
+
+    HybridNode<string> *inputFlexTextLabel =
+        childOfMaindivBuilder_str
+            .withModelNode(flexLabel)
+
+            //.withTransformFns(passthru, passthru)
+            .textInput();
+
+    ClarityNode *statusButton =
+        childOfMaindivBuilder.button("statusButton", "Print Status", doNothing);
 
     printf("Setup complete!\n");
 

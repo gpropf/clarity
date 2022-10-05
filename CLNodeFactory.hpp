@@ -37,7 +37,7 @@ class CLNodeFactory {
                          //!< to be modified when the node value changes.
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
                                      //!< any new nodes as its children.
-    ModelNode<V> *modelNode_ =
+    Nc *modelNode_ =
         nullptr;  //!< If we create a new MN or attach one, we set this. Note
                   //!< that we can create ControlNetworkNodes with no MN.
 
@@ -350,23 +350,22 @@ class CLNodeFactory {
      * @param storedValue
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withStoredValue(V *storedValue) const & {
-        assert(storedValue != nullptr);
-        ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
-                                            "modelnode_for_" + this->name_);
-        CLNodeFactory cpy(*this);
-        cpy.modelNode_ = mn;
-        return cpy;
-    }
+    // inline CLNodeFactory withStoredValue(V *storedValue) const & {
+    //     assert(storedValue != nullptr);
+       
+    //     CLNodeFactory cpy(*this);
+    //     cpy.modelNode_ = mn;
+    //     return cpy;
+    // }
 
-    inline CLNodeFactory withStoredValue(V *storedValue) && {
-        assert(storedValue != nullptr);
-        ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
-                                            "modelnode_for_" + this->name_);
-        CLNodeFactory cpy(std::move(*this));
-        cpy.modelNode_ = mn;
-        return cpy;
-    }
+    // inline CLNodeFactory withStoredValue(V *storedValue) && {
+    //     assert(storedValue != nullptr);
+    //     ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
+    //                                         "modelnode_for_" + this->name_);
+    //     CLNodeFactory cpy(std::move(*this));
+    //     cpy.modelNode_ = mn;
+    //     return cpy;
+    // }
 
     inline CLNodeFactory withCppVal(V *cppVal) const & {
         assert(cppVal != nullptr);
@@ -391,14 +390,14 @@ class CLNodeFactory {
      * @param modelNode
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) const & {
+    inline CLNodeFactory withModelNode(Nc *modelNode) const & {
         assert(modelNode != nullptr);
         CLNodeFactory cpy(*this);
         cpy.modelNode_ = modelNode;
         return cpy;
     }
 
-    inline CLNodeFactory withModelNode(ModelNode<V> *modelNode) && {
+    inline CLNodeFactory withModelNode(Nc *modelNode) && {
         assert(modelNode != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.modelNode_ = modelNode;
@@ -506,7 +505,8 @@ class CLNodeFactory {
      * @param text
      * @return Nc*
      */
-    inline Nc *label(Nc *forNode, const string &text) {
+    template <class Nc_any>
+    inline Nc *label(Nc_any *forNode, const string &text) {
         Nc *label = withTag("label").build();
         label->setBoundField("innerHTML");
         label->setVal(val(text));
