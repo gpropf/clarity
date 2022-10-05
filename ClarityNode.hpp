@@ -109,8 +109,7 @@ class ClarityNode {
         : name_(name), tag_(tag) {
         init();
         if (!useExistingDOMElement)
-            cle_.call<void>("createDOMElement", id_, tag, val("storedValueType"),
-                            name);
+            cle_.call<void>("createDOMElement", id_, tag, name);
         cle_.set("name", val(name));
         // For some reason the code that sets the name in clarity.js doesn't
         // "take" so we re-set it here.
