@@ -96,7 +96,6 @@ class ClarityNode {
         init();
         cle_.set("cpptype", val(storedValueType));
     }
-    
 
     /**
      * @brief Construct a new Web Element object
@@ -122,7 +121,6 @@ class ClarityNode {
         boundField_ = "value";
         ClarityNode::switchboard[id_] = this;
     }
-
 
     ~ClarityNode() {
         cout << "DESTROYING CLARITYNODE " << id_ << "\n";
@@ -296,7 +294,6 @@ class ClarityNode {
         ClarityNode::switchboard[id_] = this;
     }
 
-    
     /**
      * @brief The most critical way this is used is to move data to/from
      * ModelNodes. In moving data from a ModelNode the initial getVal call
@@ -450,6 +447,65 @@ class ClarityNode {
      * data is moved between nodes. */
     // vector<ClarityNode::ActiveLink> peers_;
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
+};
+
+template <typename Vt>
+class HybridNode : public ClarityNode {
+   public:
+    HybridNode(const string &name, const string &tag,
+               const CppType storedValueType, bool useExistingDOMElement)
+        : ClarityNode(name, tag, storedValueType, useExistingDOMElement) {}
+
+    inline void setCppVal(Vt *cppVal) { cppVal_ = cppVal; }
+
+    virtual val mn_getVal() const {
+        if (cppVal_ == nullptr) {
+            return val(NULL);
+        }
+        if (*dataDimensionality_ != 1) {
+            // We clearly have something with more than one value. We need to
+            // construct a JS version of the dataDimensionality_ list and return
+            // it. This will then be sent to the CG's setVal method and used to
+            // initiate the data stream transfer.
+        }
+        // Single value case, proceed as usual.
+        return val(cpp2js<Vt>(cppVal_));
+    }
+
+    Vt mn_jsToCppVal(val jsval) {
+        Vt cppVal = jsval.as<Vt>();
+        *reinterpret_cast<Vt *>(cppVal_) = cppVal;
+        return cppVal;
+    }
+
+    void mn_setVal(const val &inval) {
+        assert(cppVal_ != nullptr);
+
+        Vt newCppVal = mn_jsToCppVal(inval);
+        cout << "New C++ value from JS val: " << newCppVal << "\n";
+        pushValToPeers(this);
+    }
+
+    inline virtual void setVal(const val &inval) {
+        cout << "HybridNode::setVal()\n";
+        if (cppVal_ != nullptr) {
+            cout << "This node has a cppVal!\n";
+            // nodeStats("HybridNode::setVal()");
+            mn_setVal(inval);
+        }
+        ClarityNode::setVal(inval);
+    }
+
+    virtual val getVal() const {
+        val domVal = ClarityNode::getVal();
+        // if (cppVal_ != nullptr) {
+        //     mn_getVal();
+        // }
+        return domVal;
+    }
+
+   protected:
+    Vt *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'
 };
 
 }  // namespace clarity

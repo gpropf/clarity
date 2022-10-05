@@ -31,6 +31,8 @@ class CLNodeFactory {
     CppType storedValueType_;  //!< storedValueType to be used with elements
                                //!< this factory builds.
 
+    V *cppVal_ = nullptr;
+
     string boundField_;  //!< Different types of elements need different fields
                          //!< to be modified when the node value changes.
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
@@ -208,6 +210,10 @@ class CLNodeFactory {
             }
             if (!useExistingDOMElement_) modelNode_->pushValToPeers(modelNode_);
         }
+
+        if (cppVal_) {
+            newNode->setCppVal(cppVal_);
+        }
         return newNode;
     }
 
@@ -359,6 +365,20 @@ class CLNodeFactory {
                                             "modelnode_for_" + this->name_);
         CLNodeFactory cpy(std::move(*this));
         cpy.modelNode_ = mn;
+        return cpy;
+    }
+
+    inline CLNodeFactory withCppVal(V *cppVal) const & {
+        assert(cppVal != nullptr);
+        CLNodeFactory cpy(*this);
+        cpy.cppVal_ = cppVal;
+        return cpy;
+    }
+
+    inline CLNodeFactory withCppVal(V *cppVal) const && {
+        assert(cppVal != nullptr);
+        CLNodeFactory cpy(std::move(*this));
+        cpy.cppVal_ = cppVal;
         return cpy;
     }
 

@@ -308,6 +308,7 @@ class CLElement {
         Module.ClarityNode.pushValToPeersById(outerThis.id_)
         //Module.ClarityNode.pullValFromPeersById(outerThis.id_)
         Module.ClarityNode.markNodeDirtyById(outerThis.id_)
+        console.log("Value changed")
       })
     }
   }
