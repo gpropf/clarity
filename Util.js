@@ -8,7 +8,7 @@ class Util {
     constructor() { }
 
     utiltest(x) {
-        console.log("x is:" + x);
+        console.log("utiltest value:" + x);
     }
 
     static make_trs() {

@@ -78,6 +78,8 @@ class ClarityNode {
     // EMSCRIPTEN_KEEPALIVE void addJSEventListener(const string &eventName,
     //                                              val eventCallback);
 
+    virtual val mn_getVal() const = 0;
+
     inline string getTag() const { return tag_; }
     inline int getId() const { return id_; }
     inline void setCLE(val cle) { cle_ = cle; }
@@ -277,6 +279,17 @@ class ClarityNode {
         cnn->pushValToPeers(cnn);
     }
 
+    virtual void updateNodeFromDom() = 0;
+
+    static inline void updateNodeFromDomById(int id) {
+        ClarityNode *cnn = getCLElementById(id);
+        cnn->updateNodeFromDom();
+        cout << cnn->nodeStats("[updateNodeFromDomById]");
+        cnn->pushValToPeers(cnn);
+    }
+
+    inline void updateNodeFromModel() {}
+
     inline void init() {
         id_ = tm.getNext();
         // Set up all nodes as single valued by default.
@@ -451,10 +464,13 @@ class HybridNode : public ClarityNode {
 
     inline void setCppVal(V *cppVal) { cppVal_ = cppVal; }
 
+    template <typename Ct>
     static void nodeAudit() {
         for (auto [id, node] : switchboard) {
-            cout << "ID: " << id << ", cppVal_: "
-                 << *(dynamic_cast<HybridNode<V> *>(node)->cppVal_) << "\n";
+            HybridNode<V> *hn = dynamic_cast<HybridNode<V> *>(node);
+            cout << "ID: " << id
+                 << ", cppVal_: " << *(hn->cppVal_)
+                 << ", " << hn->getName() << "\n";
         }
     }
 
@@ -512,7 +528,12 @@ class HybridNode : public ClarityNode {
             val jsval = val(*cppVal_);
             ClarityNode::setVal(jsval);
         }
-    };
+    }
+
+    virtual void updateNodeFromDom() {
+        val jsval = getVal();
+        *cppVal_ = jsval.as<V>();
+    }
 
     ~HybridNode() {
         cout << "DESTROYING HybridNode " << id_ << "\n";
