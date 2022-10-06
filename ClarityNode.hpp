@@ -120,8 +120,6 @@ class ClarityNode {
         ClarityNode::switchboard[id_] = this;
     }
 
-    
-
     // EMSCRIPTEN_KEEPALIVE void setAttribute(const string &attr,
     //                                        const val &value);
 
@@ -453,6 +451,13 @@ class HybridNode : public ClarityNode {
 
     inline void setCppVal(V *cppVal) { cppVal_ = cppVal; }
 
+    static void nodeAudit() {
+        for (auto [id, node] : switchboard) {
+            cout << "ID: " << id << ", cppVal_: "
+                 << *(dynamic_cast<HybridNode<V> *>(node)->cppVal_) << "\n";
+        }
+    }
+
     virtual val mn_getVal() const {
         if (cppVal_ == nullptr) {
             return val(NULL);
@@ -502,7 +507,7 @@ class HybridNode : public ClarityNode {
         return domVal;
     }
 
-    virtual void refreshDOMValueFromModel(){
+    virtual void refreshDOMValueFromModel() {
         if (cppVal_ != nullptr) {
             val jsval = val(*cppVal_);
             ClarityNode::setVal(jsval);
@@ -517,7 +522,8 @@ class HybridNode : public ClarityNode {
         }
         dlpeers_.clear();
         val domElement = cle_["domElement"];
-        if (!domElement.isUndefined()) cle_["domElement"].template call<void>("remove");
+        if (!domElement.isUndefined())
+            cle_["domElement"].template call<void>("remove");
     }
 
    protected:

@@ -4,11 +4,14 @@ using std::string;
 
 EMSCRIPTEN_BINDINGS(clarity) {
     class_<ClarityNode>("ClarityNode")
-        //.function("toggleClean", &ClarityNode::toggleClean, allow_raw_pointers())
-        //.function("getVal", &ClarityNode::getVal, allow_raw_pointers())
-        //.function("pushValToPeers", &ClarityNode::pushValToPeers, allow_raw_pointers())
-        .class_function("pushValToPeersById", &ClarityNode::pushValToPeersById, allow_raw_pointers())
-        .function("pullValFromPeers", &ClarityNode::pullValFromPeers, allow_raw_pointers())
+        //.function("toggleClean", &ClarityNode::toggleClean,
+        //allow_raw_pointers()) .function("getVal", &ClarityNode::getVal,
+        //allow_raw_pointers()) .function("pushValToPeers",
+        //&ClarityNode::pushValToPeers, allow_raw_pointers())
+        .class_function("pushValToPeersById", &ClarityNode::pushValToPeersById,
+                        allow_raw_pointers())
+        .function("pullValFromPeers", &ClarityNode::pullValFromPeers,
+                  allow_raw_pointers())
         .class_function("pullValFromPeersById",
                         &ClarityNode::pullValFromPeersById,
                         allow_raw_pointers())
@@ -27,6 +30,10 @@ EMSCRIPTEN_BINDINGS(clarity) {
     class_<CanvasGrid<unsigned char>>("CanvasGrid")
         .function("setValXY", &CanvasGrid<unsigned char>::setValXY,
                   allow_raw_pointers());
+
+    class_<HybridNode<double>>("HybridNode")
+        .class_function("nodeAudit", &HybridNode<double>::nodeAudit,
+                        allow_raw_pointers());
 
     enum_<CppType>("CppType")
         .value("Int", CppType::Int)

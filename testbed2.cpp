@@ -33,6 +33,7 @@ int main() {
     val doNothing = CLE["doNothing"];
     val square = CLE["square"];
     val blackbody_st = CLE["blackbody_st"];
+    val nodeAudit = CLE["nodeAudit"];
 
     double *a = new double(27.8);
     double *t2 = new double(600);
@@ -150,7 +151,7 @@ int main() {
             .textInput();
 
     HybridNode<string> *statusButton = childOfMaindivBuilder_str.button(
-        "statusButton", "Print Status", doNothing);
+        "statusButton", "Print Status", nodeAudit);
 
     // HybridNode<double> *a_tinp =
     //     childOfMaindivBuilder.withLinkMultiplierConstant(1)

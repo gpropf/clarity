@@ -41,6 +41,10 @@ class CLElement {
     console.log("doNothing(): a function that proudly does nothing...");
   }
 
+  static nodeAudit() {
+    Module.HybridNode.nodeAudit();
+  }
+
   static destroy_everything() {
     console.log("destroy_everything():BOOM!");
     Module.ClarityNode.runCallbackById("destroy_everything")
