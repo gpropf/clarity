@@ -15,10 +15,15 @@ map<const int, ClarityNode *> ClarityNode::switchboard;
 map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm;
 val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
+template <>
+const array<string, 8> CanvasGrid<unsigned char>::colors = {
+    "#F5F5DC", "#00FF00", "#00AA00", "#FF00FF",
+    "#AA00AA", "#00AAFF", "#9090AA", "#888888"};
+
 
 vector<int *> ns;
-vector<ModelNode<int> *> mns;
-vector<ClarityNode *> clns;
+//vector<ModelNode<int> *> mns;
+vector<HybridNode<int> *> clns;
 
 time_t msecs_time() {
     struct timeval time_now {};
@@ -32,24 +37,22 @@ time_t msecs_time() {
 }
 
 void destroy_everything() {
-    cout << "Vectors clns, ns, and mns contain: " << clns.size() << ", "
-         << ns.size() << ", " << mns.size() << " elements respectively.\n";
+    cout << "Vectors clns, ns contain: " << clns.size() << ", "
+         << ns.size() << " elements respectively.\n";
     for (auto cln : clns) {
         delete cln;
     }
     for (auto i : ns) {
         delete i;
     }
-    for (auto mn : mns) {
-        delete mn;
-    }
+   
     clns.clear();
     ns.clear();
-    mns.clear();
+  
 }
 
-int *n_input_fields = new int(30);
-int *n_fieldsets = new int(100);
+int *n_input_fields = new int(5);
+int *n_fieldsets = new int(6);
 
 template <class Nc, typename V, typename N>
 void make_trs(CLNodeFactory<Nc, V, N> builder) {
@@ -59,14 +62,14 @@ void make_trs(CLNodeFactory<Nc, V, N> builder) {
 
         for (int i = 0; i < *n_input_fields; i++) {
             int *iptr = new int(i);
-            ModelNode<int> *mn = nullptr;
-            ClarityNode *cln = builder.withStoredValueType(CppType::Int)
+            //ModelNode<int> *mn = nullptr;
+            HybridNode<int> *cln = (CLNodeFactory<HybridNode<int>, int, int>(builder))
                                    .withName("cln_" + to_string(i))
-                                   .withStoredValue(iptr)
-                                   .template extractModelNode<V>(mn)
+                                   .withCppVal(iptr)
+                                   //.template extractModelNode<V>(mn)
                                    .trInput();
             ns.push_back(iptr);
-            mns.push_back(mn);
+            //mns.push_back(mn);
             clns.push_back(cln);
         }
         // destroy_everything();
@@ -96,50 +99,49 @@ int main() {
     double *d1 = new double(27.8);
     double *d2 = new double(600.4);
 
-    CLNodeFactory<ClarityNode, double, double> builder("div", "maindiv",
+    CLNodeFactory<HybridNode<int>, int, double> builder("div", "maindiv",
                                                        CppType::NoData);
 
-    ClarityNode *maindiv = builder.build();
+    HybridNode<int> *maindiv = builder.build();
 
-    CLNodeFactory<ClarityNode, double, double> childOfMaindivBuilder =
+    CLNodeFactory<HybridNode<int>, int, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
     ModelNode<double> *d1_mn;
-    ClarityNode *d1_trinp =
-        childOfMaindivBuilder.withStoredValueType(CppType::Double)
-            .withName("d1")
-            .withStoredValue(d1)
-            .extractModelNode<double>(d1_mn)
-            .trInput();
+    // HybridNode<int> *d1_trinp =
+    //     childOfMaindivBuilder
+    //         .withName("d1")
+    //         .withCppVal(d1)
+    //        // .extractModelNode<int>(d1_mn)
+    //         .trInput();
 
-    ClarityNode *labelled_d1_trinp =
-        childOfMaindivBuilder.labelGivenNode(d1_trinp, "CONST LABEL");
+    // HybridNode<int> *labelled_d1_trinp =
+    //     childOfMaindivBuilder.labelGivenNode(d1_trinp, "CONST LABEL");
 
-    CLNodeFactory<ClarityNode, int, int> childOfMaindivBuilder_int;
-    CLNodeFactory<ClarityNode, int, int>::clone(childOfMaindivBuilder,
+    CLNodeFactory<HybridNode<int>, int, int> childOfMaindivBuilder_int;
+    CLNodeFactory<HybridNode<int>, int, int>::clone(childOfMaindivBuilder,
                                                 childOfMaindivBuilder_int);
 
-    childOfMaindivBuilder_int =
-        childOfMaindivBuilder_int.withStoredValueType(CppType::Int);
+   
 
-    ClarityNode *fieldsets_inp =
+    HybridNode<int> *fieldsets_inp =
         childOfMaindivBuilder_int  // .withStoredValueType(CppType::Int)
-            .withStoredValue(n_fieldsets)
+            .withCppVal(n_fieldsets)
             .textInput();
-    ClarityNode *labelled_fieldsets_inp =
+    HybridNode<int> *labelled_fieldsets_inp =
         childOfMaindivBuilder_int.labelGivenNode(fieldsets_inp, "fieldsets");
 
-    ClarityNode *n_input_fields_inp =
+    HybridNode<int> *n_input_fields_inp =
         childOfMaindivBuilder_int  // .withStoredValueType(CppType::Int)
-            .withStoredValue(n_input_fields)
+            .withCppVal(n_input_fields)
             .textInput();
-    ClarityNode *labelled_n_input_fields_inp =
+    HybridNode<int> *labelled_n_input_fields_inp =
         childOfMaindivBuilder_int.labelGivenNode(n_input_fields_inp, "fields per set");
 
-    ClarityNode *statusButton = childOfMaindivBuilder.button(
+    HybridNode<int> *statusButton = childOfMaindivBuilder.button(
         "statusButton", "BOOM!", destroy_everything_cpp);
 
-    ClarityNode *make_trs_button = childOfMaindivBuilder.button(
+    HybridNode<int> *make_trs_button = childOfMaindivBuilder.button(
         "make_trs_button", "Make the fields!", make_trs_ints);
 
     printf("Setup complete!\n");

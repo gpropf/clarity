@@ -176,7 +176,7 @@ class CLNodeFactory {
      * @return CLNodeFactory
      */
     template <typename T>
-    inline CLNodeFactory extractModelNode(ModelNode<T> *&modelNode) {
+    inline CLNodeFactory extractModelNode(Nc *&modelNode) {
         modelNode = modelNode_;
         return *this;
     }
