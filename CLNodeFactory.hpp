@@ -193,8 +193,7 @@ class CLNodeFactory {
         if (existingNode != nullptr) {
             newNode = existingNode;
         } else {
-            newNode =
-                new Nc(name_, tag_, useExistingDOMElement_);
+            newNode = new Nc(name_, tag_, useExistingDOMElement_);
         }
 
         newNode->setBoundField(boundField_);
@@ -352,7 +351,7 @@ class CLNodeFactory {
      */
     // inline CLNodeFactory withStoredValue(V *storedValue) const & {
     //     assert(storedValue != nullptr);
-       
+
     //     CLNodeFactory cpy(*this);
     //     cpy.modelNode_ = mn;
     //     return cpy;
@@ -495,12 +494,14 @@ class CLNodeFactory {
         buttonDOMElement.call<void>("addEventListener", val("click"),
                                     onPressCallback);
         return button;
-    }
+    }    
 
     /**
-     * @brief An HTML label. By default, this tracks the value of the current
-     * ModelNode and can thus be changed dynamically.
+     * @brief
      *
+     * @tparam Nc_any This template param exists because the label value
+     * (probably a string) does not need to be the same as the thing being
+     * labelled.
      * @param forNode
      * @param text
      * @return Nc*
@@ -601,9 +602,9 @@ class CLNodeFactory {
 
     inline CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight,
                                      int pixelWidth, int pixelHeight) {
-        CanvasGrid<V> *cg = new CanvasGrid<V>(
-            name_, "canvas", useExistingDOMElement_,
-            gridWidth, gridHeight, pixelWidth, pixelHeight);
+        CanvasGrid<V> *cg =
+            new CanvasGrid<V>(name_, "canvas", useExistingDOMElement_,
+                              gridWidth, gridHeight, pixelWidth, pixelHeight);
         cg = static_cast<CanvasGrid<V> *>(build(cg));
 
         cg->initcg();
