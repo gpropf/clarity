@@ -494,7 +494,7 @@ class CLNodeFactory {
         buttonDOMElement.call<void>("addEventListener", val("click"),
                                     onPressCallback);
         return button;
-    }    
+    }
 
     /**
      * @brief
@@ -526,6 +526,8 @@ class CLNodeFactory {
                       .withBoundField("value")
                       .withAttributes(inputFieldAttrs)
                       .build();
+        inp->refreshDOMValueFromModel();
+        inp->pushValToPeers(inp);
         return inp;
     }
 
@@ -540,6 +542,8 @@ class CLNodeFactory {
                       .withBoundField("value")
                       .withAttributes(inputFieldAttrs)
                       .build();
+        inp->refreshDOMValueFromModel();
+        inp->pushValToPeers(inp);
         return inp;
     }
 
@@ -549,20 +553,10 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    inline Nc *trInput() {
-        map<string, val> inputFieldAttrs = {{"type", val("text")}};
-        Nc *tinp = withTag("input")
-                       .withBoundField("value")
-                       .withAttributes(inputFieldAttrs)
-                       .build();
-
-        inputFieldAttrs["type"] = val("range");
-        // inputFieldAttrs.find("type") = "range";
-        Nc *rinp = withTag("input")
-                       .withBoundField("value")
-                       .withAttributes(inputFieldAttrs)
-                       .build();
-        Nc *outerDiv = withTag("div").withName("tr_" + name_).build();
+    inline Nc *trInput() {        
+        Nc *tinp = withName("txt_" + name_).textInput();
+        Nc *rinp = withName("rng_" + name_).rangeInput();
+        Nc *outerDiv = withTag("div").withName("wrapper_" + name_).build();
         outerDiv->appendChild(tinp);
         outerDiv->appendChild(rinp);
         return outerDiv;

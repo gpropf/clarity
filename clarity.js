@@ -283,7 +283,7 @@ class CLElement {
         Module.ClarityNode.updateNodeFromDomById(outerThis.id_)
         //Module.ClarityNode.pullValFromPeersById(outerThis.id_)
         Module.ClarityNode.markNodeDirtyById(outerThis.id_)
-        console.log("For ID: " + this.id + " Value changed to:" + this.domElement);
+        console.log("For ID: " + this.id + " Value changed to:" + this.domElement_);
       })
     }
   }

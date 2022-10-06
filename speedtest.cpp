@@ -50,8 +50,8 @@ void destroy_everything() {
     ns.clear();
 }
 
-int *n_input_fields = new int(5);
-int *n_fieldsets = new int(6);
+int *n_input_fields = new int(3);
+int *n_fieldsets = new int(2);
 
 template <class Nc, typename V, typename N>
 void make_trs(CLNodeFactory<Nc, V, N> builder) {
@@ -133,9 +133,9 @@ int main() {
             .withCppVal(n_fieldsets)
             .textInput();
 
-    fieldsets_inp->setCppVal(n_fieldsets);
-    fieldsets_inp->refreshDOMValueFromModel();
-    fieldsets_inp->pushValToPeers(fieldsets_inp);
+   // fieldsets_inp->setCppVal(n_fieldsets);
+    // fieldsets_inp->refreshDOMValueFromModel();
+    // fieldsets_inp->pushValToPeers(fieldsets_inp);
 
     HybridNode<int> *labelled_fieldsets_inp =
         childOfMaindivBuilder_int.labelGivenNode(fieldsets_inp, "fieldsets");
@@ -144,6 +144,11 @@ int main() {
         childOfMaindivBuilder_int  // .withStoredValueType(CppType::Int)
             .withCppVal(n_input_fields)
             .textInput();
+
+   // n_input_fields_inp->setCppVal(n_input_fields);
+    // n_input_fields_inp->refreshDOMValueFromModel();
+    // n_input_fields_inp->pushValToPeers(n_input_fields_inp);
+
     HybridNode<int> *labelled_n_input_fields_inp =
         childOfMaindivBuilder_int.labelGivenNode(n_input_fields_inp,
                                                  "fields per set");
@@ -167,6 +172,6 @@ int main() {
         make_trs(childOfMaindivBuilder_int);
     };
 
-    //utils_instance.call<void>("utiltest", 3);
+    // utils_instance.call<void>("utiltest", 3);
     return 0;
 }

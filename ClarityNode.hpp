@@ -464,7 +464,7 @@ class HybridNode : public ClarityNode {
 
     inline void setCppVal(V *cppVal) { cppVal_ = cppVal; }
 
-    template <typename Ct>
+    
     static void nodeAudit() {
         for (auto [id, node] : switchboard) {
             HybridNode<V> *hn = dynamic_cast<HybridNode<V> *>(node);
