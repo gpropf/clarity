@@ -199,6 +199,14 @@ class CLElement {
     return new CLElement()
   }
 
+  set boundField(boundField) {
+    this.boundField_ = boundField;
+  }
+
+  get boundField() {
+    return this.boundField_;
+  }
+
   set owner(owner) {
     this.owner_ = owner
   }
@@ -261,6 +269,7 @@ class CLElement {
     this.id_ = id
     this.tag_ = tag
     this.name_ = name
+    this.boundField_ = "value"; // FIXME
 
     // console.log(`ID ${id} from ticketMachine.`)
     var el = document.getElementById(this.id_)
@@ -287,7 +296,10 @@ class CLElement {
         Module.ClarityNode.updateNodeFromDomById(outerThis.id_)
         //Module.ClarityNode.pullValFromPeersById(outerThis.id_)
         Module.ClarityNode.markNodeDirtyById(outerThis.id_)
-        console.log("For ID: " + this.id + " Value changed to:" + this.domElement_);
+        if (outerThis.boundField != undefined)
+          console.log("For ID: " + outerThis.id + " Value changed to: " + outerThis.domElement[outerThis.boundField]);
+        else
+          console.log("For ID: " + outerThis.id + " Value changed");
       })
     }
   }

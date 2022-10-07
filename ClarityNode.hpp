@@ -116,8 +116,8 @@ class ClarityNode {
         // "take" so we re-set it here.
 
         domElement_ = cle_["domElement"];
-
-        boundField_ = "value";
+        setBoundField("value");
+        // boundField_ = "value";  // FIXME: Not true for all elements
         ClarityNode::switchboard[id_] = this;
     }
 
@@ -165,11 +165,15 @@ class ClarityNode {
             domElement.set(boundField_, inval);
             domElement.call<void>("setAttribute", val(boundField_), inval);
         } else {
-            // FIXME: Should an assert or exception
+            // FIXME: Should be an assert or exception
         }
     }
 
-    inline void setBoundField(const string &boundField) { boundField_ = boundField; }
+    inline void setBoundField(const string &boundField) {
+        boundField_ = boundField;
+        cle_.set("boundField_", boundField);
+        // val domElement = cle_["domElement"];
+    }
 
     inline val getCLE() const { return cle_; }
     inline string getName() const { return name_; }
@@ -485,9 +489,7 @@ class HybridNode : public ClarityNode {
         *cppVal_ = jsval.as<V>();
     }
 
-    ~HybridNode() {
-        cout << "DESTROYING HybridNode with id: " << id_ << "\n";
-    }
+    ~HybridNode() { cout << "DESTROYING HybridNode with id: " << id_ << "\n"; }
 
    protected:
     V *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'
