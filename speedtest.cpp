@@ -100,10 +100,12 @@ int main() {
     val make_trs_ints = CLE["make_trs_ints"];
     val square = CLE["square"];
     val blackbody_st = CLE["blackbody_st"];
-    val nodeAudit = CLE["nodeAudit"];
+    val nodeAudit = CLE["nodeAudit_int"];
 
-    // double *d1 = new double(27.8);
+     double *d1 = new double(27.8);
     // double *d2 = new double(600.4);
+
+    ModelNode<double> *amn = new ModelNode<double>(d1, "independently_created_modelnode");
 
     CLNodeFactory<HybridNode<int>, int, double> builder("div", "maindiv",
                                                         CppType::NoData);
@@ -133,7 +135,7 @@ int main() {
             .withCppVal(n_fieldsets)
             .textInput();
 
-   // fieldsets_inp->setCppVal(n_fieldsets);
+    // fieldsets_inp->setCppVal(n_fieldsets);
     // fieldsets_inp->refreshDOMValueFromModel();
     // fieldsets_inp->pushValToPeers(fieldsets_inp);
 
@@ -145,7 +147,7 @@ int main() {
             .withCppVal(n_input_fields)
             .textInput();
 
-   // n_input_fields_inp->setCppVal(n_input_fields);
+    // n_input_fields_inp->setCppVal(n_input_fields);
     // n_input_fields_inp->refreshDOMValueFromModel();
     // n_input_fields_inp->pushValToPeers(n_input_fields_inp);
 

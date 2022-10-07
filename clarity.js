@@ -41,8 +41,12 @@ class CLElement {
     console.log("doNothing(): a function that proudly does nothing...");
   }
 
-  static nodeAudit() {
-    Module.HybridNode.nodeAudit();
+  static nodeAudit_int() {
+    Module.HybridNode.nodeAudit_int();
+  }
+
+  static nodeAudit_double() {
+    Module.HybridNode.nodeAudit_double();
   }
 
   static destroy_everything() {
@@ -184,7 +188,7 @@ class CLElement {
     var r = f.call(f, v);
     //console.log("Value " + v + ", Transformed into " + r + " by function " + f.name);
     return r;
-  }  
+  }
 
   appendChild(child) {
     if (child.domElement && child.domElement instanceof Element)
@@ -201,7 +205,7 @@ class CLElement {
 
   get owner() {
     return this.owner_
-  }  
+  }
 
   get tag() {
     return this.tag_
@@ -255,7 +259,7 @@ class CLElement {
 
   createDOMElement(id, tag, name) {
     this.id_ = id
-    this.tag_ = tag   
+    this.tag_ = tag
     this.name_ = name
 
     // console.log(`ID ${id} from ticketMachine.`)

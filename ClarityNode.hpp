@@ -467,10 +467,13 @@ class HybridNode : public ClarityNode {
     
     static void nodeAudit() {
         for (auto [id, node] : switchboard) {
+            string name = node->getName();
             HybridNode<V> *hn = dynamic_cast<HybridNode<V> *>(node);
+            string cppValStr = to_string(*(hn->cppVal_));
+            if (hn->cppVal_ == nullptr) cppValStr = "NULL PTR";
             cout << "ID: " << id
-                 << ", cppVal_: " << *(hn->cppVal_)
-                 << ", " << hn->getName() << "\n";
+                 << ", cppVal_: " << cppValStr
+                 << ", " << name << "\n";
         }
     }
 

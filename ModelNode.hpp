@@ -28,6 +28,8 @@ class ModelNode : public ClarityNode {
     ModelNode() : ClarityNode() {}
 
     virtual void refreshDOMValueFromModel(){};
+    virtual void updateNodeFromDom() {};
+    virtual val mn_getVal() const {};
 
     ModelNode(T *dynval) : ClarityNode() { cppVal_ = dynval; }
 

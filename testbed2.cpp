@@ -33,14 +33,15 @@ int main() {
     val doNothing = CLE["doNothing"];
     val square = CLE["square"];
     val blackbody_st = CLE["blackbody_st"];
-    val nodeAudit = CLE["nodeAudit"];
+    val nodeAudit = CLE["nodeAudit_double"];
 
     double *a = new double(27.8);
     double *t2 = new double(600);
 
     double *temp = new double(88.4);
     // ModelNode<double> *a_mn =
-    //     new ModelNode(a, "independently_created_modelnode");
+    ModelNode<double> *amn =
+        new ModelNode<double>(a, "independently_created_modelnode");
 
     // val blackbody_st = a_mn->getCLE()["blackbody_st"];
 
@@ -135,8 +136,7 @@ int main() {
     string *flexLabelText = new string("Flex Text");
 
     HybridNode<string> *flexLabel =
-        childOfMaindivBuilder_str
-            .withCppVal(flexLabelText)
+        childOfMaindivBuilder_str.withCppVal(flexLabelText)
             .withName("flexLabel")
             // .extractModelNode<string>(flexLabel_mn)
             .label(hybridTemp_tinp, *flexLabelText);
@@ -150,8 +150,9 @@ int main() {
             //.withTransformFns(passthru, passthru)
             .textInput();
 
-    HybridNode<string> *statusButton = childOfMaindivBuilder_str.button(
-        "statusButton", "Print Status", nodeAudit);
+    HybridNode<int> *statusButton =
+        (CLNodeFactory<HybridNode<int>, int, int>(childOfMaindivBuilder))
+            .button("statusButton", "Print Status", nodeAudit);
 
     // HybridNode<double> *a_tinp =
     //     childOfMaindivBuilder.withLinkMultiplierConstant(1)

@@ -35,7 +35,9 @@ EMSCRIPTEN_BINDINGS(clarity) {
                   allow_raw_pointers());
 
     class_<HybridNode<int>>("HybridNode")
-        .class_function("nodeAudit", &HybridNode<int>::nodeAudit,
+        .class_function("nodeAudit_int", &HybridNode<int>::nodeAudit,
+                        allow_raw_pointers())
+        .class_function("nodeAudit_double", &HybridNode<double>::nodeAudit,
                         allow_raw_pointers());
 
     enum_<CppType>("CppType")
