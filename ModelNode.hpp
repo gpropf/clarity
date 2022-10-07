@@ -28,14 +28,12 @@ class ModelNode : public ClarityNode {
     ModelNode() : ClarityNode() {}
 
     virtual void refreshDOMValueFromModel(){};
-    virtual void updateNodeFromDom() {};
-    virtual val mn_getVal() const {};
+    virtual void updateNodeFromDom(){};
+    virtual val mn_getVal() const { return val(NULL); };
 
     ModelNode(T *dynval) : ClarityNode() { cppVal_ = dynval; }
 
-    ModelNode(T *dynval, const string &name) : ModelNode(dynval) {
-        name_ = name;
-    }
+    ModelNode(T *dynval, const string &name) : ModelNode(dynval) { name_ = name; }
 
     virtual val getVal() const {
         if (cppVal_ == nullptr) {

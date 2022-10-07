@@ -79,6 +79,17 @@ class ClarityNode {
 
     // void EMSCRIPTEN_KEEPALIVE init();
     inline ClarityNode() { init(); }
+
+    virtual ~ClarityNode() {
+        cout << "DESTROYING ClarityNode " << id_ << "\n";
+        for (auto dl : dlpeers_) {
+            dl.reset();
+        }
+        dlpeers_.clear();
+        val domElement = cle_["domElement"];
+        if (!domElement.isUndefined()) cle_["domElement"].template call<void>("remove");
+    }
+
     // inline ClarityNode(const CppType storedValueType)
     //     : storedValueType_(storedValueType) {
     //     init();
@@ -149,7 +160,7 @@ class ClarityNode {
     inline virtual void setVal(const val &inval) {
         clean_ = false;
         val domElement = cle_["domElement"];
-        //cle_.call<void>("printVal", inval);        
+        // cle_.call<void>("printVal", inval);
         if (boundField_ != "") {
             domElement.set(boundField_, inval);
             domElement.call<void>("setAttribute", val(boundField_), inval);
@@ -222,7 +233,7 @@ class ClarityNode {
 
     static void pushValToPeersById(int id) {
         ClarityNode *cnn = getCLElementById(id);
-        //cout << cnn->nodeStats("[pushValToPeersById]");
+        // cout << cnn->nodeStats("[pushValToPeersById]");
         cnn->pushValToPeers(cnn);
     }
 
@@ -475,14 +486,7 @@ class HybridNode : public ClarityNode {
     }
 
     ~HybridNode() {
-        cout << "DESTROYING HybridNode " << id_ << "\n";
-
-        for (auto dl : dlpeers_) {
-            dl.reset();
-        }
-        dlpeers_.clear();
-        val domElement = cle_["domElement"];
-        if (!domElement.isUndefined()) cle_["domElement"].template call<void>("remove");
+        cout << "DESTROYING HybridNode with id: " << id_ << "\n";
     }
 
    protected:

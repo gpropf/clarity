@@ -1,7 +1,6 @@
 #ifndef CanvasElement_hpp
 #define CanvasElement_hpp
 
-//#include "CLNodeFactory.hpp"
 #include "ClarityNode.hpp"
 
 namespace clarity {
@@ -13,7 +12,9 @@ class CanvasElement : public HybridNode<V> {
                   bool useExistingDOMElement)
         : HybridNode<V>(name, tag, useExistingDOMElement) {}
 
-    // void setDrawFuntionName(const string &drawFuntionName);
+    ~CanvasElement() {
+        cout << "DESTROYING CanvasElement with id: " << this->id_ << "\n";
+    }
 
     virtual void refreshDOMValueFromModel(){};
 
@@ -146,6 +147,10 @@ class CanvasGrid : public CanvasElement<V> {
         pixelHeight_ = pixelHeight;
         cellWidth_ = pixelWidth_ / gridWidth_;
         cellHeight_ = pixelHeight_ / gridHeight_;
+    }
+
+    ~CanvasGrid() {
+        cout << "DESTROYING CanvasGrid with id: " << this->id_ << "\n";
     }
 };
 
