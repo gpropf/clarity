@@ -16,7 +16,7 @@ class CLElement {
         ctx.beginPath();
         ctx.arc(250, 40, 32, 0, 2 * Math.PI);
         ctx.fill();
-        console.log("extraInitCode['canvas']()")
+        // console.log("extraInitCode['canvas']()")
       }
     }
   };

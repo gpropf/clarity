@@ -56,6 +56,7 @@ int *n_fieldsets = new int(2);
 template <class Nc, typename V, typename N>
 void make_trs(CLNodeFactory<Nc, V, N> builder) {
     time_t t1 = msecs_time();
+    int fieldCount = 0;
     for (int j = 0; j < *n_fieldsets; j++) {
         // n_input_fields = new int(90);
 
@@ -64,7 +65,7 @@ void make_trs(CLNodeFactory<Nc, V, N> builder) {
             // ModelNode<int> *mn = nullptr;
             HybridNode<int> *cln =
                 (CLNodeFactory<HybridNode<int>, int, int>(builder))
-                    .withName("cln_" + to_string(i))
+                    .withName("cln_" + to_string(fieldCount++))
                     .withCppVal(iptr)
                     //.template extractModelNode<V>(mn)
                     .trInput();
