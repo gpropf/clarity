@@ -26,7 +26,7 @@ class ModelNode : public ClarityNode {
 
     virtual void refreshDOMValueFromModel(){};
     virtual void updateNodeFromDom(){};
-    virtual val mn_getVal() const { return val(NULL); };
+    //virtual val mn_getVal() const { return val(NULL); };
 
     ModelNode(T *dynval) : ClarityNode() { cppVal_ = dynval; }
 

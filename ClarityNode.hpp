@@ -69,7 +69,7 @@ class ClarityNode {
     // EMSCRIPTEN_KEEPALIVE void addJSEventListener(const string &eventName,
     //                                              val eventCallback);
 
-    virtual val mn_getVal() const = 0;
+    //virtual val mn_getVal() const = 0;
 
     inline string getTag() const { return tag_; }
     inline int getId() const { return id_; }
@@ -439,19 +439,19 @@ class HybridNode : public ClarityNode {
         }
     }
 
-    virtual val mn_getVal() const {
-        if (cppVal_ == nullptr) {
-            return val(NULL);
-        }
-        if (*dataDimensionality_ != 1) {
-            // We clearly have something with more than one value. We need to
-            // construct a JS version of the dataDimensionality_ list and return
-            // it. This will then be sent to the CG's setVal method and used to
-            // initiate the data stream transfer.
-        }
-        // Single value case, proceed as usual.
-        return val(cpp2js<V>(cppVal_));
-    }
+    // virtual val mn_getVal() const {
+    //     if (cppVal_ == nullptr) {
+    //         return val(NULL);
+    //     }
+    //     if (*dataDimensionality_ != 1) {
+    //         // We clearly have something with more than one value. We need to
+    //         // construct a JS version of the dataDimensionality_ list and return
+    //         // it. This will then be sent to the CG's setVal method and used to
+    //         // initiate the data stream transfer.
+    //     }
+    //     // Single value case, proceed as usual.
+    //     return val(cpp2js<V>(cppVal_));
+    // }
 
     // V mn_jsToCppVal(val jsval) {
     //     V cppVal = jsval.as<V>();
@@ -475,7 +475,8 @@ class HybridNode : public ClarityNode {
 
     virtual val getVal() const {
         if (cppVal_ != nullptr) {
-            return mn_getVal();
+            return val(cpp2js<V>(cppVal_));
+            //return mn_getVal();
         }
         val domVal = ClarityNode::getVal();
         return domVal;
