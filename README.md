@@ -9,4 +9,7 @@ Clarity is a web development framework written in C++ using emscripten to facili
 ### Todo ###
 
 1. ~~Find out why the 'name' field doesn't set in CLE.~~
-3. 
+3. Clean up update functions and standardize nomenclature.
+4. Collect global static data into a header or place at end of each header file so each new program doesn't need to create them.
+5. Delete or disable unimplemented features.
+6. Set up real test template with standardized debug elements like a node audit button.

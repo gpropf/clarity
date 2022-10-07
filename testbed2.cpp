@@ -8,7 +8,6 @@
 map<const int, ClarityNode *> ClarityNode::switchboard;
 map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm;
-// val ClarityNode::ActiveLink::CLElement_ = val::global("CLElement");
 val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
 
 template <>
@@ -115,7 +114,6 @@ int main() {
             .withTag("canvas")
             .withAttributes({{"style", val("border: 1px solid green")}, {"width", val(400)}, {"height", val(300)}})
             .canvasGrid(30, 20, 400, 300);
-    //.canvas();
 
     CLNodeFactory<HybridNode<string>, string, int> childOfMaindivBuilder_str(childOfMaindivBuilder);
 
@@ -123,16 +121,11 @@ int main() {
 
     HybridNode<string> *flexLabel = childOfMaindivBuilder_str.withCppVal(flexLabelText)
                                         .withName("flexLabel")
-                                        // .extractModelNode<string>(flexLabel_mn)
                                         .label(hybridTemp_tinp, *flexLabelText);
 
     val passthru = flexLabel->getCLE()["passthru"];
 
-    HybridNode<string> *inputFlexTextLabel = childOfMaindivBuilder_str
-                                                 .withModelNode(flexLabel)
-
-                                                 //.withTransformFns(passthru, passthru)
-                                                 .textInput();
+    HybridNode<string> *inputFlexTextLabel = childOfMaindivBuilder_str.withModelNode(flexLabel).textInput();
 
     HybridNode<int> *statusButton = (CLNodeFactory<HybridNode<int>, int, int>(childOfMaindivBuilder))
                                         .button("statusButton", "Node Audit", nodeAudit);

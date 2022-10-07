@@ -111,9 +111,9 @@ class ClarityNode {
     ClarityNode(const string &name, const string &tag, bool useExistingDOMElement) : name_(name), tag_(tag) {
         init();
         if (!useExistingDOMElement) cle_.call<void>("createDOMElement", id_, tag, name);
-        //cle_.set("name", val(name));
-        // For some reason the code that sets the name in clarity.js doesn't
-        // "take" so we re-set it here.
+        // cle_.set("name", val(name));
+        //  For some reason the code that sets the name in clarity.js doesn't
+        //  "take" so we re-set it here.
 
         domElement_ = cle_["domElement"];
         setBoundField("value");
@@ -147,6 +147,14 @@ class ClarityNode {
         return domText;
     }
 
+    /**
+     * @brief Read the DOM element text and convert it to a JS variable using the cppVal_ type as a type hint. Even if
+     * this particular node does not contain a value there it will still be able to use the pointer as a type hint. The
+     * template specializations allow us to use functions like stof, stod, and stoi to convert the text to the
+     * appropriate value type.
+     *
+     * @return val
+     */
     virtual val getVal() const {
         string valueText = getDOMText();
         return val("NO SPECIALIZED TEMPLATE");
@@ -445,27 +453,23 @@ class HybridNode : public ClarityNode {
         return val(cpp2js<V>(cppVal_));
     }
 
-    V mn_jsToCppVal(val jsval) {
-        V cppVal = jsval.as<V>();
-        *reinterpret_cast<V *>(cppVal_) = cppVal;
-        return cppVal;
-    }
+    // V mn_jsToCppVal(val jsval) {
+    //     V cppVal = jsval.as<V>();
+    //     *reinterpret_cast<V *>(cppVal_) = cppVal;
+    //     return cppVal;
+    // }
 
-    void mn_setVal(const val &inval) {
-        assert(cppVal_ != nullptr);
-        V newCppVal = mn_jsToCppVal(inval);
-        // cout << "New C++ value from JS val: " << newCppVal << "\n";
+    void setCppValFromJSVal(const val &jsval) {
+        // assert(cppVal_ != nullptr);
+        V newCppVal = jsval.as<V>();  // mn_jsToCppVal(inval);
+        *reinterpret_cast<V *>(cppVal_) = newCppVal;
         pushValToPeers(this);
     }
 
     inline virtual void setVal(const val &inval) {
-        // cout << "HybridNode::setVal()\n";
         ClarityNode::setVal(inval);
         if (cppVal_ != nullptr) {
-            // cout << nodeStats("HybridNode::setVal() --> This node has a cppVal!\n");
-            mn_setVal(inval);
-        } else {
-            // cout << nodeStats("HybridNode::setVal() --> This node DOES NOT HAVE a cppVal!\n");
+            setCppValFromJSVal(inval);
         }
     }
 
@@ -486,7 +490,10 @@ class HybridNode : public ClarityNode {
 
     virtual void updateNodeFromDom() {
         val jsval = getVal();
-        *cppVal_ = jsval.as<V>();
+        if (cppVal_ != nullptr) {
+            cout << "cppVal_ exists!\n";
+            *cppVal_ = jsval.as<V>();
+        }
     }
 
     ~HybridNode() { cout << "DESTROYING HybridNode with id: " << id_ << "\n"; }
