@@ -283,8 +283,9 @@ class CLElement {
         // their actual parents using a call in C++ to the appendChild method.
 
         el.id = this.id_
-        el.type = this.type_
+        //el.type = this.type_
         el.name = this.name_
+        el.setAttribute("name", name);
       }
     }
     this.domElement_ = el

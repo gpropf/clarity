@@ -19,10 +19,7 @@ template <typename T>
 class ModelNode : public ClarityNode {
    public:
     ~ModelNode() {
-        cout << "DESTROYING MODELNODE " << id_ << "\n";
-        for (auto dl : dlpeers_) {
-            dl.reset();
-        }
+        cout << "DESTROYING MODELNODE " << id_ << "\n";        
     }
 
     ModelNode() : ClarityNode() {}

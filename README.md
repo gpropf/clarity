@@ -6,3 +6,7 @@ Clarity is a web development framework written in C++ using emscripten to facili
 
 ### An Interface is a Graph
 
+### Todo ###
+
+1. ~~Find out why the 'name' field doesn't set in CLE.~~
+3. 
