@@ -69,7 +69,7 @@ class ClarityNode {
     // EMSCRIPTEN_KEEPALIVE void addJSEventListener(const string &eventName,
     //                                              val eventCallback);
 
-    //virtual val mn_getVal() const = 0;
+    // virtual val mn_getVal() const = 0;
 
     inline string getTag() const { return tag_; }
     inline int getId() const { return id_; }
@@ -439,33 +439,18 @@ class HybridNode : public ClarityNode {
         }
     }
 
-    // virtual val mn_getVal() const {
-    //     if (cppVal_ == nullptr) {
-    //         return val(NULL);
-    //     }
-    //     if (*dataDimensionality_ != 1) {
-    //         // We clearly have something with more than one value. We need to
-    //         // construct a JS version of the dataDimensionality_ list and return
-    //         // it. This will then be sent to the CG's setVal method and used to
-    //         // initiate the data stream transfer.
-    //     }
-    //     // Single value case, proceed as usual.
-    //     return val(cpp2js<V>(cppVal_));
-    // }
-
-    // V mn_jsToCppVal(val jsval) {
-    //     V cppVal = jsval.as<V>();
-    //     *reinterpret_cast<V *>(cppVal_) = cppVal;
-    //     return cppVal;
-    // }
-
-    void setCppValFromJSVal(const val &jsval) {
-        // assert(cppVal_ != nullptr);
-        V newCppVal = jsval.as<V>();  // mn_jsToCppVal(inval);
+    void setCppValFromJSVal(const val &jsval) {        
+        V newCppVal = jsval.as<V>();
         *reinterpret_cast<V *>(cppVal_) = newCppVal;
         pushValToPeers(this);
     }
 
+    /**
+     * @brief Calls ClarityNode::setVal() first to initiate the push process if there are peer nodes. If the cppVal_
+     * pointer is non-null, we also then update that value in this node.
+     *
+     * @param inval
+     */
     inline virtual void setVal(const val &inval) {
         ClarityNode::setVal(inval);
         if (cppVal_ != nullptr) {
@@ -473,10 +458,15 @@ class HybridNode : public ClarityNode {
         }
     }
 
+    /**
+     * @brief If this node has a non-null cppVal_ pointer we return the JS form of the value therein. Otherwise we call
+     * the CN method that pulls the value from the DOM element.
+     *
+     * @return val
+     */
     virtual val getVal() const {
         if (cppVal_ != nullptr) {
             return val(cpp2js<V>(cppVal_));
-            //return mn_getVal();
         }
         val domVal = ClarityNode::getVal();
         return domVal;
