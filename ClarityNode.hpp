@@ -1,7 +1,16 @@
 #ifndef ClarityNode_hpp
 #define ClarityNode_hpp
 
+#include <sstream>
+
 #include "clarity.hpp"
+
+template <typename Type>
+std::string clto_str(const Type &t) {
+    std::ostringstream os;
+    os << t;
+    return os.str();
+}
 
 namespace clarity {
 
@@ -64,12 +73,18 @@ class ClarityNode {
         }
     };
 
-    // EMSCRIPTEN_KEEPALIVE void addEventListenerByName(
-    //     const string &eventName, const string &callbackName);
-    // EMSCRIPTEN_KEEPALIVE void addJSEventListener(const string &eventName,
-    //                                              val eventCallback);
+    virtual string cppValToString() const { return "CN::cppValToString()"; }
 
-    // virtual val mn_getVal() const = 0;
+    static void nodeAudit() {
+        for (auto [id, node] : switchboard) {
+            string name = node->getName();
+
+            string cppValStr = "NULL PTR2";
+            cppValStr = node->cppValToString();
+            // if (hn->cppVal_ == nullptr) cppValStr = "NULL PTR";
+            cout << "ID: " << id << ", cppVal_: " << cppValStr << ", " << name << "\n";
+        }
+    }
 
     inline string getTag() const { return tag_; }
     inline int getId() const { return id_; }
@@ -429,17 +444,18 @@ class HybridNode : public ClarityNode {
 
     inline void setCppVal(V *cppVal) { cppVal_ = cppVal; }
 
-    static void nodeAudit() {
-        for (auto [id, node] : switchboard) {
-            string name = node->getName();
-            HybridNode<V> *hn = dynamic_cast<HybridNode<V> *>(node);
-            string cppValStr = to_string(*(hn->cppVal_));
-            if (hn->cppVal_ == nullptr) cppValStr = "NULL PTR";
-            cout << "ID: " << id << ", cppVal_: " << cppValStr << ", " << name << "\n";
-        }
-    }
+    // static void nodeAudit() {
+    //     for (auto [id, node] : switchboard) {
+    //         string name = node->getName();
+    //         HybridNode<V> *hn = dynamic_cast<HybridNode<V> *>(node);
+    //         string cppValStr = "NULL PTR2";
+    //         cppValStr = hn->cppValToString();
+    //         //if (hn->cppVal_ == nullptr) cppValStr = "NULL PTR";
+    //         cout << "ID: " << id << ", cppVal_: " << cppValStr << ", " << name << "\n";
+    //     }
+    // }
 
-    void setCppValFromJSVal(const val &jsval) {        
+    void setCppValFromJSVal(const val &jsval) {
         V newCppVal = jsval.as<V>();
         *reinterpret_cast<V *>(cppVal_) = newCppVal;
         pushValToPeers(this);
@@ -470,6 +486,11 @@ class HybridNode : public ClarityNode {
         }
         val domVal = ClarityNode::getVal();
         return domVal;
+    }
+
+    inline string cppValToString() const {
+        if (cppVal_ == nullptr) return "NULLPTR";
+        return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
     }
 
     virtual void refreshDOMValueFromModel() {

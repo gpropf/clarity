@@ -26,6 +26,12 @@ class ModelNode : public ClarityNode {
 
     virtual void refreshDOMValueFromModel(){};
     virtual void updateNodeFromDom(){};
+
+    inline string cppValToString() const {
+        if (cppVal_ == nullptr) return "ModelNode NULLPTR";
+        return clto_str(*(reinterpret_cast<T *>(this->cppVal_)));
+    }
+
     //virtual val mn_getVal() const { return val(NULL); };
 
     ModelNode(T *dynval) : ClarityNode() { cppVal_ = dynval; }

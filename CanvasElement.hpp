@@ -8,23 +8,21 @@ namespace clarity {
 template <typename V>
 class CanvasElement : public HybridNode<V> {
    public:
-    CanvasElement(const string &name, const string &tag,
-                  bool useExistingDOMElement)
+    CanvasElement(const string &name, const string &tag, bool useExistingDOMElement)
         : HybridNode<V>(name, tag, useExistingDOMElement) {}
 
-    ~CanvasElement() {
-        cout << "DESTROYING CanvasElement with id: " << this->id_ << "\n";
+    ~CanvasElement() { cout << "DESTROYING CanvasElement with id: " << this->id_ << "\n"; }
+
+    inline string cppValToString() const {
+        if (this->cppVal_ == nullptr) return "CanvasElement NULLPTR";
+        return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
     }
 
     virtual void refreshDOMValueFromModel(){};
 
-    inline void setDrawFuntionName(const string &drawFuntionName) {
-        drawFuntionName_ = drawFuntionName;
-    }
+    inline void setDrawFuntionName(const string &drawFuntionName) { drawFuntionName_ = drawFuntionName; }
 
-    inline void refreshView() {
-        this->cle_.template call<void>(drawFuntionName_.c_str());
-    }
+    inline void refreshView() { this->cle_.template call<void>(drawFuntionName_.c_str()); }
 
    protected:
     int width_, height_;
@@ -51,14 +49,17 @@ class CanvasGrid : public CanvasElement<V> {
     int width_, height_;  //!< Width and Height in screen pixels.
     double scaleFactorH_ = 1.0;
     double scaleFactorV_ = 1.0;
-    int gridWidth_, gridHeight_, pixelWidth_, pixelHeight_, cellWidth_,
-        cellHeight_;
-    
+    int gridWidth_, gridHeight_, pixelWidth_, pixelHeight_, cellWidth_, cellHeight_;
+
     V currentCellVal_ = 0;
 
     static const array<string, 8> colors;
 
    public:
+    inline string cppValToString() const {
+        if (this->cppVal_ == nullptr) return "CanvasGrid NULLPTR";
+        return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
+    }
 
     inline virtual void setVal(const val &inval) {
         this->clean_ = false;
@@ -88,9 +89,7 @@ class CanvasGrid : public CanvasElement<V> {
             // cout << "\n";
             cellCount++;
         }
-        this->domElement_.template call<void>(
-            "addEventListener", val("click"),
-            CLElement_["setGridLocToCurrentVal"]);
+        this->domElement_.template call<void>("addEventListener", val("click"), CLElement_["setGridLocToCurrentVal"]);
         // addJSEventListener("click", CLElement_["setGridLocToCurrentVal"] );
         drawGrid();
     }
@@ -105,10 +104,8 @@ class CanvasGrid : public CanvasElement<V> {
     void drawGrid() const {
         val ctx = this->domElement_.template call<val>("getContext", val("2d"));
         val domElement = this->cle_["domElement"];
-        domElement.set(
-            "gridRef",
-            const_cast<CanvasGrid *>(
-                this));  // Very bizarre errors when trying to use domElement_.
+        domElement.set("gridRef",
+                       const_cast<CanvasGrid *>(this));  // Very bizarre errors when trying to use domElement_.
         domElement.set("gw", gridWidth_);
         domElement.set("gh", gridHeight_);
         domElement.set("cw", cellWidth_);
@@ -125,20 +122,17 @@ class CanvasGrid : public CanvasElement<V> {
 
                 ctx.set("fillStyle", colors[v]);
 
-                ctx.call<void>("fillRect", val(i * cellWidth_),
-                               val(j * cellHeight_), val(cellWidth_),
+                ctx.call<void>("fillRect", val(i * cellWidth_), val(j * cellHeight_), val(cellWidth_),
                                val(cellHeight_));
             }
             cellCount++;
         }
     }
 
-    CanvasGrid(const string &name, const string &tag,
-               bool useExistingDOMElement)
+    CanvasGrid(const string &name, const string &tag, bool useExistingDOMElement)
         : CanvasElement<V>(name, tag, useExistingDOMElement) {}
 
-    CanvasGrid(const string &name, const string &tag,
-               bool useExistingDOMElement, int gridWidth, int gridHeight,
+    CanvasGrid(const string &name, const string &tag, bool useExistingDOMElement, int gridWidth, int gridHeight,
                int pixelWidth, int pixelHeight)
         : CanvasGrid(name, tag, useExistingDOMElement) {
         gridWidth_ = gridWidth;
@@ -149,9 +143,7 @@ class CanvasGrid : public CanvasElement<V> {
         cellHeight_ = pixelHeight_ / gridHeight_;
     }
 
-    ~CanvasGrid() {
-        cout << "DESTROYING CanvasGrid with id: " << this->id_ << "\n";
-    }
+    ~CanvasGrid() { cout << "DESTROYING CanvasGrid with id: " << this->id_ << "\n"; }
 };
 
 }  // namespace clarity

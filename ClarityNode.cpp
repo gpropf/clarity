@@ -1,6 +1,13 @@
 #include "ClarityNode.hpp"
 
 template <>
+string HybridNode<string>::cppValToString() const {
+    //cout << "HybridNode<string>::cppValToString()\n";
+    if (cppVal_ == nullptr) return "HybridNode<string> NULLPTR";
+    return *cppVal_;// static_cast<string>(cppVal_);
+}
+
+template <>
 val HybridNode<double>::getVal() const {
     string valueText = getDOMText();
     return val(stod(valueText));
