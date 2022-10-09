@@ -35,12 +35,9 @@ int main() {
 
     double *a = new double(27.8);
     double *t2 = new double(600);
-
     double *temp = new double(88.4);
-    // ModelNode<double> *a_mn =
-    ModelNode<double> *amn = new ModelNode<double>(a, "independently_created_modelnode");
 
-    // val blackbody_st = a_mn->getCLE()["blackbody_st"];
+    ModelNode<double> *amn = new ModelNode<double>(a, "independently_created_modelnode");
 
     CLNodeFactory<HybridNode<double>, double, double> builder("div", "maindiv", CppType::NoData);
 
@@ -48,62 +45,24 @@ int main() {
 
     CLNodeFactory<HybridNode<double>, double, double> childOfMaindivBuilder = builder.createChildrenOf(maindiv);
 
-    // CLNodeFactory<CanvasGrid<unsigned char>, unsigned char, double>
-    // canvasBuilder("div", "canvasDiv",
-    //                                                    CppType::NoData);
-
-    // CanvasGrid<unsigned char> *canvas1 =
-    //     canvasBuilder.withName("canvas1")
-    //         .withTag("canvas")
-    //         .withAttributes({{"style", val("border: 1px solid green")},
-    //                          {"width", val(400)},
-    //                          {"height", val(300)}})
-    //         .canvasGrid(30, 20, 400, 300);
-    //         //.canvas();
-
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
 
     CLNodeFactory<HybridNode<double>, double, double> inputBuilder =
         childOfMaindivBuilder.withTag("input").withBoundField("value").withAttributes(inputFieldAttrs);
 
-    // ClarityNode *input_a =
-    //     inputBuilder.withName("input_a_text").withModelNode(a_mn).build();
-
     double *ival;
-    // ival = testmem(ival);
     testmem(ival);
     cout << "Value created in CLNF is: " << *ival << "\n";
-
-    // ModelNode<double> *temp_mn2;
-    // HybridNode<double> *input_temp =
-    //     childOfMaindivBuilder.withStoredValueType(CppType::Double)
-    //         .withName("input_temp_text")
-    //         .withStoredValue(temp)
-    //         //.withCppVal(temp)
-    //         .extractModelNode<double>(temp_mn2)
-    //         .textInput();
-
-    // HybridNode<double>  *input_temp_tr =
-    //     childOfMaindivBuilder.withStoredValueType(CppType::Double)
-    //         .withLinkMultiplierConstant(10)
-    //         .withName("input_temp_range")
-    //         .withModelNode(temp_mn2)
-    //       //  .withCppVal(temp)
-    //         .trInput();
 
     HybridNode<double> *hybridTemp_tinp =
         childOfMaindivBuilder.withLinkMultiplierConstant(1).withName("hybridTemp_tinp").withCppVal(temp).textInput();
 
     hybridTemp_tinp->setCppVal(temp);
 
-    HybridNode<double> *temp_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
-                                        .withName("temp_rinp")
-                                        //  .withModelNode(temp_mn2)
-                                        .rangeInput();
+    HybridNode<double> *temp_rinp =
+        childOfMaindivBuilder.withLinkMultiplierConstant(1).withName("temp_rinp").rangeInput();
 
     temp_rinp->addPeer(hybridTemp_tinp, 0.5);
-    // temp_rinp->pushValToPeers(temp_rinp);
-    // hybridTemp_tinp->addPeer(temp_rinp, 1);
     hybridTemp_tinp->refreshDOMValueFromModel();
     hybridTemp_tinp->pushValToPeers(hybridTemp_tinp);
 
@@ -123,18 +82,10 @@ int main() {
                                         .withName("flexLabel")
                                         .label(hybridTemp_tinp, *flexLabelText);
 
-    val passthru = flexLabel->getCLE()["passthru"];
-
     HybridNode<string> *inputFlexTextLabel = childOfMaindivBuilder_str.withModelNode(flexLabel).textInput();
 
     HybridNode<int> *statusButton = (CLNodeFactory<HybridNode<int>, int, int>(childOfMaindivBuilder))
                                         .button("statusButton", "Node Audit", nodeAudit);
-
-    // HybridNode<double> *a_tinp =
-    //     childOfMaindivBuilder.withLinkMultiplierConstant(1)
-    //         .withName("a_tinp")
-    //         .withCppVal(a)
-    //         .textInput();
 
     HybridNode<double> *svgarea = childOfMaindivBuilder.withName("svgarea")
                                       .withTag("svg")
@@ -161,17 +112,12 @@ int main() {
                                            .withAttributes({})
                                            .attributeNode("r", cir1);
 
-    HybridNode<double> *temp2_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
-                                         .withName("temp2_rinp")
-                                         .withCppVal(t2)
-                                         //  .withModelNode(temp_mn2)
-                                         .rangeInput();
+    HybridNode<double> *temp2_rinp =
+        childOfMaindivBuilder.withLinkMultiplierConstant(1).withName("temp2_rinp").withCppVal(t2).rangeInput();
 
     val blackbody = temp2_rinp->getCLE()["blackbody"];
 
-    HybridNode<double> *circleFill = childOfMaindivBuilder
-                                         .withModelNode(temp2_rinp)
-                                         //.withStoredValueType(CppType::String)
+    HybridNode<double> *circleFill = childOfMaindivBuilder.withModelNode(temp2_rinp)
                                          .withName("CIRCLEFILL")
                                          .withTransformFns(blackbody, blackbody)
                                          .withAttributes({})
@@ -182,7 +128,7 @@ int main() {
     temp2_rinp->pushValToPeers(temp2_rinp);
 
     string *textarea_val = new string("This is a textarea.");
-    HybridNode<string> *textarea1 = childOfMaindivBuilder_str.textarea(textarea_val, 8, 80);
+    HybridNode<string> *textarea1 = childOfMaindivBuilder_str.textarea(textarea_val, 3, 40);
     textarea1->refreshDOMValueFromModel();
     textarea1->pushValToPeers(textarea1);
 

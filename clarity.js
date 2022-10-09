@@ -276,14 +276,14 @@ class CLElement {
     if (el == null) {
       el = document.getElementById(this.name_)
       if (el == null) {
-        // console.log(`ELEMENT ${id}: tag is ${this.tag_}`)
         el = this.createDOMElementByTagType()
+
         document.body.appendChild(el)
-        // Without this the elements get garbage collected and vanish. The idea is that you append them later to
-        // their actual parents using a call in C++ to the appendChild method.
+        // Without this the newly created elements get garbage collected and vanish.
+        // The idea is that you append them later to their actual parents using a call
+        // in C++ to the appendChild method.
 
         el.id = this.id_
-        //el.type = this.type_
         el.name = this.name_
         el.setAttribute("name", name);
       }
