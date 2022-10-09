@@ -5,14 +5,21 @@
 
 #include "clarity.hpp"
 
-template <typename Type>
-std::string clto_str(const Type &t) {
+namespace clarity {
+
+/**
+ * @brief 
+ * 
+ * @tparam T 
+ * @param v 
+ * @return std::string 
+ */
+template <typename T>
+std::string clto_str(const T &v) {
     std::ostringstream os;
-    os << t;
+    os << v;
     return os.str();
 }
-
-namespace clarity {
 
 /**
  * @brief The project's central class. Describes an element with push/pull
@@ -26,7 +33,6 @@ namespace clarity {
  * contain pure virtual methods and trying to instantiate it will be an error.
  *
  */
-
 class ClarityNode {
    public:
     static map<string, std::function<void()>> callbackMap;

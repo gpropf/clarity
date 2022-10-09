@@ -181,6 +181,11 @@ int main() {
     temp2_rinp->refreshDOMValueFromModel();
     temp2_rinp->pushValToPeers(temp2_rinp);
 
+    string *textarea_val = new string("This is a textarea.");
+    HybridNode<string> *textarea1 = childOfMaindivBuilder_str.textarea(textarea_val, 8, 80);
+    textarea1->refreshDOMValueFromModel();
+    textarea1->pushValToPeers(textarea1);
+
     printf("Setup complete!\n");
 
     return 0;

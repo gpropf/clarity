@@ -26,39 +26,36 @@ namespace clarity {
 template <class Nc, typename V, typename N>
 class CLNodeFactory {
    public:
-    string tag_;   //!< Tag to be used with elements this factory builds.
-    string name_;  //!< Name to be used with elements this factory builds.
+    string tag_;               //!< Tag to be used with elements this factory builds.
+    string name_;              //!< Name to be used with elements this factory builds.
     CppType storedValueType_;  //!< storedValueType to be used with elements
                                //!< this factory builds.
 
     V *cppVal_ = nullptr;
 
-    string boundField_;  //!< Different types of elements need different fields
-                         //!< to be modified when the node value changes.
+    string boundField_;              //!< Different types of elements need different fields
+                                     //!< to be modified when the node value changes.
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
                                      //!< any new nodes as its children.
-    Nc *modelNode_ =
-        nullptr;  //!< If we create a new MN or attach one, we set this. Note
-                  //!< that we can create ControlNetworkNodes with no MN.
+    Nc *modelNode_ = nullptr;        //!< If we create a new MN or attach one, we set this. Note
+                                     //!< that we can create ControlNetworkNodes with no MN.
 
     N linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
                                     //!< values from node to node unchanged.
     val transformFn_ = val(NULL);   //!< See the docs on the ActiveLink class.
     val a2b_xfmr_ = val(NULL);
     val b2a_xfmr_ = val(NULL);
-    bool useExistingDOMElement_ =
-        false;  //!< Primarily this is intended for creating attribute nodes.
-                //!< The idea is that some nodes control attributes of other
-                //!< nodes. The canonical example of this would be color of an
-                //!< SVG object. In these cases we don't want to create a new
-                //!< DOM element.
+    bool useExistingDOMElement_ = false;  //!< Primarily this is intended for creating attribute nodes.
+                                          //!< The idea is that some nodes control attributes of other
+                                          //!< nodes. The canonical example of this would be color of an
+                                          //!< SVG object. In these cases we don't want to create a new
+                                          //!< DOM element.
 
-    map<string, val>
-        attrs_;  //!< Sometimes a web element should be created with a bunch of
-                 //!< attributes already set. That's what this is for. Even
-                 //!< simple things like text input fields need to set the type
-                 //!< attribute and doing just about anything with SVG requires
-                 //!< a lot of attributes.
+    map<string, val> attrs_;  //!< Sometimes a web element should be created with a bunch of
+                              //!< attributes already set. That's what this is for. Even
+                              //!< simple things like text input fields need to set the type
+                              //!< attribute and doing just about anything with SVG requires
+                              //!< a lot of attributes.
 
     /**
      * @brief This is a bit of a kludge to allow us to switch the parameter
@@ -79,11 +76,9 @@ class CLNodeFactory {
      * @param clnf_to 'to' factory
      * @return CLNodeFactory
      */
-    template <class Nc_from, typename V_from, typename N_from, class Nc_to,
-              typename V_to, typename N_to>
-    static CLNodeFactory clone(
-        const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from,
-        CLNodeFactory<Nc_to, V_to, N_to> &clnf_to) {
+    template <class Nc_from, typename V_from, typename N_from, class Nc_to, typename V_to, typename N_to>
+    static CLNodeFactory clone(const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from,
+                               CLNodeFactory<Nc_to, V_to, N_to> &clnf_to) {
         clnf_to.tag_ = clnf_from.tag_;
         clnf_to.name_ = clnf_from.name_;
         clnf_to.storedValueType_ = clnf_from.storedValueType_;
@@ -129,8 +124,7 @@ class CLNodeFactory {
      * but is meant to make basic distinctions between, say, a string and a
      * float value.
      */
-    inline CLNodeFactory(const string &tag, const string &name,
-                         CppType storedValueType)
+    inline CLNodeFactory(const string &tag, const string &name, CppType storedValueType)
         : tag_(tag), name_(name), storedValueType_(storedValueType) {}
 
     /**
@@ -142,8 +136,7 @@ class CLNodeFactory {
      * @param storedValue If we use this, we are creating a corresponding MN to
      * hold the value.
      */
-    inline CLNodeFactory(const string &tag, const string &name,
-                         CppType storedValueType, V *storedValue)
+    inline CLNodeFactory(const string &tag, const string &name, CppType storedValueType, V *storedValue)
         : tag_(tag), name_(name), storedValueType_(storedValueType) {
         withStoredValue(storedValue, true);
     }
@@ -411,16 +404,14 @@ class CLNodeFactory {
      * @param linkMultiplierConstant Cannot be 0.
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withLinkMultiplierConstant(
-        N linkMultiplierConstant) const & {
+    inline CLNodeFactory withLinkMultiplierConstant(N linkMultiplierConstant) const & {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(*this);
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
         return cpy;
     }
 
-    inline CLNodeFactory withLinkMultiplierConstant(
-        N linkMultiplierConstant) && {
+    inline CLNodeFactory withLinkMultiplierConstant(N linkMultiplierConstant) && {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(std::move(*this));
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
@@ -442,16 +433,14 @@ class CLNodeFactory {
      * @param b2a_xfmr
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withTransformFns(val a2b_xfmr,
-                                          val b2a_xfmr = val(NULL)) const & {
+    inline CLNodeFactory withTransformFns(val a2b_xfmr, val b2a_xfmr = val(NULL)) const & {
         CLNodeFactory cpy(*this);
         cpy.a2b_xfmr_ = a2b_xfmr;
         cpy.b2a_xfmr_ = b2a_xfmr;
         return cpy;
     }
 
-    inline CLNodeFactory withTransformFns(val a2b_xfmr,
-                                          val b2a_xfmr = val(NULL)) && {
+    inline CLNodeFactory withTransformFns(val a2b_xfmr, val b2a_xfmr = val(NULL)) && {
         CLNodeFactory cpy(std::move(*this));
         cpy.a2b_xfmr_ = a2b_xfmr;
         cpy.b2a_xfmr_ = b2a_xfmr;
@@ -485,14 +474,12 @@ class CLNodeFactory {
      * @param onPressCallback JS function to run when button is pressed.
      * @return Nc*
      */
-    inline Nc *button(const string &name, const string &text,
-                      val onPressCallback = val(NULL)) {
+    inline Nc *button(const string &name, const string &text, val onPressCallback = val(NULL)) {
         Nc *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setVal(val(text));
         val buttonDOMElement = button->getCLE()["domElement"];
-        buttonDOMElement.call<void>("addEventListener", val("click"),
-                                    onPressCallback);
+        buttonDOMElement.call<void>("addEventListener", val("click"), onPressCallback);
         return button;
     }
 
@@ -522,10 +509,7 @@ class CLNodeFactory {
      */
     inline Nc *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
-        Nc *inp = withTag("input")
-                      .withBoundField("value")
-                      .withAttributes(inputFieldAttrs)
-                      .build();
+        Nc *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
         inp->refreshDOMValueFromModel();
         inp->pushValToPeers(inp);
         return inp;
@@ -538,10 +522,7 @@ class CLNodeFactory {
      */
     inline Nc *rangeInput() {
         map<string, val> inputFieldAttrs = {{"type", val("range")}};
-        Nc *inp = withTag("input")
-                      .withBoundField("value")
-                      .withAttributes(inputFieldAttrs)
-                      .build();
+        Nc *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
         inp->refreshDOMValueFromModel();
         inp->pushValToPeers(inp);
         return inp;
@@ -553,13 +534,19 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    inline Nc *trInput() {        
+    inline Nc *trInput() {
         Nc *tinp = withName("txt_" + name_).textInput();
         Nc *rinp = withName("rng_" + name_).rangeInput();
         Nc *outerDiv = withTag("div").withName("wrapper_" + name_).build();
         outerDiv->appendChild(tinp);
         outerDiv->appendChild(rinp);
         return outerDiv;
+    }
+
+    inline Nc *textarea(string *txt, const int rows = 4, const int cols = 50) {
+        map<string, val> attrs = {{"rows", val(rows)}, {"cols", val(cols)}};
+        Nc *textArea = withTag("textArea").withBoundField("value").withAttributes(attrs).withCppVal(txt).build();
+        return textArea;
     }
 
     /**
@@ -571,11 +558,8 @@ class CLNodeFactory {
      * @return Nc*
      */
     inline Nc *labelGivenNode(Nc *nodeToBeLabelled, const string &labelText) {
-        Nc *outerDiv = withTag("div")
-                           .withName("labeldiv_" + nodeToBeLabelled->getName())
-                           .build();
-        Nc *labelNode = withName("labelfor_" + nodeToBeLabelled->getName())
-                            .label(nodeToBeLabelled, labelText);
+        Nc *outerDiv = withTag("div").withName("labeldiv_" + nodeToBeLabelled->getName()).build();
+        Nc *labelNode = withName("labelfor_" + nodeToBeLabelled->getName()).label(nodeToBeLabelled, labelText);
         outerDiv->appendChild(nodeToBeLabelled);
         outerDiv->appendChild(labelNode);
         return outerDiv;
@@ -587,18 +571,15 @@ class CLNodeFactory {
      * @return Nc*
      */
     inline CanvasElement<V> *canvas() {
-        CanvasElement<V> *cel =
-            static_cast<CanvasElement<V> *>(withTag("canvas").build());
+        CanvasElement<V> *cel = static_cast<CanvasElement<V> *>(withTag("canvas").build());
         cel->setDrawFuntionName("canvasTestPattern");
         cel->refreshView();
         return cel;
     }
 
-    inline CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight,
-                                     int pixelWidth, int pixelHeight) {
+    inline CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight) {
         CanvasGrid<V> *cg =
-            new CanvasGrid<V>(name_, "canvas", useExistingDOMElement_,
-                              gridWidth, gridHeight, pixelWidth, pixelHeight);
+            new CanvasGrid<V>(name_, "canvas", useExistingDOMElement_, gridWidth, gridHeight, pixelWidth, pixelHeight);
         cg = static_cast<CanvasGrid<V> *>(build(cg));
 
         cg->initcg();
@@ -630,8 +611,7 @@ class CLNodeFactory {
      * @return Nc*
      */
     inline Nc *attributeNode(const string &attributeName) {
-        Nc *attributeNode =
-            withExistingDOMElement().withBoundField(attributeName).build();
+        Nc *attributeNode = withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
         modelNode_->pushValToPeers(modelNode_);
