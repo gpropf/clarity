@@ -3,29 +3,14 @@
 #include "CLNodeFactory.hpp"
 #include "clarity.hpp"
 #include "embindings.hpp"
+#include "globals.hpp"
 #include "testbed.hpp"
-
-map<const int, ClarityNode *> ClarityNode::switchboard;
-map<string, std::function<void()>> ClarityNode::callbackMap;
-TicketMachine ClarityNode::tm;
-val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
 
 template <>
 const array<string, 8> CanvasGrid<unsigned char>::colors = {"#F5F5DC", "#00FF00", "#00AA00", "#FF00FF",
                                                             "#AA00AA", "#00AAFF", "#9090AA", "#888888"};
 
-// double *testmem(double *dptr) {
-//     dptr = new double(37);
-//     return dptr;
-// }
-
-void testmem(double *&dptr) {
-    dptr = new double(37);
-    // return dptr;
-}
-
-int main() {
-    // using ActiveLink = ClarityNode::ActiveLink;
+int main() {   
 
     val CLE = val::global("CLElement");
     val doNothing = CLE["doNothing"];
@@ -49,10 +34,6 @@ int main() {
 
     CLNodeFactory<HybridNode<double>, double, double> inputBuilder =
         childOfMaindivBuilder.withTag("input").withBoundField("value").withAttributes(inputFieldAttrs);
-
-    double *ival;
-    testmem(ival);
-    cout << "Value created in CLNF is: " << *ival << "\n";
 
     HybridNode<double> *hybridTemp_tinp =
         childOfMaindivBuilder.withLinkMultiplierConstant(1).withName("hybridTemp_tinp").withCppVal(temp).textInput();

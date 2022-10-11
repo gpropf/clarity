@@ -36,6 +36,7 @@ std::string clto_str(const T &v) {
 class ClarityNode {
    public:
     static map<string, std::function<void()>> callbackMap;
+    static val CLElement_;
 
     /**
      * @brief Represents the 'edges' in our control graph. These edges can be
@@ -52,7 +53,7 @@ class ClarityNode {
         val a2b_xfmr_;
         val b2a_xfmr_;
 
-        static val CLElement_;
+        //static val CLElement_;
         val get_a2b_xfmr() const;
         val get_b2a_xfmr() const;
         void set_a2b_xfmr(val xfmr);
@@ -302,7 +303,7 @@ class ClarityNode {
 
         auto [peer, xfmr] = dl.getOtherNode(this);
         if (internalVal.isNumber()) {
-            val transformedVal = ClarityNode::DualLink::CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
+            val transformedVal = CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
             peer->setVal(transformedVal);
         } else {
             peer->setVal(internalVal);
@@ -342,7 +343,7 @@ class ClarityNode {
         auto [peer, xfmr] = dl.getOtherNode(this);
         val internalVal = peer->getVal();
         if (internalVal.isNumber()) {
-            val transformedVal = ClarityNode::DualLink::CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
+            val transformedVal = CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
             setVal(transformedVal);
         } else {
             setVal(internalVal);

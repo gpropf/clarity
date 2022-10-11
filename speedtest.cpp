@@ -12,14 +12,7 @@
 #include "clarity.hpp"
 #include "embindings.hpp"
 
-map<const int, ClarityNode *> ClarityNode::switchboard;
-map<string, std::function<void()>> ClarityNode::callbackMap;
-TicketMachine ClarityNode::tm;
-val ClarityNode::DualLink::CLElement_ = val::global("CLElement");
-template <>
-const array<string, 8> CanvasGrid<unsigned char>::colors = {
-    "#F5F5DC", "#00FF00", "#00AA00", "#FF00FF",
-    "#AA00AA", "#00AAFF", "#9090AA", "#888888"};
+#include "globals.hpp"
 
 vector<int *> ns;
 // vector<ModelNode<int> *> mns;
