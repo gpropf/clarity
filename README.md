@@ -14,6 +14,7 @@ Clarity is a web development framework written in C++ using emscripten to facili
 5. Delete or disable unimplemented features.
 6. Set up real test template with standardized debug elements like a node audit button.
 7. Event API. We still need a framework to offer people a way to easily use events.
+8. Figure out what actually needs to be inline
 
 ### Todo (Somewhat Lower Priority) ###
 1. Go through attributes list at w3schools and just look for fun stuff to add to the project.

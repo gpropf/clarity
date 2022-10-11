@@ -1,3 +1,5 @@
+
+
 #include "speedtest.hpp"
 
 #include <sys/time.h>
@@ -11,12 +13,16 @@
 #include "CLNodeFactory.hpp"
 #include "clarity.hpp"
 #include "embindings.hpp"
-
 #include "globals.hpp"
 
 vector<int *> ns;
-// vector<ModelNode<int> *> mns;
 vector<HybridNode<int> *> clns;
+
+template <>
+const array<string, 8> CanvasGrid<unsigned char>::colors = {"#F5F5DC", "#00FF00", "#00AA00", "#FF00FF",
+                                                            "#AA00AA", "#00AAFF", "#9090AA", "#888888"};
+// We need this here because embindings.hpp pulls in CanvasElement and then you need to define the colors. Need to make
+// embindings.hpp less general.
 
 time_t msecs_time() {
     struct timeval time_now {};
@@ -30,15 +36,13 @@ time_t msecs_time() {
 }
 
 void destroy_everything() {
-    cout << "Vectors clns, ns contain: " << clns.size() << ", " << ns.size()
-         << " elements respectively.\n";
+    cout << "Vectors clns, ns contain: " << clns.size() << ", " << ns.size() << " elements respectively.\n";
     for (auto cln : clns) {
         delete cln;
     }
     for (auto i : ns) {
         delete i;
     }
-
     clns.clear();
     ns.clear();
 }
@@ -51,40 +55,23 @@ void make_trs(CLNodeFactory<Nc, V, N> builder) {
     time_t t1 = msecs_time();
     int fieldCount = 0;
     for (int j = 0; j < *n_fieldsets; j++) {
-        // n_input_fields = new int(90);
-
         for (int i = 0; i < *n_input_fields; i++) {
             int *iptr = new int(i);
-            // ModelNode<int> *mn = nullptr;
-            HybridNode<int> *cln =
-                (CLNodeFactory<HybridNode<int>, int, int>(builder))
-                    .withName("cln_" + to_string(fieldCount++))
-                    .withCppVal(iptr)
-                    //.template extractModelNode<V>(mn)
-                    .trInput();
-
+            HybridNode<int> *cln = (CLNodeFactory<HybridNode<int>, int, int>(builder))
+                                       .withName("cln_" + to_string(fieldCount++))
+                                       .withCppVal(iptr)
+                                       .trInput();
             cln->setCppVal(iptr);
             cln->refreshDOMValueFromModel();
             cln->pushValToPeers(cln);
-
             ns.push_back(iptr);
-            // mns.push_back(mn);
             clns.push_back(cln);
         }
-        // destroy_everything();
     }
     time_t t2 = msecs_time();
-    // msecs_time();
     time_t del_t = t2 - t1;
     cout << "Elapsed time: " << del_t << "\n";
 }
-
-// using namespace emscripten;
-// EMSCRIPTEN_BINDINGS(Util) {
-
-//         function("make_trs", &make_trs);
-
-// }
 
 int main() {
     val utils_instance = val::global("Util").new_();
@@ -96,78 +83,26 @@ int main() {
     val blackbody_st = CLE["blackbody_st"];
     val nodeAudit = CLE["nodeAudit_int"];
 
-     double *d1 = new double(27.8);
-    // double *d2 = new double(600.4);
-
+    double *d1 = new double(27.8);
     ModelNode<double> *amn = new ModelNode<double>(d1, "independently_created_modelnode");
-
-    CLNodeFactory<HybridNode<int>, int, double> builder("div", "maindiv",
-                                                        CppType::NoData);
-
+    CLNodeFactory<HybridNode<int>, int, double> builder("div", "maindiv", CppType::NoData);
     HybridNode<int> *maindiv = builder.build();
-
-    CLNodeFactory<HybridNode<int>, int, double> childOfMaindivBuilder =
-        builder.createChildrenOf(maindiv);
-
-    ModelNode<double> *d1_mn;
-    // HybridNode<int> *d1_trinp =
-    //     childOfMaindivBuilder
-    //         .withName("d1")
-    //         .withCppVal(d1)
-    //        // .extractModelNode<int>(d1_mn)
-    //         .trInput();
-
-    // HybridNode<int> *labelled_d1_trinp =
-    //     childOfMaindivBuilder.labelGivenNode(d1_trinp, "CONST LABEL");
-
+    CLNodeFactory<HybridNode<int>, int, double> childOfMaindivBuilder = builder.createChildrenOf(maindiv);
     CLNodeFactory<HybridNode<int>, int, int> childOfMaindivBuilder_int;
-    CLNodeFactory<HybridNode<int>, int, int>::clone(childOfMaindivBuilder,
-                                                    childOfMaindivBuilder_int);
+    CLNodeFactory<HybridNode<int>, int, int>::clone(childOfMaindivBuilder, childOfMaindivBuilder_int);
 
-    HybridNode<int> *fieldsets_inp =
-        childOfMaindivBuilder_int  // .withStoredValueType(CppType::Int)
-            .withCppVal(n_fieldsets)
-            .textInput();
-
-    // fieldsets_inp->setCppVal(n_fieldsets);
-    // fieldsets_inp->refreshDOMValueFromModel();
-    // fieldsets_inp->pushValToPeers(fieldsets_inp);
-
-    HybridNode<int> *labelled_fieldsets_inp =
-        childOfMaindivBuilder_int.labelGivenNode(fieldsets_inp, "fieldsets");
-
-    HybridNode<int> *n_input_fields_inp =
-        childOfMaindivBuilder_int  // .withStoredValueType(CppType::Int)
-            .withCppVal(n_input_fields)
-            .textInput();
-
-    // n_input_fields_inp->setCppVal(n_input_fields);
-    // n_input_fields_inp->refreshDOMValueFromModel();
-    // n_input_fields_inp->pushValToPeers(n_input_fields_inp);
-
+    HybridNode<int> *fieldsets_inp = childOfMaindivBuilder_int.withCppVal(n_fieldsets).textInput();
+    HybridNode<int> *labelled_fieldsets_inp = childOfMaindivBuilder_int.labelGivenNode(fieldsets_inp, "fieldsets");
+    HybridNode<int> *n_input_fields_inp = childOfMaindivBuilder_int.withCppVal(n_input_fields).textInput();
     HybridNode<int> *labelled_n_input_fields_inp =
-        childOfMaindivBuilder_int.labelGivenNode(n_input_fields_inp,
-                                                 "fields per set");
-
-    HybridNode<int> *statusButton = childOfMaindivBuilder.button(
-        "statusButton", "BOOM!", destroy_everything_cpp);
-
-    HybridNode<int> *make_trs_button = childOfMaindivBuilder.button(
-        "make_trs_button", "Make the fields!", make_trs_ints);
-
-    HybridNode<int> *auditButton =
-        childOfMaindivBuilder.button("auditButton", "Node Audit", nodeAudit);
+        childOfMaindivBuilder_int.labelGivenNode(n_input_fields_inp, "fields per set");
+    HybridNode<int> *statusButton = childOfMaindivBuilder.button("statusButton", "BOOM!", destroy_everything_cpp);
+    HybridNode<int> *make_trs_button =
+        childOfMaindivBuilder.button("make_trs_button", "Make the fields!", make_trs_ints);
+    HybridNode<int> *auditButton = childOfMaindivBuilder.button("auditButton", "Node Audit", nodeAudit);
+    clarity::ClarityNode::callbackMap["destroy_everything"] = [=] { destroy_everything(); };
+    clarity::ClarityNode::callbackMap["make_trs_ints"] = [=] { make_trs(childOfMaindivBuilder_int); };
 
     printf("Setup complete!\n");
-
-    clarity::ClarityNode::callbackMap["destroy_everything"] = [=] {
-        destroy_everything();
-    };
-
-    clarity::ClarityNode::callbackMap["make_trs_ints"] = [=] {
-        make_trs(childOfMaindivBuilder_int);
-    };
-
-    // utils_instance.call<void>("utiltest", 3);
     return 0;
 }

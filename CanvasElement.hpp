@@ -1,3 +1,14 @@
+/**
+ * @file CanvasElement.hpp
+ * @author your name (you@domain.com)
+ * @brief CanvasElement and CanvasGrid classes.
+ * @version 1.0
+ * @date 2022-10-10
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #ifndef CanvasElement_hpp
 #define CanvasElement_hpp
 
