@@ -85,10 +85,8 @@ class ClarityNode {
     static void nodeAudit() {
         for (auto [id, node] : switchboard) {
             string name = node->getName();
-
             string cppValStr = "NULL PTR2";
-            cppValStr = node->cppValToString();
-            // if (hn->cppVal_ == nullptr) cppValStr = "NULL PTR";
+            cppValStr = node->cppValToString();            
             cout << "ID: " << id << ", cppVal_: " << cppValStr << ", " << name << "\n";
         }
     }
@@ -154,14 +152,7 @@ class ClarityNode {
     // bool appendChild(ClarityNode *child);
 
     inline ClarityNode *getParent() const { return this->parent_; }
-    inline void setParent(ClarityNode *parent) { this->parent_ = parent; }
-
-    template <typename V, typename C>
-    inline V &getRawVal(const vector<C> loc) const {}
-
-    // val stringToJSVal(string s) {
-    //     return val(s);
-    // }
+    inline void setParent(ClarityNode *parent) { this->parent_ = parent; }    
 
     inline string getDOMText() const {
         val domElement = cle_["domElement"];
@@ -180,12 +171,7 @@ class ClarityNode {
     virtual val getVal() const {
         string valueText = getDOMText();
         return val("NO SPECIALIZED TEMPLATE");
-    }
-
-    template <typename V, typename C>
-    inline void setRawVal(V &v, vector<C> loc) {}
-
-    // inline virtual void setVal(const val &inval) { clean_ = false; }
+    }   
 
     inline virtual void setVal(const val &inval) {
         clean_ = false;
@@ -224,7 +210,7 @@ class ClarityNode {
 
     // virtual string nodeStats(const string &msg = "") const;
 
-    const int *getDimensionality() const { return dataDimensionality_; };
+    //const int *getDimensionality() const { return dataDimensionality_; };
 
     // virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
     // virtual void pushValToPeer(DualLink &al);
@@ -284,9 +270,6 @@ class ClarityNode {
 
     inline void init() {
         id_ = tm.getNext();
-        // Set up all nodes as single valued by default.
-        dataDimensionality_[0] = 1;
-        dataDimensionality_[1] = 0;
         ClarityNode::switchboard[id_] = this;
     }
 
@@ -422,13 +405,7 @@ class ClarityNode {
      * space. */
     val cle_ = val::global("CLElement").new_();
     val domElement_;  //!< This will be initialized if the node has its own DOM
-                      //!< element.
-
-    // CppType storedValueType_;  //!< C++ Data type
-    int *dataDimensionality_ = new int[2];  //!< There is a digit for each dimension and the dimension
-                                            //!< list is terminated with a 0. Single valued datums thus
-                                            //!< have[1, 0]. A 2D grid that is 6 wide and 5
-                                            //!< high will have[6, 5, 0] and so on.
+                      //!< element.    
 
     /** \brief A node's parent is the DOM element that contains it. In the
      * case of the WebAttrNode this is the WebElemNode for which this is an
@@ -449,18 +426,7 @@ class HybridNode : public ClarityNode {
     HybridNode(const string &name, const string &tag, bool useExistingDOMElement)
         : ClarityNode(name, tag, useExistingDOMElement) {}
 
-    inline void setCppVal(V *cppVal) { cppVal_ = cppVal; }
-
-    // static void nodeAudit() {
-    //     for (auto [id, node] : switchboard) {
-    //         string name = node->getName();
-    //         HybridNode<V> *hn = dynamic_cast<HybridNode<V> *>(node);
-    //         string cppValStr = "NULL PTR2";
-    //         cppValStr = hn->cppValToString();
-    //         //if (hn->cppVal_ == nullptr) cppValStr = "NULL PTR";
-    //         cout << "ID: " << id << ", cppVal_: " << cppValStr << ", " << name << "\n";
-    //     }
-    // }
+    inline void setCppVal(V *cppVal) { cppVal_ = cppVal; }    
 
     void setCppValFromJSVal(const val &jsval) {
         V newCppVal = jsval.as<V>();
