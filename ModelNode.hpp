@@ -15,7 +15,7 @@ namespace clarity {
  * @tparam T
  */
 
-template <typename T>
+template <typename V>
 class ModelNode : public ClarityNode {
    public:
     ~ModelNode() {
@@ -29,38 +29,38 @@ class ModelNode : public ClarityNode {
 
     inline string cppValToString() const {
         if (cppVal_ == nullptr) return "ModelNode NULLPTR";
-        return clto_str(*(reinterpret_cast<T *>(this->cppVal_)));
+        return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
     }
 
     //virtual val mn_getVal() const { return val(NULL); };
 
-    ModelNode(T *dynval) : ClarityNode() { cppVal_ = dynval; }
+    ModelNode(V *dynval) : ClarityNode() { cppVal_ = dynval; }
 
-    ModelNode(T *dynval, const string &name) : ModelNode(dynval) { name_ = name; }
+    ModelNode(V *dynval, const string &name) : ModelNode(dynval) { name_ = name; }
 
     virtual val getVal() const {
         if (cppVal_ == nullptr) {
             return val(NULL);
         }
-        return val(cpp2js<T>(cppVal_));
+        return val(cpp2js<V>(cppVal_));
     }
 
-    T jsToCppVal(val jsval) {
-        T cppVal = jsval.as<T>();
-        *reinterpret_cast<T *>(cppVal_) = cppVal;
+    V jsToCppVal(val jsval) {
+        V cppVal = jsval.as<V>();
+        *reinterpret_cast<V *>(cppVal_) = cppVal;
         return cppVal;
     }
 
     void setVal(const val &inval) {
         assert(cppVal_ != nullptr);
-        // *reinterpret_cast<T *>(cppVal_) =
-        //     this->cle_.template call<T>("jsToCPPVal", inval);
-        T newCppVal = jsToCppVal(inval);
+        // *reinterpret_cast<V *>(cppVal_) =
+        //     this->cle_.template call<V>("jsToCPPVal", inval);
+        V newCppVal = jsToCppVal(inval);
         cout << "New C++ value from JS val: " << newCppVal << "\n";
         pushValToPeers(this);
     }
 
-    T *cppVal_;  //!< The C++ data object that acts as the 'model'
+    V *cppVal_;  //!< The C++ data object that acts as the 'model'
 };
 }  // namespace clarity
 
