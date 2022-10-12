@@ -48,13 +48,13 @@ void destroy_everything() {
 }
 
 int *n_input_fields = new int(100);
-int *n_fieldsets = new int(100);
+int *n_fieldsets = new int(50);
 
 template <class Nc, typename V, typename N>
 void make_trs(CLNodeFactory<Nc, V, N> builder) {
-    time_t t1 = msecs_time();
     int fieldCount = 0;
     for (int j = 0; j < *n_fieldsets; j++) {
+        time_t t1 = msecs_time();
         for (int i = 0; i < *n_input_fields; i++) {
             int *iptr = new int(i);
             HybridNode<int> *cln = (CLNodeFactory<HybridNode<int>, int, int>(builder))
@@ -67,10 +67,11 @@ void make_trs(CLNodeFactory<Nc, V, N> builder) {
             ns.push_back(iptr);
             clns.push_back(cln);
         }
+        time_t t2 = msecs_time();
+        time_t del_t = t2 - t1;
+        cout << "Elapsed time: " << del_t << "\n";
+        destroy_everything();
     }
-    time_t t2 = msecs_time();
-    time_t del_t = t2 - t1;
-    cout << "Elapsed time: " << del_t << "\n";
 }
 
 int main() {

@@ -1,8 +1,6 @@
 #ifndef ClarityNode_hpp
 #define ClarityNode_hpp
 
-
-
 #include <sstream>
 
 #include "clarity.hpp"
@@ -10,11 +8,11 @@
 namespace clarity {
 
 /**
- * @brief 
- * 
- * @tparam T 
- * @param v 
- * @return std::string 
+ * @brief
+ *
+ * @tparam T
+ * @param v
+ * @return std::string
  */
 template <typename T>
 std::string clto_str(const T &v) {
@@ -55,7 +53,7 @@ class ClarityNode {
         val a2b_xfmr_;
         val b2a_xfmr_;
 
-        //static val CLElement_;
+        // static val CLElement_;
         val get_a2b_xfmr() const;
         val get_b2a_xfmr() const;
         void set_a2b_xfmr(val xfmr);
@@ -88,7 +86,7 @@ class ClarityNode {
         for (auto [id, node] : switchboard) {
             string name = node->getName();
             string cppValStr = "NULL PTR2";
-            cppValStr = node->cppValToString();            
+            cppValStr = node->cppValToString();
             cout << "ID: " << id << ", cppVal_: " << cppValStr << ", " << name << "\n";
         }
     }
@@ -103,7 +101,7 @@ class ClarityNode {
     INLINE ClarityNode() { init(); }
 
     virtual ~ClarityNode() {
-        cout << "DESTROYING ClarityNode " << id_ << "\n";
+        // cout << "DESTROYING ClarityNode " << id_ << "\n";
         switchboard.erase(id_);
         for (auto dl : dlpeers_) {
             dl.reset();
@@ -155,7 +153,7 @@ class ClarityNode {
     // bool appendChild(ClarityNode *child);
 
     INLINE ClarityNode *getParent() const { return this->parent_; }
-    INLINE void setParent(ClarityNode *parent) { this->parent_ = parent; }    
+    INLINE void setParent(ClarityNode *parent) { this->parent_ = parent; }
 
     INLINE string getDOMText() const {
         val domElement = cle_["domElement"];
@@ -174,7 +172,7 @@ class ClarityNode {
     virtual val getVal() const {
         string valueText = getDOMText();
         return val("NO SPECIALIZED TEMPLATE");
-    }   
+    }
 
     INLINE virtual void setVal(const val &inval) {
         clean_ = false;
@@ -213,7 +211,7 @@ class ClarityNode {
 
     // virtual string nodeStats(const string &msg = "") const;
 
-    //const int *getDimensionality() const { return dataDimensionality_; };
+    // const int *getDimensionality() const { return dataDimensionality_; };
 
     // virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
     // virtual void pushValToPeer(DualLink &al);
@@ -408,7 +406,7 @@ class ClarityNode {
      * space. */
     val cle_ = val::global("CLElement").new_();
     val domElement_;  //!< This will be initialized if the node has its own DOM
-                      //!< element.    
+                      //!< element.
 
     /** \brief A node's parent is the DOM element that contains it. In the
      * case of the WebAttrNode this is the WebElemNode for which this is an
@@ -429,7 +427,7 @@ class HybridNode : public ClarityNode {
     HybridNode(const string &name, const string &tag, bool useExistingDOMElement)
         : ClarityNode(name, tag, useExistingDOMElement) {}
 
-    INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }    
+    INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
 
     void setCppValFromJSVal(const val &jsval) {
         V newCppVal = jsval.as<V>();
@@ -484,7 +482,8 @@ class HybridNode : public ClarityNode {
         }
     }
 
-    ~HybridNode() { cout << "DESTROYING HybridNode with id: " << id_ << "\n"; }
+    ~HybridNode() {  // cout << "DESTROYING HybridNode with id: " << id_ << "\n";
+    }
 
    protected:
     V *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'
