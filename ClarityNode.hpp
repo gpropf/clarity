@@ -102,6 +102,7 @@ class ClarityNode {
 
     virtual ~ClarityNode() {
         cout << "DESTROYING ClarityNode " << id_ << "\n";
+        switchboard.erase(id_);
         for (auto dl : dlpeers_) {
             dl.reset();
         }
