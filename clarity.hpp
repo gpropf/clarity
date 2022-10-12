@@ -16,6 +16,9 @@ using namespace emscripten;
 
 // Run with 'python3 -m http.server 8000'
 
+//#define INLINE inline
+#define INLINE /* inline */
+
 namespace clarity {
 /**
  * @brief Supported C++ types for WebElements.

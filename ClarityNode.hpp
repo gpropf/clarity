@@ -1,6 +1,8 @@
 #ifndef ClarityNode_hpp
 #define ClarityNode_hpp
 
+
+
 #include <sstream>
 
 #include "clarity.hpp"
@@ -68,9 +70,9 @@ class ClarityNode {
         DualLink(ClarityNode *nodeA, ClarityNode *nodeB, val a2b_xfmr, val b2a_xfmr = val(NULL))
             : nodeA_(nodeA), nodeB_(nodeB), a2b_xfmr_(a2b_xfmr), b2a_xfmr_(b2a_xfmr) {}
 
-        inline void printDL() { cout << "DL peer IDs: A = " << nodeA_->getId() << ", B = " << nodeB_->getId() << "\n"; }
+        INLINE void printDL() { cout << "DL peer IDs: A = " << nodeA_->getId() << ", B = " << nodeB_->getId() << "\n"; }
 
-        inline pair<ClarityNode *, val> getOtherNode(ClarityNode *thisNode) {
+        INLINE pair<ClarityNode *, val> getOtherNode(ClarityNode *thisNode) {
             if (nodeA_ == thisNode) {
                 return pair(nodeB_, b2a_xfmr_);
             }
@@ -91,14 +93,14 @@ class ClarityNode {
         }
     }
 
-    inline string getTag() const { return tag_; }
-    inline int getId() const { return id_; }
-    inline void setCLE(val cle) { cle_ = cle; }
+    INLINE string getTag() const { return tag_; }
+    INLINE int getId() const { return id_; }
+    INLINE void setCLE(val cle) { cle_ = cle; }
 
-    inline static void runCallbackById(const string &id) { callbackMap[id](); }
+    INLINE static void runCallbackById(const string &id) { callbackMap[id](); }
 
     // void EMSCRIPTEN_KEEPALIVE init();
-    inline ClarityNode() { init(); }
+    INLINE ClarityNode() { init(); }
 
     virtual ~ClarityNode() {
         cout << "DESTROYING ClarityNode " << id_ << "\n";
@@ -111,12 +113,12 @@ class ClarityNode {
         if (!domElement.isUndefined()) cle_["domElement"].template call<void>("remove");
     }
 
-    // inline ClarityNode(const CppType storedValueType)
+    // INLINE ClarityNode(const CppType storedValueType)
     //     : storedValueType_(storedValueType) {
     //     init();
     //     cle_.set("cpptype", val(storedValueType));
     // }
-    inline ClarityNode(const string &name) : name_(name) {
+    INLINE ClarityNode(const string &name) : name_(name) {
         init();
         // cle_.set("cpptype", val(storedValueType));
     }
@@ -147,15 +149,15 @@ class ClarityNode {
 
     // EMSCRIPTEN_KEEPALIVE void setAttributes(const map<string, val> &attrs);
 
-    // inline CppType getStoredValueType() const { return storedValueType_; }
+    // INLINE CppType getStoredValueType() const { return storedValueType_; }
     //  EMSCRIPTEN_KEEPALIVE void setStoredValueType(CppType cppType);
 
     // bool appendChild(ClarityNode *child);
 
-    inline ClarityNode *getParent() const { return this->parent_; }
-    inline void setParent(ClarityNode *parent) { this->parent_ = parent; }    
+    INLINE ClarityNode *getParent() const { return this->parent_; }
+    INLINE void setParent(ClarityNode *parent) { this->parent_ = parent; }    
 
-    inline string getDOMText() const {
+    INLINE string getDOMText() const {
         val domElement = cle_["domElement"];
         string domText = domElement[boundField_].as<string>();
         return domText;
@@ -174,7 +176,7 @@ class ClarityNode {
         return val("NO SPECIALIZED TEMPLATE");
     }   
 
-    inline virtual void setVal(const val &inval) {
+    INLINE virtual void setVal(const val &inval) {
         clean_ = false;
         val domElement = cle_["domElement"];
         // cle_.call<void>("printVal", inval);
@@ -186,21 +188,21 @@ class ClarityNode {
         }
     }
 
-    inline void setBoundField(const string &boundField) {
+    INLINE void setBoundField(const string &boundField) {
         boundField_ = boundField;
         cle_.set("boundField_", boundField);
         // val domElement = cle_["domElement"];
     }
 
-    inline val getCLE() const { return cle_; }
-    inline string getName() const { return name_; }
-    inline virtual void printState() const { cle_.call<void>("printState"); }
-    inline static ClarityNode *getCLElementById(const int id) { return switchboard[id]; }
-    inline static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
-    inline void toggleClean() { clean_ = !clean_; }
+    INLINE val getCLE() const { return cle_; }
+    INLINE string getName() const { return name_; }
+    INLINE virtual void printState() const { cle_.call<void>("printState"); }
+    INLINE static ClarityNode *getCLElementById(const int id) { return switchboard[id]; }
+    INLINE static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
+    INLINE void toggleClean() { clean_ = !clean_; }
 
     template <typename T>
-    inline static val cpp2js(void *valptr) {
+    INLINE static val cpp2js(void *valptr) {
         return val(*reinterpret_cast<T *>(valptr));
     }
 
@@ -234,8 +236,8 @@ class ClarityNode {
     //   void addPeer2(ClarityNode *peer);
 
     // void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr = val(NULL));
-    inline void appendDualLink(shared_ptr<DualLink> dl) { dlpeers_.push_back(dl); }
-    inline int countPeers() const { return dlpeers_.size(); }
+    INLINE void appendDualLink(shared_ptr<DualLink> dl) { dlpeers_.push_back(dl); }
+    INLINE int countPeers() const { return dlpeers_.size(); }
 
     //=========== From cpp file
 
@@ -246,7 +248,7 @@ class ClarityNode {
         return true;  // FIXME: need to check for duplicate ids.
     }
 
-    inline string nodeStats(const string &msg) const {
+    INLINE string nodeStats(const string &msg) const {
         string s = "NS: Node name: " + name_ + ", Node id: " + to_string(id_) + ", Node type: " + typeid(*this).name() +
                    ", peer count = " + to_string(countPeers()) + ". " + msg + "\n";
         return s;
@@ -260,16 +262,16 @@ class ClarityNode {
 
     virtual void updateNodeFromDom() = 0;
 
-    static inline void updateNodeFromDomById(int id) {
+    static INLINE void updateNodeFromDomById(int id) {
         ClarityNode *cnn = getCLElementById(id);
         cnn->updateNodeFromDom();
         // cout << cnn->nodeStats("[updateNodeFromDomById]");
         cnn->pushValToPeers(cnn);
     }
 
-    inline void updateNodeFromModel() {}
+    INLINE void updateNodeFromModel() {}
 
-    inline void init() {
+    INLINE void init() {
         id_ = tm.getNext();
         ClarityNode::switchboard[id_] = this;
     }
@@ -362,27 +364,27 @@ class ClarityNode {
         peer->appendDualLink(dl);
     }
 
-    inline void setAttribute(const string &attr, const val &value) {
+    INLINE void setAttribute(const string &attr, const val &value) {
         val domElement = cle_["domElement"];
         domElement.call<void>("setAttribute", attr, value);
     }
 
-    inline void setAttributes(const map<string, val> &attrs) {
+    INLINE void setAttributes(const map<string, val> &attrs) {
         for (auto [attrName, value] : attrs) {
             setAttribute(attrName, value);
         }
     }
 
-    // inline void setStoredValueType(CppType cppType) {
+    // INLINE void setStoredValueType(CppType cppType) {
     //     storedValueType_ = cppType;
     //     cle_.set("cpptype", cppType);
     // }
 
-    inline void addEventListenerByName(const string &eventName, const string &callbackName) {
+    INLINE void addEventListenerByName(const string &eventName, const string &callbackName) {
         cle_.call<void>("addEventListenerById", eventName, callbackName);
     }
 
-    inline void addJSEventListener(const string &eventName, val eventCallback) {
+    INLINE void addJSEventListener(const string &eventName, val eventCallback) {
         cle_.call<void>("addEventListener", eventName, eventCallback);
     }
     // ========= End from Cpp file
@@ -427,7 +429,7 @@ class HybridNode : public ClarityNode {
     HybridNode(const string &name, const string &tag, bool useExistingDOMElement)
         : ClarityNode(name, tag, useExistingDOMElement) {}
 
-    inline void setCppVal(V *cppVal) { cppVal_ = cppVal; }    
+    INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }    
 
     void setCppValFromJSVal(const val &jsval) {
         V newCppVal = jsval.as<V>();
@@ -441,7 +443,7 @@ class HybridNode : public ClarityNode {
      *
      * @param inval
      */
-    inline virtual void setVal(const val &inval) {
+    INLINE virtual void setVal(const val &inval) {
         ClarityNode::setVal(inval);
         if (cppVal_ != nullptr) {
             setCppValFromJSVal(inval);
@@ -462,7 +464,7 @@ class HybridNode : public ClarityNode {
         return domVal;
     }
 
-    inline string cppValToString() const {
+    INLINE string cppValToString() const {
         if (cppVal_ == nullptr) return "NULLPTR";
         return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
     }

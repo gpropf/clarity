@@ -112,7 +112,7 @@ class CLNodeFactory {
      * @brief Construct a new CLNodeFactory object
      *
      */
-    inline CLNodeFactory() {}
+    INLINE CLNodeFactory() {}
 
     /**
      * @brief Construct a new CLNodeFactory object
@@ -124,7 +124,7 @@ class CLNodeFactory {
      * but is meant to make basic distinctions between, say, a string and a
      * float value.
      */
-    inline CLNodeFactory(const string &tag, const string &name, CppType storedValueType)
+    INLINE CLNodeFactory(const string &tag, const string &name, CppType storedValueType)
         : tag_(tag), name_(name), storedValueType_(storedValueType) {}
 
     /**
@@ -136,7 +136,7 @@ class CLNodeFactory {
      * @param storedValue If we use this, we are creating a corresponding MN to
      * hold the value.
      */
-    inline CLNodeFactory(const string &tag, const string &name, CppType storedValueType, V *storedValue)
+    INLINE CLNodeFactory(const string &tag, const string &name, CppType storedValueType, V *storedValue)
         : tag_(tag), name_(name), storedValueType_(storedValueType) {
         withStoredValue(storedValue, true);
     }
@@ -169,7 +169,7 @@ class CLNodeFactory {
      * @return CLNodeFactory
      */
     template <typename T>
-    inline CLNodeFactory extractModelNode(Nc *&modelNode) {
+    INLINE CLNodeFactory extractModelNode(Nc *&modelNode) {
         modelNode = modelNode_;
         return *this;
     }
@@ -215,7 +215,7 @@ class CLNodeFactory {
      * @param attrs
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withAttributes(const map<string, val> &attrs) {
+    INLINE CLNodeFactory withAttributes(const map<string, val> &attrs) {
         CLNodeFactory cpy(*this);
         cpy.attrs_ = attrs;
         return cpy;
@@ -228,7 +228,7 @@ class CLNodeFactory {
      * @param boundField
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withBoundField(const string &boundField) {
+    INLINE CLNodeFactory withBoundField(const string &boundField) {
         assert(boundField != "");
         CLNodeFactory cpy(*this);
         cpy.boundField_ = boundField;
@@ -244,7 +244,7 @@ class CLNodeFactory {
      * @param parent
      * @return CLNodeFactory
      */
-    inline CLNodeFactory createChildrenOf(Nc *parent) {
+    INLINE CLNodeFactory createChildrenOf(Nc *parent) {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
@@ -257,13 +257,13 @@ class CLNodeFactory {
      * @param tag
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withTag(const string &tag) const & {
+    INLINE CLNodeFactory withTag(const string &tag) const & {
         CLNodeFactory cpy(*this);
         cpy.tag_ = tag;
         return cpy;
     }
 
-    inline CLNodeFactory withTag(const string &tag) && {
+    INLINE CLNodeFactory withTag(const string &tag) && {
         CLNodeFactory cpy(std::move(*this));
         cpy.tag_ = tag;
         return cpy;
@@ -275,13 +275,13 @@ class CLNodeFactory {
      * @param name
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withName(const string &name) const & {
+    INLINE CLNodeFactory withName(const string &name) const & {
         CLNodeFactory cpy(*this);
         cpy.name_ = name;
         return cpy;
     }
 
-    inline CLNodeFactory withName(const string &name) && {
+    INLINE CLNodeFactory withName(const string &name) && {
         CLNodeFactory cpy(std::move(*this));
         cpy.name_ = name;
         return cpy;
@@ -293,14 +293,14 @@ class CLNodeFactory {
      * @param parent Cannot be null.
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withParent(Nc *parent) const & {
+    INLINE CLNodeFactory withParent(Nc *parent) const & {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
     }
 
-    inline CLNodeFactory withParent(Nc *parent) && {
+    INLINE CLNodeFactory withParent(Nc *parent) && {
         assert(parent != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.parent_ = parent;
@@ -314,7 +314,7 @@ class CLNodeFactory {
      * @param storedValueType
      * @return CLNodeFactory
      */
-    // inline CLNodeFactory withStoredValueType(
+    // INLINE CLNodeFactory withStoredValueType(
     //     clarity::CppType storedValueType) const & {
     //     CLNodeFactory cpy(*this);
     //     cpy.storedValueType_ = storedValueType;
@@ -324,7 +324,7 @@ class CLNodeFactory {
     //     return cpy;
     // }
 
-    // inline CLNodeFactory withStoredValueType(
+    // INLINE CLNodeFactory withStoredValueType(
     //     clarity::CppType storedValueType) && {
     //     CLNodeFactory cpy(std::move(*this));
     //     cpy.storedValueType_ = storedValueType;
@@ -342,7 +342,7 @@ class CLNodeFactory {
      * @param storedValue
      * @return CLNodeFactory
      */
-    // inline CLNodeFactory withStoredValue(V *storedValue) const & {
+    // INLINE CLNodeFactory withStoredValue(V *storedValue) const & {
     //     assert(storedValue != nullptr);
 
     //     CLNodeFactory cpy(*this);
@@ -350,7 +350,7 @@ class CLNodeFactory {
     //     return cpy;
     // }
 
-    // inline CLNodeFactory withStoredValue(V *storedValue) && {
+    // INLINE CLNodeFactory withStoredValue(V *storedValue) && {
     //     assert(storedValue != nullptr);
     //     ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
     //                                         "modelnode_for_" + this->name_);
@@ -359,14 +359,14 @@ class CLNodeFactory {
     //     return cpy;
     // }
 
-    inline CLNodeFactory withCppVal(V *cppVal) const & {
+    INLINE CLNodeFactory withCppVal(V *cppVal) const & {
         assert(cppVal != nullptr);
         CLNodeFactory cpy(*this);
         cpy.cppVal_ = cppVal;
         return cpy;
     }
 
-    inline CLNodeFactory withCppVal(V *cppVal) const && {
+    INLINE CLNodeFactory withCppVal(V *cppVal) const && {
         assert(cppVal != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.cppVal_ = cppVal;
@@ -382,14 +382,14 @@ class CLNodeFactory {
      * @param modelNode
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withModelNode(Nc *modelNode) const & {
+    INLINE CLNodeFactory withModelNode(Nc *modelNode) const & {
         assert(modelNode != nullptr);
         CLNodeFactory cpy(*this);
         cpy.modelNode_ = modelNode;
         return cpy;
     }
 
-    inline CLNodeFactory withModelNode(Nc *modelNode) && {
+    INLINE CLNodeFactory withModelNode(Nc *modelNode) && {
         assert(modelNode != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.modelNode_ = modelNode;
@@ -404,14 +404,14 @@ class CLNodeFactory {
      * @param linkMultiplierConstant Cannot be 0.
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withLinkMultiplierConstant(N linkMultiplierConstant) const & {
+    INLINE CLNodeFactory withLinkMultiplierConstant(N linkMultiplierConstant) const & {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(*this);
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
         return cpy;
     }
 
-    inline CLNodeFactory withLinkMultiplierConstant(N linkMultiplierConstant) && {
+    INLINE CLNodeFactory withLinkMultiplierConstant(N linkMultiplierConstant) && {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(std::move(*this));
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
@@ -433,14 +433,14 @@ class CLNodeFactory {
      * @param b2a_xfmr
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withTransformFns(val a2b_xfmr, val b2a_xfmr = val(NULL)) const & {
+    INLINE CLNodeFactory withTransformFns(val a2b_xfmr, val b2a_xfmr = val(NULL)) const & {
         CLNodeFactory cpy(*this);
         cpy.a2b_xfmr_ = a2b_xfmr;
         cpy.b2a_xfmr_ = b2a_xfmr;
         return cpy;
     }
 
-    inline CLNodeFactory withTransformFns(val a2b_xfmr, val b2a_xfmr = val(NULL)) && {
+    INLINE CLNodeFactory withTransformFns(val a2b_xfmr, val b2a_xfmr = val(NULL)) && {
         CLNodeFactory cpy(std::move(*this));
         cpy.a2b_xfmr_ = a2b_xfmr;
         cpy.b2a_xfmr_ = b2a_xfmr;
@@ -454,13 +454,13 @@ class CLNodeFactory {
      *
      * @return CLNodeFactory
      */
-    inline CLNodeFactory withExistingDOMElement() const & {
+    INLINE CLNodeFactory withExistingDOMElement() const & {
         CLNodeFactory cpy(*this);
         cpy.useExistingDOMElement_ = true;
         return cpy;
     }
 
-    inline CLNodeFactory withExistingDOMElement() && {
+    INLINE CLNodeFactory withExistingDOMElement() && {
         CLNodeFactory cpy(std::move(*this));
         cpy.useExistingDOMElement_ = true;
         return cpy;
@@ -474,7 +474,7 @@ class CLNodeFactory {
      * @param onPressCallback JS function to run when button is pressed.
      * @return Nc*
      */
-    inline Nc *button(const string &name, const string &text, val onPressCallback = val(NULL)) {
+    INLINE Nc *button(const string &name, const string &text, val onPressCallback = val(NULL)) {
         Nc *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setVal(val(text));
@@ -494,7 +494,7 @@ class CLNodeFactory {
      * @return Nc*
      */
     template <class Nc_any>
-    inline Nc *label(Nc_any *forNode, const string &text) {
+    INLINE Nc *label(Nc_any *forNode, const string &text) {
         Nc *label = withTag("label").build();
         label->setBoundField("innerHTML");
         label->setVal(val(text));
@@ -507,7 +507,7 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    inline Nc *textInput() {
+    INLINE Nc *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
         Nc *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
         inp->refreshDOMValueFromModel();
@@ -520,7 +520,7 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    inline Nc *rangeInput() {
+    INLINE Nc *rangeInput() {
         map<string, val> inputFieldAttrs = {{"type", val("range")}};
         Nc *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
         inp->refreshDOMValueFromModel();
@@ -534,7 +534,7 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    inline Nc *trInput() {
+    INLINE Nc *trInput() {
         Nc *tinp = withName("txt_" + name_).textInput();
         Nc *rinp = withName("rng_" + name_).rangeInput();
         Nc *outerDiv = withTag("div").withName("wrapper_" + name_).build();
@@ -543,7 +543,7 @@ class CLNodeFactory {
         return outerDiv;
     }
 
-    inline Nc *textarea(string *txt, const int rows = 4, const int cols = 50) {
+    INLINE Nc *textarea(string *txt, const int rows = 4, const int cols = 50) {
         map<string, val> attrs = {{"rows", val(rows)}, {"cols", val(cols)}};
         Nc *textArea = withTag("textArea").withBoundField("value").withAttributes(attrs).withCppVal(txt).build();
         return textArea;
@@ -557,7 +557,7 @@ class CLNodeFactory {
      * @param labelText
      * @return Nc*
      */
-    inline Nc *labelGivenNode(Nc *nodeToBeLabelled, const string &labelText) {
+    INLINE Nc *labelGivenNode(Nc *nodeToBeLabelled, const string &labelText) {
         Nc *outerDiv = withTag("div").withName("labeldiv_" + nodeToBeLabelled->getName()).build();
         Nc *labelNode = withName("labelfor_" + nodeToBeLabelled->getName()).label(nodeToBeLabelled, labelText);
         outerDiv->appendChild(nodeToBeLabelled);
@@ -570,14 +570,14 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    inline CanvasElement<V> *canvas() {
+    INLINE CanvasElement<V> *canvas() {
         CanvasElement<V> *cel = static_cast<CanvasElement<V> *>(withTag("canvas").build());
         cel->setDrawFuntionName("canvasTestPattern");
         cel->refreshView();
         return cel;
     }
 
-    inline CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight) {
+    INLINE CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight) {
         CanvasGrid<V> *cg =
             new CanvasGrid<V>(name_, "canvas", useExistingDOMElement_, gridWidth, gridHeight, pixelWidth, pixelHeight);
         cg = static_cast<CanvasGrid<V> *>(build(cg));
@@ -598,7 +598,7 @@ class CLNodeFactory {
      * @param labelText
      * @return Nc*
      */
-    inline Nc *labelledTRInputNode(const string &labelText) {
+    INLINE Nc *labelledTRInputNode(const string &labelText) {
         Nc *trInputNode = trInput();
         return labelGivenNode(trInputNode, labelText);
     }
@@ -610,7 +610,7 @@ class CLNodeFactory {
      * @param attributeName
      * @return Nc*
      */
-    inline Nc *attributeNode(const string &attributeName) {
+    INLINE Nc *attributeNode(const string &attributeName) {
         Nc *attributeNode = withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
@@ -626,7 +626,7 @@ class CLNodeFactory {
      * @param parent
      * @return Nc*
      */
-    inline Nc *attributeNode(const string &attributeName, Nc *parent) {
+    INLINE Nc *attributeNode(const string &attributeName, Nc *parent) {
         Nc *attributeNode = withParent(parent).attributeNode(attributeName);
         return attributeNode;
     }
