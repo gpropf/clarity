@@ -20,31 +20,7 @@ using namespace emscripten;
 #define INLINE /* inline */
 
 namespace clarity {
-/**
- * @brief Supported C++ types for WebElements.
- *
- */
-enum class CppType : int {
-    Int,
-    Float,
-    Double,
-    String,
-    JSFunc,
-    NoData  /// Used for things like div that hold no data.
-};
 
-/**
- * @brief Interface class that should be implemented by all models and
- * views. Has only the update method. Typically a model or view being
- * updated will trigger the update of it corresponding element. Models
- * are always paired with views and vice versa. Still not sure I actually
- * want to use this but if I do basically everything will be an Updateable.
- * It's possible that this class is just OO cruft.
- *
- */
-class Updateable {
-    virtual void update() = 0;
-};
 
 /**
  * @brief Hands out (presumably) unique int ids with a simply incrementing
@@ -57,10 +33,6 @@ class TicketMachine {
 
    public:
     inline const int getNext() { return ++id_; }
-};
-
-class Invertable {
-    virtual Invertable *inverted() = 0;
 };
 
 }  // namespace clarity

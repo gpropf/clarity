@@ -40,11 +40,5 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .class_function("nodeAudit_double", &HybridNode<double>::nodeAudit,
                         allow_raw_pointers());
 
-    enum_<CppType>("CppType")
-        .value("Int", CppType::Int)
-        .value("Float", CppType::Float)
-        .value("Double", CppType::Double)
-        .value("String", CppType::String)
-        .value("JSFunc", CppType::JSFunc)
-        .value("NoData", CppType::NoData);
+    
 }
