@@ -84,7 +84,7 @@ int main() {
     val nodeAudit = CLE["nodeAudit_int"];
 
     double *d1 = new double(27.8);
-    ModelNode<double> *amn = new ModelNode<double>(d1, "independently_created_modelnode");
+    //ModelNode<double> *amn = new ModelNode<double>(d1, "independently_created_modelnode");
     CLNodeFactory<HybridNode, int, double> builder("div", "maindiv");
     HybridNode<int> *maindiv = builder.build();
     CLNodeFactory<HybridNode, int, double> childOfMaindivBuilder = builder.createChildrenOf(maindiv);

@@ -3,7 +3,6 @@
 
 #include "CanvasElement.hpp"
 #include "ClarityNode.hpp"
-#include "ModelNode.hpp"
 
 namespace clarity {
 

@@ -22,7 +22,7 @@ int main() {
     double *t2 = new double(600);
     double *temp = new double(88.4);
 
-    ModelNode<double> *amn = new ModelNode<double>(a, "independently_created_modelnode");
+    //ModelNode<double> *amn = new ModelNode<double>(a, "independently_created_modelnode");
 
     CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");
 
