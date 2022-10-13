@@ -21,6 +21,12 @@ std::string clto_str(const T &v) {
     return os.str();
 }
 
+class BaseNode {
+protected:
+ vector<BaseNode *> children_;
+};
+
+
 /**
  * @brief The project's central class. Describes an element with push/pull
  * behavior to syncronize a data model and a web view. WebElements can contain
@@ -33,7 +39,7 @@ std::string clto_str(const T &v) {
  * contain pure virtual methods and trying to instantiate it will be an error.
  *
  */
-class ClarityNode {
+class ClarityNode: public BaseNode {
    public:
     static map<string, std::function<void()>> callbackMap;
     static val CLElement_;
@@ -395,7 +401,7 @@ class ClarityNode {
     string tag_;
     string boundField_;
 
-    vector<ClarityNode *> children_;
+   
     /** \brief The node is clean if it has not been recently changed. This
        feature is mainly designed to prevent infinite update loops if the node
        graph is not acyclic. It doesn't do anything yet.*/
