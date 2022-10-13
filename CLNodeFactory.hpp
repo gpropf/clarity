@@ -305,14 +305,14 @@ class CLNodeFactory {
     }  
 
     INLINE CLNodeFactory withCppVal(V *cppVal) const & {
-        assert(cppVal != nullptr);
+        //assert(cppVal != nullptr);
         CLNodeFactory cpy(*this);
         cpy.cppVal_ = cppVal;
         return cpy;
     }
 
     INLINE CLNodeFactory withCppVal(V *cppVal) const && {
-        assert(cppVal != nullptr);
+        //assert(cppVal != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.cppVal_ = cppVal;
         return cpy;
@@ -483,10 +483,12 @@ class CLNodeFactory {
      */
     INLINE Nc<V> *trInput() {
         Nc<V> *tinp = withName("txt_" + name_).textInput();
-        Nc<V> *rinp = withName("rng_" + name_).rangeInput();
+        Nc<V> *rinp = withCppVal(nullptr).withName("rng_" + name_).rangeInput();
+        tinp->addPeer(rinp, linkMultiplierConstant_);
         Nc<V> *outerDiv = withTag("div").withName("wrapper_" + name_).build();
         outerDiv->appendChild(tinp);
         outerDiv->appendChild(rinp);
+        tinp->refresh();
         return outerDiv;
     }
 
