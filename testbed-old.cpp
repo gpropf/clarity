@@ -24,15 +24,15 @@ int main() {
 
     ModelNode<double> *amn = new ModelNode<double>(a, "independently_created_modelnode");
 
-    CLNodeFactory<HybridNode<double>, double, double> builder("div", "maindiv");
+    CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");
 
     HybridNode<double> *maindiv = builder.build();
 
-    CLNodeFactory<HybridNode<double>, double, double> childOfMaindivBuilder = builder.createChildrenOf(maindiv);
+    CLNodeFactory<HybridNode, double, double> childOfMaindivBuilder = builder.createChildrenOf(maindiv);
 
     map<string, val> inputFieldAttrs = {{"type", val("text")}};
 
-    CLNodeFactory<HybridNode<double>, double, double> inputBuilder =
+    CLNodeFactory<HybridNode, double, double> inputBuilder =
         childOfMaindivBuilder.withTag("input").withBoundField("value").withAttributes(inputFieldAttrs);
 
     HybridNode<double> *hybridTemp_tinp =
@@ -47,7 +47,7 @@ int main() {
     hybridTemp_tinp->refreshDOMValueFromModel();
     hybridTemp_tinp->pushValToPeers(hybridTemp_tinp);
 
-    CLNodeFactory<CanvasGrid<unsigned char>, unsigned char, double> canvasBuilder("div", "canvasDiv");
+    CLNodeFactory<CanvasGrid, unsigned char, double> canvasBuilder("div", "canvasDiv");
 
     CanvasGrid<unsigned char> *canvas1 =
         canvasBuilder.withName("canvas1")
@@ -55,7 +55,7 @@ int main() {
             .withAttributes({{"style", val("border: 1px solid green")}, {"width", val(400)}, {"height", val(300)}})
             .canvasGrid(30, 20, 400, 300);
 
-    CLNodeFactory<HybridNode<string>, string, int> childOfMaindivBuilder_str(childOfMaindivBuilder);
+    CLNodeFactory<HybridNode, string, int> childOfMaindivBuilder_str(childOfMaindivBuilder);
 
     string *flexLabelText = new string("Flex Text");
 
@@ -65,7 +65,7 @@ int main() {
 
     HybridNode<string> *inputFlexTextLabel = childOfMaindivBuilder_str.withModelNode(flexLabel).textInput();
 
-    HybridNode<int> *statusButton = (CLNodeFactory<HybridNode<int>, int, int>(childOfMaindivBuilder))
+    HybridNode<int> *statusButton = (CLNodeFactory<HybridNode, int, int>(childOfMaindivBuilder))
                                         .button("statusButton", "Node Audit", nodeAudit);
 
     HybridNode<double> *svgarea = childOfMaindivBuilder.withName("svgarea")
