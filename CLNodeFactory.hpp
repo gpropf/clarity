@@ -28,8 +28,6 @@ class CLNodeFactory {
    public:
     string tag_;               //!< Tag to be used with elements this factory builds.
     string name_;              //!< Name to be used with elements this factory builds.
-    CppType storedValueType_;  //!< storedValueType to be used with elements
-                               //!< this factory builds.
 
     V *cppVal_ = nullptr;
 
@@ -81,7 +79,7 @@ class CLNodeFactory {
                                CLNodeFactory<Nc_to, V_to, N_to> &clnf_to) {
         clnf_to.tag_ = clnf_from.tag_;
         clnf_to.name_ = clnf_from.name_;
-        clnf_to.storedValueType_ = clnf_from.storedValueType_;
+        //clnf_to.storedValueType_ = clnf_from.storedValueType_;
         clnf_to.boundField_ = clnf_from.boundField_;
         clnf_to.parent_ = clnf_from.parent_;
         clnf_to.linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
@@ -97,7 +95,7 @@ class CLNodeFactory {
     CLNodeFactory(CLNodeFactory<Nc_from, V_from, N_from> clnf_from) {
         tag_ = clnf_from.tag_;
         name_ = clnf_from.name_;
-        storedValueType_ = clnf_from.storedValueType_;
+        //storedValueType_ = clnf_from.storedValueType_;
         boundField_ = clnf_from.boundField_;
         parent_ = clnf_from.parent_;
         linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
@@ -119,25 +117,21 @@ class CLNodeFactory {
      *
      * @param tag valid HTML tag, e.g. input, div, button, etc...
      * @param name the string name to give the element
-     * @param storedValueType The type the corresponding stored data has in
-     * C++. This is a far smaller set of types than actually exist in C++
-     * but is meant to make basic distinctions between, say, a string and a
-     * float value.
+     * 
      */
-    INLINE CLNodeFactory(const string &tag, const string &name, CppType storedValueType)
-        : tag_(tag), name_(name), storedValueType_(storedValueType) {}
+    INLINE CLNodeFactory(const string &tag, const string &name)
+        : tag_(tag), name_(name) {}
 
     /**
      * @brief Construct a new CLNodeFactory object
      *
      * @param tag
      * @param name
-     * @param storedValueType
      * @param storedValue If we use this, we are creating a corresponding MN to
      * hold the value.
      */
-    INLINE CLNodeFactory(const string &tag, const string &name, CppType storedValueType, V *storedValue)
-        : tag_(tag), name_(name), storedValueType_(storedValueType) {
+    INLINE CLNodeFactory(const string &tag, const string &name, V *storedValue)
+        : tag_(tag), name_(name) {
         withStoredValue(storedValue, true);
     }
 
@@ -305,59 +299,7 @@ class CLNodeFactory {
         CLNodeFactory cpy(std::move(*this));
         cpy.parent_ = parent;
         return cpy;
-    }
-
-    /**
-     * @brief Sets the C++ type of the stored data. If a ModelNode is already
-     * set, also sets the storedValueType_ for it.
-     *
-     * @param storedValueType
-     * @return CLNodeFactory
-     */
-    // INLINE CLNodeFactory withStoredValueType(
-    //     clarity::CppType storedValueType) const & {
-    //     CLNodeFactory cpy(*this);
-    //     cpy.storedValueType_ = storedValueType;
-    //     if (cpy.modelNode_) {
-    //         cpy.modelNode_->setStoredValueType(storedValueType);
-    //     }
-    //     return cpy;
-    // }
-
-    // INLINE CLNodeFactory withStoredValueType(
-    //     clarity::CppType storedValueType) && {
-    //     CLNodeFactory cpy(std::move(*this));
-    //     cpy.storedValueType_ = storedValueType;
-    //     if (cpy.modelNode_) {
-    //         cpy.modelNode_->setStoredValueType(storedValueType);
-    //     }
-    //     return cpy;
-    // }
-
-    /**
-     * @brief Creates a ModelNode in which to store the provided value. During
-     * the build() call the ModelNode will be linked to the built node as a
-     * peer.
-     *
-     * @param storedValue
-     * @return CLNodeFactory
-     */
-    // INLINE CLNodeFactory withStoredValue(V *storedValue) const & {
-    //     assert(storedValue != nullptr);
-
-    //     CLNodeFactory cpy(*this);
-    //     cpy.modelNode_ = mn;
-    //     return cpy;
-    // }
-
-    // INLINE CLNodeFactory withStoredValue(V *storedValue) && {
-    //     assert(storedValue != nullptr);
-    //     ModelNode<V> *mn = new ModelNode<V>(storedValue, storedValueType_,
-    //                                         "modelnode_for_" + this->name_);
-    //     CLNodeFactory cpy(std::move(*this));
-    //     cpy.modelNode_ = mn;
-    //     return cpy;
-    // }
+    }  
 
     INLINE CLNodeFactory withCppVal(V *cppVal) const & {
         assert(cppVal != nullptr);

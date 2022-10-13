@@ -86,7 +86,7 @@ int main() {
 
     double *d1 = new double(27.8);
     ModelNode<double> *amn = new ModelNode<double>(d1, "independently_created_modelnode");
-    CLNodeFactory<HybridNode<int>, int, double> builder("div", "maindiv", CppType::NoData);
+    CLNodeFactory<HybridNode<int>, int, double> builder("div", "maindiv");
     HybridNode<int> *maindiv = builder.build();
     CLNodeFactory<HybridNode<int>, int, double> childOfMaindivBuilder = builder.createChildrenOf(maindiv);
     CLNodeFactory<HybridNode<int>, int, int> childOfMaindivBuilder_int;

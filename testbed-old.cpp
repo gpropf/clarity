@@ -24,7 +24,7 @@ int main() {
 
     ModelNode<double> *amn = new ModelNode<double>(a, "independently_created_modelnode");
 
-    CLNodeFactory<HybridNode<double>, double, double> builder("div", "maindiv", CppType::NoData);
+    CLNodeFactory<HybridNode<double>, double, double> builder("div", "maindiv");
 
     HybridNode<double> *maindiv = builder.build();
 
@@ -47,7 +47,7 @@ int main() {
     hybridTemp_tinp->refreshDOMValueFromModel();
     hybridTemp_tinp->pushValToPeers(hybridTemp_tinp);
 
-    CLNodeFactory<CanvasGrid<unsigned char>, unsigned char, double> canvasBuilder("div", "canvasDiv", CppType::NoData);
+    CLNodeFactory<CanvasGrid<unsigned char>, unsigned char, double> canvasBuilder("div", "canvasDiv");
 
     CanvasGrid<unsigned char> *canvas1 =
         canvasBuilder.withName("canvas1")
