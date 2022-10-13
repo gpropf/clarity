@@ -110,6 +110,7 @@ class ClarityNode {
         for (auto child: children_) {
             delete child;
         }
+        children_.clear();
         val domElement = cle_["domElement"];
         if (!domElement.isUndefined()) cle_["domElement"].template call<void>("remove");
     }
