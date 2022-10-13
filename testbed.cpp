@@ -21,19 +21,19 @@ int main() {
     // CLNodeFactory<HybridNode<void>, void, double> voidBuilder("div", "root", CppType::NoData);
     // HybridNode<void> *voidnode = voidBuilder.build();
 
-    CLNodeFactory<HybridNode<double>, double, double> rootBuilder("div", "root");
+    CLNodeFactory<HybridNode, double, double> rootBuilder("div", "root");
     HybridNode<double> *root = rootBuilder.build();
 
     HybridNode<double> *sidebar = rootBuilder.withParent(root).withName("sidebar").build();
     HybridNode<double> *testarea = rootBuilder.withParent(root).withName("testarea").build();
 
-    CLNodeFactory<HybridNode<double>, double, double> sidebarBuilder =
+    CLNodeFactory<HybridNode, double, double> sidebarBuilder =
         rootBuilder.withName("sidebar_subnode").createChildrenOf(sidebar);
-    CLNodeFactory<HybridNode<double>, double, double> testareaBuilder =
+    CLNodeFactory<HybridNode, double, double> testareaBuilder =
         rootBuilder.withName("testarea_subnode").createChildrenOf(testarea);
 
     HybridNode<int> *nodeAuditButton =
-        (CLNodeFactory<HybridNode<int>, int, int>(sidebarBuilder)).button("nodeAuditButton", "Node Audit", nodeAudit);
+        (CLNodeFactory<HybridNode, int, int>(sidebarBuilder)).button("nodeAuditButton", "Node Audit", nodeAudit);
 
     double *a = new double(3.2);
     HybridNode<double> *tinp =

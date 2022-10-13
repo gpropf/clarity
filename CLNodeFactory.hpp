@@ -23,7 +23,8 @@ namespace clarity {
  * that there are two different tparams for this probably means we need a bit of
  * a refactoring.
  */
-template <class Nc, typename V, typename N>
+template <template<typename V> class Nc, typename V, typename N>
+//template <class Nc, typename V, typename N>
 class CLNodeFactory {
    public:
     string tag_;               //!< Tag to be used with elements this factory builds.
@@ -35,7 +36,7 @@ class CLNodeFactory {
                                      //!< to be modified when the node value changes.
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
                                      //!< any new nodes as its children.
-    Nc *modelNode_ = nullptr;        //!< If we create a new MN or attach one, we set this. Note
+    Nc<V> *modelNode_ = nullptr;        //!< If we create a new MN or attach one, we set this. Note
                                      //!< that we can create ControlNetworkNodes with no MN.
 
     N linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
@@ -55,43 +56,43 @@ class CLNodeFactory {
                               //!< attribute and doing just about anything with SVG requires
                               //!< a lot of attributes.
 
-    /**
-     * @brief This is a bit of a kludge to allow us to switch the parameter
-     * values 'midstream' while building a GUI. The idea is to preserve the work
-     * you've already done, for instance in setting up a builder that produces
-     * only children of a certain node. You might want to preserve most of the
-     * settings in such a builder while changing the type of data or class of
-     * nodes it produces. You feed in a 'from' factory and get back your 'to'
-     * factory with all the non-tparam values copied over.
-     *
-     * @tparam Nc_from Node class of the 'from' factory.
-     * @tparam V_from V for 'from' factory.
-     * @tparam N_from N for 'from' factory.
-     * @tparam Nc_to Node class of the 'to' factory.
-     * @tparam V_to V for 'to' factory.
-     * @tparam N_to N for 'from' factory.
-     * @param clnf_from 'from' factory
-     * @param clnf_to 'to' factory
-     * @return CLNodeFactory
-     */
-    template <class Nc_from, typename V_from, typename N_from, class Nc_to, typename V_to, typename N_to>
-    static CLNodeFactory clone(const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from,
-                               CLNodeFactory<Nc_to, V_to, N_to> &clnf_to) {
-        clnf_to.tag_ = clnf_from.tag_;
-        clnf_to.name_ = clnf_from.name_;
-        //clnf_to.storedValueType_ = clnf_from.storedValueType_;
-        clnf_to.boundField_ = clnf_from.boundField_;
-        clnf_to.parent_ = clnf_from.parent_;
-        clnf_to.linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
-        clnf_to.transformFn_ = clnf_from.transformFn_;
-        clnf_to.a2b_xfmr_ = clnf_from.a2b_xfmr_;
-        clnf_to.b2a_xfmr_ = clnf_from.b2a_xfmr_;
-        clnf_to.useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
-        clnf_to.attrs_ = clnf_from.attrs_;
-        return clnf_to;
-    }
+    // /**
+    //  * @brief This is a bit of a kludge to allow us to switch the parameter
+    //  * values 'midstream' while building a GUI. The idea is to preserve the work
+    //  * you've already done, for instance in setting up a builder that produces
+    //  * only children of a certain node. You might want to preserve most of the
+    //  * settings in such a builder while changing the type of data or class of
+    //  * nodes it produces. You feed in a 'from' factory and get back your 'to'
+    //  * factory with all the non-tparam values copied over.
+    //  *
+    //  * @tparam Nc_from Node class of the 'from' factory.
+    //  * @tparam V_from V for 'from' factory.
+    //  * @tparam N_from N for 'from' factory.
+    //  * @tparam Nc_to Node class of the 'to' factory.
+    //  * @tparam V_to V for 'to' factory.
+    //  * @tparam N_to N for 'from' factory.
+    //  * @param clnf_from 'from' factory
+    //  * @param clnf_to 'to' factory
+    //  * @return CLNodeFactory
+    //  */
+    // template <class Nc_from, typename V_from, typename N_from, class Nc_to, typename V_to, typename N_to>
+    // static CLNodeFactory clone(const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from,
+    //                            CLNodeFactory<Nc_to, V_to, N_to> &clnf_to) {
+    //     clnf_to.tag_ = clnf_from.tag_;
+    //     clnf_to.name_ = clnf_from.name_;
+    //     //clnf_to.storedValueType_ = clnf_from.storedValueType_;
+    //     clnf_to.boundField_ = clnf_from.boundField_;
+    //     clnf_to.parent_ = clnf_from.parent_;
+    //     clnf_to.linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
+    //     clnf_to.transformFn_ = clnf_from.transformFn_;
+    //     clnf_to.a2b_xfmr_ = clnf_from.a2b_xfmr_;
+    //     clnf_to.b2a_xfmr_ = clnf_from.b2a_xfmr_;
+    //     clnf_to.useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
+    //     clnf_to.attrs_ = clnf_from.attrs_;
+    //     return clnf_to;
+    // }
 
-    template <class Nc_from, typename V_from, typename N_from>
+    template <template<typename V_from> class Nc_from, typename V_from, typename N_from>
     CLNodeFactory(CLNodeFactory<Nc_from, V_from, N_from> clnf_from) {
         tag_ = clnf_from.tag_;
         name_ = clnf_from.name_;
@@ -163,7 +164,7 @@ class CLNodeFactory {
      * @return CLNodeFactory
      */
     template <typename T>
-    INLINE CLNodeFactory extractModelNode(Nc *&modelNode) {
+    INLINE CLNodeFactory extractModelNode(Nc<V> *&modelNode) {
         modelNode = modelNode_;
         return *this;
     }
@@ -175,12 +176,12 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    Nc *build(Nc *existingNode = nullptr) {
-        Nc *newNode;
+    Nc<V> *build(Nc<V> *existingNode = nullptr) {
+        Nc<V> *newNode;
         if (existingNode != nullptr) {
             newNode = existingNode;
         } else {
-            newNode = new Nc(name_, tag_, useExistingDOMElement_);
+            newNode = new Nc<V>(name_, tag_, useExistingDOMElement_);
         }
 
         newNode->setBoundField(boundField_);
@@ -238,7 +239,7 @@ class CLNodeFactory {
      * @param parent
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory createChildrenOf(Nc *parent) {
+    INLINE CLNodeFactory createChildrenOf(Nc<V> *parent) {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
@@ -287,14 +288,14 @@ class CLNodeFactory {
      * @param parent Cannot be null.
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory withParent(Nc *parent) const & {
+    INLINE CLNodeFactory withParent(Nc<V> *parent) const & {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
     }
 
-    INLINE CLNodeFactory withParent(Nc *parent) && {
+    INLINE CLNodeFactory withParent(Nc<V> *parent) && {
         assert(parent != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.parent_ = parent;
@@ -324,14 +325,14 @@ class CLNodeFactory {
      * @param modelNode
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory withModelNode(Nc *modelNode) const & {
+    INLINE CLNodeFactory withModelNode(Nc<V> *modelNode) const & {
         assert(modelNode != nullptr);
         CLNodeFactory cpy(*this);
         cpy.modelNode_ = modelNode;
         return cpy;
     }
 
-    INLINE CLNodeFactory withModelNode(Nc *modelNode) && {
+    INLINE CLNodeFactory withModelNode(Nc<V> *modelNode) && {
         assert(modelNode != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.modelNode_ = modelNode;
@@ -416,8 +417,8 @@ class CLNodeFactory {
      * @param onPressCallback JS function to run when button is pressed.
      * @return Nc*
      */
-    INLINE Nc *button(const string &name, const string &text, val onPressCallback = val(NULL)) {
-        Nc *button = withTag("button").build();
+    INLINE Nc<V> *button(const string &name, const string &text, val onPressCallback = val(NULL)) {
+        Nc<V> *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setVal(val(text));
         val buttonDOMElement = button->getCLE()["domElement"];
@@ -436,8 +437,8 @@ class CLNodeFactory {
      * @return Nc*
      */
     template <class Nc_any>
-    INLINE Nc *label(Nc_any *forNode, const string &text) {
-        Nc *label = withTag("label").build();
+    INLINE Nc<V> *label(Nc_any *forNode, const string &text) {
+        Nc<V> *label = withTag("label").build();
         label->setBoundField("innerHTML");
         label->setVal(val(text));
         label->setAttribute("for", val(forNode->getId()));
@@ -449,9 +450,9 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    INLINE Nc *textInput() {
+    INLINE Nc<V> *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
-        Nc *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
+        Nc<V> *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
         inp->refreshDOMValueFromModel();
         inp->pushValToPeers(inp);
         return inp;
@@ -462,9 +463,9 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    INLINE Nc *rangeInput() {
+    INLINE Nc<V> *rangeInput() {
         map<string, val> inputFieldAttrs = {{"type", val("range")}};
-        Nc *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
+        Nc<V> *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
         inp->refreshDOMValueFromModel();
         inp->pushValToPeers(inp);
         return inp;
@@ -476,18 +477,18 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    INLINE Nc *trInput() {
-        Nc *tinp = withName("txt_" + name_).textInput();
-        Nc *rinp = withName("rng_" + name_).rangeInput();
-        Nc *outerDiv = withTag("div").withName("wrapper_" + name_).build();
+    INLINE Nc<V> *trInput() {
+        Nc<V> *tinp = withName("txt_" + name_).textInput();
+        Nc<V> *rinp = withName("rng_" + name_).rangeInput();
+        Nc<V> *outerDiv = withTag("div").withName("wrapper_" + name_).build();
         outerDiv->appendChild(tinp);
         outerDiv->appendChild(rinp);
         return outerDiv;
     }
 
-    INLINE Nc *textarea(string *txt, const int rows = 4, const int cols = 50) {
+    INLINE Nc<V> *textarea(string *txt, const int rows = 4, const int cols = 50) {
         map<string, val> attrs = {{"rows", val(rows)}, {"cols", val(cols)}};
-        Nc *textArea = withTag("textArea").withBoundField("value").withAttributes(attrs).withCppVal(txt).build();
+        Nc<V> *textArea = withTag("textArea").withBoundField("value").withAttributes(attrs).withCppVal(txt).build();
         return textArea;
     }
 
@@ -499,9 +500,9 @@ class CLNodeFactory {
      * @param labelText
      * @return Nc*
      */
-    INLINE Nc *labelGivenNode(Nc *nodeToBeLabelled, const string &labelText) {
-        Nc *outerDiv = withTag("div").withName("labeldiv_" + nodeToBeLabelled->getName()).build();
-        Nc *labelNode = withName("labelfor_" + nodeToBeLabelled->getName()).label(nodeToBeLabelled, labelText);
+    INLINE Nc<V> *labelGivenNode(Nc<V> *nodeToBeLabelled, const string &labelText) {
+        Nc<V> *outerDiv = withTag("div").withName("labeldiv_" + nodeToBeLabelled->getName()).build();
+        Nc<V> *labelNode = withName("labelfor_" + nodeToBeLabelled->getName()).label(nodeToBeLabelled, labelText);
         outerDiv->appendChild(nodeToBeLabelled);
         outerDiv->appendChild(labelNode);
         return outerDiv;
@@ -540,8 +541,8 @@ class CLNodeFactory {
      * @param labelText
      * @return Nc*
      */
-    INLINE Nc *labelledTRInputNode(const string &labelText) {
-        Nc *trInputNode = trInput();
+    INLINE Nc<V> *labelledTRInputNode(const string &labelText) {
+        Nc<V> *trInputNode = trInput();
         return labelGivenNode(trInputNode, labelText);
     }
 
@@ -552,8 +553,8 @@ class CLNodeFactory {
      * @param attributeName
      * @return Nc*
      */
-    INLINE Nc *attributeNode(const string &attributeName) {
-        Nc *attributeNode = withExistingDOMElement().withBoundField(attributeName).build();
+    INLINE Nc<V> *attributeNode(const string &attributeName) {
+        Nc<V> *attributeNode = withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
         modelNode_->pushValToPeers(modelNode_);
@@ -568,8 +569,8 @@ class CLNodeFactory {
      * @param parent
      * @return Nc*
      */
-    INLINE Nc *attributeNode(const string &attributeName, Nc *parent) {
-        Nc *attributeNode = withParent(parent).attributeNode(attributeName);
+    INLINE Nc<V> *attributeNode(const string &attributeName, Nc<V> *parent) {
+        Nc<V> *attributeNode = withParent(parent).attributeNode(attributeName);
         return attributeNode;
     }
 };

@@ -50,14 +50,14 @@ void destroy_everything() {
 int *n_input_fields = new int(100);
 int *n_fieldsets = new int(50);
 
-template <class Nc, typename V, typename N>
+template <template<typename V> class Nc, typename V, typename N>
 void make_trs(CLNodeFactory<Nc, V, N> builder) {
     int fieldCount = 0;
     for (int j = 0; j < *n_fieldsets; j++) {
         time_t t1 = msecs_time();
         for (int i = 0; i < *n_input_fields; i++) {
             int *iptr = new int(i);
-            HybridNode<int> *cln = (CLNodeFactory<HybridNode<int>, int, int>(builder))
+            HybridNode<int> *cln = (CLNodeFactory<HybridNode, int, int>(builder))
                                        .withName("cln_" + to_string(fieldCount++))
                                        .withCppVal(iptr)
                                        .trInput();
@@ -86,11 +86,11 @@ int main() {
 
     double *d1 = new double(27.8);
     ModelNode<double> *amn = new ModelNode<double>(d1, "independently_created_modelnode");
-    CLNodeFactory<HybridNode<int>, int, double> builder("div", "maindiv");
+    CLNodeFactory<HybridNode, int, double> builder("div", "maindiv");
     HybridNode<int> *maindiv = builder.build();
-    CLNodeFactory<HybridNode<int>, int, double> childOfMaindivBuilder = builder.createChildrenOf(maindiv);
-    CLNodeFactory<HybridNode<int>, int, int> childOfMaindivBuilder_int;
-    CLNodeFactory<HybridNode<int>, int, int>::clone(childOfMaindivBuilder, childOfMaindivBuilder_int);
+    CLNodeFactory<HybridNode, int, double> childOfMaindivBuilder = builder.createChildrenOf(maindiv);
+    
+    CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
 
     HybridNode<int> *fieldsets_inp = childOfMaindivBuilder_int.withCppVal(n_fieldsets).textInput();
     HybridNode<int> *labelled_fieldsets_inp = childOfMaindivBuilder_int.labelGivenNode(fieldsets_inp, "fieldsets");
