@@ -62,15 +62,14 @@ void make_trs(CLNodeFactory<Nc, V, N> builder) {
                                        .withCppVal(iptr)
                                        .trInput();
             cln->setCppVal(iptr);
-            cln->refreshDOMValueFromModel();
-            cln->pushValToPeers(cln);
+            cln->refresh();
             ns.push_back(iptr);
             clns.push_back(cln);
         }
         time_t t2 = msecs_time();
         time_t del_t = t2 - t1;
         cout << "Elapsed time: " << del_t << "\n";
-        destroy_everything();
+        //destroy_everything();
     }
 }
 

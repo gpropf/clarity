@@ -201,6 +201,8 @@ class CLNodeFactory {
         if (cppVal_) {
             newNode->setCppVal(cppVal_);
         }
+
+        //newNode->refresh();
         return newNode;
     }
 
@@ -453,8 +455,9 @@ class CLNodeFactory {
     INLINE Nc<V> *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
         Nc<V> *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
-        inp->refreshDOMValueFromModel();
-        inp->pushValToPeers(inp);
+        // inp->refreshDOMValueFromModel();
+        // inp->pushValToPeers(inp);
+        inp->refresh();
         return inp;
     }
 
@@ -466,8 +469,9 @@ class CLNodeFactory {
     INLINE Nc<V> *rangeInput() {
         map<string, val> inputFieldAttrs = {{"type", val("range")}};
         Nc<V> *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
-        inp->refreshDOMValueFromModel();
-        inp->pushValToPeers(inp);
+        // inp->refreshDOMValueFromModel();
+        // inp->pushValToPeers(inp); 
+        inp->refresh();
         return inp;
     }
 

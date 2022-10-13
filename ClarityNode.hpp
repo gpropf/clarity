@@ -107,6 +107,9 @@ class ClarityNode {
             dl.reset();
         }
         dlpeers_.clear();
+        for (auto child: children_) {
+            delete child;
+        }
         val domElement = cle_["domElement"];
         if (!domElement.isUndefined()) cle_["domElement"].template call<void>("remove");
     }
@@ -432,6 +435,12 @@ class HybridNode : public ClarityNode {
     void setCppValFromJSVal(const val &jsval) {
         V newCppVal = jsval.as<V>();
         *reinterpret_cast<V *>(cppVal_) = newCppVal;
+        pushValToPeers(this);
+    }
+
+
+    void refresh() {
+        refreshDOMValueFromModel();
         pushValToPeers(this);
     }
 
