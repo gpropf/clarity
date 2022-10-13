@@ -21,8 +21,8 @@ FRAMEWORK_DEPS = clarity.js Util.js clarity.html Makefile
 speedtest: speedtest.o ClarityNode.o
 	$(CC) -lembind speedtest.o ClarityNode.o $(CFLAGS) -o $(JSOUT)
 
-testbed2: testbed2.o ClarityNode.o CanvasElement.o
-	$(CC) -lembind testbed2.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
+testbed: testbed.o ClarityNode.o CanvasElement.o
+	$(CC) -lembind testbed.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
 
 # libclr.a: $(LIBCLR_OBJS)
 # 	$(AR) rcs libclr.a $(LIBCLR_OBJS)
@@ -39,4 +39,4 @@ clean:
 realclean: clean
 	rm -f *.wasm *.wasm.map *.a $(JSOUT)
 
-all: testbed2 speedtest docs
+all: testbed speedtest docs
