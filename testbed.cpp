@@ -24,8 +24,10 @@ int main() {
     CLNodeFactory<HybridNode, double, double> rootBuilder("div", "root");
     HybridNode<double> *root = rootBuilder.build();
 
-    HybridNode<double> *sidebar = rootBuilder.withParent(root).withName("sidebar").build();
-    HybridNode<double> *testarea = rootBuilder.withParent(root).withName("testarea").build();
+    HybridNode<double> *sidebar =
+        rootBuilder.withParent(root).withName("sidebar").withAttributes({{"class", val("sidebar")}}).build();
+    HybridNode<double> *testarea =
+        rootBuilder.withParent(root).withName("testarea").withAttributes({{"class", val("mainarea")}}).build();
 
     CLNodeFactory<HybridNode, double, double> sidebarBuilder =
         rootBuilder.withName("sidebar_subnode").createChildrenOf(sidebar);

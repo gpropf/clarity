@@ -21,6 +21,9 @@ class CLElement {
     }
   };
 
+  /**
+   * See note below on these generator functions.
+   */
   static eventListeners = {
     "input": [{
       "eventName": "change", "eventHandlerGenerator":
@@ -38,7 +41,7 @@ class CLElement {
       "eventName": "input", "eventHandlerGenerator":
         function (element) {
           return function (e) {
-            console.log("KEYPRESSED!");            
+            console.log("KEYPRESSED!");
           }
         }
     },
@@ -325,10 +328,20 @@ class CLElement {
       }
     }
     this.domElement_ = el
-    this.installEventListeners(this);
+    this.generateEventListeners(this);
   }
 
-  installEventListeners(outerThis) {
+  /**
+   * We need to generate event listeners for each node we create of a given type. 
+   * There is something about the way the closure for the functions is defined that
+   * make 'this' not work as expected so I explicitly pass in a parameter to each
+   * generator that references the element's 'this' correctly. Storing the actual handlers
+   * simply does not work as the value of the 'element' variable is different for each
+   * field.
+   * 
+   * @param {CLElement} outerThis 
+   */
+  generateEventListeners(outerThis) {
     if (outerThis.tag_ in CLElement.eventListeners) {
       let listenerList = CLElement.eventListeners[outerThis.tag_];
       listenerList.map(function (kv) {
@@ -337,7 +350,9 @@ class CLElement {
     }
   }
 
-
+  /**
+   * 
+   */
   set id(id) {
     this.id_ = id
   }
