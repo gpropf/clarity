@@ -21,9 +21,102 @@ std::string clto_str(const T &v) {
     return os.str();
 }
 
-class WebNode {};
+class WebNode : public ClarityNode {
+   public:
 
+    virtual ~WebNode() {
+        val domElement = cle_["domElement"];
+        if (!domElement.isUndefined()) cle_["domElement"].template call<void>("remove");
+    }
 
+    INLINE val getCLE() const { return cle_; }
+    INLINE void setCLE(val cle) { cle_ = cle; }
+
+    WebNode(const string &name, const string &tag, bool useExistingDOMElement) : ClarityNode(name), tag_(tag) {
+        cle_.call<void>("createDOMElement", id_, tag, name);
+        // cle_.set("name", val(name));
+        //  For some reason the code that sets the name in clarity.js doesn't
+        //  "take" so we re-set it here.
+
+        domElement_ = cle_["domElement"];
+        setBoundField("value");
+    }
+
+    INLINE void setBoundField(const string &boundField) {
+        boundField_ = boundField;
+        cle_.set("boundField_", boundField);
+        // val domElement = cle_["domElement"];
+    }
+
+    INLINE void addEventListenerByName(const string &eventName, const string &callbackName) {
+        cle_.call<void>("addEventListenerById", eventName, callbackName);
+    }
+
+    INLINE void addJSEventListener(const string &eventName, val eventCallback) {
+        cle_.call<void>("addEventListener", eventName, eventCallback);
+    }
+
+    INLINE string getTag() const { return tag_; }
+
+    INLINE void setAttribute(const string &attr, const val &value) {
+        val domElement = cle_["domElement"];
+        domElement.call<void>("setAttribute", attr, value);
+    }
+
+    INLINE void setAttributes(const map<string, val> &attrs) {
+        for (auto [attrName, value] : attrs) {
+            setAttribute(attrName, value);
+        }
+    }
+
+    virtual bool appendChild(ClarityNode *child) {
+        children_.push_back(child);
+        child->setParent(this);
+        cle_.call<void>("appendChild", child->getCLE());
+        return true;  // FIXME: need to check for duplicate ids.
+    }
+
+    INLINE string getDOMText() const {
+        val domElement = cle_["domElement"];
+        string domText = domElement[boundField_].as<string>();
+        return domText;
+    }
+
+    INLINE virtual void printState() const { cle_.call<void>("printState"); }
+
+    /**
+     * @brief Read the DOM element text and convert it to a JS variable using the cppVal_ type as a type hint. Even if
+     * this particular node does not contain a value there it will still be able to use the pointer as a type hint. The
+     * template specializations allow us to use functions like stof, stod, and stoi to convert the text to the
+     * appropriate value type.
+     *
+     * @return val
+     */
+    virtual val getVal() const {
+        string valueText = getDOMText();
+        return val("NO SPECIALIZED TEMPLATE");
+    }
+
+    INLINE virtual void setVal(const val &inval) {
+        clean_ = false;
+        val domElement = cle_["domElement"];
+        // cle_.call<void>("printVal", inval);
+        if (boundField_ != "") {
+            domElement.set(boundField_, inval);
+            domElement.call<void>("setAttribute", val(boundField_), inval);
+        } else {
+            // FIXME: Should be an assert or exception
+        }
+    }
+
+   protected:
+    /** \brief Instance of the CLElement class that acts as a "proxy" in JS
+     * space. */
+    val cle_ = val::global("CLElement").new_();
+    val domElement_;  //!< This will be initialized if the node has its own DOM element.
+    string boundField_;
+    string tag_;
+};
 
 /**
  * @brief The project's central class. Describes an element with push/pull
@@ -95,9 +188,7 @@ class ClarityNode {
         }
     }
 
-    INLINE string getTag() const { return tag_; }
     INLINE int getId() const { return id_; }
-    INLINE void setCLE(val cle) { cle_ = cle; }
 
     INLINE static void runCallbackById(const string &id) { callbackMap[id](); }
 
@@ -115,8 +206,6 @@ class ClarityNode {
             delete child;
         }
         children_.clear();
-        val domElement = cle_["domElement"];
-        if (!domElement.isUndefined()) cle_["domElement"].template call<void>("remove");
     }
 
     // INLINE ClarityNode(const CppType storedValueType)
@@ -137,15 +226,9 @@ class ClarityNode {
      * @param storedValueType C++ type of data contained within
      *
      */
-    ClarityNode(const string &name, const string &tag, bool useExistingDOMElement) : name_(name), tag_(tag) {
+    ClarityNode(const string &name, bool useExistingDOMElement) : name_(name) {
         init();
-        if (!useExistingDOMElement) cle_.call<void>("createDOMElement", id_, tag, name);
-        // cle_.set("name", val(name));
-        //  For some reason the code that sets the name in clarity.js doesn't
-        //  "take" so we re-set it here.
 
-        domElement_ = cle_["domElement"];
-        setBoundField("value");
         // boundField_ = "value";  // FIXME: Not true for all elements
         ClarityNode::switchboard[id_] = this;
     }
@@ -163,46 +246,8 @@ class ClarityNode {
     INLINE ClarityNode *getParent() const { return this->parent_; }
     INLINE void setParent(ClarityNode *parent) { this->parent_ = parent; }
 
-    INLINE string getDOMText() const {
-        val domElement = cle_["domElement"];
-        string domText = domElement[boundField_].as<string>();
-        return domText;
-    }
-
-    /**
-     * @brief Read the DOM element text and convert it to a JS variable using the cppVal_ type as a type hint. Even if
-     * this particular node does not contain a value there it will still be able to use the pointer as a type hint. The
-     * template specializations allow us to use functions like stof, stod, and stoi to convert the text to the
-     * appropriate value type.
-     *
-     * @return val
-     */
-    virtual val getVal() const {
-        string valueText = getDOMText();
-        return val("NO SPECIALIZED TEMPLATE");
-    }
-
-    INLINE virtual void setVal(const val &inval) {
-        clean_ = false;
-        val domElement = cle_["domElement"];
-        // cle_.call<void>("printVal", inval);
-        if (boundField_ != "") {
-            domElement.set(boundField_, inval);
-            domElement.call<void>("setAttribute", val(boundField_), inval);
-        } else {
-            // FIXME: Should be an assert or exception
-        }
-    }
-
-    INLINE void setBoundField(const string &boundField) {
-        boundField_ = boundField;
-        cle_.set("boundField_", boundField);
-        // val domElement = cle_["domElement"];
-    }
-
-    INLINE val getCLE() const { return cle_; }
     INLINE string getName() const { return name_; }
-    INLINE virtual void printState() const { cle_.call<void>("printState"); }
+
     INLINE static ClarityNode *getCLElementById(const int id) { return switchboard[id]; }
     INLINE static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
     INLINE void toggleClean() { clean_ = !clean_; }
@@ -247,7 +292,7 @@ class ClarityNode {
 
     //=========== From cpp file
 
-    bool appendChild(ClarityNode *child) {
+    virtual bool appendChild(ClarityNode *child) {
         children_.push_back(child);
         child->setParent(this);
         cle_.call<void>("appendChild", child->getCLE());
@@ -370,35 +415,14 @@ class ClarityNode {
         peer->appendDualLink(dl);
     }
 
-    INLINE void setAttribute(const string &attr, const val &value) {
-        val domElement = cle_["domElement"];
-        domElement.call<void>("setAttribute", attr, value);
-    }
-
-    INLINE void setAttributes(const map<string, val> &attrs) {
-        for (auto [attrName, value] : attrs) {
-            setAttribute(attrName, value);
-        }
-    }
-
     // INLINE void setStoredValueType(CppType cppType) {
     //     storedValueType_ = cppType;
     //     cle_.set("cpptype", cppType);
     // }
 
-    INLINE void addEventListenerByName(const string &eventName, const string &callbackName) {
-        cle_.call<void>("addEventListenerById", eventName, callbackName);
-    }
-
-    INLINE void addJSEventListener(const string &eventName, val eventCallback) {
-        cle_.call<void>("addEventListener", eventName, eventCallback);
-    }
     // ========= End from Cpp file
 
    protected:
-    string tag_;
-    string boundField_;
-
     /** \brief The node is clean if it has not been recently changed. This
        feature is mainly designed to prevent infinite update loops if the node
        graph is not acyclic. It doesn't do anything yet.*/
@@ -408,12 +432,6 @@ class ClarityNode {
     /** \brief Keeps track of all nodes in the system. If you have the id of a
      * node you can get a pointer to it here. */
     static map<const int, ClarityNode *> switchboard;
-
-    /** \brief Instance of the CLElement class that acts as a "proxy" in JS
-     * space. */
-    val cle_ = val::global("CLElement").new_();
-    val domElement_;  //!< This will be initialized if the node has its own DOM
-                      //!< element.
 
     /** \brief A node's parent is the DOM element that contains it. In the
      * case of the WebAttrNode this is the WebElemNode for which this is an
@@ -439,12 +457,11 @@ class ModelNode {
     V *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'
 };
 
-
 template <typename V>
-class HybridNode : public ClarityNode, public ModelNode<V> {
+class HybridNode : public WebNode, public ModelNode<V> {
    public:
     HybridNode(const string &name, const string &tag, bool useExistingDOMElement)
-        : ClarityNode(name, tag, useExistingDOMElement) {}
+        : WebNode(name, tag, useExistingDOMElement) {}
 
     void setCppValFromJSVal(const val &jsval) {
         V newCppVal = jsval.as<V>();
