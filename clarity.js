@@ -22,11 +22,44 @@ class CLElement {
   };
 
   static eventListeners = {
-    "input": [],
-    "textarea": [],
+    "input": [{
+      "eventName": "change", "eventHandlerGenerator":
+        function (element) {
+          return function (e) {
+            Module.ClarityNode.updateNodeFromDomById(element.id)
+            if (element.boundField != undefined)
+              console.log("For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
+            else
+              console.log("For ID: " + element.id + " Value changed");
+          }
+        }
+    }],
+    "textarea": [{
+      "eventName": "input", "eventHandlerGenerator":
+        function (element) {
+          return function (e) {
+            console.log("KEYPRESSED!");            
+          }
+        }
+    },
+    {
+      "eventName": "change", "eventHandlerGenerator":
+        function (element) {
+          return function (e) {
+            console.log("textarea lost focus!");
+            Module.ClarityNode.updateNodeFromDomById(element.id)
+            if (element.boundField != undefined)
+              console.log("For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
+            else
+              console.log("For ID: " + element.id + " Value changed");
+          }
+        }
+    }],
     "select": [],
     "option": []
   }
+
+
 
   multiplyValues(a, b) {
     return a * b
@@ -38,10 +71,6 @@ class CLElement {
 
   static square(x) {
     return x ** 2;
-  }
-
-  static testAlert() {
-    alert("FOO!")
   }
 
   static doNothing() {
@@ -296,21 +325,18 @@ class CLElement {
       }
     }
     this.domElement_ = el
+    this.installEventListeners(this);
+  }
 
-    if (this.tag_ == 'input') {
-      var outerThis = this
-      this.domElement_.addEventListener('change', function (e) {
-        // console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)
-        Module.ClarityNode.updateNodeFromDomById(outerThis.id_)
-        //Module.ClarityNode.pullValFromPeersById(outerThis.id_)
-        //Module.ClarityNode.markNodeDirtyById(outerThis.id_)
-        if (outerThis.boundField != undefined)
-          console.log("For ID: " + outerThis.id + " Value changed to: " + outerThis.domElement[outerThis.boundField]);
-        else
-          console.log("For ID: " + outerThis.id + " Value changed");
+  installEventListeners(outerThis) {
+    if (outerThis.tag_ in CLElement.eventListeners) {
+      let listenerList = CLElement.eventListeners[outerThis.tag_];
+      listenerList.map(function (kv) {
+        outerThis.domElement_.addEventListener(kv.eventName, kv.eventHandlerGenerator(outerThis));
       })
     }
   }
+
 
   set id(id) {
     this.id_ = id

@@ -493,7 +493,7 @@ class CLNodeFactory {
 
     INLINE Nc<V> *textarea(string *txt, const int rows = 4, const int cols = 50) {
         map<string, val> attrs = {{"rows", val(rows)}, {"cols", val(cols)}};
-        Nc<V> *textArea = withTag("textArea").withBoundField("value").withAttributes(attrs).withCppVal(txt).build();
+        Nc<V> *textArea = withTag("textarea").withBoundField("value").withAttributes(attrs).withCppVal(txt).build();
         return textArea;
     }
 
