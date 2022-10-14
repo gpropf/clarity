@@ -21,10 +21,8 @@ std::string clto_str(const T &v) {
     return os.str();
 }
 
-class BaseNode {
-protected:
- vector<BaseNode *> children_;
-};
+class WebNode {};
+
 
 
 /**
@@ -39,7 +37,7 @@ protected:
  * contain pure virtual methods and trying to instantiate it will be an error.
  *
  */
-class ClarityNode: public BaseNode {
+class ClarityNode {
    public:
     static map<string, std::function<void()>> callbackMap;
     static val CLElement_;
@@ -113,7 +111,7 @@ class ClarityNode: public BaseNode {
             dl.reset();
         }
         dlpeers_.clear();
-        for (auto child: children_) {
+        for (auto child : children_) {
             delete child;
         }
         children_.clear();
@@ -401,7 +399,6 @@ class ClarityNode: public BaseNode {
     string tag_;
     string boundField_;
 
-   
     /** \brief The node is clean if it has not been recently changed. This
        feature is mainly designed to prevent infinite update loops if the node
        graph is not acyclic. It doesn't do anything yet.*/
@@ -429,22 +426,31 @@ class ClarityNode: public BaseNode {
      * data is moved between nodes. */
     // vector<ClarityNode::ActiveLink> peers_;
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
+
+    vector<ClarityNode *> children_;
 };
 
 template <typename V>
-class HybridNode : public ClarityNode {
+class ModelNode {
+   public:
+    INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
+
+   protected:
+    V *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'
+};
+
+
+template <typename V>
+class HybridNode : public ClarityNode, public ModelNode<V> {
    public:
     HybridNode(const string &name, const string &tag, bool useExistingDOMElement)
         : ClarityNode(name, tag, useExistingDOMElement) {}
 
-    INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
-
     void setCppValFromJSVal(const val &jsval) {
         V newCppVal = jsval.as<V>();
-        *reinterpret_cast<V *>(cppVal_) = newCppVal;
+        *reinterpret_cast<V *>(this->cppVal_) = newCppVal;
         pushValToPeers(this);
     }
-
 
     void refresh() {
         refreshDOMValueFromModel();
@@ -459,7 +465,7 @@ class HybridNode : public ClarityNode {
      */
     INLINE virtual void setVal(const val &inval) {
         ClarityNode::setVal(inval);
-        if (cppVal_ != nullptr) {
+        if (this->cppVal_ != nullptr) {
             setCppValFromJSVal(inval);
         }
     }
@@ -471,30 +477,30 @@ class HybridNode : public ClarityNode {
      * @return val
      */
     virtual val getVal() const {
-        if (cppVal_ != nullptr) {
-            return val(cpp2js<V>(cppVal_));
+        if (this->cppVal_ != nullptr) {
+            return val(cpp2js<V>(this->cppVal_));
         }
         val domVal = ClarityNode::getVal();
         return domVal;
     }
 
     INLINE string cppValToString() const {
-        if (cppVal_ == nullptr) return "NULLPTR";
+        if (this->cppVal_ == nullptr) return "NULLPTR";
         return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
     }
 
     virtual void refreshDOMValueFromModel() {
-        if (cppVal_ != nullptr) {
-            val jsval = val(*cppVal_);
+        if (this->cppVal_ != nullptr) {
+            val jsval = val(*this->cppVal_);
             ClarityNode::setVal(jsval);
         }
     }
 
     virtual void updateNodeFromDom() {
         val jsval = getVal();
-        if (cppVal_ != nullptr) {
+        if (this->cppVal_ != nullptr) {
             cout << "cppVal_ exists!\n";
-            *cppVal_ = jsval.as<V>();
+            *this->cppVal_ = jsval.as<V>();
         }
     }
 
@@ -502,7 +508,6 @@ class HybridNode : public ClarityNode {
     }
 
    protected:
-    V *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'
 };
 
 }  // namespace clarity
