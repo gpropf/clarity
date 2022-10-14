@@ -55,6 +55,8 @@ int main() {
             .withAttributes({{"style", val("border: 1px solid green")}, {"width", val(400)}, {"height", val(300)}})
             .canvasGrid(30, 20, 400, 300);
 
+    canvas1->setCurrentCellVal(5);
+
     CLNodeFactory<HybridNode, string, int> childOfMaindivBuilder_str(childOfMaindivBuilder);
 
     string *flexLabelText = new string("Flex Text");

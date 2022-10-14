@@ -67,6 +67,11 @@ class CanvasGrid : public CanvasElement<V> {
     static const array<string, 8> colors;
 
    public:
+
+    inline void setCurrentCellVal(int v) {
+        currentCellVal_ = v;
+    }
+
     inline string cppValToString() const {
         if (this->cppVal_ == nullptr) return "CanvasGrid NULLPTR";
         return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
