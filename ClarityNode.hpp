@@ -200,7 +200,7 @@ class ClarityNode {
     INLINE string getName() const { return name_; }
     INLINE virtual void printState() const { cle_.call<void>("printState"); }
     INLINE static ClarityNode *getCLElementById(const int id) { return switchboard[id]; }
-    INLINE static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
+    //INLINE static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
     INLINE void toggleClean() { clean_ = !clean_; }
 
     template <typename T>

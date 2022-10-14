@@ -21,6 +21,13 @@ class CLElement {
     }
   };
 
+  static eventListeners = {
+    "input": [],
+    "textarea": [],
+    "select": [],
+    "option": []
+  }
+
   multiplyValues(a, b) {
     return a * b
   }
@@ -296,7 +303,7 @@ class CLElement {
         // console.log(`Javascript onchange callback called for outerThis.id_ = ${outerThis.id_}`)
         Module.ClarityNode.updateNodeFromDomById(outerThis.id_)
         //Module.ClarityNode.pullValFromPeersById(outerThis.id_)
-        Module.ClarityNode.markNodeDirtyById(outerThis.id_)
+        //Module.ClarityNode.markNodeDirtyById(outerThis.id_)
         if (outerThis.boundField != undefined)
           console.log("For ID: " + outerThis.id + " Value changed to: " + outerThis.domElement[outerThis.boundField]);
         else
