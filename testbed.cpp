@@ -18,9 +18,6 @@ int main() {
     val blackbody_st = CLE["blackbody_st"];
     val nodeAudit = CLE["nodeAudit_double"];
 
-    // CLNodeFactory<HybridNode<void>, void, double> voidBuilder("div", "root", CppType::NoData);
-    // HybridNode<void> *voidnode = voidBuilder.build();
-
     CLNodeFactory<HybridNode, double, double> rootBuilder("div", "root");
     HybridNode<double> *root = rootBuilder.build();
 

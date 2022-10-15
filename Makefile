@@ -1,8 +1,8 @@
 AR 		= emar
 CC		= emcc
 
-#ENV		= DEMANGLE_SUPPORT=1 EMCC_DEBUG=1 #TOTAL_MEMORY=1900mb
-ENV		= DEMANGLE_SUPPORT=1 #TOTAL_MEMORY=1900mb
+#ENV		= DEMANGLE_SUPPORT=1 EMCC_DEBUG=1
+ENV		= DEMANGLE_SUPPORT=1
 
 #CFLAGS	=  -O0 -g -gsource-map --source-map-base=http://localhost:6931/ -std=c++17
 CFLAGS	=  -O0 -g -std=c++17 #-sASSERTIONS
@@ -24,8 +24,8 @@ speedtest: speedtest.o ClarityNode.o
 testbed: testbed.o ClarityNode.o CanvasElement.o
 	$(CC) -lembind testbed.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
 
-testbed-old: testbed-old.o ClarityNode.o CanvasElement.o
-	$(CC) -lembind testbed-old.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
+showcase: showcase.o ClarityNode.o CanvasElement.o
+	$(CC) -lembind showcase.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
 
 
 # libclr.a: $(LIBCLR_OBJS)

@@ -135,14 +135,13 @@ class ClarityNode {
      */
     ClarityNode(const string &name, const string &tag, bool useExistingDOMElement) : name_(name), tag_(tag) {
         init();
-        if (!useExistingDOMElement) cle_.call<void>("createDOMElement", id_, tag, name);
+        if (!useExistingDOMElement) cle_.call<void>("createDOMElement", id_, tag_, name_);
         // cle_.set("name", val(name));
         //  For some reason the code that sets the name in clarity.js doesn't
         //  "take" so we re-set it here.
 
         domElement_ = cle_["domElement"];
-        setBoundField("value");
-        // boundField_ = "value";  // FIXME: Not true for all elements
+        setBoundField("value");        
         ClarityNode::switchboard[id_] = this;
     }
 

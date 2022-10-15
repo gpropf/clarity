@@ -22,12 +22,12 @@ namespace clarity {
  * that there are two different tparams for this probably means we need a bit of
  * a refactoring.
  */
-template <template<typename V> class Nc, typename V, typename N>
-//template <class Nc, typename V, typename N>
+template <template <typename V> class Nc, typename V, typename N>
+// template <class Nc, typename V, typename N>
 class CLNodeFactory {
    public:
-    string tag_;               //!< Tag to be used with elements this factory builds.
-    string name_;              //!< Name to be used with elements this factory builds.
+    string tag_;   //!< Tag to be used with elements this factory builds.
+    string name_;  //!< Name to be used with elements this factory builds.
 
     V *cppVal_ = nullptr;
 
@@ -35,7 +35,7 @@ class CLNodeFactory {
                                      //!< to be modified when the node value changes.
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
                                      //!< any new nodes as its children.
-    Nc<V> *modelNode_ = nullptr;        //!< If we create a new MN or attach one, we set this. Note
+    Nc<V> *modelNode_ = nullptr;     //!< If we create a new MN or attach one, we set this. Note
                                      //!< that we can create ControlNetworkNodes with no MN.
 
     N linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
@@ -91,11 +91,11 @@ class CLNodeFactory {
     //     return clnf_to;
     // }
 
-    template <template<typename V_from> class Nc_from, typename V_from, typename N_from>
+    template <template <typename V_from> class Nc_from, typename V_from, typename N_from>
     CLNodeFactory(CLNodeFactory<Nc_from, V_from, N_from> clnf_from) {
         tag_ = clnf_from.tag_;
         name_ = clnf_from.name_;
-        //storedValueType_ = clnf_from.storedValueType_;
+        // storedValueType_ = clnf_from.storedValueType_;
         boundField_ = clnf_from.boundField_;
         parent_ = clnf_from.parent_;
         linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
@@ -117,10 +117,9 @@ class CLNodeFactory {
      *
      * @param tag valid HTML tag, e.g. input, div, button, etc...
      * @param name the string name to give the element
-     * 
+     *
      */
-    INLINE CLNodeFactory(const string &tag, const string &name)
-        : tag_(tag), name_(name) {}
+    INLINE CLNodeFactory(const string &tag, const string &name) : tag_(tag), name_(name) {}
 
     /**
      * @brief Construct a new CLNodeFactory object
@@ -130,8 +129,7 @@ class CLNodeFactory {
      * @param storedValue If we use this, we are creating a corresponding MN to
      * hold the value.
      */
-    INLINE CLNodeFactory(const string &tag, const string &name, V *storedValue)
-        : tag_(tag), name_(name) {
+    INLINE CLNodeFactory(const string &tag, const string &name, V *storedValue) : tag_(tag), name_(name) {
         withStoredValue(storedValue, true);
     }
 
@@ -201,7 +199,7 @@ class CLNodeFactory {
             newNode->setCppVal(cppVal_);
         }
 
-        //newNode->refresh();
+        // newNode->refresh();
         return newNode;
     }
 
@@ -301,17 +299,17 @@ class CLNodeFactory {
         CLNodeFactory cpy(std::move(*this));
         cpy.parent_ = parent;
         return cpy;
-    }  
+    }
 
     INLINE CLNodeFactory withCppVal(V *cppVal) const & {
-        //assert(cppVal != nullptr);
+        // assert(cppVal != nullptr);
         CLNodeFactory cpy(*this);
         cpy.cppVal_ = cppVal;
         return cpy;
     }
 
     INLINE CLNodeFactory withCppVal(V *cppVal) const && {
-        //assert(cppVal != nullptr);
+        // assert(cppVal != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.cppVal_ = cppVal;
         return cpy;
@@ -465,11 +463,11 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    INLINE Nc<V> *rangeInput() {
-        map<string, val> inputFieldAttrs = {{"type", val("range")}};
+    INLINE Nc<V> *rangeInput(int min = 0, int max = 100) {
+        map<string, val> inputFieldAttrs = {{"type", val("range")}, {"min", val(min)}, {"max", val(max)}};
         Nc<V> *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
         // inp->refreshDOMValueFromModel();
-        // inp->pushValToPeers(inp); 
+        // inp->pushValToPeers(inp);
         inp->refresh();
         return inp;
     }

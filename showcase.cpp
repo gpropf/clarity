@@ -22,8 +22,6 @@ int main() {
     double *t2 = new double(600);
     double *temp = new double(88.4);
 
-    //ModelNode<double> *amn = new ModelNode<double>(a, "independently_created_modelnode");
-
     CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");
 
     HybridNode<double> *maindiv = builder.build();
@@ -96,7 +94,7 @@ int main() {
                                            .attributeNode("r", cir1);
 
     HybridNode<double> *temp2_rinp =
-        childOfMaindivBuilder.withLinkMultiplierConstant(1).withName("temp2_rinp").withCppVal(t2).rangeInput();
+        childOfMaindivBuilder.withLinkMultiplierConstant(1).withName("temp2_rinp").withCppVal(t2).rangeInput(0, 5000);
 
     val blackbody = temp2_rinp->getCLE()["blackbody"];
 
