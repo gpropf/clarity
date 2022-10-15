@@ -21,15 +21,6 @@ using namespace emscripten;
 
 namespace clarity {
 
-/**
- * @brief Abstract convenience class. Overload this class and the content() method
- * and you can easily put your content in an existing template like the testbed.cpp
- * example program.
- *
- */
-struct PageContent {
-    virtual void content() = 0;
-};
 
 /**
  * @brief Hands out (presumably) unique int ids with a simply incrementing

@@ -26,6 +26,12 @@ val HybridNode<int>::getVal() const {
 }
 
 template <>
+val HybridNode<unsigned char>::getVal() const {
+    string valueText = getDOMText();
+    return val(stoi(valueText));
+}
+
+template <>
 val HybridNode<string>::getVal() const {
     string valueText = getDOMText();
     return val(valueText);
