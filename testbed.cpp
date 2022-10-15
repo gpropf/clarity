@@ -13,9 +13,6 @@ const array<string, 8> CanvasGrid<unsigned char>::colors = {"#F5F5DC", "#00FF00"
 
 int main() {
     val CLE = val::global("CLElement");
-    val doNothing = CLE["doNothing"];
-    val square = CLE["square"];
-    val blackbody_st = CLE["blackbody_st"];
     val nodeAudit = CLE["nodeAudit_double"];
 
     CLNodeFactory<HybridNode, double, double> rootBuilder("div", "root");
@@ -33,10 +30,6 @@ int main() {
 
     HybridNode<int> *nodeAuditButton =
         (CLNodeFactory<HybridNode, int, int>(sidebarBuilder)).button("nodeAuditButton", "Node Audit", nodeAudit);
-
-    double *a = new double(3.2);
-    HybridNode<double> *tinp =
-        testareaBuilder.withLinkMultiplierConstant(1).withName("a_tinp").withCppVal(a).textInput();
 
     return 0;
 }
