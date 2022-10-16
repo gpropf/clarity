@@ -48,19 +48,21 @@ struct Showcase : public PageContent {
         CanvasGrid<unsigned char> *canvas1 =
             canvasBuilder.withName("canvas1")
                 .withTag("canvas")
-                .withAttributes({{"style", val("border: 1px solid green")}, {"width", val(400)}, {"height", val(300)}})
+                .withAttributes({{"style", val("border: 1px solid green")},
+                 {"width", val(400)}, {"height", val(300)}})
                 .canvasGrid(30, 20, 400, 300);
 
         canvas1->setCurrentCellVal(5);
 
         CLNodeFactory<HybridNode, unsigned char, double> canvasParamBuilder(canvasBuilder);
-        HybridNode<unsigned char> * canvas1CurrentCellColor_tinp = canvasParamBuilder.withName("currentCellColor_tinp")
-                                                              .withCppVal(canvas1->getPtr2CurrentCellVal())
-                                                              .textInput();
+        HybridNode<unsigned char> *canvas1CurrentCellColor_tinp =
+            canvasParamBuilder.withName("currentCellColor_tinp")
+                .withCppVal(canvas1->getPtr2CurrentCellVal())
+                .withAttributes({{"style", val("border: 3px dashed purple")}, {"size", val(2)}})
+                .textInput();
 
         maindiv->appendChild(canvas1);
         maindiv->appendChild(canvas1CurrentCellColor_tinp);
-
 
         CLNodeFactory<HybridNode, string, int> childOfMaindivBuilder_str(childOfMaindivBuilder);
 
@@ -103,7 +105,7 @@ struct Showcase : public PageContent {
         HybridNode<double> *temp2_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
                                              .withName("temp2_rinp")
                                              .withCppVal(t2)
-                                             .rangeInput(0, 5000);
+                                             .rangeInput(0, 2000);
 
         val blackbody = temp2_rinp->getCLE()["blackbody"];
 

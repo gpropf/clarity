@@ -31,6 +31,8 @@ class CLNodeFactory {
 
     V *cppVal_ = nullptr;
 
+    string innerHTML_ = "";
+
     string boundField_;              //!< Different types of elements need different fields
                                      //!< to be modified when the node value changes.
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
@@ -181,6 +183,9 @@ class CLNodeFactory {
             newNode = new Nc<V>(name_, tag_, useExistingDOMElement_);
         }
 
+        if (innerHTML_ != "") {
+            (newNode->getDomElement()).set("innerHTML", val(innerHTML_));
+        }
         newNode->setBoundField(boundField_);
         newNode->setAttributes(attrs_);
         if (parent_) {
@@ -409,6 +414,24 @@ class CLNodeFactory {
     }
 
     /**
+     * @brief Put some text or raw html in a node.
+     *
+     * @param innerHTML
+     * @return INLINE
+     */
+    INLINE CLNodeFactory withInnerHTML(const string &innerHTML) & {
+        CLNodeFactory cpy(*this);
+        cpy.innerHTML_ = innerHTML;
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withInnerHTML(const string &innerHTML) && {
+        CLNodeFactory cpy(std::move(*this));
+        cpy.innerHTML_ = innerHTML;
+        return cpy;
+    }
+
+    /**
      * @brief A button.
      *
      * @param name
@@ -451,7 +474,9 @@ class CLNodeFactory {
      */
     INLINE Nc<V> *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
-        Nc<V> *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
+        attrs_.merge(inputFieldAttrs);
+
+        Nc<V> *inp = withTag("input").withBoundField("value").build();
         // inp->refreshDOMValueFromModel();
         // inp->pushValToPeers(inp);
         inp->refresh();
@@ -465,7 +490,8 @@ class CLNodeFactory {
      */
     INLINE Nc<V> *rangeInput(int min = 0, int max = 100) {
         map<string, val> inputFieldAttrs = {{"type", val("range")}, {"min", val(min)}, {"max", val(max)}};
-        Nc<V> *inp = withTag("input").withBoundField("value").withAttributes(inputFieldAttrs).build();
+        attrs_.merge(inputFieldAttrs);
+        Nc<V> *inp = withTag("input").withBoundField("value").build();
         // inp->refreshDOMValueFromModel();
         // inp->pushValToPeers(inp);
         inp->refresh();

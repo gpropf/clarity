@@ -7,8 +7,6 @@
 
 namespace clarity {
 
-
-
 /**
  * @brief
  *
@@ -109,7 +107,7 @@ class ClarityNode {
             dl.reset();
         }
         dlpeers_.clear();
-        for (auto child: children_) {
+        for (auto child : children_) {
             delete child;
         }
         children_.clear();
@@ -143,7 +141,7 @@ class ClarityNode {
         //  "take" so we re-set it here.
 
         domElement_ = cle_["domElement"];
-        setBoundField("value");        
+        setBoundField("value");
         ClarityNode::switchboard[id_] = this;
     }
 
@@ -198,10 +196,11 @@ class ClarityNode {
     }
 
     INLINE val getCLE() const { return cle_; }
+    INLINE val getDomElement() { return domElement_; }
     INLINE string getName() const { return name_; }
     INLINE virtual void printState() const { cle_.call<void>("printState"); }
     INLINE static ClarityNode *getCLElementById(const int id) { return switchboard[id]; }
-    //INLINE static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
+    // INLINE static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
     INLINE void toggleClean() { clean_ = !clean_; }
 
     template <typename T>
@@ -433,10 +432,8 @@ class ClarityNode {
  *
  */
 struct PageContent {
-    virtual ClarityNode * content() = 0;
+    virtual ClarityNode *content() = 0;
 };
-
-
 
 template <typename V>
 class HybridNode : public ClarityNode {
@@ -451,7 +448,6 @@ class HybridNode : public ClarityNode {
         *reinterpret_cast<V *>(cppVal_) = newCppVal;
         pushValToPeers(this);
     }
-
 
     void refresh() {
         refreshDOMValueFromModel();
