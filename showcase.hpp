@@ -37,7 +37,7 @@ struct Showcase : public PageContent {
 
         CLNodeFactory<HybridNode, string, int> childOfMaindivBuilder_str(childOfMaindivBuilder);
 
-        string *flexLabelText = new string("Flex Text");
+        string *flexLabelText = new string("Edit this label text");
 
         HybridNode<string> *flexLabel = childOfMaindivBuilder_str.withCppVal(flexLabelText)
                                             .withName("flexLabel")

@@ -1,3 +1,14 @@
+/**
+ * @file ClarityNode.cpp
+ * @author your name (you@domain.com)
+ * @brief This file is primarily for template specializations of getVal() for common data types.
+ * @version 1.0
+ * @date 2022-10-17
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
+
 #include "ClarityNode.hpp"
 
 template <>
