@@ -181,9 +181,9 @@ class CLElement {
    * @returns a very crude (for now) attempt at showing hot objects glowing the right way. This
    * is returned as a string representing an RGB triplet with values from 0-255.
    */
-  static blackbody_st(temp, originalColor) {
+  static blackbody_st(temp, originalColor = { "r": 22, "g": 45, "b": 70 }) {
     // console.log(originalColor);
-    temp += 600;
+    temp += 273;
     // return "#aa0ff9";
 
     var r = originalColor.r + CLElement.zerofloor(temp - 500) / 2;
@@ -395,7 +395,7 @@ class CLElement {
     //let locOut = Util.wrapCoords(locIn, gridDimensions);
     var locOut = Util.capCoords(locIn, gridDimensions);
     domElement.gridRef.setValXY(locOut.x, locOut.y);
-    console.log(locOut);
+    //console.log(locOut);
   }
 
 

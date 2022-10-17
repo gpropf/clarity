@@ -45,11 +45,11 @@ class CLNodeFactory {
     val transformFn_ = val(NULL);   //!< See the docs on the ActiveLink class.
     val a2b_xfmr_ = val(NULL);
     val b2a_xfmr_ = val(NULL);
-    bool useExistingDOMElement_ = false;  //!< Primarily this is intended for creating attribute nodes.
-                                          //!< The idea is that some nodes control attributes of other
-                                          //!< nodes. The canonical example of this would be color of an
-                                          //!< SVG object. In these cases we don't want to create a new
-                                          //!< DOM element.
+    bool useExistingDOMElement_ = false;  //!< Primarily this is intended for creating attribute
+                                          //!< nodes. The idea is that some nodes control attributes
+                                          //!< of other nodes. The canonical example of this would
+                                          //!< be color of an SVG object. In these cases we don't
+                                          //!< want to create a new DOM element.
 
     map<string, val> attrs_;  //!< Sometimes a web element should be created with a bunch of
                               //!< attributes already set. That's what this is for. Even
@@ -76,8 +76,9 @@ class CLNodeFactory {
     //  * @param clnf_to 'to' factory
     //  * @return CLNodeFactory
     //  */
-    // template <class Nc_from, typename V_from, typename N_from, class Nc_to, typename V_to, typename N_to>
-    // static CLNodeFactory clone(const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from,
+    // template <class Nc_from, typename V_from, typename N_from, class Nc_to, typename V_to,
+    // typename N_to> static CLNodeFactory clone(const CLNodeFactory<Nc_from, V_from, N_from>
+    // &clnf_from,
     //                            CLNodeFactory<Nc_to, V_to, N_to> &clnf_to) {
     //     clnf_to.tag_ = clnf_from.tag_;
     //     clnf_to.name_ = clnf_from.name_;
@@ -131,7 +132,8 @@ class CLNodeFactory {
      * @param storedValue If we use this, we are creating a corresponding MN to
      * hold the value.
      */
-    INLINE CLNodeFactory(const string &tag, const string &name, V *storedValue) : tag_(tag), name_(name) {
+    INLINE CLNodeFactory(const string &tag, const string &name, V *storedValue)
+        : tag_(tag), name_(name) {
         withStoredValue(storedValue, true);
     }
 
@@ -448,6 +450,14 @@ class CLNodeFactory {
         return button;
     }
 
+    INLINE Nc<V> *group(const vector<ClarityNode *> &nodes) {
+        Nc<V> *group = withTag("div").build();
+        for (auto node : nodes) {
+            group->appendChild(node);
+        }
+        return group;
+    }
+
     /**
      * @brief
      *
@@ -489,7 +499,8 @@ class CLNodeFactory {
      * @return Nc*
      */
     INLINE Nc<V> *rangeInput(int min = 0, int max = 100) {
-        map<string, val> inputFieldAttrs = {{"type", val("range")}, {"min", val(min)}, {"max", val(max)}};
+        map<string, val> inputFieldAttrs = {
+            {"type", val("range")}, {"min", val(min)}, {"max", val(max)}};
         attrs_.merge(inputFieldAttrs);
         Nc<V> *inp = withTag("input").withBoundField("value").build();
         // inp->refreshDOMValueFromModel();
@@ -505,8 +516,8 @@ class CLNodeFactory {
      * @return Nc*
      */
     INLINE Nc<V> *trInput() {
-        Nc<V> *tinp = withName("txt_" + name_).textInput();
-        Nc<V> *rinp = withCppVal(nullptr).withName("rng_" + name_).rangeInput();
+        Nc<V> *tinp = withName("tinp_" + name_).textInput();
+        Nc<V> *rinp = withCppVal(nullptr).withName("rinp_" + name_).rangeInput();
         tinp->addPeer(rinp, linkMultiplierConstant_);
         Nc<V> *outerDiv = withTag("div").withName("wrapper_" + name_).build();
         outerDiv->appendChild(tinp);
@@ -517,7 +528,11 @@ class CLNodeFactory {
 
     INLINE Nc<V> *textarea(string *txt, const int rows = 4, const int cols = 50) {
         map<string, val> attrs = {{"rows", val(rows)}, {"cols", val(cols)}};
-        Nc<V> *textArea = withTag("textarea").withBoundField("value").withAttributes(attrs).withCppVal(txt).build();
+        Nc<V> *textArea = withTag("textarea")
+                              .withBoundField("value")
+                              .withAttributes(attrs)
+                              .withCppVal(txt)
+                              .build();
         return textArea;
     }
 
@@ -530,8 +545,10 @@ class CLNodeFactory {
      * @return Nc*
      */
     INLINE Nc<V> *labelGivenNode(Nc<V> *nodeToBeLabelled, const string &labelText) {
-        Nc<V> *outerDiv = withTag("div").withName("labeldiv_" + nodeToBeLabelled->getName()).build();
-        Nc<V> *labelNode = withName("labelfor_" + nodeToBeLabelled->getName()).label(nodeToBeLabelled, labelText);
+        Nc<V> *outerDiv =
+            withTag("div").withName("labeldiv_" + nodeToBeLabelled->getName()).build();
+        Nc<V> *labelNode =
+            withName("labelfor_" + nodeToBeLabelled->getName()).label(nodeToBeLabelled, labelText);
         outerDiv->appendChild(nodeToBeLabelled);
         outerDiv->appendChild(labelNode);
         return outerDiv;
@@ -549,30 +566,13 @@ class CLNodeFactory {
         return cel;
     }
 
-    INLINE CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight) {
-        CanvasGrid<V> *cg =
-            new CanvasGrid<V>(name_, "canvas", useExistingDOMElement_, gridWidth, gridHeight, pixelWidth, pixelHeight);
+    INLINE CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight, int pixelWidth,
+                                     int pixelHeight) {
+        CanvasGrid<V> *cg = new CanvasGrid<V>(name_, "canvas", useExistingDOMElement_, gridWidth,
+                                              gridHeight, pixelWidth, pixelHeight);
         cg = static_cast<CanvasGrid<V> *>(build(cg));
-
         cg->initcg();
-
-        // cg->gridWidth_ = gridWidth;
-        // cg->setDrawFuntionName("canvasTestPattern");
-        // cg->refreshView();
         return cg;
-    }
-
-    /**
-     * @brief This is suppsed to create a dual text and range input control and
-     * add a label. It needs work. The label text ends up using the
-     * storedValue_, not exactly what I wanted.
-     *
-     * @param labelText
-     * @return Nc*
-     */
-    INLINE Nc<V> *labelledTRInputNode(const string &labelText) {
-        Nc<V> *trInputNode = trInput();
-        return labelGivenNode(trInputNode, labelText);
     }
 
     /**

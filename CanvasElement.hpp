@@ -128,7 +128,7 @@ class CanvasGrid : public CanvasElement<V> {
         ctx.set("fillStyle", "blue");
         // int width = this->datum_->dataDimensionality_[0];
         // int height = this->datum_->dataDimensionality_[1];
-        cout << "pixelWidth_ = " << pixelWidth_ << "\n";
+        // cout << "pixelWidth_ = " << pixelWidth_ << "\n";
         int cellCount = 0;
         for (int i = 0; i < gridWidth_; i++) {
             for (int j = 0; j < gridHeight_; j++) {

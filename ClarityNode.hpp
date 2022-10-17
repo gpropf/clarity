@@ -60,7 +60,8 @@ class ClarityNode {
         void set_b2a_xfmr(val xfmr);
 
         template <typename T>
-        DualLink(ClarityNode *nodeA, ClarityNode *nodeB, const T multiplier = 1) : nodeA_(nodeA), nodeB_(nodeB) {
+        DualLink(ClarityNode *nodeA, ClarityNode *nodeB, const T multiplier = 1)
+            : nodeA_(nodeA), nodeB_(nodeB) {
             a2b_xfmr_ = CLElement_.call<val>("generateTransformFn", multiplier);
             b2a_xfmr_ = CLElement_.call<val>("generateTransformFn", 1 / multiplier);
         };
@@ -68,7 +69,9 @@ class ClarityNode {
         DualLink(ClarityNode *nodeA, ClarityNode *nodeB, val a2b_xfmr, val b2a_xfmr = val(NULL))
             : nodeA_(nodeA), nodeB_(nodeB), a2b_xfmr_(a2b_xfmr), b2a_xfmr_(b2a_xfmr) {}
 
-        INLINE void printDL() { cout << "DL peer IDs: A = " << nodeA_->getId() << ", B = " << nodeB_->getId() << "\n"; }
+        INLINE void printDL() {
+            cout << "DL peer IDs: A = " << nodeA_->getId() << ", B = " << nodeB_->getId() << "\n";
+        }
 
         INLINE pair<ClarityNode *, val> getOtherNode(ClarityNode *thisNode) {
             if (nodeA_ == thisNode) {
@@ -133,7 +136,8 @@ class ClarityNode {
      * @param storedValueType C++ type of data contained within
      *
      */
-    ClarityNode(const string &name, const string &tag, bool useExistingDOMElement) : name_(name), tag_(tag) {
+    ClarityNode(const string &name, const string &tag, bool useExistingDOMElement)
+        : name_(name), tag_(tag) {
         init();
         if (!useExistingDOMElement) cle_.call<void>("createDOMElement", id_, tag_, name_);
         // cle_.set("name", val(name));
@@ -165,10 +169,10 @@ class ClarityNode {
     }
 
     /**
-     * @brief Read the DOM element text and convert it to a JS variable using the cppVal_ type as a type hint. Even if
-     * this particular node does not contain a value there it will still be able to use the pointer as a type hint. The
-     * template specializations allow us to use functions like stof, stod, and stoi to convert the text to the
-     * appropriate value type.
+     * @brief Read the DOM element text and convert it to a JS variable using the cppVal_ type as a
+     * type hint. Even if this particular node does not contain a value there it will still be able
+     * to use the pointer as a type hint. The template specializations allow us to use functions
+     * like stof, stod, and stoi to convert the text to the appropriate value type.
      *
      * @return val
      */
@@ -251,7 +255,8 @@ class ClarityNode {
     }
 
     INLINE string nodeStats(const string &msg) const {
-        string s = "NS: Node name: " + name_ + ", Node id: " + to_string(id_) + ", Node type: " + typeid(*this).name() +
+        string s = "NS: Node name: " + name_ + ", Node id: " + to_string(id_) +
+                   ", Node type: " + typeid(*this).name() +
                    ", peer count = " + to_string(countPeers()) + ". " + msg + "\n";
         return s;
     }
@@ -443,20 +448,29 @@ class HybridNode : public ClarityNode {
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
 
+    /**
+     * @brief Set the Model value from the provided val object.
+     * 
+     * @param jsval 
+     */
     void setCppValFromJSVal(const val &jsval) {
         V newCppVal = jsval.as<V>();
         *reinterpret_cast<V *>(cppVal_) = newCppVal;
         pushValToPeers(this);
     }
 
+    /**
+     * @brief Runs refreshDOMValueFromModel() and then syncs the peers with the updated value.
+     *
+     */
     void refresh() {
         refreshDOMValueFromModel();
         pushValToPeers(this);
     }
 
     /**
-     * @brief Calls ClarityNode::setVal() first to initiate the push process if there are peer nodes. If the cppVal_
-     * pointer is non-null, we also then update that value in this node.
+     * @brief Calls ClarityNode::setVal() first to initiate the push process if there are peer
+     * nodes. If the cppVal_ pointer is non-null, we also then update that value in this node.
      *
      * @param inval
      */
@@ -468,8 +482,8 @@ class HybridNode : public ClarityNode {
     }
 
     /**
-     * @brief If this node has a non-null cppVal_ pointer we return the JS form of the value therein. Otherwise we call
-     * the CN method that pulls the value from the DOM element.
+     * @brief If this node has a non-null cppVal_ pointer we return the JS form of the value
+     * therein. Otherwise we call the CN method that pulls the value from the DOM element.
      *
      * @return val
      */
@@ -486,6 +500,10 @@ class HybridNode : public ClarityNode {
         return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
     }
 
+    /**
+     * @brief Updates the DOM value from the model value.
+     *
+     */
     virtual void refreshDOMValueFromModel() {
         if (cppVal_ != nullptr) {
             val jsval = val(*cppVal_);
