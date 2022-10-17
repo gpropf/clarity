@@ -78,8 +78,7 @@ struct Showcase : public PageContent {
 
         HybridNode<double> *circleFill = childOfMaindivBuilder.withModelNode(temp_rinp)
                                              .withName("circleFill")
-                                             .withTransformFns(blackbody_st, blackbody_st)
-                                             //.withAttributes({})
+                                             .withTransformFns(blackbody_st, blackbody_st)                                             
                                              .attributeNode("fill", cir1);
         childOfMaindivBuilder.br();      
 
