@@ -170,10 +170,7 @@ class CLNodeFactory {
         return *this;
     }
 
-    INLINE Nc<V> *br() {
-        return withTag("br").build();
-    }
-
+    INLINE Nc<V> *br() { return withTag("br").build(); }
 
     /**
      * @brief The method that makes it all possible. Virtually all the other
@@ -455,7 +452,6 @@ class CLNodeFactory {
         return button;
     }
 
-
     INLINE Nc<V> *group(const vector<ClarityNode *> &nodes) {
         Nc<V> *group = withTag("div").build();
         for (auto node : nodes) {
@@ -539,6 +535,7 @@ class CLNodeFactory {
                               .withAttributes(attrs)
                               .withCppVal(txt)
                               .build();
+        textArea->refresh();
         return textArea;
     }
 
