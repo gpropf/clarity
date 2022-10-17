@@ -30,7 +30,7 @@ struct Showcase : public PageContent {
         HybridNode<double> *cir1Radius_rinp =
             childOfMaindivBuilder.withLinkMultiplierConstant(1).withName("temp_rinp").rangeInput();
 
-        cir1Radius_rinp->addPeer(cir1Radius_tinp, 0.5);    
+        cir1Radius_rinp->addPeer(cir1Radius_tinp, 0.5);
 
         auto *g1 = childOfMaindivBuilder.withName("cir1Radius_grp")
                        .group({cir1Radius_tinp, cir1Radius_rinp});
@@ -78,12 +78,12 @@ struct Showcase : public PageContent {
 
         HybridNode<double> *circleFill = childOfMaindivBuilder.withModelNode(temp_rinp)
                                              .withName("circleFill")
-                                             .withTransformFns(blackbody_st, blackbody_st)                                             
+                                             .withTransformFns(blackbody_st, blackbody_st)
                                              .attributeNode("fill", cir1);
-        childOfMaindivBuilder.br();      
+        childOfMaindivBuilder.br();
 
         string *textarea_val = new string("This is a textarea.");
-        HybridNode<string> *textarea1 = childOfMaindivBuilder_str.textarea(textarea_val, 3, 40);        
+        HybridNode<string> *textarea1 = childOfMaindivBuilder_str.textarea(textarea_val, 3, 40);
         childOfMaindivBuilder.br();
 
         CLNodeFactory<HybridNode, unsigned char, double> canvasBuilder("div", "canvasDiv");
@@ -97,7 +97,7 @@ struct Showcase : public PageContent {
                 .canvasGrid(30, 20, 400, 300);
 
         canvas1->setCurrentCellVal(5);
-       
+
         HybridNode<unsigned char> *canvas1CurrentCellColor_tinp =
             canvasBuilder.withName("currentCellColor_tinp")
                 .withCppVal(canvas1->getPtr2CurrentCellVal())
@@ -114,6 +114,7 @@ struct Showcase : public PageContent {
         printf("Setup complete!\n");
         return maindiv;
     }
+    ClarityNode *content(ClarityNode *innerContent) { return content(); }
 };
 
 #endif

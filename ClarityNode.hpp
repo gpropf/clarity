@@ -430,15 +430,7 @@ class ClarityNode {
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
 };
 
-/**
- * @brief Abstract convenience class. Overload this class and the content() method
- * and you can easily put your content in an existing template like the testbed.cpp
- * example program.
- *
- */
-struct PageContent {
-    virtual ClarityNode *content() = 0;
-};
+
 
 template <typename V>
 class HybridNode : public ClarityNode {
