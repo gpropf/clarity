@@ -16,30 +16,30 @@ struct Showcase : public PageContent {
 
         double *a = new double(27.8);
         double *t2 = new double(330);
-        double *temp = new double(88.4);
+        double *cir1Radius_value = new double(88.4);
 
         CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");
-
         HybridNode<double> *maindiv = builder.build();
 
         CLNodeFactory<HybridNode, double, double> childOfMaindivBuilder =
-            builder.createChildrenOf(maindiv);
+            builder.createChildrenOf(maindiv);        
 
-        map<string, val> inputFieldAttrs = {{"type", val("text")}};
-
-        HybridNode<double> *hybridTemp_tinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
-                                                  .withName("hybridTemp_tinp")
-                                                  .withCppVal(temp)
+        HybridNode<double> *cir1Radius_tinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
+                                                  .withName("cir1Radius_tinp")
+                                                  .withCppVal(cir1Radius_value)
                                                   .textInput();
 
-        hybridTemp_tinp->setCppVal(temp);
+        cir1Radius_tinp->setCppVal(cir1Radius_value);
 
         HybridNode<double> *temp_rinp =
             childOfMaindivBuilder.withLinkMultiplierConstant(1).withName("temp_rinp").rangeInput();
 
-        temp_rinp->addPeer(hybridTemp_tinp, 0.5);
-        hybridTemp_tinp->refreshDOMValueFromModel();
-        hybridTemp_tinp->pushValToPeers(hybridTemp_tinp);
+        temp_rinp->addPeer(cir1Radius_tinp, 0.5);
+        cir1Radius_tinp->refreshDOMValueFromModel();
+        cir1Radius_tinp->pushValToPeers(cir1Radius_tinp);
+
+        auto * g1 = childOfMaindivBuilder.withName("tempGroup").group({cir1Radius_tinp, temp_rinp});
+        childOfMaindivBuilder.br();
 
         CLNodeFactory<HybridNode, unsigned char, double> canvasBuilder("div", "canvasDiv");
 
@@ -69,7 +69,7 @@ struct Showcase : public PageContent {
 
         HybridNode<string> *flexLabel = childOfMaindivBuilder_str.withCppVal(flexLabelText)
                                             .withName("flexLabel")
-                                            .label(hybridTemp_tinp, *flexLabelText);
+                                            .label(cir1Radius_tinp, *flexLabelText);
 
         HybridNode<string> *inputFlexTextLabel =
             childOfMaindivBuilder_str.withModelNode(flexLabel).textInput();        
@@ -94,7 +94,7 @@ struct Showcase : public PageContent {
                                                         {"stroke-width", val(4)}})
                                        .build();
 
-        HybridNode<double> *cir1Radius = childOfMaindivBuilder.withModelNode(hybridTemp_tinp)
+        HybridNode<double> *cir1Radius = childOfMaindivBuilder.withModelNode(cir1Radius_tinp)
                                                .withName("cir1Radius")
                                                .withLinkMultiplierConstant(1)
                                                .withAttributes({})

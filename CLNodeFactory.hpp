@@ -170,6 +170,11 @@ class CLNodeFactory {
         return *this;
     }
 
+    INLINE Nc<V> *br() {
+        return withTag("br").build();
+    }
+
+
     /**
      * @brief The method that makes it all possible. Virtually all the other
      * methods use this at least once. The build method uses all the current
@@ -449,6 +454,7 @@ class CLNodeFactory {
         buttonDOMElement.call<void>("addEventListener", val("click"), onPressCallback);
         return button;
     }
+
 
     INLINE Nc<V> *group(const vector<ClarityNode *> &nodes) {
         Nc<V> *group = withTag("div").build();
