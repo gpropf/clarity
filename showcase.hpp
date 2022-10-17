@@ -35,13 +35,9 @@ struct Showcase : public PageContent {
         auto *g1 = childOfMaindivBuilder.withName("cir1Radius_grp")
                        .group({cir1Radius_tinp, cir1Radius_rinp});
 
+        auto g1_lbl = childOfMaindivBuilder.labelGivenNode(g1, "Circle radius");
+
         CLNodeFactory<HybridNode, string, int> childOfMaindivBuilder_str(childOfMaindivBuilder);
-
-        string *flexLabelText = new string("Edit this label text");
-
-        HybridNode<string> *flexLabel = childOfMaindivBuilder_str.withCppVal(flexLabelText)
-                                            .withName("flexLabel")
-                                            .label(cir1Radius_tinp, *flexLabelText);
 
         childOfMaindivBuilder.br();
 
@@ -80,6 +76,11 @@ struct Showcase : public PageContent {
                                              .withName("circleFill")
                                              .withTransformFns(blackbody_st, blackbody_st)
                                              .attributeNode("fill", cir1);
+        childOfMaindivBuilder.br();
+        string *flexLabelText = new string("This is the label for 'svgarea'. You can edit the text below.");
+        HybridNode<string> *flexLabel = childOfMaindivBuilder_str.withCppVal(flexLabelText)
+                                            .withName("flexLabel")
+                                            .label(svgarea, *flexLabelText);
         childOfMaindivBuilder.br();
 
         string *textarea_val = new string("This is a textarea.");
