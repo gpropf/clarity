@@ -24,7 +24,7 @@ class CLElement {
   /**
    * See note below on these generator functions.
    */
-  static eventListeners = {
+  static eventHandlerGenerators = {
     "input": [{
       "eventName": "change", "eventHandlerGenerator":
         function (element) {
@@ -328,7 +328,7 @@ class CLElement {
       }
     }
     this.domElement_ = el
-    this.generateEventListeners(this);
+    this.generateEventHandlers(this);
   }
 
   /**
@@ -341,9 +341,9 @@ class CLElement {
    * 
    * @param {CLElement} outerThis 
    */
-  generateEventListeners(outerThis) {
-    if (outerThis.tag_ in CLElement.eventListeners) {
-      let listenerList = CLElement.eventListeners[outerThis.tag_];
+  generateEventHandlers(outerThis) {
+    if (outerThis.tag_ in CLElement.eventHandlerGenerators) {
+      let listenerList = CLElement.eventHandlerGenerators[outerThis.tag_];
       listenerList.map(function (kv) {
         outerThis.domElement_.addEventListener(kv.eventName, kv.eventHandlerGenerator(outerThis));
       })
