@@ -94,9 +94,9 @@ class ClarityNode {
     static void nodeAudit() {
         for (auto [id, node] : switchboard) {
             string name = node->getName();
-            string cppValStr = "NULL PTR2";
-            cppValStr = node->cppValToString();
-            cout << "ID: " << id << ", cppVal_: " << cppValStr << ", " << name << "\n";
+            //string cppValStr;// = "NULL PTR2";
+            string cppValStr = node->cppValToString();
+            cout << "ID: " << id << ", cppVal_: " << cppValStr << ", <" << node->getTag() << ">, name = '" << name << "'\n";
         }
     }
 
@@ -489,7 +489,7 @@ class HybridNode : public ClarityNode {
     }
 
     INLINE string cppValToString() const {
-        if (cppVal_ == nullptr) return "NULLPTR";
+        if (cppVal_ == nullptr) return "###";
         return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
     }
 
