@@ -154,8 +154,6 @@ class CLElement {
     }
   }
 
-
-
   canvasTestPattern() {
     var domElement = this.domElement_;
     if (domElement.getContext) {
@@ -173,35 +171,31 @@ class CLElement {
     }
   }
 
-
   /**
    * 
    * @param {*} temp: In degrees Kelvin 
    * @param {*} originalColor: the object's 'actual' color at 0 K.
-   * @returns a very crude (for now) attempt at showing hot objects glowing the right way. This
-   * is returned as a string representing an RGB triplet with values from 0-255.
+   * @returns a very crude (for now) attempt at showing color color change due to heating.
+   * Color is returned as a string representing an RGB triplet with values from 0-255.
    */
-  static blackbody_st(temp, originalColor = { "r": 22, "g": 45, "b": 70 }) {
-    // console.log(originalColor);
-    temp += 273;
-    // return "#aa0ff9";
+  static blackbody_st(temp, originalColor = { "r": 15, "g": 15, "b": 15 }) {    
+    temp += 273;    
 
-    var r = originalColor.r + CLElement.zerofloor(temp - 500) / 2;
-    var g = originalColor.g + CLElement.zerofloor(temp - 1000) / 5;
-    var b = originalColor.b + CLElement.zerofloor(temp - 1500) / 5;
+    var r = originalColor.r + CLElement.zerofloor(temp - 500);
+    var g = originalColor.g + CLElement.zerofloor(temp - 1000) / 10;
+    var b = originalColor.b + CLElement.zerofloor(temp - 1500) / 10;
 
     if (r > 255) r = 255;
     if (g > 255) g = 255;
     if (b > 255) b = 255;
     var rgbstr = `rgb(${r},${g},${b})`;
     return rgbstr;
-
   }
 
-  blackbody(temp) {
-    var originalColor = { "r": 0, "g": 200, "b": 75 };
-    return CLElement.blackbody_st(temp, originalColor);
-  }
+  // blackbody(temp) {
+  //   var originalColor = { "r": 0, "g": 200, "b": 75 };
+  //   return CLElement.blackbody_st(temp, originalColor);
+  // }
 
   /**
    * 
@@ -214,7 +208,6 @@ class CLElement {
 
   static generateTransformFn(constantOrFunction) {
     if (constantOrFunction instanceof Function) {
-      // console.log("Multiplier is function")
       return constantOrFunction;
     }
     var generatedMultiplierFunction = (x) => x * constantOrFunction;

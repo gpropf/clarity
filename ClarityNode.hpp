@@ -72,6 +72,13 @@ class ClarityNode {
             cout << "DL peer IDs: A = " << nodeA_->getId() << ", B = " << nodeB_->getId() << "\n";
         }
 
+        /**
+         * @brief A node will have a shared pointer to a DualLink if it is one of the ends of the
+         * link. This method allows a node to quickly get a reference to the other end of the link.
+         *
+         * @param thisNode
+         * @return INLINE
+         */
         INLINE pair<ClarityNode *, val> getOtherNode(ClarityNode *thisNode) {
             if (nodeA_ == thisNode) {
                 return pair(nodeB_, b2a_xfmr_);
@@ -283,10 +290,7 @@ class ClarityNode {
     }
 
     /**
-     * @brief The most critical way this is used is to move data to/from
-     * ModelNodes. In moving data from a ModelNode the initial getVal call
-     * occurs in a ModelNode and the setVal calls are in the corresponding
-     * ClarityNodes.
+     * @brief Use the provided DualLink to send data to the peers of this node.
      *
      * @param dl
      */
