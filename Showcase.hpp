@@ -42,6 +42,7 @@ struct Showcase : public PageContent {
         auto g1_lbl = childOfMaindivBuilder.labelGivenNode(g1, "Circle radius");
 
         CLNodeFactory<HybridNode, string, int> childOfMaindivBuilder_str(childOfMaindivBuilder);
+        //CLNodeFactory<HybridNode, void, int> childOfMaindivBuilder_void(childOfMaindivBuilder);
 
         childOfMaindivBuilder.br();
 

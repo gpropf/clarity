@@ -95,7 +95,7 @@ class CLNodeFactory {
     // }
 
     template <template <typename V_from> class Nc_from, typename V_from, typename N_from>
-    CLNodeFactory(CLNodeFactory<Nc_from, V_from, N_from> clnf_from) {
+    CLNodeFactory(const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from) {
         tag_ = clnf_from.tag_;
         name_ = clnf_from.name_;
         // storedValueType_ = clnf_from.storedValueType_;
@@ -107,7 +107,7 @@ class CLNodeFactory {
         b2a_xfmr_ = clnf_from.b2a_xfmr_;
         useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
         attrs_ = clnf_from.attrs_;
-    }
+    }   
 
     /**
      * @brief Construct a new CLNodeFactory object
