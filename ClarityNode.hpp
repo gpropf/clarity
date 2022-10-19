@@ -23,14 +23,13 @@ std::string clto_str(const T &v) {
 
 /**
  * @brief The project's central class. Describes an element with push/pull
- * behavior to syncronize a data model and a web view. WebElements can contain
+ * behavior to synchronize a data model and a web view. WebElements can contain
  * others and complex web controls can be built up in a hierarchal fashion. The
  * class is not necessarily homologous to JavaScript Dom elements but the
  * "mirror" class CLElement is currently used to store a JS Dom element and
  * retain other state on the JS side. This is also the base class for all other
- * types. The CNN type should never be instantiated as it has no specific
- * behaviors and doesn't bind to anything on the webpage. In future it may
- * contain pure virtual methods and trying to instantiate it will be an error.
+ * types. ClarityNode is now an abstract class. The HybridNode<T> child class is
+ * what we actually use to represent web elements.
  *
  */
 class ClarityNode {
@@ -430,8 +429,6 @@ class ClarityNode {
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
 };
 
-
-
 template <typename V>
 class HybridNode : public ClarityNode {
    public:
@@ -442,8 +439,8 @@ class HybridNode : public ClarityNode {
 
     /**
      * @brief Set the Model value from the provided val object.
-     * 
-     * @param jsval 
+     *
+     * @param jsval
      */
     void setCppValFromJSVal(const val &jsval) {
         V newCppVal = jsval.as<V>();

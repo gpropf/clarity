@@ -13,7 +13,7 @@ JSOUT	= clarity_embind.js
 LIBCLR_IN = ClarityNode.cpp ModelNode.hpp CanvasElement.cpp CLNodeFactory.hpp			
 LIBCLR_OBJS = ClarityNode.o ModelNode.o CanvasElement.o CLNodeFactory.o			
 
-FRAMEWORK_DEPS = clarity.js Util.js clarity.html Makefile
+FRAMEWORK_DEPS = Clarity.js Util.js testbed.html Makefile
 
 %.o : %.cpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)

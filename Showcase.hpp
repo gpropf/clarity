@@ -8,6 +8,10 @@
 
 using namespace clarity;
 
+/**
+ * @brief Used to test all the major types of web controls.
+ * 
+ */
 struct Showcase : public PageContent {
     ClarityNode *content() {
         val CLElement = val::global("CLElement");

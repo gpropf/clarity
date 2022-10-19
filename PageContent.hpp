@@ -16,12 +16,18 @@ using namespace clarity;
  *
  */
 struct PageContent {
-    virtual ClarityNode *content() = 0;
-    virtual ClarityNode *content(ClarityNode *innerContent) = 0;
+   // virtual ClarityNode *content() = 0;
+    virtual ClarityNode *content(ClarityNode *innerContent = nullptr) = 0;
 };
 
+/**
+ * @brief Provides a node audit button and eventually perhaps other controls meant to provide a test
+ * framework for new and existing controls as well as aid users in developing and testing their
+ * projects.
+ *
+ */
 struct TestFramework : public PageContent {
-    ClarityNode *content(ClarityNode *innerContent) {
+    ClarityNode *content(ClarityNode *innerContent = nullptr) {
         val CLE = val::global("CLElement");
         val nodeAudit = CLE["nodeAudit_double"];
 
@@ -51,7 +57,7 @@ struct TestFramework : public PageContent {
         return root;
     }
 
-    ClarityNode *content() { return content(nullptr); }
+//    ClarityNode *content() { return content(nullptr); }
 };
 
 #endif

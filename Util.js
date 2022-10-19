@@ -1,7 +1,7 @@
 
 /**
  * Mostly a place for little utility functions to live. I made it a class so I could use it to test
- * instantiating things with Emscripten. Most methods should be static.
+ * instantiating things with Emscripten. Most or all methods with be static.
  */
 class Util {
 
