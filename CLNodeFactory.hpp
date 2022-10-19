@@ -33,16 +33,19 @@ class CLNodeFactory {
 
     string innerHTML_ = "";
 
-    string boundField_;              //!< Different types of elements need different fields
-                                     //!< to be modified when the node value changes.
+    string boundField_;  //!< Different types of elements need different fields
+                         //!< to be modified when the node value changes.
+
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
                                      //!< any new nodes as its children.
-    Nc<V> *modelNode_ = nullptr;     //!< If we create a new MN or attach one, we set this. Note
-                                     //!< that we can create ControlNetworkNodes with no MN.
+
+    Nc<V> *modelNode_ = nullptr;  //!< If we create a new MN or attach one, we set this. Note
+                                  //!< that we can create ClarityNodes with no MN. These would store
+                                  //!< their data entirely in their DOM elements.
 
     N linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
                                     //!< values from node to node unchanged.
-    val transformFn_ = val(NULL);   //!< See the docs on the ActiveLink class.
+
     val a2b_xfmr_ = val(NULL);
     val b2a_xfmr_ = val(NULL);
     bool useExistingDOMElement_ = false;  //!< Primarily this is intended for creating attribute
@@ -57,57 +60,33 @@ class CLNodeFactory {
                               //!< attribute and doing just about anything with SVG requires
                               //!< a lot of attributes.
 
-    // /**
-    //  * @brief This is a bit of a kludge to allow us to switch the parameter
-    //  * values 'midstream' while building a GUI. The idea is to preserve the work
-    //  * you've already done, for instance in setting up a builder that produces
-    //  * only children of a certain node. You might want to preserve most of the
-    //  * settings in such a builder while changing the type of data or class of
-    //  * nodes it produces. You feed in a 'from' factory and get back your 'to'
-    //  * factory with all the non-tparam values copied over.
-    //  *
-    //  * @tparam Nc_from Node class of the 'from' factory.
-    //  * @tparam V_from V for 'from' factory.
-    //  * @tparam N_from N for 'from' factory.
-    //  * @tparam Nc_to Node class of the 'to' factory.
-    //  * @tparam V_to V for 'to' factory.
-    //  * @tparam N_to N for 'from' factory.
-    //  * @param clnf_from 'from' factory
-    //  * @param clnf_to 'to' factory
-    //  * @return CLNodeFactory
-    //  */
-    // template <class Nc_from, typename V_from, typename N_from, class Nc_to, typename V_to,
-    // typename N_to> static CLNodeFactory clone(const CLNodeFactory<Nc_from, V_from, N_from>
-    // &clnf_from,
-    //                            CLNodeFactory<Nc_to, V_to, N_to> &clnf_to) {
-    //     clnf_to.tag_ = clnf_from.tag_;
-    //     clnf_to.name_ = clnf_from.name_;
-    //     //clnf_to.storedValueType_ = clnf_from.storedValueType_;
-    //     clnf_to.boundField_ = clnf_from.boundField_;
-    //     clnf_to.parent_ = clnf_from.parent_;
-    //     clnf_to.linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
-    //     clnf_to.transformFn_ = clnf_from.transformFn_;
-    //     clnf_to.a2b_xfmr_ = clnf_from.a2b_xfmr_;
-    //     clnf_to.b2a_xfmr_ = clnf_from.b2a_xfmr_;
-    //     clnf_to.useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
-    //     clnf_to.attrs_ = clnf_from.attrs_;
-    //     return clnf_to;
-    // }
-
+    /**
+     * @brief Construct a new CLNodeFactory object from another of possibly different template
+     * parameters. We cannot rely on the implicit copy constructor if we want to build a new CLNF
+     * from one that may have different tparams.
+     *
+     * @tparam Nc_from
+     * @tparam V_from
+     * @tparam N_from
+     * @param clnf_from
+     */
     template <template <typename V_from> class Nc_from, typename V_from, typename N_from>
     CLNodeFactory(const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from) {
         tag_ = clnf_from.tag_;
         name_ = clnf_from.name_;
-        // storedValueType_ = clnf_from.storedValueType_;
+        innerHTML_ = clnf_from.innerHTML_;
         boundField_ = clnf_from.boundField_;
         parent_ = clnf_from.parent_;
         linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
-        transformFn_ = clnf_from.transformFn_;
+        // transformFn_ = clnf_from.transformFn_;
         a2b_xfmr_ = clnf_from.a2b_xfmr_;
         b2a_xfmr_ = clnf_from.b2a_xfmr_;
         useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
         attrs_ = clnf_from.attrs_;
-    }   
+
+        modelNode_ = nullptr;
+        cppVal_ = nullptr;
+    }
 
     /**
      * @brief Construct a new CLNodeFactory object
