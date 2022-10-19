@@ -10,7 +10,7 @@ using namespace clarity;
 
 /**
  * @brief Used to test all the major types of web controls.
- * 
+ *
  */
 struct Showcase : public PageContent {
     ClarityNode *content() {
@@ -42,7 +42,7 @@ struct Showcase : public PageContent {
         auto g1_lbl = childOfMaindivBuilder.labelGivenNode(g1, "Circle radius");
 
         CLNodeFactory<HybridNode, string, int> childOfMaindivBuilder_str(childOfMaindivBuilder);
-        //CLNodeFactory<HybridNode, void, int> childOfMaindivBuilder_void(childOfMaindivBuilder);
+        // CLNodeFactory<HybridNode, void, int> childOfMaindivBuilder_void(childOfMaindivBuilder);
 
         childOfMaindivBuilder.br();
 
@@ -82,10 +82,16 @@ struct Showcase : public PageContent {
                                              .withTransformFns(blackbody_st, blackbody_st)
                                              .attributeNode("fill", cir1);
         childOfMaindivBuilder.br();
-        string *flexLabelText = new string("This is the label for 'svgarea'. You can edit the text below.");
+        string *flexLabelText =
+            new string("This is the label for 'svgarea'. You can edit the text below.");
         HybridNode<string> *flexLabel = childOfMaindivBuilder_str.withCppVal(flexLabelText)
                                             .withName("flexLabel")
                                             .label(svgarea, *flexLabelText);
+        childOfMaindivBuilder.hr();
+        HybridNode<string> *inputFlexTextLabel =
+            childOfMaindivBuilder_str.withName("inputFlexTextLabel")
+                .withModelNode(flexLabel)
+                .textInput();
         childOfMaindivBuilder.br();
 
         string *textarea_val = new string("This is a textarea.");
@@ -114,8 +120,7 @@ struct Showcase : public PageContent {
         maindiv->appendChild(canvas1CurrentCellColor_tinp);
         childOfMaindivBuilder.br();
 
-        HybridNode<string> *inputFlexTextLabel =
-            childOfMaindivBuilder_str.withName("inputFlexTextLabel").withModelNode(flexLabel).textInput();
+        
 
         printf("Setup complete!\n");
         return maindiv;

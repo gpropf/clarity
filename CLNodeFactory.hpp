@@ -151,7 +151,19 @@ class CLNodeFactory {
         return *this;
     }
 
+    /**
+     * @brief Simple BR tag.
+     *
+     * @return Nc<V>*
+     */
     INLINE Nc<V> *br() { return withTag("br").build(); }
+
+    /**
+     * @brief Simple HR tag.
+     *
+     * @return Nc<V>*
+     */
+    INLINE Nc<V> *hr() { return withTag("hr").build(); }
 
     /**
      * @brief The method that makes it all possible. Virtually all the other
