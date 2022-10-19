@@ -27,13 +27,6 @@ testbed: testbed.o ClarityNode.o CanvasElement.o
 showcase: showcase.o ClarityNode.o CanvasElement.o
 	$(CC) -lembind showcase.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
 
-
-# libclr.a: $(LIBCLR_OBJS)
-# 	$(AR) rcs libclr.a $(LIBCLR_OBJS)
-	
-# nuke: nuke.o libclr.a
-# 	$(CC) -lembind nuke.o libclr.a $(CFLAGS) -o $(JSOUT)
-
 docs: clarity.doxyconfig
 	doxygen clarity.doxyconfig
 
