@@ -15,7 +15,7 @@ LIBCLR_OBJS = ClarityNode.o ModelNode.o CanvasElement.o CLNodeFactory.o
 
 FRAMEWORK_DEPS = clarity.js Util.js clarity.html Makefile
 
-%.o : %.cpp %.hpp $(FRAMEWORK_DEPS)
+%.o : %.cpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
 
 speedtest: speedtest.o ClarityNode.o

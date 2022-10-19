@@ -13,7 +13,7 @@ Clarity is a web development framework written in C++ using emscripten to facili
 ### Todo ###
 
 
-1. Event API. We still need a framework to offer people a way to easily use events.
+1. Event API. We still need a framework to offer people a way to easily use events. Need to be able to use C++ or JS for event handling.
 2. Radio buttons
 3. Checkboxes
 4. Select boxes 
