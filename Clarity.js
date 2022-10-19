@@ -316,8 +316,11 @@ class CLElement {
         // in C++ to the appendChild method.
 
         el.id = this.id_
-        el.name = this.name_
-        el.setAttribute("name", name);
+        
+        if (this.name_ != "") {
+          el.name = this.name_
+          el.setAttribute("name", name);
+        }
       }
     }
     this.domElement_ = el

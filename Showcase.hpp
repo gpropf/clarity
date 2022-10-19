@@ -115,7 +115,7 @@ struct Showcase : public PageContent {
         childOfMaindivBuilder.br();
 
         HybridNode<string> *inputFlexTextLabel =
-            childOfMaindivBuilder_str.withModelNode(flexLabel).textInput();
+            childOfMaindivBuilder_str.withName("inputFlexTextLabel").withModelNode(flexLabel).textInput();
 
         printf("Setup complete!\n");
         return maindiv;

@@ -28,6 +28,7 @@ class CLNodeFactory {
    public:
     string tag_;   //!< Tag to be used with elements this factory builds.
     string name_;  //!< Name to be used with elements this factory builds.
+    bool nameIsForSingleUse_ = true;
 
     V *cppVal_ = nullptr;
 
@@ -74,6 +75,7 @@ class CLNodeFactory {
     CLNodeFactory(const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from) {
         tag_ = clnf_from.tag_;
         name_ = clnf_from.name_;
+        nameIsForSingleUse_ = clnf_from.nameIsForSingleUse_;
         innerHTML_ = clnf_from.innerHTML_;
         boundField_ = clnf_from.boundField_;
         parent_ = clnf_from.parent_;
@@ -188,6 +190,7 @@ class CLNodeFactory {
         }
 
         // newNode->refresh();
+        if (nameIsForSingleUse_) name_ = "";
         return newNode;
     }
 
