@@ -13,7 +13,7 @@ using namespace clarity;
  *
  */
 struct Showcase : public PageContent {
-    ClarityNode *content() {
+    ClarityNode *content(ClarityNode *innerContent = nullptr) {
         val CLElement = val::global("CLElement");
         val blackbody_st = CLElement["blackbody_st"];
 
@@ -125,7 +125,7 @@ struct Showcase : public PageContent {
         printf("Setup complete!\n");
         return maindiv;
     }
-    ClarityNode *content(ClarityNode *innerContent) { return content(); }
+    
 };
 
 #endif
