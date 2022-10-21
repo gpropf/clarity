@@ -301,6 +301,39 @@ class CLElement {
     this.id_ = id
     this.tag_ = tag
     this.name_ = name
+    this.boundField_ = "value"; // FIXME
+
+    // console.log(`ID ${id} from ticketMachine.`)
+    // var el = document.getElementById(this.id_)
+    // if (el == null) {
+      // var el = document.getElementById(this.name_)
+      // if (el == null) {
+        var el = this.createDOMElementByTagType()
+
+        document.body.appendChild(el)
+        // Without this the newly created elements get garbage collected and vanish.
+        // The idea is that you append them later to their actual parents using a call
+        // in C++ to the appendChild method.
+
+        el.id = this.id_
+        
+        if (this.name_ != "") {
+          el.name = this.name_
+          el.setAttribute("name", name);
+        }
+      //}
+    //}
+    this.domElement_ = el
+    this.generateEventHandlers(this);
+  }
+
+
+
+
+  createDOMElement2(id, tag, name) {
+    this.id_ = id
+    this.tag_ = tag
+    this.name_ = name
     this.boundField_ = "value"; // Good for most types of input elements.
 
 
