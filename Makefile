@@ -24,9 +24,6 @@ speedtest: speedtest.o ClarityNode.o
 testbed: testbed.o ClarityNode.o CanvasElement.o
 	$(CC) -lembind testbed.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
 
-showcase: showcase.o ClarityNode.o CanvasElement.o
-	$(CC) -lembind showcase.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
-
 docs: clarity.doxyconfig
 	doxygen clarity.doxyconfig
 
