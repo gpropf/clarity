@@ -331,6 +331,7 @@ class ClarityNode {
     }
 
     virtual void refreshDOMValueFromModel() = 0;
+    virtual void refresh() = 0;
 
     void pullValFromPeer(DualLink &dl) {
         if (clean_) {
