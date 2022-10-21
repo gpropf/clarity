@@ -21,17 +21,17 @@ struct Showcase : public PageContent {
         double *cir1Radius_value = new double(88.4);
 
         CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");
-        HybridNode<double> *maindiv = builder.build();
+        auto *maindiv = builder.build();
 
         CLNodeFactory<HybridNode, double, double> childOfMaindivBuilder =
             builder.createChildrenOf(maindiv);
 
-        HybridNode<double> *cir1Radius_tinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
+        auto *cir1Radius_tinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
                                                   .withName("cir1Radius_tinp")
                                                   .withCppVal(cir1Radius_value)
                                                   .textInput();
 
-        HybridNode<double> *cir1Radius_rinp =
+        auto *cir1Radius_rinp =
             childOfMaindivBuilder.withLinkMultiplierConstant(1).withName("cir1Radius_rinp").rangeInput();
 
         cir1Radius_rinp->addPeer(cir1Radius_tinp, 0.5);
@@ -46,7 +46,7 @@ struct Showcase : public PageContent {
 
         childOfMaindivBuilder.br();
 
-        HybridNode<double> *svgarea =
+        auto *svgarea =
             childOfMaindivBuilder.withName("svgarea")
                 .withTag("svg")
                 .withAttributes({{"width", val("300")},
@@ -55,7 +55,7 @@ struct Showcase : public PageContent {
                                  {"style", val("border: 1px solid black")}})
                 .build();
 
-        HybridNode<double> *cir1 = childOfMaindivBuilder.withName("cir1")
+        auto *cir1 = childOfMaindivBuilder.withName("cir1")
                                        .withParent(svgarea)
                                        .withTag("circle")
                                        .withAttributes({{"r", val("30")},
@@ -66,36 +66,36 @@ struct Showcase : public PageContent {
                                                         {"stroke-width", val(4)}})
                                        .build();
 
-        HybridNode<double> *cir1Radius = childOfMaindivBuilder.withModelNode(cir1Radius_tinp)
+        auto *cir1Radius = childOfMaindivBuilder.withModelNode(cir1Radius_tinp)
                                              .withName("cir1Radius")
                                              .withLinkMultiplierConstant(1)
                                              .withAttributes({})
                                              .attributeNode("r", cir1);
 
-        HybridNode<double> *temp_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
+        auto *temp_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
                                             .withName("temp_rinp")
                                             .withCppVal(temp)
                                             .rangeInput(0, 2000);
 
-        HybridNode<double> *circleFill = childOfMaindivBuilder.withModelNode(temp_rinp)
+        auto *circleFill = childOfMaindivBuilder.withModelNode(temp_rinp)
                                              .withName("circleFill")
                                              .withTransformFns(blackbody_st, blackbody_st)
                                              .attributeNode("fill", cir1);
         childOfMaindivBuilder.br();
         string *flexLabelText =
             new string("This is the label for 'svgarea'. You can edit the text below.");
-        HybridNode<string> *flexLabel = childOfMaindivBuilder_str.withCppVal(flexLabelText)
+        auto *flexLabel = childOfMaindivBuilder_str.withCppVal(flexLabelText)
                                             .withName("flexLabel")
                                             .label(svgarea, *flexLabelText);
         childOfMaindivBuilder.hr();
-        HybridNode<string> *inputFlexTextLabel =
+        auto *inputFlexTextLabel =
             childOfMaindivBuilder_str.withName("inputFlexTextLabel")
                 .withModelNode(flexLabel)
                 .textInput();
         childOfMaindivBuilder.br();
 
         string *textarea_val = new string("This is a textarea.");
-        HybridNode<string> *textarea1 = childOfMaindivBuilder_str.textarea(textarea_val, 3, 40);
+        auto *textarea1 = childOfMaindivBuilder_str.textarea(textarea_val, 3, 40);
         childOfMaindivBuilder.br();
 
         CLNodeFactory<HybridNode, unsigned char, double> canvasBuilder("div", "canvasDiv");
@@ -110,7 +110,7 @@ struct Showcase : public PageContent {
 
         canvas1->setCurrentCellVal(5);
 
-        HybridNode<unsigned char> *canvas1CurrentCellColor_tinp =
+        auto *canvas1CurrentCellColor_tinp =
             canvasBuilder.withName("currentCellColor_tinp")
                 .withCppVal(canvas1->getPtr2CurrentCellVal())
                 .withAttributes({{"style", val("border: 3px dashed purple")}, {"size", val(2)}})

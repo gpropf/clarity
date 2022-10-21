@@ -33,14 +33,14 @@ struct TestFramework : public PageContent {
         val nodeAudit = CLE["nodeAudit_double"];
 
         CLNodeFactory<HybridNode, double, double> rootBuilder("div", "root");
-        HybridNode<double> *root = rootBuilder.build();
+        auto *root = rootBuilder.build();
 
-        HybridNode<double> *sidebar = rootBuilder.withParent(root)
+        auto *sidebar = rootBuilder.withParent(root)
                                           .withName("sidebar")
                                           .withInnerHTML("<h1>Clarity Web Framework</h1>")
                                           .withAttributes({{"class", val("sidebar")}})
                                           .build();
-        HybridNode<double> *testarea = rootBuilder.withParent(root)
+        auto *testarea = rootBuilder.withParent(root)
                                            .withInnerHTML("<h2>Test Area</h2>")
                                            .withName("testarea")
                                            .withAttributes({{"class", val("mainarea")}})
@@ -53,7 +53,7 @@ struct TestFramework : public PageContent {
         CLNodeFactory<HybridNode, double, double> testareaBuilder =
             rootBuilder.withName("testarea_subnode").createChildrenOf(testarea);
 
-        HybridNode<int> *nodeAuditButton = (CLNodeFactory<HybridNode, int, int>(sidebarBuilder))
+        auto *nodeAuditButton = (CLNodeFactory<HybridNode, int, int>(sidebarBuilder))
                                                .button("nodeAuditButton", "Node Audit", nodeAudit);
         return root;
     }
