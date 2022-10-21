@@ -306,22 +306,37 @@ class CLElement {
     // console.log(`ID ${id} from ticketMachine.`)
     // var el = document.getElementById(this.id_)
     // if (el == null) {
-      // var el = document.getElementById(this.name_)
-      // if (el == null) {
-        var el = this.createDOMElementByTagType()
+    // var el = document.getElementById(this.name_)
+    // if (el == null) {
+    var el = this.createDOMElementByTagType()
 
-        document.body.appendChild(el)
-        // Without this the newly created elements get garbage collected and vanish.
-        // The idea is that you append them later to their actual parents using a call
-        // in C++ to the appendChild method.
 
-        el.id = this.id_
-        
-        if (this.name_ != "") {
-          el.name = this.name_
-          el.setAttribute("name", name);
-        }
-      //}
+
+    var nameElements = document.getElementsByName(this.name_);
+    //var el = this.createDOMElementByTagType();
+
+    if (nameElements.length > 0) {
+      let nameElement = nameElements[0];
+      console.log(nameElements);
+      nameElement.parentNode.replaceChild(el, nameElement);
+    } else
+    
+    
+    document.body.appendChild(el)
+    
+    
+    
+    // Without this the newly created elements get garbage collected and vanish.
+    // The idea is that you append them later to their actual parents using a call
+    // in C++ to the appendChild method.
+
+    el.id = this.id_
+
+    if (this.name_ != "") {
+      el.name = this.name_
+      el.setAttribute("name", name);
+    }
+    //}
     //}
     this.domElement_ = el
     this.generateEventHandlers(this);

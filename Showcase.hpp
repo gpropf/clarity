@@ -32,7 +32,7 @@ struct Showcase : public PageContent {
                                                   .textInput();
 
         HybridNode<double> *cir1Radius_rinp =
-            childOfMaindivBuilder.withLinkMultiplierConstant(1).withName("temp_rinp").rangeInput();
+            childOfMaindivBuilder.withLinkMultiplierConstant(1).withName("cir1Radius_rinp").rangeInput();
 
         cir1Radius_rinp->addPeer(cir1Radius_tinp, 0.5);
 

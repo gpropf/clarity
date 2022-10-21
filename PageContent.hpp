@@ -18,6 +18,7 @@ using namespace clarity;
 struct PageContent {
    // virtual ClarityNode *content() = 0;
     virtual ClarityNode *content(ClarityNode *innerContent = nullptr) = 0;
+    ClarityNode * rootNode;
 };
 
 /**
