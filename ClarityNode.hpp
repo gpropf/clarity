@@ -37,6 +37,8 @@ class ClarityNode {
     static map<string, std::function<void()>> callbackMap;
     static val CLElement_;
 
+    enum class AttachmentMode : unsigned char { NEW = 0, REPLACE = 1, ATTACH = 2 };
+
     /**
      * @brief Represents the 'edges' in our control graph. These edges can be
      * active and contain a JS value that can act as a transformation on the
@@ -94,9 +96,10 @@ class ClarityNode {
     static void nodeAudit() {
         for (auto [id, node] : switchboard) {
             string name = node->getName();
-            //string cppValStr;// = "NULL PTR2";
+            // string cppValStr;// = "NULL PTR2";
             string cppValStr = node->cppValToString();
-            cout << "ID: " << id << ", cppVal_: " << cppValStr << ", <" << node->getTag() << ">, name = '" << name << "'\n";
+            cout << "ID: " << id << ", cppVal_: " << cppValStr << ", <" << node->getTag()
+                 << ">, name = '" << name << "'\n";
         }
     }
 
@@ -142,10 +145,12 @@ class ClarityNode {
      * @param storedValueType C++ type of data contained within
      *
      */
-    ClarityNode(const string &name, const string &tag, bool useExistingDOMElement)
+    ClarityNode(const string &name, const string &tag, bool useExistingDOMElement,
+                AttachmentMode attachmentMode)
         : name_(name), tag_(tag) {
         init();
-        if (!useExistingDOMElement) cle_.call<void>("createDOMElement", id_, tag_, name_);
+        if (!useExistingDOMElement)
+            cle_.call<void>("createDOMElement", id_, tag_, name_, attachmentMode);
         // cle_.set("name", val(name));
         //  For some reason the code that sets the name in clarity.js doesn't
         //  "take" so we re-set it here.
@@ -331,7 +336,7 @@ class ClarityNode {
     }
 
     virtual void refreshDOMValueFromModel() = 0;
-    //virtual void refresh() = 0;
+    // virtual void refresh() = 0;
 
     void pullValFromPeer(DualLink &dl) {
         if (clean_) {
@@ -424,21 +429,29 @@ class ClarityNode {
     /** \brief A node's parent is the DOM element that contains it. In the
      * case of the WebAttrNode this is the WebElemNode for which this is an
      * attribute. */
-
     ClarityNode *parent_;
+
     int id_ = -1;  //!< Unique identifier - needs to be immutable once set.
+
     string name_;  //!< Human readable name of node. Mutable, not required.
+
     /** \brief List of peers linked through JS functions which are applied when
      * data is moved between nodes. */
     // vector<ClarityNode::ActiveLink> peers_;
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
+
+    //AttachmentMode attachmentMode_ = AttachmentMode::NEW;
 };
 
 template <typename V>
 class HybridNode : public ClarityNode {
    public:
-    HybridNode(const string &name, const string &tag, bool useExistingDOMElement)
-        : ClarityNode(name, tag, useExistingDOMElement) {}
+    HybridNode(const string &name, const string &tag, bool useExistingDOMElement,
+               ClarityNode::AttachmentMode attachmentMode = ClarityNode::AttachmentMode::NEW)
+        : ClarityNode(name, tag, useExistingDOMElement, attachmentMode) {
+            cout <<"FOUR ARG HN constructor called!: " << int(attachmentMode) << "\n";
+
+        }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
 

@@ -32,7 +32,7 @@ struct TestFramework : public PageContent {
         val CLE = val::global("CLElement");
         val nodeAudit = CLE["nodeAudit_double"];
 
-        CLNodeFactory<HybridNode, double, double> rootBuilder("div", "root");
+        CLNodeFactory<HybridNode, double, double> rootBuilder("div", "hookdiv");
         auto *root = rootBuilder.build();
 
         auto *sidebar = rootBuilder.withParent(root)

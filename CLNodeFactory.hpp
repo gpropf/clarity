@@ -61,6 +61,8 @@ class CLNodeFactory {
                               //!< attribute and doing just about anything with SVG requires
                               //!< a lot of attributes.
 
+    ClarityNode::AttachmentMode attachmentMode_ = ClarityNode::AttachmentMode::REPLACE;
+
     /**
      * @brief Construct a new CLNodeFactory object from another of possibly different template
      * parameters. We cannot rely on the implicit copy constructor if we want to build a new CLNF
@@ -177,7 +179,7 @@ class CLNodeFactory {
         if (existingNode != nullptr) {
             newNode = existingNode;
         } else {
-            newNode = new Nc<V>(name_, tag_, useExistingDOMElement_);
+            newNode = new Nc<V>(name_, tag_, useExistingDOMElement_, attachmentMode_);
         }
 
         if (innerHTML_ != "") {
@@ -565,7 +567,7 @@ class CLNodeFactory {
 
     INLINE CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight, int pixelWidth,
                                      int pixelHeight) {
-        CanvasGrid<V> *cg = new CanvasGrid<V>(name_, "canvas", useExistingDOMElement_, gridWidth,
+        CanvasGrid<V> *cg = new CanvasGrid<V>(name_, "canvas", useExistingDOMElement_, attachmentMode_, gridWidth,
                                               gridHeight, pixelWidth, pixelHeight);
         cg = static_cast<CanvasGrid<V> *>(build(cg));
         cg->initcg();

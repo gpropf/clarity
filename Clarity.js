@@ -297,7 +297,7 @@ class CLElement {
     return el
   }
 
-  createDOMElement(id, tag, name) {
+  createDOMElement(id, tag, name, attachmentMode) {
     this.id_ = id
     this.tag_ = tag
     this.name_ = name
@@ -314,18 +314,21 @@ class CLElement {
 
     var nameElements = document.getElementsByName(this.name_);
     //var el = this.createDOMElementByTagType();
-
+    console.log(attachmentMode);
     if (nameElements.length > 0) {
       let nameElement = nameElements[0];
-      console.log(nameElements);
-      nameElement.parentNode.replaceChild(el, nameElement);
-    } else
-    
-    
-    document.body.appendChild(el)
-    
-    
-    
+      console.log(attachmentMode);
+      if (attachmentMode == Module.AttachmentMode.ATTACH) {
+        nameElement.appendChild(el);
+      }
+      else {
+        nameElement.parentNode.replaceChild(el, nameElement);
+      }
+
+    } else { document.body.appendChild(el); }
+
+
+
     // Without this the newly created elements get garbage collected and vanish.
     // The idea is that you append them later to their actual parents using a call
     // in C++ to the appendChild method.

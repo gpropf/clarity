@@ -40,5 +40,10 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .class_function("nodeAudit_double", &HybridNode<double>::nodeAudit,
                         allow_raw_pointers());
 
+    enum_<ClarityNode::AttachmentMode>("AttachmentMode")
+        .value("NEW", ClarityNode::AttachmentMode::NEW)
+        .value("REPLACE", ClarityNode::AttachmentMode::REPLACE)
+        .value("ATTACH", ClarityNode::AttachmentMode::ATTACH);
+
     
 }

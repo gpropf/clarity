@@ -19,8 +19,8 @@ namespace clarity {
 template <typename V>
 class CanvasElement : public HybridNode<V> {
    public:
-    CanvasElement(const string &name, const string &tag, bool useExistingDOMElement)
-        : HybridNode<V>(name, tag, useExistingDOMElement) {}
+    CanvasElement(const string &name, const string &tag, bool useExistingDOMElement, ClarityNode::AttachmentMode attachmentMode)
+        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode) {}
 
     ~CanvasElement() { cout << "DESTROYING CanvasElement with id: " << this->id_ << "\n"; }
 
@@ -144,12 +144,12 @@ class CanvasGrid : public CanvasElement<V> {
         }
     }
 
-    CanvasGrid(const string &name, const string &tag, bool useExistingDOMElement)
-        : CanvasElement<V>(name, tag, useExistingDOMElement) {}
+    CanvasGrid(const string &name, const string &tag, bool useExistingDOMElement, ClarityNode::AttachmentMode attachmentMode)
+        : CanvasElement<V>(name, tag, useExistingDOMElement, attachmentMode) {}
 
-    CanvasGrid(const string &name, const string &tag, bool useExistingDOMElement, int gridWidth, int gridHeight,
+    CanvasGrid(const string &name, const string &tag, bool useExistingDOMElement, ClarityNode::AttachmentMode attachmentMode, int gridWidth, int gridHeight,
                int pixelWidth, int pixelHeight)
-        : CanvasGrid(name, tag, useExistingDOMElement) {
+        : CanvasGrid(name, tag, useExistingDOMElement, attachmentMode) {
         gridWidth_ = gridWidth;
         gridHeight_ = gridHeight;
         pixelWidth_ = pixelWidth;
