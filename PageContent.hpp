@@ -37,7 +37,7 @@ struct TestFramework : public PageContent {
 
         HybridNode<double> *sidebar = rootBuilder.withParent(root)
                                           .withName("sidebar")
-                                          .withInnerHTML("<h1>Clarity Testbed</h1>")
+                                          .withInnerHTML("<h1>Clarity Web Framework</h1>")
                                           .withAttributes({{"class", val("sidebar")}})
                                           .build();
         HybridNode<double> *testarea = rootBuilder.withParent(root)
