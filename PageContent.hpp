@@ -16,8 +16,18 @@ using namespace clarity;
  *
  */
 struct PageContent {
-   // virtual ClarityNode *content() = 0;
-    virtual ClarityNode *content(ClarityNode *innerContent = nullptr) = 0;
+    // virtual ClarityNode *content() = 0;
+    //virtual ClarityNode *content(ClarityNode *innerContent = nullptr) = 0;
+    virtual ClarityNode *content(ClarityNode *innerContent = nullptr, string attachmentNodeName = "") = 0;
+    CLNodeFactoryBase * rootBuilder_;
+    string attachmentNodeName_ = "";
+    virtual void buildPage() {
+        if (attachmentNodeName_ == "") {
+            attachmentNodeName_ = "clroot";
+        }
+        //CLNodeFactory<HybridNode, double, double> rootBuilder("div", attachmentNodeName_);
+        HybridNode<void> *root = dynamic_cast<HybridNode<void>*>(rootBuilder_->build());
+    }
 };
 
 /**
@@ -27,19 +37,23 @@ struct PageContent {
  *
  */
 struct TestFramework : public PageContent {
-    ClarityNode *content(ClarityNode *innerContent = nullptr) {
+    
+    ClarityNode *content(ClarityNode *innerContent, string attachmentNodeName = "") {
         val CLE = val::global("CLElement");
         val nodeAudit = CLE["nodeAudit_double"];
 
-        CLNodeFactory<HybridNode, double, double> rootBuilder("div", "root");
-        HybridNode<double> *root = rootBuilder.build();
+        if (attachmentNodeName == "") {
+            attachmentNodeName = "clroot";
+        }
+        CLNodeFactory<HybridNode, int, double> rootBuilder("div", attachmentNodeName);
+        auto *root = rootBuilder.build();
 
-        HybridNode<double> *sidebar = rootBuilder.withParent(root)
+        auto *sidebar = rootBuilder.withParent(root)
                                           .withName("sidebar")
                                           .withInnerHTML("<h1>Clarity Testbed</h1>")
                                           .withAttributes({{"class", val("sidebar")}})
                                           .build();
-        HybridNode<double> *testarea = rootBuilder.withParent(root)
+        auto *testarea = rootBuilder.withParent(root)
                                            .withInnerHTML("<h2>Test Area</h2>")
                                            .withName("testarea")
                                            .withAttributes({{"class", val("mainarea")}})
@@ -52,12 +66,12 @@ struct TestFramework : public PageContent {
         CLNodeFactory<HybridNode, double, double> testareaBuilder =
             rootBuilder.withName("testarea_subnode").createChildrenOf(testarea);
 
-        HybridNode<int> *nodeAuditButton = (CLNodeFactory<HybridNode, int, int>(sidebarBuilder))
+        auto *nodeAuditButton = (CLNodeFactory<HybridNode, int, int>(sidebarBuilder))
                                                .button("nodeAuditButton", "Node Audit", nodeAudit);
         return root;
     }
 
-//    ClarityNode *content() { return content(nullptr); }
+    //    ClarityNode *content() { return content(nullptr); }
 };
 
 #endif

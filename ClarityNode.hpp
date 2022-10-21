@@ -397,7 +397,8 @@ class ClarityNode {
     INLINE void addJSEventListener(const string &eventName, val eventCallback) {
         cle_.call<void>("addEventListener", eventName, eventCallback);
     }
-    // ========= End from Cpp file
+    
+    virtual void refresh() = 0; 
 
    protected:
     string tag_;

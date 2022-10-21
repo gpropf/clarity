@@ -6,6 +6,10 @@
 
 namespace clarity {
 
+struct CLNodeFactoryBase {
+    virtual ClarityNode *build(ClarityNode *existingNode = nullptr) = 0;
+};
+
 /**
  * @brief This class offers a set of pure functions that can be chained to
  * create complex web controls. Essentially, instead of being a typical
@@ -24,7 +28,7 @@ namespace clarity {
  */
 template <template <typename V> class Nc, typename V, typename N>
 // template <class Nc, typename V, typename N>
-class CLNodeFactory {
+class CLNodeFactory : public CLNodeFactoryBase {
    public:
     string tag_;   //!< Tag to be used with elements this factory builds.
     string name_;  //!< Name to be used with elements this factory builds.
@@ -40,7 +44,7 @@ class CLNodeFactory {
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
                                      //!< any new nodes as its children.
 
-    Nc<V> *modelNode_ = nullptr;  //!< If we create a new MN or attach one, we set this. Note
+    ClarityNode *modelNode_ = nullptr;  //!< If we create a new MN or attach one, we set this. Note
                                   //!< that we can create ClarityNodes with no MN. These would store
                                   //!< their data entirely in their DOM elements.
 
@@ -156,14 +160,14 @@ class CLNodeFactory {
      *
      * @return Nc<V>*
      */
-    INLINE Nc<V> *br() { return withTag("br").build(); }
+    INLINE ClarityNode *br() { return withTag("br").build(); }
 
     /**
      * @brief Simple HR tag.
      *
      * @return Nc<V>*
      */
-    INLINE Nc<V> *hr() { return withTag("hr").build(); }
+    INLINE ClarityNode *hr() { return withTag("hr").build(); }
 
     /**
      * @brief The method that makes it all possible. Virtually all the other
@@ -172,8 +176,8 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    Nc<V> *build(Nc<V> *existingNode = nullptr) {
-        Nc<V> *newNode;
+    ClarityNode *build(ClarityNode *existingNode = nullptr) {
+        ClarityNode *newNode;
         if (existingNode != nullptr) {
             newNode = existingNode;
         } else {
@@ -198,7 +202,7 @@ class CLNodeFactory {
         }
 
         if (cppVal_) {
-            newNode->setCppVal(cppVal_);
+            //newNode->setCppVal(cppVal_);
         }
 
         // newNode->refresh();
@@ -241,7 +245,7 @@ class CLNodeFactory {
      * @param parent
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory createChildrenOf(Nc<V> *parent) {
+    INLINE CLNodeFactory createChildrenOf(ClarityNode *parent) {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
@@ -290,14 +294,14 @@ class CLNodeFactory {
      * @param parent Cannot be null.
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory withParent(Nc<V> *parent) const & {
+    INLINE CLNodeFactory withParent(ClarityNode *parent) const & {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
     }
 
-    INLINE CLNodeFactory withParent(Nc<V> *parent) && {
+    INLINE CLNodeFactory withParent(ClarityNode *parent) && {
         assert(parent != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.parent_ = parent;
@@ -327,14 +331,14 @@ class CLNodeFactory {
      * @param modelNode
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory withModelNode(Nc<V> *modelNode) const & {
+    INLINE CLNodeFactory withModelNode(ClarityNode *modelNode) const & {
         assert(modelNode != nullptr);
         CLNodeFactory cpy(*this);
         cpy.modelNode_ = modelNode;
         return cpy;
     }
 
-    INLINE CLNodeFactory withModelNode(Nc<V> *modelNode) && {
+    INLINE CLNodeFactory withModelNode(ClarityNode *modelNode) && {
         assert(modelNode != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.modelNode_ = modelNode;
@@ -437,8 +441,9 @@ class CLNodeFactory {
      * @param onPressCallback JS function to run when button is pressed.
      * @return Nc*
      */
-    INLINE Nc<V> *button(const string &name, const string &text, val onPressCallback = val(NULL)) {
-        Nc<V> *button = withTag("button").build();
+    INLINE ClarityNode *button(const string &name, const string &text,
+                               val onPressCallback = val(NULL)) {
+        ClarityNode *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setVal(val(text));
         val buttonDOMElement = button->getCLE()["domElement"];
@@ -446,8 +451,8 @@ class CLNodeFactory {
         return button;
     }
 
-    INLINE Nc<V> *group(const vector<ClarityNode *> &nodes) {
-        Nc<V> *group = withTag("div").build();
+    INLINE ClarityNode *group(const vector<ClarityNode *> &nodes) {
+        ClarityNode *group = withTag("div").build();
         for (auto node : nodes) {
             group->appendChild(node);
         }
@@ -465,8 +470,8 @@ class CLNodeFactory {
      * @return Nc*
      */
     template <class Nc_any>
-    INLINE Nc<V> *label(Nc_any *forNode, const string &text) {
-        Nc<V> *label = withTag("label").build();
+    INLINE ClarityNode*label(Nc_any *forNode, const string &text) {
+        ClarityNode *label = withTag("label").build();
         label->setBoundField("innerHTML");
         label->setVal(val(text));
         label->setAttribute("for", val(forNode->getId()));
@@ -478,11 +483,11 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    INLINE Nc<V> *textInput() {
+    INLINE ClarityNode *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
         attrs_.merge(inputFieldAttrs);
 
-        Nc<V> *inp = withTag("input").withBoundField("value").build();
+        ClarityNode *inp = withTag("input").withBoundField("value").build();
         // inp->refreshDOMValueFromModel();
         // inp->pushValToPeers(inp);
         inp->refresh();
@@ -494,11 +499,11 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    INLINE Nc<V> *rangeInput(int min = 0, int max = 100) {
+    INLINE ClarityNode *rangeInput(int min = 0, int max = 100) {
         map<string, val> inputFieldAttrs = {
             {"type", val("range")}, {"min", val(min)}, {"max", val(max)}};
         attrs_.merge(inputFieldAttrs);
-        Nc<V> *inp = withTag("input").withBoundField("value").build();
+        ClarityNode *inp = withTag("input").withBoundField("value").build();
         // inp->refreshDOMValueFromModel();
         // inp->pushValToPeers(inp);
         inp->refresh();
@@ -522,9 +527,9 @@ class CLNodeFactory {
         return outerDiv;
     }
 
-    INLINE Nc<V> *textarea(string *txt, const int rows = 4, const int cols = 50) {
+    INLINE ClarityNode *textarea(string *txt, const int rows = 4, const int cols = 50) {
         map<string, val> attrs = {{"rows", val(rows)}, {"cols", val(cols)}};
-        Nc<V> *textArea = withTag("textarea")
+        ClarityNode *textArea = withTag("textarea")
                               .withBoundField("value")
                               .withAttributes(attrs)
                               .withCppVal(txt)
@@ -541,10 +546,10 @@ class CLNodeFactory {
      * @param labelText
      * @return Nc*
      */
-    INLINE Nc<V> *labelGivenNode(Nc<V> *nodeToBeLabelled, const string &labelText) {
-        Nc<V> *outerDiv =
+    INLINE ClarityNode *labelGivenNode(ClarityNode *nodeToBeLabelled, const string &labelText) {
+        ClarityNode *outerDiv =
             withTag("div").withName("labeldiv_" + nodeToBeLabelled->getName()).build();
-        Nc<V> *labelNode =
+        ClarityNode *labelNode =
             withName("labelfor_" + nodeToBeLabelled->getName()).label(nodeToBeLabelled, labelText);
         outerDiv->appendChild(nodeToBeLabelled);
         outerDiv->appendChild(labelNode);
@@ -579,8 +584,8 @@ class CLNodeFactory {
      * @param attributeName
      * @return Nc*
      */
-    INLINE Nc<V> *attributeNode(const string &attributeName) {
-        Nc<V> *attributeNode = withExistingDOMElement().withBoundField(attributeName).build();
+    INLINE ClarityNode *attributeNode(const string &attributeName) {
+        ClarityNode *attributeNode = withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
         modelNode_->pushValToPeers(modelNode_);
@@ -595,8 +600,8 @@ class CLNodeFactory {
      * @param parent
      * @return Nc*
      */
-    INLINE Nc<V> *attributeNode(const string &attributeName, Nc<V> *parent) {
-        Nc<V> *attributeNode = withParent(parent).attributeNode(attributeName);
+    INLINE ClarityNode *attributeNode(const string &attributeName, ClarityNode *parent) {
+        ClarityNode *attributeNode = withParent(parent).attributeNode(attributeName);
         return attributeNode;
     }
 };
