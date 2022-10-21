@@ -178,8 +178,8 @@ class CLElement {
    * @returns a very crude (for now) attempt at showing color color change due to heating.
    * Color is returned as a string representing an RGB triplet with values from 0-255.
    */
-  static blackbody_st(temp, originalColor = { "r": 15, "g": 15, "b": 15 }) {    
-    temp += 273;    
+  static blackbody_st(temp, originalColor = { "r": 15, "g": 15, "b": 15 }) {
+    temp += 273;
 
     var r = originalColor.r + CLElement.zerofloor(temp - 500);
     var g = originalColor.g + CLElement.zerofloor(temp - 1000) / 10;
@@ -301,28 +301,37 @@ class CLElement {
     this.id_ = id
     this.tag_ = tag
     this.name_ = name
-    this.boundField_ = "value"; // FIXME
+    this.boundField_ = "value"; // Good for most types of input elements.
 
-    // console.log(`ID ${id} from ticketMachine.`)
-    var el = document.getElementById(this.id_)
-    if (el == null) {
-      el = document.getElementById(this.name_)
-      if (el == null) {
-        el = this.createDOMElementByTagType()
 
-        document.body.appendChild(el)
-        // Without this the newly created elements get garbage collected and vanish.
-        // The idea is that you append them later to their actual parents using a call
-        // in C++ to the appendChild method.
-
-        el.id = this.id_
-        
-        if (this.name_ != "") {
-          el.name = this.name_
-          el.setAttribute("name", name);
-        }
-      }
+    // We look for a node with the name that was provided. If we can't find it we attach the
+    // created node directly to the <body> tag.
+    var nameElements = document.getElementsByName(this.name_);
+    var el = this.createDOMElementByTagType();
+    if (nameElements.length > 0) {
+      let nameElement = nameElements[0];
+      nameElement.parentNode.replaceChild(el, nameElement);
     }
+    else document.body.appendChild(el);
+
+
+
+    //   if (el == null) {
+
+
+
+    // Without this the newly created elements get garbage collected and vanish.
+    // The idea is that you append them later to their actual parents using a call
+    // in C++ to the appendChild method.
+
+    el.id = this.id_
+
+    if (this.name_ != "") {
+      el.name = this.name_
+      el.setAttribute("name", name);
+    }
+    //   }
+    // }
     this.domElement_ = el
     this.generateEventHandlers(this);
   }
