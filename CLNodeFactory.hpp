@@ -61,7 +61,8 @@ class CLNodeFactory {
                               //!< attribute and doing just about anything with SVG requires
                               //!< a lot of attributes.
 
-    ClarityNode::AttachmentMode attachmentMode_ = ClarityNode::AttachmentMode::REPLACE;
+    ClarityNode::AttachmentMode attachmentMode_ = ClarityNode::AttachmentMode::REPLACE_NAME;
+    string attachmentId_ = ""; //!< id of existing DOM element that we are attaching to or replacing.
 
     /**
      * @brief Construct a new CLNodeFactory object from another of possibly different template
@@ -179,7 +180,7 @@ class CLNodeFactory {
         if (existingNode != nullptr) {
             newNode = existingNode;
         } else {
-            newNode = new Nc<V>(name_, tag_, useExistingDOMElement_, attachmentMode_);
+            newNode = new Nc<V>(name_, tag_, useExistingDOMElement_, attachmentMode_, attachmentId_);
         }
 
         if (innerHTML_ != "") {
@@ -207,6 +208,20 @@ class CLNodeFactory {
         if (nameIsForSingleUse_) name_ = "";
         return newNode;
     }
+
+
+    INLINE CLNodeFactory withAttachmentId(const string& attachmentId_) const & {
+        CLNodeFactory cpy(*this);
+        cpy.attachmentId_ = attachmentId_;
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withAttachmentId(const string& attachmentId_) && {
+        CLNodeFactory cpy(std::move(*this));
+        cpy.attachmentId_ = attachmentId_;
+        return cpy;
+    }
+
 
     /**
      * @brief Create the element with the listed attrs.
@@ -565,10 +580,11 @@ class CLNodeFactory {
         return cel;
     }
 
-    INLINE CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight, int pixelWidth,
-                                     int pixelHeight) {
-        CanvasGrid<V> *cg = new CanvasGrid<V>(name_, "canvas", useExistingDOMElement_, attachmentMode_, gridWidth,
-                                              gridHeight, pixelWidth, pixelHeight);
+    INLINE CanvasGrid<V> *canvasGrid(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight,
+                                     const string &existingDOMId = "") {
+        CanvasGrid<V> *cg =
+            new CanvasGrid<V>(name_, "canvas", useExistingDOMElement_, attachmentMode_, gridWidth,
+                              gridHeight, pixelWidth, pixelHeight, existingDOMId);
         cg = static_cast<CanvasGrid<V> *>(build(cg));
         cg->initcg();
         return cg;

@@ -299,21 +299,23 @@ class CLElement {
 
   placeElement(existingElement, el, attachmentMode) {
     switch (attachmentMode) {
-      case Module.AttachmentMode.ATTACH:
+      case Module.AttachmentMode.ATTACH_ID:
+      case Module.AttachmentMode.ATTACH_NAME:
         existingElement.appendChild(el);
+        break;
+      case Module.AttachmentMode.REPLACE_ID:
+      case Module.AttachmentMode.REPLACE_NAME:
+        existingElement.parentNode.replaceChild(el, existingElement);
         break;
       case Module.AttachmentMode.NEW:
         document.body.appendChild(el);
         break;
-      case Module.AttachmentMode.REPLACE:
-        existingElement.parentNode.replaceChild(el, existingElement);
-        break;
       default:
-        console.log("No valid attachment mode!");
+        console.log("Invalid attachment mode!");
     }
   }
 
-  createDOMElement(id, tag, name, attachmentMode) {
+  createDOMElement(id, tag, name, attachmentMode, domId = null) {
     this.id_ = id
     this.tag_ = tag
     this.name_ = name
@@ -322,7 +324,12 @@ class CLElement {
 
     var el = this.createDOMElementByTagType();
 
-    var existingElement = document.getElementById(id);
+    if (attachmentMode == Module.AttachmentMode.REPLACE_ID
+      || attachmentMode == Module.AttachmentMode.ATTACH_ID) {
+      var existingElement = document.getElementById(id);
+    }
+
+
     if (existingElement != null) {
       this.placeElement(existingElement, el, attachmentMode);
     }

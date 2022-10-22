@@ -37,7 +37,13 @@ class ClarityNode {
     static map<string, std::function<void()>> callbackMap;
     static val CLElement_;
 
-    enum class AttachmentMode : unsigned char { NEW = 0, REPLACE = 1, ATTACH = 2 };
+    enum class AttachmentMode : unsigned char {
+        NEW = 0,
+        REPLACE_ID = 1,
+        REPLACE_NAME = 2,
+        ATTACH_ID = 3,
+        ATTACH_NAME = 4
+    };
 
     /**
      * @brief Represents the 'edges' in our control graph. These edges can be
@@ -146,7 +152,7 @@ class ClarityNode {
      *
      */
     ClarityNode(const string &name, const string &tag, bool useExistingDOMElement,
-                AttachmentMode attachmentMode)
+                AttachmentMode attachmentMode, const string &attachmentId = "")
         : name_(name), tag_(tag) {
         init();
         if (!useExistingDOMElement)
@@ -440,18 +446,18 @@ class ClarityNode {
     // vector<ClarityNode::ActiveLink> peers_;
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
 
-    //AttachmentMode attachmentMode_ = AttachmentMode::NEW;
+    // AttachmentMode attachmentMode_ = AttachmentMode::NEW;
 };
 
 template <typename V>
 class HybridNode : public ClarityNode {
    public:
     HybridNode(const string &name, const string &tag, bool useExistingDOMElement,
-               ClarityNode::AttachmentMode attachmentMode = ClarityNode::AttachmentMode::NEW)
-        : ClarityNode(name, tag, useExistingDOMElement, attachmentMode) {
-            cout <<"FOUR ARG HN constructor called!: " << int(attachmentMode) << "\n";
-
-        }
+               ClarityNode::AttachmentMode attachmentMode = ClarityNode::AttachmentMode::NEW,
+               const string &attachmentId = "")
+        : ClarityNode(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
+        cout << "FIVE ARG HN constructor called!: " << int(attachmentMode) << "\n";
+    }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
 

@@ -19,8 +19,9 @@ namespace clarity {
 template <typename V>
 class CanvasElement : public HybridNode<V> {
    public:
-    CanvasElement(const string &name, const string &tag, bool useExistingDOMElement, ClarityNode::AttachmentMode attachmentMode)
-        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode) {}
+    CanvasElement(const string &name, const string &tag, bool useExistingDOMElement,
+                  ClarityNode::AttachmentMode attachmentMode, const string& attachmentId = "")
+        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
     ~CanvasElement() { cout << "DESTROYING CanvasElement with id: " << this->id_ << "\n"; }
 
@@ -31,7 +32,9 @@ class CanvasElement : public HybridNode<V> {
 
     virtual void refreshDOMValueFromModel(){};
 
-    inline void setDrawFuntionName(const string &drawFuntionName) { drawFuntionName_ = drawFuntionName; }
+    inline void setDrawFuntionName(const string &drawFuntionName) {
+        drawFuntionName_ = drawFuntionName;
+    }
 
     inline void refreshView() { this->cle_.template call<void>(drawFuntionName_.c_str()); }
 
@@ -104,7 +107,8 @@ class CanvasGrid : public CanvasElement<V> {
             // cout << "\n";
             cellCount++;
         }
-        this->domElement_.template call<void>("addEventListener", val("click"), CLElement_["setGridLocToCurrentVal"]);
+        this->domElement_.template call<void>("addEventListener", val("click"),
+                                              CLElement_["setGridLocToCurrentVal"]);
         // addJSEventListener("click", CLElement_["setGridLocToCurrentVal"] );
         drawGrid();
     }
@@ -119,8 +123,9 @@ class CanvasGrid : public CanvasElement<V> {
     void drawGrid() const {
         val ctx = this->domElement_.template call<val>("getContext", val("2d"));
         val domElement = this->cle_["domElement"];
-        domElement.set("gridRef",
-                       const_cast<CanvasGrid *>(this));  // Very bizarre errors when trying to use domElement_.
+        domElement.set(
+            "gridRef",
+            const_cast<CanvasGrid *>(this));  // Very bizarre errors when trying to use domElement_.
         domElement.set("gw", gridWidth_);
         domElement.set("gh", gridHeight_);
         domElement.set("cw", cellWidth_);
@@ -137,19 +142,21 @@ class CanvasGrid : public CanvasElement<V> {
 
                 ctx.set("fillStyle", colors[v]);
 
-                ctx.call<void>("fillRect", val(i * cellWidth_), val(j * cellHeight_), val(cellWidth_),
-                               val(cellHeight_));
+                ctx.call<void>("fillRect", val(i * cellWidth_), val(j * cellHeight_),
+                               val(cellWidth_), val(cellHeight_));
             }
             cellCount++;
         }
     }
 
-    CanvasGrid(const string &name, const string &tag, bool useExistingDOMElement, ClarityNode::AttachmentMode attachmentMode)
-        : CanvasElement<V>(name, tag, useExistingDOMElement, attachmentMode) {}
+    CanvasGrid(const string &name, const string &tag, bool useExistingDOMElement,
+               ClarityNode::AttachmentMode attachmentMode, const string &domId = "")
+        : CanvasElement<V>(name, tag, useExistingDOMElement, attachmentMode, domId) {}
 
-    CanvasGrid(const string &name, const string &tag, bool useExistingDOMElement, ClarityNode::AttachmentMode attachmentMode, int gridWidth, int gridHeight,
-               int pixelWidth, int pixelHeight)
-        : CanvasGrid(name, tag, useExistingDOMElement, attachmentMode) {
+    CanvasGrid(const string &name, const string &tag, bool useExistingDOMElement,
+               ClarityNode::AttachmentMode attachmentMode, int gridWidth, int gridHeight,
+               int pixelWidth, int pixelHeight, const string& domId = "")
+        : CanvasGrid(name, tag, useExistingDOMElement, attachmentMode, domId) {
         gridWidth_ = gridWidth;
         gridHeight_ = gridHeight;
         pixelWidth_ = pixelWidth;

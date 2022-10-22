@@ -42,8 +42,10 @@ EMSCRIPTEN_BINDINGS(clarity) {
 
     enum_<ClarityNode::AttachmentMode>("AttachmentMode")
         .value("NEW", ClarityNode::AttachmentMode::NEW)
-        .value("REPLACE", ClarityNode::AttachmentMode::REPLACE)
-        .value("ATTACH", ClarityNode::AttachmentMode::ATTACH);
+        .value("REPLACE_ID", ClarityNode::AttachmentMode::REPLACE_ID)
+        .value("REPLACE_NAME", ClarityNode::AttachmentMode::REPLACE_NAME)
+        .value("ATTACH_ID", ClarityNode::AttachmentMode::ATTACH_ID)
+        .value("ATTACH_NAME", ClarityNode::AttachmentMode::ATTACH_NAME);
 
     
 }
