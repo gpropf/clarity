@@ -61,8 +61,13 @@ class CLNodeFactory {
                               //!< attribute and doing just about anything with SVG requires
                               //!< a lot of attributes.
 
-    ClarityNode::AttachmentMode attachmentMode_ = ClarityNode::AttachmentMode::ATTACH_ID;
-    string attachmentId_ = ""; //!< id of existing DOM element that we are attaching to or replacing.
+    /** \brief Tells how to attach the new node. Nodes can replace or attach to an existing DOM
+     * node. We can also select the attachment point by either name or id.*/
+    ClarityNode::AttachmentMode attachmentMode_ = ClarityNode::AttachmentMode::NEW;
+
+    /** \brief String identifier (can be either the DOM name or Id) that will be used to place the
+     * new node in the DOM.*/
+    string attachmentId_ = "";
 
     /**
      * @brief Construct a new CLNodeFactory object from another of possibly different template
@@ -180,7 +185,8 @@ class CLNodeFactory {
         if (existingNode != nullptr) {
             newNode = existingNode;
         } else {
-            newNode = new Nc<V>(name_, tag_, useExistingDOMElement_, attachmentMode_, attachmentId_);
+            newNode =
+                new Nc<V>(name_, tag_, useExistingDOMElement_, attachmentMode_, attachmentId_);
         }
 
         if (innerHTML_ != "") {
@@ -209,19 +215,29 @@ class CLNodeFactory {
         return newNode;
     }
 
-
-    INLINE CLNodeFactory withAttachmentId(const string& attachmentId_) const & {
+    INLINE CLNodeFactory withAttachmentId(const string &attachmentId_) const & {
         CLNodeFactory cpy(*this);
         cpy.attachmentId_ = attachmentId_;
         return cpy;
     }
 
-    INLINE CLNodeFactory withAttachmentId(const string& attachmentId_) && {
+    INLINE CLNodeFactory withAttachmentId(const string &attachmentId_) && {
         CLNodeFactory cpy(std::move(*this));
         cpy.attachmentId_ = attachmentId_;
         return cpy;
     }
 
+    INLINE CLNodeFactory withAttachmentMode(ClarityNode::AttachmentMode attachmentMode) const & {
+        CLNodeFactory cpy(*this);
+        cpy.attachmentMode_ = attachmentMode;
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withAttachmentMode(ClarityNode::AttachmentMode attachmentMode) && {
+        CLNodeFactory cpy(std::move(*this));
+        cpy.attachmentMode_ = attachmentMode;
+        return cpy;
+    }
 
     /**
      * @brief Create the element with the listed attrs.

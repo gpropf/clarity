@@ -37,7 +37,9 @@ struct TestFramework : public PageContent {
         val nodeAudit = CLE["nodeAudit_double"];
 
         CLNodeFactory<HybridNode, double, double> rootBuilder("div", "tf_root");
-        auto *root = rootBuilder.withAttachmentId("hookid").build();
+        auto *root = rootBuilder.withAttachmentMode(ClarityNode::AttachmentMode::REPLACE_ID)
+                         .withAttachmentId("hookid")
+                         .build();
 
         auto *sidebar = rootBuilder.withParent(root)
                             .withName("sidebar")
