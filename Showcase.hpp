@@ -119,8 +119,17 @@ struct Showcase : public PageContent {
         maindiv->appendChild(canvas1);
         maindiv->appendChild(canvas1CurrentCellColor_tinp);
         childOfMaindivBuilder.br();
+        childOfMaindivBuilder.hr();
 
-        
+        CLNodeFactory<Select, vector<string>, int> selectBuilder(childOfMaindivBuilder);
+        vector<string> * carOptions = new vector<string>;
+        carOptions->push_back("Chevy");
+        carOptions->push_back("Ford");
+
+        Select<vector<string>> * carSelect = selectBuilder.withName("cars").withCppVal(carOptions).select();
+        //carSelect->getCLE().template call<void>("addOptionElementFromString");
+        carSelect->getCLE().template call<void>("addOptionElementFromString", val((*carSelect->getCppVal())[0])); 
+        carSelect->getCLE().template call<void>("addOptionElementFromString", val((*carSelect->getCppVal())[1])); 
 
         printf("Setup complete!\n");
         return maindiv;

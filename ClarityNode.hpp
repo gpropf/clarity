@@ -8,7 +8,7 @@
 namespace clarity {
 
 /**
- * @brief
+ * @brief My own stringification function once I saw that to_string() wasn't always working.
  *
  * @tparam T
  * @param v
@@ -20,6 +20,11 @@ std::string clto_str(const T &v) {
     os << v;
     return os.str();
 }
+
+
+
+
+
 
 /**
  * @brief The project's central class. Describes an element with push/pull
@@ -456,10 +461,11 @@ class HybridNode : public ClarityNode {
                ClarityNode::AttachmentMode attachmentMode = ClarityNode::AttachmentMode::NEW,
                const string &attachmentId = "")
         : ClarityNode(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
-        cout << "FIVE ARG HN constructor called!: " << int(attachmentMode) << "\n";
+        //cout << "FIVE ARG HN constructor called!: " << int(attachmentMode) << "\n";
     }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
+    INLINE V *getCppVal() const { return cppVal_; }
 
     /**
      * @brief Set the Model value from the provided val object.
@@ -508,9 +514,10 @@ class HybridNode : public ClarityNode {
         return domVal;
     }
 
-    INLINE string cppValToString() const {
+    virtual INLINE string cppValToString() const {
         if (cppVal_ == nullptr) return "###";
-        return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
+        //return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
+        return string("FIXME");
     }
 
     /**

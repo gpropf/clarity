@@ -3,6 +3,7 @@
 
 #include "CanvasElement.hpp"
 #include "ClarityNode.hpp"
+#include "Selectables.hpp"
 
 namespace clarity {
 
@@ -605,6 +606,12 @@ class CLNodeFactory {
         cg->initcg();
         return cg;
     }
+
+    INLINE Select<V> *select() {
+        return withTag("select").build();
+    }
+
+
 
     /**
      * @brief Attribute nodes are a special case. They represent a single

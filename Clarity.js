@@ -321,14 +321,14 @@ class CLElement {
     this.tag_ = tag
     this.name_ = name
     this.boundField_ = "value"; // Good for most input types, gets changed later if needed by the specific element type.
-    console.log(attachmentMode);
+    //console.log(attachmentMode);
 
     var el = this.createDOMElementByTagType();
     var existingElement = null;
 
     if (attachmentMode == Module.AttachmentMode.REPLACE_ID
       || attachmentMode == Module.AttachmentMode.ATTACH_ID) {
-      existingElement = document.getElementById(attachmentId);      
+      existingElement = document.getElementById(attachmentId);
     } else if (attachmentMode == Module.AttachmentMode.REPLACE_NAME
       || attachmentMode == Module.AttachmentMode.ATTACH_NAME) {
       var nameElements = document.getElementsByName(attachmentId);
@@ -351,46 +351,19 @@ class CLElement {
   }
 
 
-
-
-  createDOMElement2(id, tag, name) {
-    this.id_ = id
-    this.tag_ = tag
-    this.name_ = name
-    this.boundField_ = "value"; // Good for most types of input elements.
-
-
-    // We look for a node with the name that was provided. If we can't find it we attach the
-    // created node directly to the <body> tag.
-    var nameElements = document.getElementsByName(this.name_);
-    var el = this.createDOMElementByTagType();
-    if (nameElements.length > 0) {
-      let nameElement = nameElements[0];
-      nameElement.parentNode.replaceChild(el, nameElement);
-    }
-    else document.body.appendChild(el);
-
-
-
-    //   if (el == null) {
-
-
-
-    // Without this the newly created elements get garbage collected and vanish.
-    // The idea is that you append them later to their actual parents using a call
-    // in C++ to the appendChild method.
-
-    el.id = this.id_
-
-    if (this.name_ != "") {
-      el.name = this.name_
-      el.setAttribute("name", name);
-    }
-    //   }
-    // }
-    this.domElement_ = el
-    this.generateEventHandlers(this);
+  makeOptionsFromList(lst) {
+    var opts = lst.map(function(x) {return `<option value='${x}'>${x}</option>`;})
+    console.log(opts);
   }
+
+  addOptionElementFromString(s) {
+    var opt = document.createElement("option");
+    opt.value = s;
+    opt.label = s;
+    this.domElement_.appendChild(opt);
+  }
+
+
 
   /**
    * We need to generate event listeners for each node we create of a given type. 
@@ -411,9 +384,6 @@ class CLElement {
     }
   }
 
-  /**
-   * 
-   */
   set id(id) {
     this.id_ = id
   }

@@ -21,8 +21,8 @@ FRAMEWORK_DEPS = Clarity.js Util.js testbed.html Makefile
 speedtest: speedtest.o ClarityNode.o
 	$(CC) -lembind speedtest.o ClarityNode.o $(CFLAGS) -o $(JSOUT)
 
-testbed: testbed.o ClarityNode.o CanvasElement.o
-	$(CC) -lembind testbed.o ClarityNode.o CanvasElement.o $(CFLAGS) -o $(JSOUT)
+testbed: testbed.o ClarityNode.o CanvasElement.o Selectables.o
+	$(CC) -lembind testbed.o ClarityNode.o CanvasElement.o Selectables.o $(CFLAGS) -o $(JSOUT)
 
 docs: clarity.doxyconfig
 	doxygen clarity.doxyconfig
