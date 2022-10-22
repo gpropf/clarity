@@ -36,8 +36,8 @@ struct TestFramework : public PageContent {
         val CLE = val::global("CLElement");
         val nodeAudit = CLE["nodeAudit_double"];
 
-        CLNodeFactory<HybridNode, double, double> rootBuilder("div", "foo");
-        auto *root = rootBuilder.build();
+        CLNodeFactory<HybridNode, double, double> rootBuilder("div", "tf_root");
+        auto *root = rootBuilder.withAttachmentId("hookid").build();
 
         auto *sidebar = rootBuilder.withParent(root)
                             .withName("sidebar")

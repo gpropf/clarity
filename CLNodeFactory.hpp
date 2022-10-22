@@ -61,7 +61,7 @@ class CLNodeFactory {
                               //!< attribute and doing just about anything with SVG requires
                               //!< a lot of attributes.
 
-    ClarityNode::AttachmentMode attachmentMode_ = ClarityNode::AttachmentMode::REPLACE_NAME;
+    ClarityNode::AttachmentMode attachmentMode_ = ClarityNode::AttachmentMode::ATTACH_ID;
     string attachmentId_ = ""; //!< id of existing DOM element that we are attaching to or replacing.
 
     /**

@@ -298,6 +298,7 @@ class CLElement {
   }
 
   placeElement(existingElement, el, attachmentMode) {
+    if (existingElement == null) attachmentMode = Module.AttachmentMode.NEW;
     switch (attachmentMode) {
       case Module.AttachmentMode.ATTACH_ID:
       case Module.AttachmentMode.ATTACH_NAME:
@@ -315,7 +316,7 @@ class CLElement {
     }
   }
 
-  createDOMElement(id, tag, name, attachmentMode, domId = null) {
+  createDOMElement(id, tag, name, attachmentMode, attachmentId = null) {
     this.id_ = id
     this.tag_ = tag
     this.name_ = name
@@ -323,26 +324,20 @@ class CLElement {
     console.log(attachmentMode);
 
     var el = this.createDOMElementByTagType();
+    var existingElement = null;
 
     if (attachmentMode == Module.AttachmentMode.REPLACE_ID
       || attachmentMode == Module.AttachmentMode.ATTACH_ID) {
-      var existingElement = document.getElementById(id);
-    }
-
-
-    if (existingElement != null) {
-      this.placeElement(existingElement, el, attachmentMode);
-    }
-    else {
-      var nameElements = document.getElementsByName(this.name_);
+      existingElement = document.getElementById(attachmentId);      
+    } else if (attachmentMode == Module.AttachmentMode.REPLACE_NAME
+      || attachmentMode == Module.AttachmentMode.ATTACH_NAME) {
+      var nameElements = document.getElementsByName(attachmentId);
       if (nameElements.length > 0) {
         existingElement = nameElements[0];
-        this.placeElement(existingElement, el, attachmentMode);
-      }
-      else {
-        this.placeElement(existingElement, el, Module.AttachmentMode.NEW);
       }
     }
+
+    this.placeElement(existingElement, el, attachmentMode);
 
     el.id = this.id_
 

@@ -20,7 +20,7 @@ struct Showcase : public PageContent {
         double *temp = new double(330);
         double *cir1Radius_value = new double(88.4);
 
-        CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");
+        CLNodeFactory<HybridNode, double, double> builder("div", "showcase_root");
         auto *maindiv = builder.build();
 
         CLNodeFactory<HybridNode, double, double> childOfMaindivBuilder =
