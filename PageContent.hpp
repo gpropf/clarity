@@ -37,9 +37,14 @@ struct TestFramework : public PageContent {
         val nodeAudit = CLE["nodeAudit_double"];
 
         CLNodeFactory<HybridNode, double, double> rootBuilder("div", "tf_root");
-        auto *root = rootBuilder.withAttachmentMode(ClarityNode::AttachmentMode::REPLACE_ID)
-                         .withAttachmentId("hookid")
-                         .build();
+
+        // Uncomment the lines below to see how to attach a node to existing content.
+        // auto *root = rootBuilder.withAttachmentMode(ClarityNode::AttachmentMode::REPLACE_ID)
+        //                  .withAttachmentId("hookid")
+        //                  .build();
+
+        // Default attachment mode is to just attach the node directly to the body.
+        auto *root = rootBuilder.build();
 
         auto *sidebar = rootBuilder.withParent(root)
                             .withName("sidebar")
