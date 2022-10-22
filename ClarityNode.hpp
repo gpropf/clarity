@@ -514,9 +514,11 @@ class HybridNode : public ClarityNode {
         return domVal;
     }
 
-    virtual INLINE string cppValToString() const {
+    virtual  string cppValToString() const {
         if (cppVal_ == nullptr) return "###";
-        //return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
+        //return clto_str<V>(*(reinterpret_cast<V *>(this->cppVal_)));
+        //return clto_str<V>(*this->cppVal_);
+        //return to_string(*this->cppVal_);
         return string("FIXME");
     }
 

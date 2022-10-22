@@ -26,6 +26,14 @@ string HybridNode<unsigned char>::cppValToString() const {
     //return string("<unsigned char> Canvas.");
 }
 
+template <>
+string HybridNode<double>::cppValToString() const {
+    //cout << "HybridNode<string>::cppValToString()\n";
+    if (cppVal_ == nullptr) return "HybridNode<double> NULLPTR";
+    return clto_str<double>(*cppVal_);// static_cast<string>(cppVal_);
+    //return string("<unsigned char> Canvas.");
+}
+
 
 
 template <>
