@@ -608,7 +608,8 @@ class CLNodeFactory {
     }
 
     INLINE Select<V> *select() {
-        Select<V> *sel = static_cast<Select<V> *>(withTag("select").build());
+        Select<V> *sel = new Select<V>(name_, "select", useExistingDOMElement_, attachmentMode_);
+        sel = static_cast<Select<V> *>(build(sel));
         sel->getCLE().template call<void>("addOptionElementFromString", val((*sel->getCppVal())[0])); // FIXME
         sel->getCLE().template call<void>("addOptionElementFromString", val((*sel->getCppVal())[1])); 
         return sel;
