@@ -608,10 +608,15 @@ class CLNodeFactory {
     }
 
     INLINE Select<V> *select() {
-        return withTag("select").build();
+        Select<V> *sel = static_cast<Select<V> *>(withTag("select").build());
+        sel->getCLE().template call<void>("addOptionElementFromString", val((*sel->getCppVal())[0])); // FIXME
+        sel->getCLE().template call<void>("addOptionElementFromString", val((*sel->getCppVal())[1])); 
+        return sel;
     }
 
-
+    // cel->setDrawFuntionName("canvasTestPattern");
+    // cel->refreshView();
+    // return cel;
 
     /**
      * @brief Attribute nodes are a special case. They represent a single

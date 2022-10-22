@@ -128,8 +128,8 @@ struct Showcase : public PageContent {
 
         Select<vector<string>> * carSelect = selectBuilder.withName("cars").withCppVal(carOptions).select();
         //carSelect->getCLE().template call<void>("addOptionElementFromString");
-        carSelect->getCLE().template call<void>("addOptionElementFromString", val((*carSelect->getCppVal())[0])); 
-        carSelect->getCLE().template call<void>("addOptionElementFromString", val((*carSelect->getCppVal())[1])); 
+        // carSelect->getCLE().template call<void>("addOptionElementFromString", val((*carSelect->getCppVal())[0])); 
+        // carSelect->getCLE().template call<void>("addOptionElementFromString", val((*carSelect->getCppVal())[1])); 
 
         printf("Setup complete!\n");
         return maindiv;
