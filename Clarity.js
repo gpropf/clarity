@@ -356,10 +356,10 @@ class CLElement {
     console.log(opts);
   }
 
-  addOptionElementFromString(s) {
+  addOptionElementFromString(v, lbl) {
     var opt = document.createElement("option");
-    opt.value = s;
-    opt.label = s;
+    opt.value = v;
+    opt.label = lbl;
     this.domElement_.appendChild(opt);
   }
 
