@@ -316,11 +316,15 @@ class CLElement {
     }
   }
 
-  createDOMElement(id, tag, name, attachmentMode, attachmentId = null) {
-    this.id_ = id
-    this.tag_ = tag
-    this.name_ = name
-    this.boundField_ = "value"; // Good for most input types, gets changed later if needed by the specific element type.
+
+  //createDOMElement(id, tag, name, attachmentMode, attachmentId = null) {
+  createDOMElement(id, attachmentMode, attachmentId = null) {
+    
+    this.clarityNode_ = Module.ClarityNode.getCLElementById(id);
+    this.id_ = this.clarityNode_.getId();
+    this.tag_ = this.clarityNode_.getTag();
+    this.name_ = this.clarityNode_.getName();
+    this.boundField_ = this.clarityNode_.getBoundField();
     //console.log(attachmentMode);
 
     var el = this.createDOMElementByTagType();
@@ -352,7 +356,7 @@ class CLElement {
 
 
   makeOptionsFromList(lst) {
-    var opts = lst.map(function(x) {return `<option value='${x}'>${x}</option>`;})
+    var opts = lst.map(function (x) { return `<option value='${x}'>${x}</option>`; })
     console.log(opts);
   }
 

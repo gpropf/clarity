@@ -21,11 +21,6 @@ std::string clto_str(const T &v) {
     return os.str();
 }
 
-
-
-
-
-
 /**
  * @brief The project's central class. Describes an element with push/pull
  * behavior to synchronize a data model and a web view. WebElements can contain
@@ -160,14 +155,18 @@ class ClarityNode {
                 AttachmentMode attachmentMode, const string &attachmentId = "")
         : name_(name), tag_(tag) {
         init();
+        // if (!useExistingDOMElement)
+        //     cle_.call<void>("createDOMElement", id_, tag_, name_, attachmentMode, attachmentId);
+
         if (!useExistingDOMElement)
-            cle_.call<void>("createDOMElement", id_, tag_, name_, attachmentMode, attachmentId);
+            cle_.call<void>("createDOMElement", id_, attachmentMode, attachmentId);
+
         // cle_.set("name", val(name));
         //  For some reason the code that sets the name in clarity.js doesn't
         //  "take" so we re-set it here.
 
         domElement_ = cle_["domElement"];
-        setBoundField("value");
+        boundField_ = "value";
         ClarityNode::switchboard[id_] = this;
     }
 
@@ -214,6 +213,8 @@ class ClarityNode {
             // FIXME: Should be an assert or exception
         }
     }
+
+    INLINE string getBoundField() const { return boundField_; }
 
     INLINE void setBoundField(const string &boundField) {
         boundField_ = boundField;
@@ -461,7 +462,7 @@ class HybridNode : public ClarityNode {
                ClarityNode::AttachmentMode attachmentMode = ClarityNode::AttachmentMode::NEW,
                const string &attachmentId = "")
         : ClarityNode(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
-        //cout << "FIVE ARG HN constructor called!: " << int(attachmentMode) << "\n";
+        // cout << "FIVE ARG HN constructor called!: " << int(attachmentMode) << "\n";
     }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
@@ -514,11 +515,11 @@ class HybridNode : public ClarityNode {
         return domVal;
     }
 
-    virtual  string cppValToString() const {
+    virtual string cppValToString() const {
         if (cppVal_ == nullptr) return "###";
-        //return clto_str<V>(*(reinterpret_cast<V *>(this->cppVal_)));
-        //return clto_str<V>(*this->cppVal_);
-        //return to_string(*this->cppVal_);
+        // return clto_str<V>(*(reinterpret_cast<V *>(this->cppVal_)));
+        // return clto_str<V>(*this->cppVal_);
+        // return to_string(*this->cppVal_);
         return string("FIXME");
     }
 
