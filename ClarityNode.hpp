@@ -157,6 +157,7 @@ class ClarityNode {
                 AttachmentMode attachmentMode, const string &attachmentId = "")
         : name_(name), tag_(tag) {
         init();
+        cout << "ClarityNode Constructor\n";
         // if (!useExistingDOMElement)
         //     cle_.call<void>("createDOMElement", id_, tag_, name_, attachmentMode, attachmentId);
 

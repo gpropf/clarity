@@ -34,6 +34,7 @@ class Select : public HybridNode<V> {
         : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
         // this->cle_.template call<void>("addOptionElementFromString", val((*this->cppVal_)[0]));
         // this->cle_.template call<void>("addOptionElementFromString");
+        cout << "Select Constructor\n";
     }
 
     ~Select() { cout << "DESTROYING Select with id: " << this->id_ << "\n"; }
