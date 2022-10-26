@@ -95,6 +95,8 @@ class CanvasGrid : public CanvasElement<V> {
         return val(NULL);  // FIXME
     }
 
+    INLINE virtual string getNodeTypeCode() { return string("CG"); }
+
     void initcg() {
         cout << "CG init called.\n";
         HybridNode<V>::cppVal_ = new V[gridWidth_ * gridHeight_];

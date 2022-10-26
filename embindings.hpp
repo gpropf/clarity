@@ -24,6 +24,8 @@ EMSCRIPTEN_BINDINGS(clarity) {
                   allow_raw_pointers())
         .function("getBoundField", &ClarityNode::getBoundField,
                   allow_raw_pointers())
+        .function("getNodeTypeCode", &ClarityNode::getNodeTypeCode,
+                  allow_raw_pointers())
         .class_function("pullValFromPeersById",
                         &ClarityNode::pullValFromPeersById,
                         allow_raw_pointers())

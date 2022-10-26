@@ -34,7 +34,7 @@ class CLElement {
   /**
    * See note below on these generator functions.
    */
-  static eventHandlerGenerators = {
+  static eventListenerGenerators = {
     "input": [{
       "eventName": "change", "eventHandlerGenerator":
         function (element) {
@@ -72,7 +72,7 @@ class CLElement {
     "option": []
   }
 
-  static eventHandlerGeneratorsByClass = {
+  eventHandlerGeneratorsByClass = {
     "HN": {
 
       "input": [{
@@ -400,6 +400,7 @@ class CLElement {
     }
 
     this.domElement_ = el
+    console.log("This node's type code is: " +  this.clarityNode_.getNodeTypeCode())
     this.generateEventHandlers(this);
   }
 
@@ -429,8 +430,8 @@ class CLElement {
    * @param {CLElement} outerThis 
    */
   generateEventHandlers(outerThis) {
-    if (outerThis.tag_ in CLElement.eventHandlerGenerators) {
-      let listenerList = CLElement.eventHandlerGenerators[outerThis.tag_];
+    if (outerThis.tag_ in CLElement.eventListenerGenerators) {
+      let listenerList = CLElement.eventListenerGenerators[outerThis.tag_];
       listenerList.map(function (kv) {
         outerThis.domElement_.addEventListener(kv.eventName, kv.eventHandlerGenerator(outerThis));
       })

@@ -53,6 +53,9 @@ class Select : public HybridNode<V> {
 
     virtual void refreshDOMValueFromModel(){};
 
+    // The "V" is for vector.
+    INLINE virtual string getNodeTypeCode() { return string("SV"); }
+
    protected:
 };
 

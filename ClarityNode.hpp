@@ -109,6 +109,8 @@ class ClarityNode {
         }
     }
 
+    static void addEventListenerGenerator(const string &nodeTypeCode, val handlerGenerator) {}
+
     INLINE string getTag() const { return tag_; }
     INLINE int getId() const { return id_; }
     INLINE void setCLE(val cle) { cle_ = cle; }
@@ -221,6 +223,14 @@ class ClarityNode {
         cle_.set("boundField_", boundField);
         // val domElement = cle_["domElement"];
     }
+
+    /**
+     * @brief Get the Node Type Code for use in installing the appropriate eventListeners on node creation.
+     * I went with a short code instead of an enum to make expanding the types easier for end users.
+     *
+     * @return string
+     */
+    virtual string getNodeTypeCode() {return string("--");};
 
     INLINE val getCLE() const { return cle_; }
     INLINE val getDomElement() { return domElement_; }
@@ -418,7 +428,6 @@ class ClarityNode {
     // ========= End from Cpp file
 
    protected:
-    const string nodeType = "CN";
     string tag_;
     string boundField_;
 
@@ -468,6 +477,8 @@ class HybridNode : public ClarityNode {
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
     INLINE V *getCppVal() const { return cppVal_; }
+
+    INLINE virtual string getNodeTypeCode() { return string("HN"); }
 
     /**
      * @brief Set the Model value from the provided val object.

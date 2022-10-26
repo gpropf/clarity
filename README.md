@@ -14,7 +14,7 @@ Clarity is a web development framework written in C++ using emscripten to facili
 
 
 1. Event API. We still need a framework to offer people a way to easily use events. Need to be able to use C++ or JS for event handling. 
-   1. CLElement.eventHandlerGenerators needs to use the HybridNode descendent class names rather than HTML tags as keys since there might be more than one way to use a given HTML tag.
+   1. CLElement.eventListenerGenerators needs to use the HybridNode descendent class names rather than HTML tags as keys since there might be more than one way to use a given HTML tag.
 2. Selectables could use a common base class.
    1. Radio buttons
    2. Checkboxes
