@@ -418,6 +418,7 @@ class ClarityNode {
     // ========= End from Cpp file
 
    protected:
+    const string nodeType = "CN";
     string tag_;
     string boundField_;
 

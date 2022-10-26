@@ -1,3 +1,13 @@
+function loadAuxScript(scriptName) {
+  var el = document.createElement('script');
+  el.async = false;
+  el.src = 'js.d/' + scriptName;
+  el.type = 'text/javascript';  
+  (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(el);
+}
+
+var auxScripts = ["auxExample1.js","auxExample2.js"];
+auxScripts.map(loadAuxScript);
 
 // Run with 'python3 -m http.server 8000'
 
@@ -62,7 +72,46 @@ class CLElement {
     "option": []
   }
 
+  static eventHandlerGeneratorsByClass = {
+    "HN": {
 
+      "input": [{
+        "eventName": "change", "eventHandlerGenerator":
+          function (element) {
+            return function (e) {
+              Module.ClarityNode.updateNodeFromDomById(element.id)
+              if (element.boundField != undefined)
+                console.log("For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
+              else
+                console.log("For ID: " + element.id + " Value changed");
+            }
+          }
+      }],
+      "textarea": [{
+        "eventName": "input", "eventHandlerGenerator":
+          function (element) {
+            return function (e) {
+              console.log("KEYPRESSED!");
+            }
+          }
+      },
+      {
+        "eventName": "change", "eventHandlerGenerator":
+          function (element) {
+            return function (e) {
+              console.log("textarea lost focus!");
+              Module.ClarityNode.updateNodeFromDomById(element.id)
+              if (element.boundField != undefined)
+                console.log("For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
+              else
+                console.log("For ID: " + element.id + " Value changed");
+            }
+          }
+      }],
+      "select": [],
+      "option": []
+    }
+  }
 
   multiplyValues(a, b) {
     return a * b
@@ -319,7 +368,7 @@ class CLElement {
 
   //createDOMElement(id, tag, name, attachmentMode, attachmentId = null) {
   createDOMElement(id, attachmentMode, attachmentId = null) {
-    
+
     this.clarityNode_ = Module.ClarityNode.getCLElementById(id);
     this.id_ = this.clarityNode_.getId();
     this.tag_ = this.clarityNode_.getTag();
