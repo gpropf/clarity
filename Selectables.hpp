@@ -31,11 +31,7 @@ class Select : public HybridNode<V> {
    public:
     Select(const string &name, const string &tag, bool useExistingDOMElement,
            ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
-        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
-        // this->cle_.template call<void>("addOptionElementFromString", val((*this->cppVal_)[0]));
-        // this->cle_.template call<void>("addOptionElementFromString");
-        cout << "Select Constructor\n";
-    }
+        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
     ~Select() { cout << "DESTROYING Select with id: " << this->id_ << "\n"; }
 
@@ -48,7 +44,8 @@ class Select : public HybridNode<V> {
     void populateOptions() {
         for (auto opt : *this->cppVal_) {
             auto [optFirst, optSecond] = opt;
-            this->getCLE().template call<void>("addOptionElementFromString", val(optFirst), val(optSecond));
+            this->getCLE().template call<void>("addOptionElementFromString", val(optFirst),
+                                               val(optSecond));
         }
     }
 

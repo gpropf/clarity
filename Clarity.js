@@ -399,8 +399,7 @@ class CLElement {
       el.setAttribute("name", name);
     }
 
-    this.domElement_ = el
-    console.log("This node's type code is: " +  this.clarityNode_.getNodeTypeCode())
+    this.domElement_ = el    
     this.generateEventHandlers(this);
   }
 

@@ -156,32 +156,15 @@ class ClarityNode {
     ClarityNode(const string &name, const string &tag, bool useExistingDOMElement,
                 AttachmentMode attachmentMode, const string &attachmentId = "")
         : name_(name), tag_(tag) {
-        init();
-        cout << "ClarityNode Constructor\n";
-        // if (!useExistingDOMElement)
-        //     cle_.call<void>("createDOMElement", id_, tag_, name_, attachmentMode, attachmentId);
+        init();        
 
         if (!useExistingDOMElement)
-            cle_.call<void>("createDOMElement", id_, attachmentMode, attachmentId);
-
-        // cle_.set("name", val(name));
-        //  For some reason the code that sets the name in clarity.js doesn't
-        //  "take" so we re-set it here.
+            cle_.call<void>("createDOMElement", id_, attachmentMode, attachmentId);        
 
         domElement_ = cle_["domElement"];
         boundField_ = "value";
         ClarityNode::switchboard[id_] = this;
-    }
-
-    // EMSCRIPTEN_KEEPALIVE void setAttribute(const string &attr,
-    //                                        const val &value);
-
-    // EMSCRIPTEN_KEEPALIVE void setAttributes(const map<string, val> &attrs);
-
-    // INLINE CppType getStoredValueType() const { return storedValueType_; }
-    //  EMSCRIPTEN_KEEPALIVE void setStoredValueType(CppType cppType);
-
-    // bool appendChild(ClarityNode *child);
+    }    
 
     INLINE ClarityNode *getParent() const { return this->parent_; }
     INLINE void setParent(ClarityNode *parent) { this->parent_ = parent; }
@@ -279,8 +262,7 @@ class ClarityNode {
     INLINE void appendDualLink(shared_ptr<DualLink> dl) { dlpeers_.push_back(dl); }
     INLINE int countPeers() const { return dlpeers_.size(); }
 
-    //=========== From cpp file
-
+    
     bool appendChild(ClarityNode *child) {
         children_.push_back(child);
         child->setParent(this);
@@ -412,12 +394,7 @@ class ClarityNode {
         for (auto [attrName, value] : attrs) {
             setAttribute(attrName, value);
         }
-    }
-
-    // INLINE void setStoredValueType(CppType cppType) {
-    //     storedValueType_ = cppType;
-    //     cle_.set("cpptype", cppType);
-    // }
+    }    
 
     INLINE void addEventListenerByName(const string &eventName, const string &callbackName) {
         cle_.call<void>("addEventListenerById", eventName, callbackName);
@@ -426,19 +403,21 @@ class ClarityNode {
     INLINE void addJSEventListener(const string &eventName, val eventCallback) {
         cle_.call<void>("addEventListener", eventName, eventCallback);
     }
-    // ========= End from Cpp file
 
    protected:
     string tag_;
     string boundField_;
 
     vector<ClarityNode *> children_;
+
     /** \brief The node is clean if it has not been recently changed. This
        feature is mainly designed to prevent infinite update loops if the node
        graph is not acyclic. It doesn't do anything yet.*/
     bool clean_ = false;
+
     /** \brief Hands out the numeric ids for all nodes.*/
     static TicketMachine tm;
+
     /** \brief Keeps track of all nodes in the system. If you have the id of a
      * node you can get a pointer to it here. */
     static map<const int, ClarityNode *> switchboard;
@@ -446,6 +425,7 @@ class ClarityNode {
     /** \brief Instance of the CLElement class that acts as a "proxy" in JS
      * space. */
     val cle_ = val::global("CLElement").new_();
+
     val domElement_;  //!< This will be initialized if the node has its own DOM
                       //!< element.
 
@@ -462,8 +442,6 @@ class ClarityNode {
      * data is moved between nodes. */
     // vector<ClarityNode::ActiveLink> peers_;
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
-
-    // AttachmentMode attachmentMode_ = AttachmentMode::NEW;
 };
 
 template <typename V>
