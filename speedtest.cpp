@@ -80,7 +80,16 @@ void cppTestFn() {
     cout << "I'm a C++ function called from JS.]\n";
 }
 
+
+EMSCRIPTEN_BINDINGS(speedtest) {
+    emscripten::function("cppTestFn", &cppTestFn);
+}
+
+
 int main() {   
+    
+    val speedtest = val::global("speedtesteee");
+    //val cppTestFn = speedtest["cppTestFn"];
 
     val utils_instance = val::global("Util").new_();
     val CLE = val::global("CLElement");
