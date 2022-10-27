@@ -76,6 +76,10 @@ void make_trs(CLNodeFactory<Nc, V, N> builder) {
     cout << "Total elapsed time: " << totalTime << "\n";
 }
 
+void cppTestFn() {
+    cout << "I'm a C++ function called from JS.]\n";
+}
+
 int main() {   
 
     val utils_instance = val::global("Util").new_();
