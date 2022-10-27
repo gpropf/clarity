@@ -135,44 +135,9 @@ class CLElement {
   }
 
   eventHandlerGeneratorsByClass = {
-    "HN": {
-      "input": [{
-        "eventName": "change", "eventHandlerGenerator":
-          function (element) {
-            return function (e) {
-              Module.ClarityNode.updateNodeFromDomById(element.id)
-              if (element.boundField != undefined)
-                console.log("For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
-              else
-                console.log("For ID: " + element.id + " Value changed");
-            }
-          }
-      }],
-      "textarea": [{
-        "eventName": "input", "eventHandlerGenerator":
-          function (element) {
-            return function (e) {
-              console.log("KEYPRESSED!");
-            }
-          }
-      },
-      {
-        "eventName": "change", "eventHandlerGenerator":
-          function (element) {
-            return function (e) {
-              console.log("textarea lost focus!");
-              Module.ClarityNode.updateNodeFromDomById(element.id)
-              if (element.boundField != undefined)
-                console.log("For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
-              else
-                console.log("For ID: " + element.id + " Value changed");
-            }
-          }
-      }],
-      "select": [],
-      "option": []
-    }
+    a:2
   }
+
 
   static doNothing() {
     console.log("doNothing(): a function that proudly does nothing...");
@@ -192,7 +157,7 @@ class CLElement {
   }
 
   static make_trs_ints() {
-    console.log("JS:make_trs_ints()");
+    //console.log("JS:make_trs_ints()");
     Module.ClarityNode.runCallbackById("make_trs_ints");
   }
 
