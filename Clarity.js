@@ -1,3 +1,8 @@
+/**
+ * 
+ * CLElement class and helper functions. This is the main JS file in the project.
+ */
+
 function loadAuxScript(scriptName) {
   var el = document.createElement('script');
   el.async = false;
@@ -9,11 +14,68 @@ function loadAuxScript(scriptName) {
 var auxScripts = ["auxExample1.js","auxExample2.js"];
 auxScripts.map(loadAuxScript);
 
-// Run with 'python3 -m http.server 8000'
-
 class CLElement {
 
   constructor() { }
+
+  set boundField(boundField) {
+    this.boundField_ = boundField;
+  }
+
+  get boundField() {
+    return this.boundField_;
+  }
+
+  set owner(owner) {
+    this.owner_ = owner
+  }
+
+  get owner() {
+    return this.owner_
+  }
+
+  set tag(tag) {
+    this.tag_ = tag
+  }
+
+  get tag() {
+    return this.tag_
+  }
+ 
+  set type(type) {
+    this.type_ = type
+  }
+
+  get type() {
+    return this.type_
+  }
+  
+  set domElement(domElement) {
+    this.domElement_ = domElement
+  }
+
+  get domElement() {
+    return this.domElement_
+  } 
+
+  set name(name) {
+    this.name_ = name;
+    if (this.domElement_) {
+      this.domElement_.setAttribute("name", name);
+    }
+  }
+
+  get name() {
+    return this.domElement_.name;
+  }
+
+  set id(id) {
+    this.id_ = id
+  }
+  
+  get id() {
+    return this.id_
+  }
 
   static tagToUrl = { "svg": "http://www.w3.org/2000/svg", "circle": "http://www.w3.org/2000/svg" };
   static extraInitCode = {
@@ -74,7 +136,6 @@ class CLElement {
 
   eventHandlerGeneratorsByClass = {
     "HN": {
-
       "input": [{
         "eventName": "change", "eventHandlerGenerator":
           function (element) {
@@ -113,18 +174,6 @@ class CLElement {
     }
   }
 
-  multiplyValues(a, b) {
-    return a * b
-  }
-
-  invertValue(v) {
-    return 1 / v
-  }
-
-  static square(x) {
-    return x ** 2;
-  }
-
   static doNothing() {
     console.log("doNothing(): a function that proudly does nothing...");
   }
@@ -156,70 +205,7 @@ class CLElement {
     return n;
   }
 
-  static draw_test_pattern() {
-    console.log("draw_test_pattern");
-    let canvasEl = document.getElementById(2);
-    var canvasCode = CLElement.extraInitCode["canvas"];
-    canvasCode(canvasEl);
-  }
-
-
-  drawBlueTestPattern() {
-    var domElement = this.domElement_;
-    // let domElement = this.domElement;
-    if (domElement.getContext) {
-      domElement.style.display = 'none';
-      domElement.style.display = 'block';
-      let ctx = domElement.getContext('2d');
-      ctx.scale(2, 2);
-      ctx.fillStyle = 'blue';
-      ctx.fillRect(10, 10, 60, 60);
-      ctx.fillRect(100, 10, 90, 60);
-
-      ctx.beginPath();
-      ctx.arc(250, 40, 32, 0, 2 * Math.PI);
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(10, 160);
-      ctx.lineTo(90, 160);
-      ctx.lineTo(50, 110);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.save();
-      ctx.scale(2, 1);
-      ctx.beginPath();
-      ctx.arc(72, 130, 25, 0, 2 * Math.PI);
-      ctx.fill();
-      ctx.restore();
-
-      ctx.beginPath();
-      ctx.arc(250, 120, 40, 0, Math.PI);
-      ctx.fill();
-      //alert(ctx);
-      console.log("drawBlueTestPattern()");
-
-    }
-  }
-
-  canvasTestPattern() {
-    var domElement = this.domElement_;
-    if (domElement.getContext) {
-      domElement.style.display = 'none';
-      domElement.style.display = 'block';
-      let ctx = domElement.getContext('2d');
-      let [w, h, hw, hh] = [domElement.width, domElement.height, domElement.width / 2, domElement.height / 2];
-      let [qw, qh] = [w / 4, h / 4];
-      ctx.scale(1, 1);
-      ctx.fillStyle = 'green';
-      ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = 'blue';
-      ctx.fillRect(qw, qh, hw, hh);
-      console.log("drawGreenTestPattern()");
-    }
-  }
-
+  
   /**
    * 
    * @param {*} temp: In degrees Kelvin 
@@ -239,21 +225,7 @@ class CLElement {
     if (b > 255) b = 255;
     var rgbstr = `rgb(${r},${g},${b})`;
     return rgbstr;
-  }
-
-  // blackbody(temp) {
-  //   var originalColor = { "r": 0, "g": 200, "b": 75 };
-  //   return CLElement.blackbody_st(temp, originalColor);
-  // }
-
-  /**
-   * 
-   * @param {*} x 
-   * @returns Whatever you pass in. This is mainly for anything that is not some kind of numeric value.
-   */
-  passthru(x) {
-    return x;
-  }
+  }  
 
   static generateTransformFn(constantOrFunction) {
     if (constantOrFunction instanceof Function) {
@@ -275,62 +247,6 @@ class CLElement {
     if (child.domElement && child.domElement instanceof Element)
       this.domElement.appendChild(child.domElement)
   }
-
-  createCLElement() {
-    return new CLElement()
-  }
-
-  set boundField(boundField) {
-    this.boundField_ = boundField;
-  }
-
-  get boundField() {
-    return this.boundField_;
-  }
-
-  set owner(owner) {
-    this.owner_ = owner
-  }
-
-  get owner() {
-    return this.owner_
-  }
-
-  get tag() {
-    return this.tag_
-  }
-
-  set tag(tag) {
-    this.tag_ = tag
-  }
-
-  get type() {
-    return this.type_
-  }
-
-  set type(type) {
-    this.type_ = type
-  }
-
-  get domElement() {
-    return this.domElement_
-  }
-
-  set domElement(domElement) {
-    this.domElement_ = domElement
-  }
-
-  set name(name) {
-    this.name_ = name;
-    if (this.domElement_) {
-      this.domElement_.setAttribute("name", name);
-    }
-  }
-
-  get name() {
-    return this.domElement_.name;
-  }
-
 
   createDOMElementByTagType() {
     var el
@@ -364,7 +280,6 @@ class CLElement {
         console.log("Invalid attachment mode!");
     }
   }
-
 
   //createDOMElement(id, tag, name, attachmentMode, attachmentId = null) {
   createDOMElement(id, attachmentMode, attachmentId = null) {
@@ -401,13 +316,7 @@ class CLElement {
 
     this.domElement_ = el    
     this.generateEventHandlers(this);
-  }
-
-
-  makeOptionsFromList(lst) {
-    var opts = lst.map(function (x) { return `<option value='${x}'>${x}</option>`; })
-    console.log(opts);
-  }
+  }  
 
   addOptionElementFromString(v, lbl) {
     var opt = document.createElement("option");
@@ -415,8 +324,6 @@ class CLElement {
     opt.label = lbl;
     this.domElement_.appendChild(opt);
   }
-
-
 
   /**
    * We need to generate event listeners for each node we create of a given type. 
@@ -435,35 +342,19 @@ class CLElement {
         outerThis.domElement_.addEventListener(kv.eventName, kv.eventHandlerGenerator(outerThis));
       })
     }
-  }
-
-  set id(id) {
-    this.id_ = id
-  }
+  }  
 
   addEventListenerById(eventName, id) {
     this.domElement_.addEventListener(eventName, (e) => {
       Module.ClarityNode.runCallbackById(id)
     })
   }
-
-  get id() {
-    return this.id_
-  }
-
+  
   printState() {
     console.log(`CNN: FOR ID: ${this.id}, THIS VAL = ${this.domElement_.value}`);
-  }
+  }  
 
-  printToConsole(v) {
-    console.log(v)
-  }
-
-  printType(v) {
-    console.log(typeof (v));
-  }
-
-  static setGridLocToCurrentVal(ev) { // FIXME: Need to rework to remove translator stuff.
+  static setGridLocToCurrentVal(ev) {
     let domElement = ev.target;
     let domrect = domElement.getBoundingClientRect();
 
@@ -471,18 +362,14 @@ class CLElement {
     let cw = domElement.cw;
     let gh = domElement.gh;
     let ch = domElement.ch;
-    //let cellDimensions = domElement.cellDimensions;
-    //let gridDimensions = domElement.gridDimensions;
+    
     var gridDimensions = { w: gw, h: gh };
     let loc = { x: (ev.x - domrect.x), y: (ev.y - domrect.y) };
-    var locIn = { x: Math.floor(loc.x / cw), y: Math.floor(loc.y / ch) };
-    //let locOut = Util.wrapCoords(locIn, gridDimensions);
+    var locIn = { x: Math.floor(loc.x / cw), y: Math.floor(loc.y / ch) };    
     var locOut = Util.capCoords(locIn, gridDimensions);
     domElement.gridRef.setValXY(locOut.x, locOut.y);
     //console.log(locOut);
   }
-
-
 }
 
 //let myVar = setInterval(myTimer, 300);
@@ -494,3 +381,107 @@ function myTimer() {
 
 window.CLElement = CLElement
 
+// DEPRECATED BELOW THIS LINE ------------------------------
+
+// printToConsole(v) {
+  //   console.log(v)
+  // }
+
+  // printType(v) {
+  //   console.log(typeof (v));
+  // }
+
+// makeOptionsFromList(lst) {
+  //   var opts = lst.map(function (x) { return `<option value='${x}'>${x}</option>`; })
+  //   console.log(opts);
+  // }
+
+  // createCLElement() {
+  //   return new CLElement()
+  // }
+
+    // multiplyValues(a, b) {
+  //   return a * b
+  // }
+
+  // invertValue(v) {
+  //   return 1 / v
+  // }
+
+  // static square(x) {
+  //   return x ** 2;
+  // }
+
+  // static draw_test_pattern() {
+  //   console.log("draw_test_pattern");
+  //   let canvasEl = document.getElementById(2);
+  //   var canvasCode = CLElement.extraInitCode["canvas"];
+  //   canvasCode(canvasEl);
+  // }
+
+
+  // drawBlueTestPattern() {
+  //   var domElement = this.domElement_;
+  //   // let domElement = this.domElement;
+  //   if (domElement.getContext) {
+  //     domElement.style.display = 'none';
+  //     domElement.style.display = 'block';
+  //     let ctx = domElement.getContext('2d');
+  //     ctx.scale(2, 2);
+  //     ctx.fillStyle = 'blue';
+  //     ctx.fillRect(10, 10, 60, 60);
+  //     ctx.fillRect(100, 10, 90, 60);
+
+  //     ctx.beginPath();
+  //     ctx.arc(250, 40, 32, 0, 2 * Math.PI);
+  //     ctx.fill();
+
+  //     ctx.beginPath();
+  //     ctx.moveTo(10, 160);
+  //     ctx.lineTo(90, 160);
+  //     ctx.lineTo(50, 110);
+  //     ctx.closePath();
+  //     ctx.fill();
+
+  //     ctx.save();
+  //     ctx.scale(2, 1);
+  //     ctx.beginPath();
+  //     ctx.arc(72, 130, 25, 0, 2 * Math.PI);
+  //     ctx.fill();
+  //     ctx.restore();
+
+  //     ctx.beginPath();
+  //     ctx.arc(250, 120, 40, 0, Math.PI);
+  //     ctx.fill();
+  //     //alert(ctx);
+  //     console.log("drawBlueTestPattern()");
+
+  //   }
+  // }
+
+  // canvasTestPattern() {
+  //   var domElement = this.domElement_;
+  //   if (domElement.getContext) {
+  //     domElement.style.display = 'none';
+  //     domElement.style.display = 'block';
+  //     let ctx = domElement.getContext('2d');
+  //     let [w, h, hw, hh] = [domElement.width, domElement.height, domElement.width / 2, domElement.height / 2];
+  //     let [qw, qh] = [w / 4, h / 4];
+  //     ctx.scale(1, 1);
+  //     ctx.fillStyle = 'green';
+  //     ctx.fillRect(0, 0, w, h);
+  //     ctx.fillStyle = 'blue';
+  //     ctx.fillRect(qw, qh, hw, hh);
+  //     console.log("drawGreenTestPattern()");
+  //   }
+  // }
+
+  // blackbody(temp) {
+  //   var originalColor = { "r": 0, "g": 200, "b": 75 };
+  //   return CLElement.blackbody_st(temp, originalColor);
+  // }
+
+  
+  // passthru(x) {
+  //   return x;
+  // }

@@ -76,10 +76,10 @@ void make_trs(CLNodeFactory<Nc, V, N> builder) {
 int main() {
     val utils_instance = val::global("Util").new_();
     val CLE = val::global("CLElement");
-    val doNothing = CLE["doNothing"];
+    //val doNothing = CLE["doNothing"];
     val destroy_everything_cpp = CLE["destroy_everything"];
     val make_trs_ints = CLE["make_trs_ints"];
-    val square = CLE["square"];
+    //val square = CLE["square"];
     val blackbody_st = CLE["blackbody_st"];
     val nodeAudit = CLE["nodeAudit_int"];
 

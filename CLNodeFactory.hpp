@@ -592,7 +592,7 @@ class CLNodeFactory {
      */
     INLINE CanvasElement<V> *canvas() {
         CanvasElement<V> *cel = static_cast<CanvasElement<V> *>(withTag("canvas").build());
-        cel->setDrawFuntionName("canvasTestPattern");
+        //cel->setDrawFuntionName("canvasTestPattern");
         cel->refreshView();
         return cel;
     }
