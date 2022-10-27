@@ -1,7 +1,7 @@
 function loadAuxScript(scriptName) {
   var el = document.createElement('script');
   el.async = false;
-  el.src = 'js.d/' + scriptName;
+  el.src = '/js.d/' + scriptName;
   el.type = 'text/javascript';  
   (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(el);
 }
