@@ -27,9 +27,9 @@ template <template <typename V> class Nc, typename V, typename N>
 // template <class Nc, typename V, typename N>
 class CLNodeFactory {
    public:
-    string tag_;   //!< Tag to be used with elements this factory builds.
-    string name_;  //!< Name to be used with elements this factory builds.
-    bool nameIsForSingleUse_ = true; //!< If true the name value is set to '' after one use.
+    string tag_;                      //!< Tag to be used with elements this factory builds.
+    string name_;                     //!< Name to be used with elements this factory builds.
+    bool nameIsForSingleUse_ = true;  //!< If true the name value is set to '' after one use.
 
     V *cppVal_ = nullptr;
 
@@ -523,6 +523,17 @@ class CLNodeFactory {
         return inp;
     }
 
+    INLINE Nc<V> *checkbox() {
+        map<string, val> inputFieldAttrs = {{"type", val("checkbox")}};
+        attrs_.merge(inputFieldAttrs);
+
+        Nc<V> *inp = withTag("input").withBoundField("value").build();
+        // inp->refreshDOMValueFromModel();
+        // inp->pushValToPeers(inp);
+        inp->refresh();
+        return inp;
+    }
+
     /**
      * @brief A range (slider) control.
      *
@@ -592,7 +603,7 @@ class CLNodeFactory {
      */
     INLINE CanvasElement<V> *canvas() {
         CanvasElement<V> *cel = static_cast<CanvasElement<V> *>(withTag("canvas").build());
-        //cel->setDrawFuntionName("canvasTestPattern");
+        // cel->setDrawFuntionName("canvasTestPattern");
         cel->refreshView();
         return cel;
     }
@@ -611,8 +622,9 @@ class CLNodeFactory {
         Select<V> *sel = new Select<V>(name_, "select", useExistingDOMElement_, attachmentMode_);
         sel = static_cast<Select<V> *>(build(sel));
         sel->populateOptions();
-        // sel->getCLE().template call<void>("addOptionElementFromString", val((*sel->getCppVal())[0])); // FIXME
-        // sel->getCLE().template call<void>("addOptionElementFromString", val((*sel->getCppVal())[1])); 
+        // sel->getCLE().template call<void>("addOptionElementFromString",
+        // val((*sel->getCppVal())[0])); // FIXME sel->getCLE().template
+        // call<void>("addOptionElementFromString", val((*sel->getCppVal())[1]));
         return sel;
     }
 

@@ -8,8 +8,6 @@
 
 using namespace clarity;
 
-
-
 /**
  * @brief Used to test all the major types of web controls.
  *
@@ -136,6 +134,11 @@ struct Showcase : public PageContent {
         //  carSelect->getCLE().template call<void>("addOptionElementFromString",
         //  val((*carSelect->getCppVal())[0])); carSelect->getCLE().template
         //  call<void>("addOptionElementFromString", val((*carSelect->getCppVal())[1]));
+
+        CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
+        //string * checkme = new string("checked");
+        bool * checkme = new bool(false);
+        checkboxBuilder.withCppVal(checkme).withName("checkme").checkbox();
 
         printf("Setup complete!\n");
         return maindiv;
