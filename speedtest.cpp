@@ -76,8 +76,8 @@ void make_trs(CLNodeFactory<Nc, V, N> builder) {
     cout << "Total elapsed time: " << totalTime << "\n";
 }
 
-void cppTestFn() {
-    cout << "I'm a C++ function called from JS.]\n";
+void cppTestFn(val v) {
+    cout << "I'm a C++ function called from JS.\n";
 }
 
 
@@ -88,9 +88,9 @@ EMSCRIPTEN_BINDINGS(speedtest) {
 
 int main() {   
     
-    val speedtest = val::global("speedtesteee");
+    val cppTestFn = val::global("Module")["cppTestFn"];
     //val cppTestFn = speedtest["cppTestFn"];
-
+//cppTestFn();
     val utils_instance = val::global("Util").new_();
     val CLE = val::global("CLElement");
     // val doNothing = CLE["doNothing"];
@@ -119,7 +119,9 @@ int main() {
     HybridNode<int> *statusButton =
         childOfMaindivBuilder.button("statusButton", "BOOM!", destroy_everything_cpp);
 
-    HybridNode<int> *make_trs_button =
+    HybridNode<int> *hello_button =
+        childOfMaindivBuilder.button("make_trs_button", "Say Hello!", cppTestFn);
+        HybridNode<int> *make_trs_button =
         childOfMaindivBuilder.button("make_trs_button", "Make the fields!", make_trs_ints);
     HybridNode<int> *auditButton =
         childOfMaindivBuilder.button("auditButton", "Node Audit", nodeAudit);
