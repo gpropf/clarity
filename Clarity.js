@@ -334,7 +334,7 @@ class CLElement {
     var locIn = { x: Math.floor(loc.x / cw), y: Math.floor(loc.y / ch) };    
     var locOut = Util.capCoords(locIn, gridDimensions);
     domElement.gridRef.setValXY(locOut.x, locOut.y);
-    //console.log(locOut);
+    console.log(locOut);
   }
 }
 
