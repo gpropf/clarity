@@ -6,7 +6,7 @@
 function loadAuxScript(scriptName) {
   var el = document.createElement('script');
   el.async = false;
-  el.src = ClarityInstallDir + '/js.d/' + scriptName;
+  el.src = ClarityInstallURL + '/js.d/' + scriptName;
   el.type = 'text/javascript';  
   (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(el);
 }

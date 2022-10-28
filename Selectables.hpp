@@ -15,6 +15,7 @@
 
 #include "ClarityNode.hpp"
 
+
 namespace clarity {
 
 // Example from Stack Overflow about collection template might be relevant here.
@@ -31,7 +32,16 @@ class Select : public HybridNode<V> {
    public:
     Select(const string &name, const string &tag, bool useExistingDOMElement,
            ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
-        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
+        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
+        val domElement = ClarityNode::getDomElement();
+       
+        if (domElement != val::null()) {
+            cout << "ClarityNode::getDomElement()\n";
+            cout << domElement["id"].as<string>() << "\n";
+            //domElement.call<void>("addEventListener", val(string("change")), call_alert);
+        }
+        // << domElement["id"] << "\n";
+    }
 
     ~Select() { cout << "DESTROYING Select with id: " << this->id_ << "\n"; }
 

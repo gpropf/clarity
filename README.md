@@ -10,6 +10,13 @@ Clarity is a web development framework written in C++ using emscripten to facili
 
 
 
+
+
+### Important Constants and Definitions ###
+
+ClarityInstallURL: global JS value that tells the systen where to looks for resources.
+
+
 ### Todo ###
 
 
@@ -19,6 +26,9 @@ Clarity is a web development framework written in C++ using emscripten to facili
    1. Radio buttons
    2. Checkboxes
    3. Select boxes 
+
+### Todo (Cleanups and "doing things right" fixes) ###
+1. Go through and replace my improvised val(NULL) constructs with the (presumably more correct/efficient) val::nul()).
 
 
 ### Todo (Somewhat Lower Priority) ###
