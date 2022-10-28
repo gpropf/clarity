@@ -66,7 +66,8 @@ class CLElement {
   }
 
   get name() {
-    return this.domElement_.name;
+    //return this.domElement_.name;
+    return this.name_;
   }
 
   set id(id) {
@@ -252,7 +253,7 @@ class CLElement {
     this.clarityNode_ = Module.ClarityNode.getCLElementById(id);
     this.id_ = this.clarityNode_.getId();
     this.tag_ = this.clarityNode_.getTag();
-    this.name_ = this.clarityNode_.getName();
+    this.name = this.clarityNode_.getName();
     this.boundField_ = this.clarityNode_.getBoundField();
     //console.log(attachmentMode);
 
@@ -276,7 +277,7 @@ class CLElement {
 
     if (this.name_ != "") {
       el.name = this.name_
-      el.setAttribute("name", name);
+      el.setAttribute("name", this.name_);
     }
 
     this.domElement_ = el    

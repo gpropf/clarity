@@ -29,7 +29,7 @@ class CLNodeFactory {
    public:
     string tag_;   //!< Tag to be used with elements this factory builds.
     string name_;  //!< Name to be used with elements this factory builds.
-    bool nameIsForSingleUse_ = true;
+    bool nameIsForSingleUse_ = true; //!< If true the name value is set to '' after one use.
 
     V *cppVal_ = nullptr;
 
