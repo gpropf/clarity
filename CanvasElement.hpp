@@ -104,7 +104,7 @@ class CanvasGrid : public CanvasElement<V> {
         for (int i = 0; i < gridWidth_; i++) {
             for (int j = 0; j < gridHeight_; j++) {
                 int addr = gridWidth_ * j + i;
-                *(HybridNode<V>::cppVal_ + addr) = 1;
+                *(HybridNode<V>::cppVal_ + addr) = currentCellVal_;
             }
             // cout << "\n";
             cellCount++;
