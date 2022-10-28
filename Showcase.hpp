@@ -105,9 +105,9 @@ struct Showcase : public PageContent {
             canvasBuilder.withName("canvas1")
                 .withTag("canvas")
                 .withAttributes({{"style", val("border: 1px solid green")},
-                                 {"width", val(400)},
-                                 {"height", val(300)}})
-                .canvasGrid(30, 20, 400, 300);
+                                 {"width", val(600)},
+                                 {"height", val(400)}})
+                .canvasGrid(30, 20, 600, 400);
 
         canvas1->setCurrentCellVal(5);
 
