@@ -15,7 +15,6 @@
 
 #include "ClarityNode.hpp"
 
-
 namespace clarity {
 
 // Example from Stack Overflow about collection template might be relevant here.
@@ -34,11 +33,22 @@ class Select : public HybridNode<V> {
            ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
         : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
         val domElement = ClarityNode::getDomElement();
-       
+
+        val Selectables = val::global("Selectables");
+        // val eventListenerGenerators = Selectables["getEventListenerGenerators"];
+        // val installEventListeners = Selectables["installEventListeners"];
+        // getEventListenerGenerators
         if (domElement != val::null()) {
-            cout << "ClarityNode::getDomElement()\n";
-            cout << domElement["id"].as<string>() << "\n";
-            //domElement.call<void>("addEventListener", val(string("change")), call_alert);
+            // val getEventListenerGenerators =
+            // ClarityNode::CLElement_["getEventListenerGenerators"];
+            //
+            Selectables.call<void>("installEventListeners", domElement, val("select"), val(""));
+
+            // CLElement_.call<val>(getEventListenerGenerators, val("select"), val(""));
+            //cout << "ClarityNode::getDomElement()\n";
+            // ClarityNode::CLElement_.call<void>("installEventListeners",
+            // cout << domElement["id"].as<string>() << "\n";
+            //  domElement.call<void>("addEventListener", val(string("change")), call_alert);
         }
         // << domElement["id"] << "\n";
     }

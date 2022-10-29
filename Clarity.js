@@ -18,6 +18,8 @@ class CLElement {
 
   constructor() { }
 
+  static foo() { return 10;}
+  
   set boundField(boundField) {
     this.boundField_ = boundField;
   }
@@ -308,7 +310,25 @@ class CLElement {
         outerThis.domElement_.addEventListener(kv.eventName, kv.eventHandlerGenerator(outerThis));
       })
     }
-  }  
+  }
+  
+  static installEventListeners(domElement, eventListenerGenerators) {
+    var entries = Object.entries(eventListenerGenerators);
+    for (const [eventName, generatorFunction] of entries) {      
+      domElement.addEventListener(eventName, generatorFunction(domElement));
+    }    
+  }
+
+  static getEventListenerGenerators(eventListenerGeneratorsByTagAndType, elementTag, elementType = "") {
+    if (elementType == "") 
+      return eventListenerGeneratorsByTagAndType[elementTag];
+    else
+      return eventListenerGeneratorsByTagAndType[elementTag][elementType];
+  }
+
+  // static threeArgStaticFn(eventListenerGeneratorsByTagAndType, elementTag, elementType = "") {
+  //   console.log("threeArgStaticFn");
+  // }
 
   addEventListenerById(eventName, id) {
     this.domElement_.addEventListener(eventName, (e) => {
