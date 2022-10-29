@@ -200,7 +200,7 @@ class ClarityNode {
         }
     }
 
-    // inline virtual void finalize() = 0;
+    inline virtual void finalize() = 0;
 
     INLINE string getBoundField() const { return boundField_; }
 
@@ -455,14 +455,14 @@ class HybridNode : public ClarityNode {
         : ClarityNode(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
         // cout << "FIVE ARG HN constructor called!: " << int(attachmentMode) << "\n";
         //cout << "type code: " << this->getNodeTypeCode() << "\n";
-        cle_.call<void>("generateEventHandlers", cle_);
+        //cle_.call<void>("generateEventHandlers", cle_);
         
     }
 
-    // inline virtual void finalize() {
-    //     cout << "HN: virtual void finalize()\n";
-    //     cle_.call<void>("generateEventHandlers", cle_);
-    // }
+    inline virtual void finalize() {
+        cout << "ID: " << this->id_ << ", HybridNode: virtual void finalize()\n";
+        cle_.call<void>("generateEventHandlers", cle_);
+    }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
     INLINE V *getCppVal() const { return cppVal_; }

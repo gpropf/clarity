@@ -32,15 +32,21 @@ class Select : public HybridNode<V> {
     Select(const string &name, const string &tag, bool useExistingDOMElement,
            ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
         : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
-        val domElement = ClarityNode::getDomElement();
-
-        val Selectables = val::global("Selectables");
-        //if (domElement != val::null()) {            
-        Selectables.call<void>("installEventListeners", domElement, val("select"), val(""));            
-        //}        
+        // if (domElement != val::null()) {
+        // Selectables.call<void>("installEventListeners", domElement, val("select"), val(""));
+        //}
     }
 
     ~Select() { cout << "DESTROYING Select with id: " << this->id_ << "\n"; }
+
+    inline virtual void finalize() {
+        val domElement = ClarityNode::getDomElement();
+
+        val Selectables = val::global("Selectables");
+        cout << "ID: " << this->id_ << ", Select: virtual void finalize()\n";
+        Selectables.call<void>("installEventListeners2", ClarityNode::getCLE(), val("select"), val(""));
+        // cle_.call<void>("generateEventHandlers", cle_);
+    }
 
     inline string cppValToString() const {
         if (this->cppVal_ == nullptr) return "Select NULLPTR";
@@ -68,19 +74,20 @@ template <typename V>
 class Checkbox : public HybridNode<V> {
    public:
     Checkbox(const string &name, const string &tag, bool useExistingDOMElement,
-           ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
+             ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
         : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
-        val domElement = ClarityNode::getDomElement();
+       // val domElement = ClarityNode::getDomElement();
 
-        val Selectables = val::global("Selectables");
-        //if (domElement != val::null()) {            
-        Selectables.call<void>("installEventListeners", domElement, val("input"), val("checkbox"));            
-        //}        
+        // if (domElement != val::null()) {
+
+        //}
     }
 
-    // inline virtual void finalize() {
-    //     cout << "CB: virtual void finalize()\n";
-    // }
+    inline virtual void finalize() {
+        cout << "CHECKBOX: virtual void finalize()\n";
+        val Selectables = val::global("Selectables");
+        Selectables.call<void>("installEventListeners2", ClarityNode::getCLE(), val("input"), val("checkbox"));
+    }
 
     ~Checkbox() { cout << "DESTROYING Checkbox with id: " << this->id_ << "\n"; }
 
@@ -89,7 +96,7 @@ class Checkbox : public HybridNode<V> {
         // return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
         return string("FIXME");
     }
-    
+
     virtual void refreshDOMValueFromModel(){};
 
     // The "V" is for vector.
@@ -97,13 +104,6 @@ class Checkbox : public HybridNode<V> {
 
    protected:
 };
-
-
-
-
-
-
-
 
 }  // namespace clarity
 

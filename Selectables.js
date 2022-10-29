@@ -12,7 +12,7 @@ class Selectables {
     "select": {
       "change": function (element) {
         return function (e) {
-          //Module.ClarityNode.updateNodeFromDomById(element.id)
+          Module.ClarityNode.updateNodeFromDomById(element.id)
           if (element.boundField != undefined)
             console.log("<SELECT> element id: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
           else
@@ -24,7 +24,8 @@ class Selectables {
       "checkbox": {
         "change": function (element) {
           return function (e) {
-            if (element.checked) {
+            //Module.ClarityNode.updateNodeFromDomById(element.id)
+            if (element.domElement.checked) {
               console.log("Checkbox is checked..");
             } else {
               console.log("Checkbox is not checked..");
@@ -37,9 +38,9 @@ class Selectables {
 
   //static getEventListenerGenerators() { return eventListenerGenerators; }
 
-  static installEventListeners(domElement, elementTag, elementType) {
+  static installEventListeners2(cle, elementTag, elementType) {
     var eventListenerGenerators = CLElement.getEventListenerGenerators(Selectables.eventListenerGenerators, elementTag, elementType);
-    CLElement.installEventListeners(domElement, eventListenerGenerators);
+    CLElement.installEventListeners2(cle, eventListenerGenerators);
   }
 
 }

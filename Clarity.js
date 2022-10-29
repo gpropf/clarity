@@ -104,9 +104,9 @@ class CLElement {
           return function (e) {
             Module.ClarityNode.updateNodeFromDomById(element.id)
             if (element.boundField != undefined)
-              console.log("For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
+              console.log("CN, For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
             else
-              console.log("For ID: " + element.id + " Value changed");
+              console.log("CN, For ID: " + element.id + " Value changed");
           }
         }
     }],
@@ -125,9 +125,9 @@ class CLElement {
             console.log("textarea lost focus!");
             Module.ClarityNode.updateNodeFromDomById(element.id)
             if (element.boundField != undefined)
-              console.log("For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
+              console.log("CN textarea, For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
             else
-              console.log("For ID: " + element.id + " Value changed");
+              console.log("CN textarea, For ID: " + element.id + " Value changed");
           }
         }
     }]
@@ -309,10 +309,18 @@ class CLElement {
     }
   }
   
-  static installEventListeners(domElement, eventListenerGenerators) {
+  // static installEventListeners(domElement, eventListenerGenerators) {
+  //   var entries = Object.entries(eventListenerGenerators);
+  //   for (const [eventName, generatorFunction] of entries) {      
+  //     domElement.addEventListener(eventName, generatorFunction(domElement));
+  //   }    
+  // }
+
+  static installEventListeners2(cle, eventListenerGenerators) {
     var entries = Object.entries(eventListenerGenerators);
-    for (const [eventName, generatorFunction] of entries) {      
-      domElement.addEventListener(eventName, generatorFunction(domElement));
+    for (const [eventName, generatorFunction] of entries) {   
+      var domElement = cle.domElement;   
+      domElement.addEventListener(eventName, generatorFunction(cle));
     }    
   }
 
