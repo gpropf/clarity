@@ -22,11 +22,13 @@ class Selectables {
     },
     "input": {
       "checkbox": {
-        "change": function(element) {
-          if (element.checked) {
-            console.log("Checkbox is checked..");
-          } else {
-            console.log("Checkbox is not checked..");
+        "change": function (element) {
+          return function (e) {
+            if (element.checked) {
+              console.log("Checkbox is checked..");
+            } else {
+              console.log("Checkbox is not checked..");
+            }
           }
         }
       }

@@ -213,6 +213,7 @@ class CLNodeFactory {
 
         // newNode->refresh();
         if (nameIsForSingleUse_) name_ = "";
+        //newNode->finalize();
         return newNode;
     }
 

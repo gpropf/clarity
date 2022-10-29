@@ -78,6 +78,10 @@ class Checkbox : public HybridNode<V> {
         //}        
     }
 
+    // inline virtual void finalize() {
+    //     cout << "CB: virtual void finalize()\n";
+    // }
+
     ~Checkbox() { cout << "DESTROYING Checkbox with id: " << this->id_ << "\n"; }
 
     inline string cppValToString() const {

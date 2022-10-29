@@ -85,6 +85,10 @@ class CanvasGrid : public CanvasElement<V> {
         // So this information should reside in inval.
     }
 
+    // inline virtual void finalize() {
+    //     cout << "CG: virtual void finalize()\n";
+    // }
+
     virtual void refreshDOMValueFromModel(){};
 
     val getVal() const {
