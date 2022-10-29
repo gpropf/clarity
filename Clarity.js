@@ -16,9 +16,7 @@ auxScripts.map(loadAuxScript);
 
 class CLElement {
 
-  constructor() { }
-
-  static foo() { return 10;}
+  constructor() { }  
   
   set boundField(boundField) {
     this.boundField_ = boundField;
@@ -132,9 +130,7 @@ class CLElement {
               console.log("For ID: " + element.id + " Value changed");
           }
         }
-    }],
-    "select": [],
-    "option": []
+    }]
   }
 
   eventHandlerGeneratorsByClass = {
@@ -282,8 +278,9 @@ class CLElement {
       el.setAttribute("name", this.name_);
     }
 
-    this.domElement_ = el    
-    this.generateEventHandlers(this);
+    this.domElement_ = el
+    //console.log("CODE: " + this.clarityNode_.getNodeTypeCode())    
+    //this.generateEventHandlers(this);
   }  
 
   addOptionElementFromString(v, lbl) {

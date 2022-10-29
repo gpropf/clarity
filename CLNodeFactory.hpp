@@ -523,7 +523,7 @@ class CLNodeFactory {
         return inp;
     }
 
-    INLINE Nc<V> *checkbox() {
+    INLINE Nc<V> *checkbox_g() {
         map<string, val> inputFieldAttrs = {{"type", val("checkbox")}};
         attrs_.merge(inputFieldAttrs);
 
@@ -533,6 +533,23 @@ class CLNodeFactory {
         inp->refresh();
         return inp;
     }
+
+    INLINE Checkbox<V> *checkbox() {
+        map<string, val> inputFieldAttrs = {{"type", val("checkbox")}};
+        attrs_.merge(inputFieldAttrs);
+
+        Checkbox<V> *cb = new Checkbox<V>(name_, "input", useExistingDOMElement_, attachmentMode_, attachmentId_);
+        
+        
+        cb = static_cast<Checkbox<V> *>(withTag("input").withBoundField("value").withAttributes(attrs_).build(cb));
+        // inp->refreshDOMValueFromModel();
+        // inp->pushValToPeers(inp);
+        //cb->refresh();
+        return cb;
+    }
+
+
+
 
     /**
      * @brief A range (slider) control.

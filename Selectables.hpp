@@ -35,22 +35,9 @@ class Select : public HybridNode<V> {
         val domElement = ClarityNode::getDomElement();
 
         val Selectables = val::global("Selectables");
-        // val eventListenerGenerators = Selectables["getEventListenerGenerators"];
-        // val installEventListeners = Selectables["installEventListeners"];
-        // getEventListenerGenerators
-        if (domElement != val::null()) {
-            // val getEventListenerGenerators =
-            // ClarityNode::CLElement_["getEventListenerGenerators"];
-            //
-            Selectables.call<void>("installEventListeners", domElement, val("select"), val(""));
-
-            // CLElement_.call<val>(getEventListenerGenerators, val("select"), val(""));
-            //cout << "ClarityNode::getDomElement()\n";
-            // ClarityNode::CLElement_.call<void>("installEventListeners",
-            // cout << domElement["id"].as<string>() << "\n";
-            //  domElement.call<void>("addEventListener", val(string("change")), call_alert);
-        }
-        // << domElement["id"] << "\n";
+        //if (domElement != val::null()) {            
+        Selectables.call<void>("installEventListeners", domElement, val("select"), val(""));            
+        //}        
     }
 
     ~Select() { cout << "DESTROYING Select with id: " << this->id_ << "\n"; }
@@ -76,6 +63,43 @@ class Select : public HybridNode<V> {
 
    protected:
 };
+
+template <typename V>
+class Checkbox : public HybridNode<V> {
+   public:
+    Checkbox(const string &name, const string &tag, bool useExistingDOMElement,
+           ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
+        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
+        val domElement = ClarityNode::getDomElement();
+
+        val Selectables = val::global("Selectables");
+        //if (domElement != val::null()) {            
+        Selectables.call<void>("installEventListeners", domElement, val("input"), val("checkbox"));            
+        //}        
+    }
+
+    ~Checkbox() { cout << "DESTROYING Checkbox with id: " << this->id_ << "\n"; }
+
+    inline string cppValToString() const {
+        if (this->cppVal_ == nullptr) return "Checkbox NULLPTR";
+        // return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
+        return string("FIXME");
+    }
+    
+    virtual void refreshDOMValueFromModel(){};
+
+    // The "V" is for vector.
+    INLINE virtual string getNodeTypeCode() { return string("CB"); }
+
+   protected:
+};
+
+
+
+
+
+
+
 
 }  // namespace clarity
 

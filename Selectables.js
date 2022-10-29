@@ -19,6 +19,17 @@ class Selectables {
             console.log("<SELECT> element id: " + element.id + " Value changed");
         }
       }
+    },
+    "input": {
+      "checkbox": {
+        "change": function(element) {
+          if (element.checked) {
+            console.log("Checkbox is checked..");
+          } else {
+            console.log("Checkbox is not checked..");
+          }
+        }
+      }
     }
   }
 

@@ -452,6 +452,8 @@ class HybridNode : public ClarityNode {
                const string &attachmentId = "")
         : ClarityNode(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
         // cout << "FIVE ARG HN constructor called!: " << int(attachmentMode) << "\n";
+        cout << "type code: " << this->getNodeTypeCode() << "\n";
+        cle_.call<void>("generateEventHandlers", cle_);
     }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
