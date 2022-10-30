@@ -18,8 +18,8 @@ FRAMEWORK_DEPS = Clarity.js Util.js testbed.html Makefile
 %.o : %.cpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
 
-speedtest: speedtest.o ClarityNode.o
-	$(CC) -lembind speedtest.o ClarityNode.o $(CFLAGS) -o $(JSOUT)
+speedtest: speedtest.o ClarityNode.o Selectables.o
+	$(CC) -lembind speedtest.o ClarityNode.o Selectables.o $(CFLAGS) -o $(JSOUT)
 
 testbed: testbed.o ClarityNode.o CanvasElement.o Selectables.o
 	$(CC) -lembind testbed.o ClarityNode.o CanvasElement.o Selectables.o $(CFLAGS) -o $(JSOUT)

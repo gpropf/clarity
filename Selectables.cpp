@@ -17,7 +17,7 @@ template <>
 string Checkbox<bool>::cppValToString() const {
     // cout << "HybridNode<string>::cppValToString()\n";
     if (cppVal_ == nullptr) return "Checkbox<bool> NULLPTR";
-    if (*cppVal_ == true) return string("TRUE");
+    if (*cppVal_) return string("TRUE");
     return string("FALSE");
 }
 

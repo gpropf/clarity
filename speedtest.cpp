@@ -17,6 +17,7 @@
 
 vector<int *> ns;
 vector<HybridNode<int> *> clns;
+bool *destroyFieldsImmediately = new bool(false);
 
 template <>
 const array<string, 8> CanvasGrid<unsigned char>::colors = {
@@ -36,8 +37,7 @@ time_t msecs_time() {
 }
 
 void destroy_everything() {
-    cout << "Vectors clns, ns contain: " << clns.size() << ", " << ns.size()
-         << " elements respectively.\n";
+    cout << "Destroying " << clns.size() << " nodes.\n";
     for (auto cln : clns) {
         delete cln;
     }
@@ -71,26 +71,22 @@ void make_trs(CLNodeFactory<Nc, V, N> builder) {
         time_t t2 = msecs_time();
         time_t del_t = t2 - t1;
         totalTime += del_t;
-        // destroy_everything();
+        if (*destroyFieldsImmediately) destroy_everything();
     }
-    cout << "Total elapsed time: " << totalTime << "\n";
+    cout << "Total elapsed time: " << totalTime << " (ms)\n";
+    cout << "Total fields created: " << fieldCount << "\n";
+    double msPerField = double(totalTime) / double(fieldCount);
+    cout << "Time per field: " << msPerField << " (ms)\n";
 }
 
-void cppTestFn(val v) {
-    cout << "I'm a C++ function called from JS.\n";
-}
+void cppTestFn(val v) { cout << "I'm a C++ function called from JS.\n"; }
 
+EMSCRIPTEN_BINDINGS(speedtest) { emscripten::function("cppTestFn", &cppTestFn); }
 
-EMSCRIPTEN_BINDINGS(speedtest) {
-    emscripten::function("cppTestFn", &cppTestFn);
-}
-
-
-int main() {   
-    
+int main() {
     val cppTestFn = val::global("Module")["cppTestFn"];
-    //val cppTestFn = speedtest["cppTestFn"];
-//cppTestFn();
+    // val cppTestFn = speedtest["cppTestFn"];
+    // cppTestFn();
     val utils_instance = val::global("Util").new_();
     val CLE = val::global("CLElement");
     // val doNothing = CLE["doNothing"];
@@ -121,10 +117,21 @@ int main() {
 
     HybridNode<int> *hello_button =
         childOfMaindivBuilder.button("make_trs_button", "Say Hello!", cppTestFn);
-        HybridNode<int> *make_trs_button =
+    HybridNode<int> *make_trs_button =
         childOfMaindivBuilder.button("make_trs_button", "Make the fields!", make_trs_ints);
     HybridNode<int> *auditButton =
         childOfMaindivBuilder.button("auditButton", "Node Audit", nodeAudit);
+
+    CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
+    // string * checkme = new string("checked");
+
+    auto *destroyFieldsImmediately_cb = checkboxBuilder.withCppVal(destroyFieldsImmediately)
+                                            .withName("destroyFieldsImmediately_cb")
+                                            .checkbox();
+
+    auto *labelled_destroyFieldsImmediately_cb =
+        checkboxBuilder.labelGivenNode(destroyFieldsImmediately_cb, "Destroy fields as we go");
+
     clarity::ClarityNode::callbackMap["destroy_everything"] = [=] { destroy_everything(); };
     clarity::ClarityNode::callbackMap["make_trs_ints"] = [=] {
         make_trs(childOfMaindivBuilder_int);
