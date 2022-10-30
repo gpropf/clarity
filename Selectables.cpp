@@ -14,6 +14,14 @@ string Select<vector<string>>::cppValToString() const {
 }
 
 template <>
+string Checkbox<bool>::cppValToString() const {
+    // cout << "HybridNode<string>::cppValToString()\n";
+    if (cppVal_ == nullptr) return "Checkbox<bool> NULLPTR";
+    if (*cppVal_ == true) return string("TRUE");
+    return string("FALSE");
+}
+
+template <>
 val Checkbox<bool>::getVal() const {
     // string valueText = getDOMText();
 
@@ -28,7 +36,7 @@ val Checkbox<bool>::getVal() const {
         cout << "Checkbox cppVal_ is now: " << *this->cppVal_ << "\n";
     }
 
-    return val(false);
+    return val(*this->cppVal_);
 }
 // template <>
 // std::string clarity::clto_str(const vector<string> &v) {
