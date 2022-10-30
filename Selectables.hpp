@@ -44,7 +44,8 @@ class Select : public HybridNode<V> {
 
         val Selectables = val::global("Selectables");
         cout << "ID: " << this->id_ << ", Select: virtual void finalize()\n";
-        Selectables.call<void>("installEventListeners2", ClarityNode::getCLE(), val("select"), val(""));
+        Selectables.call<void>("installEventListeners2", ClarityNode::getCLE(), val("select"),
+                               val(""));
         // cle_.call<void>("generateEventHandlers", cle_);
     }
 
@@ -64,6 +65,15 @@ class Select : public HybridNode<V> {
 
     virtual void refreshDOMValueFromModel(){};
 
+    virtual void updateNodeFromDom() {
+        cout << "************************************ Select::updateNodeFromDom()\n";
+        val jsval = this->getVal();
+        // if (this->cppVal_ != nullptr) {
+        //     cout << "cppVal_ exists!\n";
+        //     //*cppVal_ = jsval.as<V>();
+        // }
+    }
+
     // The "V" is for vector.
     INLINE virtual string getNodeTypeCode() { return string("SV"); }
 
@@ -76,7 +86,7 @@ class Checkbox : public HybridNode<V> {
     Checkbox(const string &name, const string &tag, bool useExistingDOMElement,
              ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
         : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
-       // val domElement = ClarityNode::getDomElement();
+        // val domElement = ClarityNode::getDomElement();
 
         // if (domElement != val::null()) {
 
@@ -86,7 +96,8 @@ class Checkbox : public HybridNode<V> {
     inline virtual void finalize() {
         cout << "CHECKBOX: virtual void finalize()\n";
         val Selectables = val::global("Selectables");
-        Selectables.call<void>("installEventListeners2", ClarityNode::getCLE(), val("input"), val("checkbox"));
+        Selectables.call<void>("installEventListeners2", ClarityNode::getCLE(), val("input"),
+                               val("checkbox"));
     }
 
     ~Checkbox() { cout << "DESTROYING Checkbox with id: " << this->id_ << "\n"; }
@@ -101,6 +112,23 @@ class Checkbox : public HybridNode<V> {
 
     // The "V" is for vector.
     INLINE virtual string getNodeTypeCode() { return string("CB"); }
+
+    virtual val getVal() const;
+
+    // virtual void updateNodeFromDom() {
+    //     cout << "************************************ Checkbox::updateNodeFromDom()\n";
+    //     val jsval = this->getVal();
+    //     val checked = this->domElement_["checked"];
+    //     cout << "this->domElement_['checked'] = " << checked.as<bool>() << "\n";
+    //     bool v = this->domElement_.template call<bool>("getAttribute", val("checked"));
+    //     cout << "Box is: " << v << "\n";
+
+    //     if (this->cppVal_ != nullptr) {
+    //         cout << "cppVal_ exists!\n";
+    //         *this->cppVal_ = jsval.as<V>();
+    //         cout << "Checkbox cppVal_ is now: " << *this->cppVal_ << "\n";
+    //     }
+    // }
 
    protected:
 };

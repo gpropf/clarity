@@ -24,7 +24,7 @@ class Selectables {
       "checkbox": {
         "change": function (element) {
           return function (e) {
-            //Module.ClarityNode.updateNodeFromDomById(element.id)
+            Module.ClarityNode.updateNodeFromDomById(element.id)
             if (element.domElement.checked) {
               console.log("Checkbox is checked..");
             } else {

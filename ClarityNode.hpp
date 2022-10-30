@@ -289,6 +289,7 @@ class ClarityNode {
 
     static INLINE void updateNodeFromDomById(int id) {
         ClarityNode *cnn = getCLElementById(id);
+        cout << "updateNodeFromDomById for " << cnn->getNodeTypeCode() << "\n";
         cnn->updateNodeFromDom();
         // cout << cnn->nodeStats("[updateNodeFromDomById]");
         cnn->pushValToPeers(cnn);
@@ -460,7 +461,7 @@ class HybridNode : public ClarityNode {
     }
 
     inline virtual void finalize() {
-        cout << "ID: " << this->id_ << ", HybridNode: virtual void finalize()\n";
+        //cout << "ID: " << this->id_ << ", HybridNode: virtual void finalize()\n";
         cle_.call<void>("generateEventHandlers", cle_);
     }
 
@@ -536,10 +537,11 @@ class HybridNode : public ClarityNode {
     }
 
     virtual void updateNodeFromDom() {
+        cout << "************************************ ClarityNode::updateNodeFromDom()\n";
         val jsval = getVal();
         if (cppVal_ != nullptr) {
             cout << "cppVal_ exists!\n";
-            *cppVal_ = jsval.as<V>();
+            *cppVal_ = jsval.as<V>();            
         }
     }
 
