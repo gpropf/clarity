@@ -108,7 +108,9 @@ class Checkbox : public HybridNode<V> {
         return string("FIXME");
     }
 
-    virtual void refreshDOMValueFromModel(){};
+    virtual void refreshDOMValueFromModel(){
+        cout << "Checkbox::refreshDOMValueFromModel()\n";
+    };
 
     // The "V" is for vector.
     INLINE virtual string getNodeTypeCode() { return string("CB"); }

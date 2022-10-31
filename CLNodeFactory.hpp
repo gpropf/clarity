@@ -545,7 +545,7 @@ class CLNodeFactory {
         cb = static_cast<Checkbox<V> *>(withTag("input").withBoundField("value").withAttributes(attrs_).build(cb));
         // inp->refreshDOMValueFromModel();
         // inp->pushValToPeers(inp);
-        //cb->refresh();
+        cb->refresh();
         return cb;
     }
 

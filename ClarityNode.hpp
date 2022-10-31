@@ -483,6 +483,8 @@ class HybridNode : public ClarityNode {
 
     /**
      * @brief Runs refreshDOMValueFromModel() and then syncs the peers with the updated value.
+     * Called by CLNF as the final step in creating many of the nodes so that they are initialized
+     * with data from the model when they first appear.
      *
      */
     void refresh() {
@@ -532,7 +534,7 @@ class HybridNode : public ClarityNode {
     virtual void refreshDOMValueFromModel() {
         if (cppVal_ != nullptr) {
             val jsval = val(*cppVal_);
-            ClarityNode::setVal(jsval);
+            setVal(jsval);
         }
     }
 

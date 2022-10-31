@@ -30,7 +30,7 @@ class CanvasElement : public HybridNode<V> {
         return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
     }
 
-    virtual void refreshDOMValueFromModel(){};
+    virtual void refreshDOMValueFromModel(){}; // FIXME: should probably move the initcg or testfunction code in here.
 
     inline void setDrawFuntionName(const string &drawFuntionName) {
         drawFuntionName_ = drawFuntionName;
@@ -89,7 +89,7 @@ class CanvasGrid : public CanvasElement<V> {
     //     cout << "CG: virtual void finalize()\n";
     // }
 
-    virtual void refreshDOMValueFromModel(){};
+    virtual void refreshDOMValueFromModel(){}; // FIXME: should probably move the initcg or testfunction code in here.
 
     val getVal() const {
         val domElement = this->cle_["domElement"];
