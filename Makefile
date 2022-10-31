@@ -13,7 +13,7 @@ JSOUT	= clarity_embind.js
 LIBCLR_IN = ClarityNode.cpp ModelNode.hpp CanvasElement.cpp CLNodeFactory.hpp			
 LIBCLR_OBJS = ClarityNode.o ModelNode.o CanvasElement.o CLNodeFactory.o			
 
-FRAMEWORK_DEPS = Clarity.js Util.js testbed.html Makefile
+FRAMEWORK_DEPS = Clarity.js Util.js showcase.html Makefile
 
 %.o : %.cpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
@@ -21,8 +21,8 @@ FRAMEWORK_DEPS = Clarity.js Util.js testbed.html Makefile
 speedtest: speedtest.o ClarityNode.o Selectables.o
 	$(CC) -lembind speedtest.o ClarityNode.o Selectables.o $(CFLAGS) -o $(JSOUT)
 
-testbed: testbed.o ClarityNode.o CanvasElement.o Selectables.o
-	$(CC) -lembind testbed.o ClarityNode.o CanvasElement.o Selectables.o $(CFLAGS) -o $(JSOUT)
+showcase: showcase.o ClarityNode.o CanvasElement.o Selectables.o
+	$(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o $(CFLAGS) -o $(JSOUT)
 
 docs: clarity.doxyconfig
 	doxygen clarity.doxyconfig
@@ -33,4 +33,4 @@ clean:
 realclean: clean
 	rm -f *.wasm *.wasm.map *.a $(JSOUT)
 
-all: testbed speedtest docs
+all: showcase speedtest docs

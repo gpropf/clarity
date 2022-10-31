@@ -524,16 +524,16 @@ class CLNodeFactory {
         return inp;
     }
 
-    INLINE Nc<V> *checkbox_g() {
-        map<string, val> inputFieldAttrs = {{"type", val("checkbox")}};
-        attrs_.merge(inputFieldAttrs);
+    // INLINE Nc<V> *checkbox_g() {
+    //     map<string, val> inputFieldAttrs = {{"type", val("checkbox")}};
+    //     attrs_.merge(inputFieldAttrs);
 
-        Nc<V> *inp = withTag("input").withBoundField("value").build();
-        // inp->refreshDOMValueFromModel();
-        // inp->pushValToPeers(inp);
-        inp->refresh();
-        return inp;
-    }
+    //     Nc<V> *inp = withTag("input").withBoundField("value").build();
+    //     // inp->refreshDOMValueFromModel();
+    //     // inp->pushValToPeers(inp);
+    //     inp->refresh();
+    //     return inp;
+    // }
 
     INLINE Checkbox<V> *checkbox() {
         map<string, val> inputFieldAttrs = {{"type", val("checkbox")}};
