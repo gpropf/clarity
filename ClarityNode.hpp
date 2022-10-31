@@ -97,7 +97,7 @@ class ClarityNode {
         }
     };
 
-    virtual string cppValToString() const { return "CN::cppValToString()"; }
+    virtual string cppValToString() const = 0; //{ return "CN::cppValToString()"; }
 
     static void nodeAudit() {
         for (auto [id, node] : switchboard) {
@@ -523,11 +523,8 @@ class HybridNode : public ClarityNode {
     }
 
     virtual string cppValToString() const {
-        if (cppVal_ == nullptr) return "###";
-        // return clto_str<V>(*(reinterpret_cast<V *>(this->cppVal_)));
-        // return clto_str<V>(*this->cppVal_);
-        // return to_string(*this->cppVal_);
-        return string("FIXME");
+        if (cppVal_ == nullptr) return "###";        
+        return string("HybridNode<V>::cppValToString() UNSPECIALIZED"); 
     }
 
     /**

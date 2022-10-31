@@ -35,6 +35,12 @@ string HybridNode<double>::cppValToString() const {
 }
 
 template <>
+string HybridNode<int>::cppValToString() const {    
+    if (cppVal_ == nullptr) return "HybridNode<int> NULLPTR";
+    return clto_str<double>(*cppVal_);
+}
+
+template <>
 string HybridNode<bool>::cppValToString() const {
     //cout << "HybridNode<string>::cppValToString()\n";
     if (cppVal_ == nullptr) return "HybridNode<bool> NULLPTR";
