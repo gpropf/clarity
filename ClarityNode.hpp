@@ -185,7 +185,7 @@ class ClarityNode {
      */
     virtual val getVal() const {
         string valueText = getDOMText();
-        return val("NO SPECIALIZED TEMPLATE");
+        return val("Warning! No specialization to interpret meaning of DOM value!");
     }
 
     INLINE virtual void setDOMVal(const val &inval) {
@@ -522,7 +522,7 @@ class HybridNode : public ClarityNode {
     }
 
     virtual void updateNodeFromDom() {
-        cout << "************************************ ClarityNode::updateNodeFromDom()\n";
+        cout << "HybridNode<V>::updateNodeFromDom()\n";
         val jsval = getVal();
         if (cppVal_ != nullptr) {
             cout << "cppVal_ exists!\n";

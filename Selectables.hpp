@@ -66,8 +66,8 @@ class Select : public HybridNode<V> {
     virtual void refreshDOMValueFromModel(){};
 
     virtual void updateNodeFromDom() {
-        cout << "************************************ Select::updateNodeFromDom()\n";
-        val jsval = this->getVal();
+        cout << "Select::updateNodeFromDom() FIXME! This method does nothing.\n";
+        // val jsval = this->getVal();
         // if (this->cppVal_ != nullptr) {
         //     cout << "cppVal_ exists!\n";
         //     //*cppVal_ = jsval.as<V>();

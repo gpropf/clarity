@@ -17,7 +17,7 @@
 
 vector<int *> ns;
 vector<HybridNode<int> *> clns;
-bool *destroyFieldsImmediately = new bool(true);
+bool *destroyFieldsImmediately = new bool(false);
 
 template <>
 const array<string, 8> CanvasGrid<unsigned char>::colors = {

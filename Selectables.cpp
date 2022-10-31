@@ -29,20 +29,14 @@ void Checkbox<bool>::setDOMVal(const val &inval) {
 
 template <>
 val Checkbox<bool>::getVal() const {
-    // string valueText = getDOMText();
-
     val checked = this->domElement_["checked"];
-    cout << "this->domElement_['checked'] = " << checked.as<bool>() << "\n";
-    // bool v = this->domElement_.template call<bool>("getAttribute", val("checked"));
-    // cout << "Box is: " << v << "\n";
-
-    if (this->cppVal_ != nullptr) {
-        cout << "cppVal_ exists!\n";
-        *this->cppVal_ = checked.as<bool>();
-        cout << "Checkbox cppVal_ is now: " << *this->cppVal_ << "\n";
-    }
-
-    return val(*this->cppVal_);
+    cout << "Checkbox<bool>::getVal(): this->domElement_['checked'] = " << checked.as<bool>() << "\n";    
+    // if (this->cppVal_ != nullptr) {        
+    //     *this->cppVal_ = checked.as<bool>();
+    //     cout << "Checkbox cppVal_ is now: " << *this->cppVal_ << "\n";
+    // }
+    // return val(*this->cppVal_);
+    return checked;
 }
 
 // template <>
