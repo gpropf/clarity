@@ -213,6 +213,9 @@ class ClarityNode {
     /**
      * @brief Get the Node Type Code for use in installing the appropriate eventListeners on node creation.
      * I went with a short code instead of an enum to make expanding the types easier for end users.
+     * 
+     * Update: using finalize() and CLElement.installEventListeners probably makes this unnecessary except for
+     * debugging output.
      *
      * @return string
      */
