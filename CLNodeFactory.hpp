@@ -475,7 +475,7 @@ class CLNodeFactory {
     INLINE Nc<V> *button(const string &name, const string &text, val onPressCallback = val(NULL)) {
         Nc<V> *button = withTag("button").build();
         button->setBoundField("textContent");
-        button->setVal(val(text));
+        button->setDOMVal(val(text));
         val buttonDOMElement = button->getCLE()["domElement"];
         buttonDOMElement.call<void>("addEventListener", val("click"), onPressCallback);
         return button;
@@ -503,7 +503,7 @@ class CLNodeFactory {
     INLINE Nc<V> *label(Nc_any *forNode, const string &text) {
         Nc<V> *label = withTag("label").build();
         label->setBoundField("innerHTML");
-        label->setVal(val(text));
+        label->setDOMVal(val(text));
         label->setAttribute("for", val(forNode->getId()));
         return label;
     }

@@ -188,7 +188,7 @@ class ClarityNode {
         return val("NO SPECIALIZED TEMPLATE");
     }
 
-    INLINE virtual void setVal(const val &inval) {
+    INLINE virtual void setDOMVal(const val &inval) {
         clean_ = false;
         val domElement = cle_["domElement"];
         // cle_.call<void>("printVal", inval);
@@ -316,9 +316,9 @@ class ClarityNode {
         auto [peer, xfmr] = dl.getOtherNode(this);
         if (internalVal.isNumber()) {
             val transformedVal = CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
-            peer->setVal(transformedVal);
+            peer->setDOMVal(transformedVal);
         } else {
-            peer->setVal(internalVal);
+            peer->setDOMVal(internalVal);
         }
     }
 
@@ -357,9 +357,9 @@ class ClarityNode {
         val internalVal = peer->getVal();
         if (internalVal.isNumber()) {
             val transformedVal = CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
-            setVal(transformedVal);
+            setDOMVal(transformedVal);
         } else {
-            setVal(internalVal);
+            setDOMVal(internalVal);
         }
 
         clean_ = true;
@@ -496,13 +496,13 @@ class HybridNode : public ClarityNode {
     }
 
     /**
-     * @brief Calls ClarityNode::setVal() first to initiate the push process if there are peer
+     * @brief Calls ClarityNode::setDOMVal() first to initiate the push process if there are peer
      * nodes. If the cppVal_ pointer is non-null, we also then update that value in this node.
      *
      * @param inval
      */
-    INLINE virtual void setVal(const val &inval) {
-        ClarityNode::setVal(inval);
+    INLINE virtual void setDOMVal(const val &inval) {
+        ClarityNode::setDOMVal(inval);
         if (cppVal_ != nullptr) {
             setCppValFromJSVal(inval);
         }
@@ -537,7 +537,7 @@ class HybridNode : public ClarityNode {
     virtual void refreshDOMValueFromModel() {
         if (cppVal_ != nullptr) {
             val jsval = val(*cppVal_);
-            setVal(jsval);
+            setDOMVal(jsval);
         }
     }
 

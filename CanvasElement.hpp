@@ -52,10 +52,6 @@ class CanvasElement : public HybridNode<V> {
  */
 template <typename V>
 class CanvasGrid : public CanvasElement<V> {
-    // void setVal(const val &inval) {}
-    // val getVal() const {}
-    //  class CLNodeFactory;
-    // friend class CLNodeFactory;
 
     val CLElement_ = val::global("CLElement");
 
@@ -79,7 +75,7 @@ class CanvasGrid : public CanvasElement<V> {
         return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
     }
 
-    inline virtual void setVal(const val &inval) {
+    inline virtual void setDOMVal(const val &inval) {
         this->clean_ = false;
         // Needs to be given pointer to array data and dataDimensionality info.
         // So this information should reside in inval.
