@@ -232,28 +232,7 @@ class ClarityNode {
     template <typename T>
     INLINE static val cpp2js(void *valptr) {
         return val(*reinterpret_cast<T *>(valptr));
-    }
-
-    // template <typename T>
-    //  val cpp2js(void *valptr) {
-    //     return val(*reinterpret_cast<T *>(valptr));
-    // }
-
-    // virtual string nodeStats(const string &msg = "") const;
-
-    // const int *getDimensionality() const { return dataDimensionality_; };
-
-    // virtual void pushValToPeer(ActiveLink &al, const string &tabs = "");
-    // virtual void pushValToPeer(DualLink &al);
-
-    // virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
-    // virtual void pushValToPeers(ClarityNode *excludedPeer = nullptr);
-    // static void pushValToPeersById(int id);
-    // static void pushValToPeersById(int id);
-    // void addPeer(ClarityNode::ActiveLink al, bool alreadyAdded = false);
-    // void pullValFromPeer(DualLink &dl);
-    // void pullValFromPeers(ClarityNode *excludedPeer);
-    // static void pullValFromPeersById(int id);
+    }    
 
     template <typename T>
     void addPeer(ClarityNode *peer, const T linkMultiplierConstant = 1) {
@@ -261,12 +240,9 @@ class ClarityNode {
         dlpeers_.push_back(dl);
         peer->appendDualLink(dl);
     }
-    //   void addPeer2(ClarityNode *peer);
-
-    // void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr = val(NULL));
+    
     INLINE void appendDualLink(shared_ptr<DualLink> dl) { dlpeers_.push_back(dl); }
     INLINE int countPeers() const { return dlpeers_.size(); }
-
     
     bool appendChild(ClarityNode *child) {
         children_.push_back(child);
@@ -349,42 +325,6 @@ class ClarityNode {
     virtual void refreshDOMValueFromModel() = 0;
     // virtual void refresh() = 0;
 
-    void pullValFromPeer(DualLink &dl) {
-        if (clean_) {
-        }
-
-        auto [peer, xfmr] = dl.getOtherNode(this);
-        val internalVal = peer->getVal();
-        if (internalVal.isNumber()) {
-            val transformedVal = CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
-            setDOMVal(transformedVal);
-        } else {
-            setDOMVal(internalVal);
-        }
-
-        clean_ = true;
-    }
-
-    void pullValFromPeers(ClarityNode *excludedPeer) {
-        if (excludedPeer == nullptr) {
-            for (auto dl : dlpeers_) {
-                pullValFromPeer(*dl);
-            }
-        } else {
-            for (auto dl : dlpeers_) {
-                auto [peer, xfmr] = dl->getOtherNode(this);
-                if (peer != excludedPeer) {
-                    pullValFromPeer(*dl);
-                }
-            }
-        }
-    }
-
-    static void pullValFromPeersById(int id) {
-        ClarityNode *cnn = getCLElementById(id);
-        cnn->pullValFromPeers(cnn);
-    }
-
     void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr) {
         auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);
         dlpeers_.push_back(dl);
@@ -448,6 +388,49 @@ class ClarityNode {
      * data is moved between nodes. */
     // vector<ClarityNode::ActiveLink> peers_;
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
+
+// DEPRECATED BELOW THIS LINE ------------------------------
+/*
+
+The 'pull' methods are likely to never be needed now.
+
+    void pullValFromPeer(DualLink &dl) {
+        if (clean_) {
+        }
+
+        auto [peer, xfmr] = dl.getOtherNode(this);
+        val internalVal = peer->getVal();
+        if (internalVal.isNumber()) {
+            val transformedVal = CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
+            setDOMVal(transformedVal);
+        } else {
+            setDOMVal(internalVal);
+        }
+
+        clean_ = true;
+    }
+
+    void pullValFromPeers(ClarityNode *excludedPeer) {
+        if (excludedPeer == nullptr) {
+            for (auto dl : dlpeers_) {
+                pullValFromPeer(*dl);
+            }
+        } else {
+            for (auto dl : dlpeers_) {
+                auto [peer, xfmr] = dl->getOtherNode(this);
+                if (peer != excludedPeer) {
+                    pullValFromPeer(*dl);
+                }
+            }
+        }
+    }
+
+    static void pullValFromPeersById(int id) {
+        ClarityNode *cnn = getCLElementById(id);
+        cnn->pullValFromPeers(cnn);
+    }
+*/
+    
 };
 
 template <typename V>

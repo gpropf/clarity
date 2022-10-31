@@ -13,8 +13,8 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .class_function("updateNodeFromDomById",
                         &ClarityNode::updateNodeFromDomById,
                         allow_raw_pointers())
-        .function("pullValFromPeers", &ClarityNode::pullValFromPeers,
-                  allow_raw_pointers())
+        // .function("pullValFromPeers", &ClarityNode::pullValFromPeers,
+        //           allow_raw_pointers())
 
         .function("getId", &ClarityNode::getId,
                   allow_raw_pointers())
@@ -26,9 +26,9 @@ EMSCRIPTEN_BINDINGS(clarity) {
                   allow_raw_pointers())
         .function("getNodeTypeCode", &ClarityNode::getNodeTypeCode,
                   allow_raw_pointers())
-        .class_function("pullValFromPeersById",
-                        &ClarityNode::pullValFromPeersById,
-                        allow_raw_pointers())
+        // .class_function("pullValFromPeersById",
+        //                 &ClarityNode::pullValFromPeersById,
+        //                 allow_raw_pointers())
         .class_function("getCLElementById", &ClarityNode::getCLElementById,
                         allow_raw_pointers())
         //.class_function("markNodeDirtyById", &ClarityNode::markNodeDirtyById,
