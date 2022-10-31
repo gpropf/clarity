@@ -108,14 +108,17 @@ class Checkbox : public HybridNode<V> {
         return string("FIXME");
     }
 
-    virtual void refreshDOMValueFromModel(){
+    virtual void refreshDOMValueFromModel(){        
         cout << "Checkbox::refreshDOMValueFromModel()\n";
+        HybridNode<V>::refreshDOMValueFromModel();
     };
 
     // The "V" is for vector.
     INLINE virtual string getNodeTypeCode() { return string("CB"); }
 
     virtual val getVal() const;
+
+    virtual void setDOMVal(const val &inval);
 
     // virtual void updateNodeFromDom() {
     //     cout << "************************************ Checkbox::updateNodeFromDom()\n";

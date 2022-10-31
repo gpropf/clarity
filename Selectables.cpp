@@ -22,6 +22,12 @@ string Checkbox<bool>::cppValToString() const {
 }
 
 template <>
+void Checkbox<bool>::setDOMVal(const val &inval) {
+    this->domElement_.set("checked", inval);
+    cout << "Checkbox::setDOMVal(const val &inval)\n";
+}
+
+template <>
 val Checkbox<bool>::getVal() const {
     // string valueText = getDOMText();
 
@@ -38,6 +44,7 @@ val Checkbox<bool>::getVal() const {
 
     return val(*this->cppVal_);
 }
+
 // template <>
 // std::string clarity::clto_str(const vector<string> &v) {
 //     std::ostringstream os;
