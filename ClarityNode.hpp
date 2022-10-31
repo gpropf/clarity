@@ -268,7 +268,7 @@ class ClarityNode {
 
     static INLINE void updateNodeFromDomById(int id) {
         ClarityNode *cnn = getCLElementById(id);
-        cout << "updateNodeFromDomById for " << cnn->getNodeTypeCode() << "\n";
+        //cout << "updateNodeFromDomById for " << cnn->getNodeTypeCode() << "\n";
         cnn->updateNodeFromDom();
         // cout << cnn->nodeStats("[updateNodeFromDomById]");
         cnn->pushValToPeers(cnn);
@@ -522,7 +522,11 @@ class HybridNode : public ClarityNode {
     }
 
     virtual void updateNodeFromDom() {
-        cout << "HybridNode<V>::updateNodeFromDom()\n";
+        string methodStr = "HybridNode<V>::updateNodeFromDom()\n";
+        methodStr = clarity::interpolateTypeIntoString<V>(methodStr);
+        //string tid = typeid(V).name();
+        //cout << "HybridNode<" << tid << ">::updateNodeFromDom()\n";        
+        cout << methodStr << endl;
         val jsval = getVal();
         if (cppVal_ != nullptr) {
             cout << "cppVal_ exists!\n";

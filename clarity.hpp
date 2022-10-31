@@ -10,6 +10,9 @@
 #include <functional>
 #include <iostream>
 #include <map>
+#include <sstream>
+// #include <vector>
+// #include <string>
 
 using namespace std;
 using namespace emscripten;
@@ -21,6 +24,20 @@ using namespace emscripten;
 
 namespace clarity {
 
+template <typename T>
+string interpolateTypeIntoString(string &inStr) {
+    string tid = typeid(T).name();
+    string beforeAngleBracket;
+    string afterAngleBracket;
+    std::stringstream streamData(inStr);
+    char separator = '<';
+    getline(streamData, beforeAngleBracket, separator);
+    separator = '>';
+    getline(streamData, afterAngleBracket, separator);
+    separator = '\n';
+    getline(streamData, afterAngleBracket, separator);    
+    return string(beforeAngleBracket + "<" + tid + ">" + afterAngleBracket);
+}
 
 /**
  * @brief Hands out (presumably) unique int ids with a simply incrementing
