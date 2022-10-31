@@ -259,18 +259,15 @@ class ClarityNode {
     }
 
     static void pushValToPeersById(int id) {
-        ClarityNode *cnn = getCLElementById(id);
-        // cout << cnn->nodeStats("[pushValToPeersById]");
+        ClarityNode *cnn = getCLElementById(id);        
         cnn->pushValToPeers(cnn);
     }
 
     virtual void updateNodeFromDom() = 0;
 
     static INLINE void updateNodeFromDomById(int id) {
-        ClarityNode *cnn = getCLElementById(id);
-        //cout << "updateNodeFromDomById for " << cnn->getNodeTypeCode() << "\n";
-        cnn->updateNodeFromDom();
-        // cout << cnn->nodeStats("[updateNodeFromDomById]");
+        ClarityNode *cnn = getCLElementById(id);        
+        cnn->updateNodeFromDom();        
         cnn->pushValToPeers(cnn);
     }
 
@@ -322,8 +319,7 @@ class ClarityNode {
         clean_ = false;
     }
 
-    virtual void refreshDOMValueFromModel() = 0;
-    // virtual void refresh() = 0;
+    virtual void refreshDOMValueFromModel() = 0;    
 
     void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr) {
         auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);
@@ -523,9 +519,7 @@ class HybridNode : public ClarityNode {
 
     virtual void updateNodeFromDom() {
         string methodStr = "HybridNode<V>::updateNodeFromDom()\n";
-        methodStr = clarity::interpolateTypeIntoString<V>(methodStr);
-        //string tid = typeid(V).name();
-        //cout << "HybridNode<" << tid << ">::updateNodeFromDom()\n";        
+        methodStr = clarity::interpolateTypeIntoString<V>(methodStr);        
         cout << methodStr << endl;
         val jsval = getVal();
         if (cppVal_ != nullptr) {

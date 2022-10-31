@@ -4,6 +4,20 @@ Clarity is a web development framework written in C++ using emscripten to facili
 
 ## Design
 
+
+### Data Flow methods ###
+
+HybridNode<V>::refreshDOMValueFromModel(): Called by refresh() at beginning of GUI construction. Main purpose is to initialize the DOM value with the model val. Calls..
+
+virtual void HybridNode<V>::setDOMVal(const val &inval): 
+
+virtual void ClarityNode::setDOMVal(const val &inval): Only affects the DOM value.
+
+void HybridNode<V>::setCppValFromJSVal(const val &jsval): Writes the provided val object into the cppVal_ according to the template type using the emscripten as() method. At the end it calls pushValToPeers().
+
+virtual void HybridNode<V>::updateNodeFromDom(): The main driver of the data flow. When the user uses a control, the method `static INLINE void ClarityNode::updateNodeFromDomById(int id)` gets called and starts the update process moving data "down" from the DOM into the modelVal and possible also "sideways" to the node's peers (if any).
+
+
 ### An Interface is a Graph
 
 ### Events ###
