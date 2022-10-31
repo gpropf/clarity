@@ -661,7 +661,8 @@ class CLNodeFactory {
         Nc<V> *attributeNode = withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
-        modelNode_->pushValToPeers(modelNode_);
+        attributeNode->setDomElement(parentDomelement);
+        modelNode_->pushValToPeers(modelNode_);        
         return attributeNode;
     }
 

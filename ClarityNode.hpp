@@ -97,7 +97,7 @@ class ClarityNode {
         }
     };
 
-    virtual string cppValToString() const = 0; //{ return "CN::cppValToString()"; }
+    virtual string cppValToString() const = 0;  //{ return "CN::cppValToString()"; }
 
     static void nodeAudit() {
         for (auto [id, node] : switchboard) {
@@ -131,8 +131,8 @@ class ClarityNode {
             delete child;
         }
         children_.clear();
-        val domElement = cle_["domElement"];
-        if (!domElement.isUndefined()) cle_["domElement"].template call<void>("remove");
+        
+        if (!domElement_.isUndefined()) domElement_.template call<void>("remove");
     }
 
     // INLINE ClarityNode(const CppType storedValueType)
@@ -156,22 +156,21 @@ class ClarityNode {
     ClarityNode(const string &name, const string &tag, bool useExistingDOMElement,
                 AttachmentMode attachmentMode, const string &attachmentId = "")
         : name_(name), tag_(tag) {
-        init();        
+        init();
 
         if (!useExistingDOMElement)
-            cle_.call<void>("createDOMElement", id_, attachmentMode, attachmentId);        
+            cle_.call<void>("createDOMElement", id_, attachmentMode, attachmentId);
 
         domElement_ = cle_["domElement"];
         boundField_ = "value";
         ClarityNode::switchboard[id_] = this;
-    }    
+    }
 
     INLINE ClarityNode *getParent() const { return this->parent_; }
     INLINE void setParent(ClarityNode *parent) { this->parent_ = parent; }
 
     INLINE string getDOMText() const {
-        val domElement = cle_["domElement"];
-        string domText = domElement[boundField_].as<string>();
+        string domText = domElement_[boundField_].as<string>();
         return domText;
     }
 
@@ -189,12 +188,10 @@ class ClarityNode {
     }
 
     INLINE virtual void setDOMVal(const val &inval) {
-        clean_ = false;
-        val domElement = cle_["domElement"];
-        // cle_.call<void>("printVal", inval);
+        clean_ = false;        
         if (boundField_ != "") {
-            domElement.set(boundField_, inval);
-            domElement.call<void>("setAttribute", val(boundField_), inval);
+            domElement_.set(boundField_, inval);
+            domElement_.call<void>("setAttribute", val(boundField_), inval);
         } else {
             // FIXME: Should be an assert or exception
         }
@@ -207,22 +204,23 @@ class ClarityNode {
     INLINE void setBoundField(const string &boundField) {
         boundField_ = boundField;
         cle_.set("boundField_", boundField);
-        // val domElement = cle_["domElement"];
     }
 
     /**
-     * @brief Get the Node Type Code for use in installing the appropriate eventListeners on node creation.
-     * I went with a short code instead of an enum to make expanding the types easier for end users.
-     * 
-     * Update: using finalize() and CLElement.installEventListeners probably makes this unnecessary except for
-     * debugging output.
+     * @brief Get the Node Type Code for use in installing the appropriate eventListeners on node
+     * creation. I went with a short code instead of an enum to make expanding the types easier for
+     * end users.
+     *
+     * Update: using finalize() and CLElement.installEventListeners probably makes this unnecessary
+     * except for debugging output.
      *
      * @return string
      */
-    virtual string getNodeTypeCode() {return string("--");};
+    virtual string getNodeTypeCode() { return string("--"); };
 
     INLINE val getCLE() const { return cle_; }
     INLINE val getDomElement() { return domElement_; }
+    INLINE void setDomElement(val domElement) { domElement_ = domElement; }
     INLINE string getName() const { return name_; }
     INLINE virtual void printState() const { cle_.call<void>("printState"); }
     INLINE static ClarityNode *getCLElementById(const int id) { return switchboard[id]; }
@@ -232,7 +230,7 @@ class ClarityNode {
     template <typename T>
     INLINE static val cpp2js(void *valptr) {
         return val(*reinterpret_cast<T *>(valptr));
-    }    
+    }
 
     template <typename T>
     void addPeer(ClarityNode *peer, const T linkMultiplierConstant = 1) {
@@ -240,10 +238,10 @@ class ClarityNode {
         dlpeers_.push_back(dl);
         peer->appendDualLink(dl);
     }
-    
+
     INLINE void appendDualLink(shared_ptr<DualLink> dl) { dlpeers_.push_back(dl); }
     INLINE int countPeers() const { return dlpeers_.size(); }
-    
+
     bool appendChild(ClarityNode *child) {
         children_.push_back(child);
         child->setParent(this);
@@ -259,15 +257,15 @@ class ClarityNode {
     }
 
     static void pushValToPeersById(int id) {
-        ClarityNode *cnn = getCLElementById(id);        
+        ClarityNode *cnn = getCLElementById(id);
         cnn->pushValToPeers(cnn);
     }
 
     virtual void updateNodeFromDom() = 0;
 
     static INLINE void updateNodeFromDomById(int id) {
-        ClarityNode *cnn = getCLElementById(id);        
-        cnn->updateNodeFromDom();        
+        ClarityNode *cnn = getCLElementById(id);
+        cnn->updateNodeFromDom();
         cnn->pushValToPeers(cnn);
     }
 
@@ -319,7 +317,7 @@ class ClarityNode {
         clean_ = false;
     }
 
-    virtual void refreshDOMValueFromModel() = 0;    
+    virtual void refreshDOMValueFromModel() = 0;
 
     void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr) {
         auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);
@@ -328,15 +326,14 @@ class ClarityNode {
     }
 
     INLINE void setAttribute(const string &attr, const val &value) {
-        val domElement = cle_["domElement"];
-        domElement.call<void>("setAttribute", attr, value);
+        domElement_.call<void>("setAttribute", attr, value);
     }
 
     INLINE void setAttributes(const map<string, val> &attrs) {
         for (auto [attrName, value] : attrs) {
             setAttribute(attrName, value);
         }
-    }    
+    }
 
     INLINE void addEventListenerByName(const string &eventName, const string &callbackName) {
         cle_.call<void>("addEventListenerById", eventName, callbackName);
@@ -385,48 +382,47 @@ class ClarityNode {
     // vector<ClarityNode::ActiveLink> peers_;
     vector<shared_ptr<ClarityNode::DualLink>> dlpeers_;
 
-// DEPRECATED BELOW THIS LINE ------------------------------
-/*
+    // DEPRECATED BELOW THIS LINE ------------------------------
+    /*
 
-The 'pull' methods are likely to never be needed now.
+    The 'pull' methods are likely to never be needed now.
 
-    void pullValFromPeer(DualLink &dl) {
-        if (clean_) {
-        }
-
-        auto [peer, xfmr] = dl.getOtherNode(this);
-        val internalVal = peer->getVal();
-        if (internalVal.isNumber()) {
-            val transformedVal = CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
-            setDOMVal(transformedVal);
-        } else {
-            setDOMVal(internalVal);
-        }
-
-        clean_ = true;
-    }
-
-    void pullValFromPeers(ClarityNode *excludedPeer) {
-        if (excludedPeer == nullptr) {
-            for (auto dl : dlpeers_) {
-                pullValFromPeer(*dl);
+        void pullValFromPeer(DualLink &dl) {
+            if (clean_) {
             }
-        } else {
-            for (auto dl : dlpeers_) {
-                auto [peer, xfmr] = dl->getOtherNode(this);
-                if (peer != excludedPeer) {
+
+            auto [peer, xfmr] = dl.getOtherNode(this);
+            val internalVal = peer->getVal();
+            if (internalVal.isNumber()) {
+                val transformedVal = CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
+                setDOMVal(transformedVal);
+            } else {
+                setDOMVal(internalVal);
+            }
+
+            clean_ = true;
+        }
+
+        void pullValFromPeers(ClarityNode *excludedPeer) {
+            if (excludedPeer == nullptr) {
+                for (auto dl : dlpeers_) {
                     pullValFromPeer(*dl);
+                }
+            } else {
+                for (auto dl : dlpeers_) {
+                    auto [peer, xfmr] = dl->getOtherNode(this);
+                    if (peer != excludedPeer) {
+                        pullValFromPeer(*dl);
+                    }
                 }
             }
         }
-    }
 
-    static void pullValFromPeersById(int id) {
-        ClarityNode *cnn = getCLElementById(id);
-        cnn->pullValFromPeers(cnn);
-    }
-*/
-    
+        static void pullValFromPeersById(int id) {
+            ClarityNode *cnn = getCLElementById(id);
+            cnn->pullValFromPeers(cnn);
+        }
+    */
 };
 
 template <typename V>
@@ -437,13 +433,12 @@ class HybridNode : public ClarityNode {
                const string &attachmentId = "")
         : ClarityNode(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
         // cout << "FIVE ARG HN constructor called!: " << int(attachmentMode) << "\n";
-        //cout << "type code: " << this->getNodeTypeCode() << "\n";
-        //cle_.call<void>("generateEventHandlers", cle_);
-        
+        // cout << "type code: " << this->getNodeTypeCode() << "\n";
+        // cle_.call<void>("generateEventHandlers", cle_);
     }
 
     inline virtual void finalize() {
-        //cout << "ID: " << this->id_ << ", HybridNode: virtual void finalize()\n";
+        // cout << "ID: " << this->id_ << ", HybridNode: virtual void finalize()\n";
         cle_.call<void>("generateEventHandlers", cle_);
     }
 
@@ -502,8 +497,8 @@ class HybridNode : public ClarityNode {
     }
 
     virtual string cppValToString() const {
-        if (cppVal_ == nullptr) return "###";        
-        return string("HybridNode<V>::cppValToString() UNSPECIALIZED"); 
+        if (cppVal_ == nullptr) return "###";
+        return string("HybridNode<V>::cppValToString() UNSPECIALIZED");
     }
 
     /**
@@ -519,12 +514,12 @@ class HybridNode : public ClarityNode {
 
     virtual void updateNodeFromDom() {
         string methodStr = "HybridNode<V>::updateNodeFromDom()\n";
-        methodStr = clarity::interpolateTypeIntoString<V>(methodStr);        
+        methodStr = clarity::interpolateTypeIntoString<V>(methodStr);
         cout << methodStr << endl;
         val jsval = getVal();
         if (cppVal_ != nullptr) {
             cout << "cppVal_ exists!\n";
-            *cppVal_ = jsval.as<V>();            
+            *cppVal_ = jsval.as<V>();
         }
     }
 
