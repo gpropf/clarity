@@ -40,13 +40,11 @@ class Select : public HybridNode<V> {
     ~Select() { cout << "DESTROYING Select with id: " << this->id_ << "\n"; }
 
     inline virtual void finalize() {
-        val domElement = ClarityNode::getDomElement();
-
+        cout << "Select::finalize()\n";
         val Selectables = val::global("Selectables");
-        cout << "ID: " << this->id_ << ", Select: virtual void finalize()\n";
-        Selectables.call<void>("installEventListeners2", ClarityNode::getCLE(), val("select"),
-                               val(""));
-        // cle_.call<void>("generateEventHandlers", cle_);
+        val expListenerGens = Selectables["expListenerGens"];
+        ClarityNode::CLElement_.call<void>("installEventListenersByTagAndType", this->cle_,
+                                           expListenerGens);
     }
 
     inline string cppValToString() const {
@@ -94,13 +92,11 @@ class Checkbox : public HybridNode<V> {
     }
 
     inline virtual void finalize() {
-        // cout << "CHECKBOX: virtual void finalize()\n";
-         val Selectables = val::global("Selectables");
-        // Selectables.call<void>("installEventListeners2", ClarityNode::getCLE(), val("input"),
-        //                        val("checkbox"));
-        
+        cout << "Checkbox::finalize()\n";
+        val Selectables = val::global("Selectables");
         val expListenerGens = Selectables["expListenerGens"];
-        ClarityNode::CLElement_.call<void>("installEventListenersByTagAndType",this->cle_, expListenerGens);      
+        ClarityNode::CLElement_.call<void>("installEventListenersByTagAndType", this->cle_,
+                                           expListenerGens);
     }
 
     ~Checkbox() { cout << "DESTROYING Checkbox with id: " << this->id_ << "\n"; }
@@ -111,7 +107,7 @@ class Checkbox : public HybridNode<V> {
         return string("FIXME");
     }
 
-    virtual void refreshDOMValueFromModel(){        
+    virtual void refreshDOMValueFromModel() {
         cout << "Checkbox::refreshDOMValueFromModel()\n";
         HybridNode<V>::refreshDOMValueFromModel();
     };
