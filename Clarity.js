@@ -331,9 +331,47 @@ class CLElement {
       return eventListenerGeneratorsByTagAndType[elementTag][elementType];
   }
 
-  // static threeArgStaticFn(eventListenerGeneratorsByTagAndType, elementTag, elementType = "") {
-  //   console.log("threeArgStaticFn");
-  // }
+  static getEventListenerGenerators2(eventListenerGeneratorsByTagAndType, elementTag, elementType = null) {
+    if (elementType == null) 
+      return eventListenerGeneratorsByTagAndType[elementTag];
+    else
+      return eventListenerGeneratorsByTagAndType[elementTag][elementType];
+  }
+
+  static expListenerGens = {    
+    "input": {
+      "text": {
+        "mousedown": function (element) {
+          return function (e) {
+            //Module.ClarityNode.updateNodeFromDomById(element.id)
+            // if (element.domElement.checked) {
+            //   console.log("Checkbox is checked..");
+            // } else {
+            //   console.log("Checkbox is not checked..");
+            // }
+            console.log("Mouse down!");
+          }
+        }
+      }
+    }
+  }
+
+  static installEventListeners3(cle, eventListenerGenerators) {
+    var entries = Object.entries(eventListenerGenerators);
+    for (const [eventName, generatorFunction] of entries) {   
+      var domElement = cle.domElement;   
+      domElement.addEventListener(eventName, generatorFunction(cle));
+    }    
+  }
+
+
+  static installEventListenersByTagAndType(cle,  listenerGeneratorMap) {  
+    var domElement = cle.domElement_;
+    if (domElement == null) return;  
+    var eventListenerGenerators = CLElement.getEventListenerGenerators2(listenerGeneratorMap, cle.tag_, cle.domElement_.getAttribute("type"));
+    if (eventListenerGenerators != null)
+      CLElement.installEventListeners3(cle, eventListenerGenerators);
+  }
 
   addEventListenerById(eventName, id) {
     this.domElement_.addEventListener(eventName, (e) => {
