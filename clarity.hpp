@@ -11,19 +11,31 @@
 #include <iostream>
 #include <map>
 #include <sstream>
-// #include <vector>
-// #include <string>
 
 using namespace std;
 using namespace emscripten;
 
-// Run with 'python3 -m http.server 8000'
-
+/**
+ * @brief This macro is here so I can test varying amounts of inlining to see if performance
+ * changes. Basically, I'll use my INLINE macro if I'm not sure something should really be inlined.
+ * Then you can change it to second definition to effectively de-inline those things declared with
+ * it.
+ *
+ */
 #define INLINE inline
 //#define INLINE /* inline */
 
 namespace clarity {
 
+/**
+ * @brief Given a string with something like '<T>' in the middle of it, this will use the typeid
+ * operator to interpolate in the actual type. C++20 supposedly has simpler string interpolation
+ * features but we're still using C++17.
+ *
+ * @tparam T
+ * @param inStr
+ * @return string
+ */
 template <typename T>
 string interpolateTypeIntoString(string &inStr) {
     string tid = typeid(T).name();
@@ -35,7 +47,7 @@ string interpolateTypeIntoString(string &inStr) {
     separator = '>';
     getline(streamData, afterAngleBracket, separator);
     separator = '\n';
-    getline(streamData, afterAngleBracket, separator);    
+    getline(streamData, afterAngleBracket, separator);
     return string(beforeAngleBracket + "<" + tid + ">" + afterAngleBracket);
 }
 
