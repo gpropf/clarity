@@ -8,30 +8,33 @@ class Selectables {
     console.log("Selectables.foo");
   }
 
+  static elgInputCheckboxChange(element) {
+    return function (e) {
+      Module.ClarityNode.updateNodeFromDomById(element.id)
+      if (element.domElement.checked) {
+        console.log("2 Checkbox is checked..");
+      } else {
+        console.log("2 Checkbox is not checked..");
+      }
+    }
+  }
+
+  static elgSelectAlltypesChange (element) {
+    return function (e) {
+      Module.ClarityNode.updateNodeFromDomById(element.id)      
+      console.log("<SELECT> element id: " + element.id + " Value changed to: " + e.target.value);      
+    }
+  }
+
   static expListenerGens = {
     "select": {
-      "change": function (element) {
-        return function (e) {
-          Module.ClarityNode.updateNodeFromDomById(element.id)
-          if (element.boundField != undefined)
-            console.log("<SELECT> element id: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
-          else
-            console.log("<SELECT> element id: " + element.id + " Value changed");
-        }
+      "NOTYPE": {
+        "change": this.elgSelectAlltypesChange
       }
     },
     "input": {
       "checkbox": {
-        "change": function (element) {
-          return function (e) {
-            Module.ClarityNode.updateNodeFromDomById(element.id)
-            if (element.domElement.checked) {
-              console.log("Checkbox is checked..");
-            } else {
-              console.log("Checkbox is not checked..");
-            }
-          }
-        }
+        "change": this.elgInputCheckboxChange
       }
     }
   }
