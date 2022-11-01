@@ -131,7 +131,7 @@ class ClarityNode {
             delete child;
         }
         children_.clear();
-        
+
         if (!domElement_.isUndefined()) domElement_.template call<void>("remove");
     }
 
@@ -188,7 +188,7 @@ class ClarityNode {
     }
 
     INLINE virtual void setDOMVal(const val &inval) {
-        clean_ = false;        
+        clean_ = false;
         if (boundField_ != "") {
             domElement_.set(boundField_, inval);
             domElement_.call<void>("setAttribute", val(boundField_), inval);
@@ -431,17 +431,11 @@ class HybridNode : public ClarityNode {
     HybridNode(const string &name, const string &tag, bool useExistingDOMElement,
                ClarityNode::AttachmentMode attachmentMode = ClarityNode::AttachmentMode::NEW,
                const string &attachmentId = "")
-        : ClarityNode(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
-        // cout << "FIVE ARG HN constructor called!: " << int(attachmentMode) << "\n";
-        // cout << "type code: " << this->getNodeTypeCode() << "\n";
-        // cle_.call<void>("generateEventHandlers", cle_);
-    }
+        : ClarityNode(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
     inline virtual void finalize() {
-        // cout << "ID: " << this->id_ << ", HybridNode: virtual void finalize()\n";
-        //cle_.call<void>("generateEventHandlers", cle_);
         val expListenerGens = CLElement_["expListenerGens"];
-        CLElement_.call<void>("installEventListenersByTagAndType",cle_, expListenerGens);        
+        CLElement_.call<void>("installEventListenersByTagAndType", cle_, expListenerGens);
     }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }

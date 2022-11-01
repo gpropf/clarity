@@ -286,9 +286,7 @@ class CLElement {
       el.setAttribute("name", this.name_);
     }
 
-    this.domElement_ = el
-    //console.log("CODE: " + this.clarityNode_.getNodeTypeCode())    
-    //this.generateEventHandlers(this);
+    this.domElement_ = el    
   }  
 
   addOptionElementFromString(v, lbl) {
@@ -297,25 +295,7 @@ class CLElement {
     opt.label = lbl;
     this.domElement_.appendChild(opt);
   }
-
-  /**
-   * We need to generate event listeners for each node we create of a given type. 
-   * There is something about the way the closure for the functions is defined that
-   * make 'this' not work as expected so I explicitly pass in a parameter to each
-   * generator that references the element's 'this' correctly. Storing the actual handlers
-   * simply does not work as the value of the 'element' variable is different for each
-   * field.
-   * 
-   * @param {CLElement} outerThis 
-   */
-  generateEventHandlers(outerThis) {
-    if (outerThis.tag_ in CLElement.eventListenerGenerators) {
-      let listenerList = CLElement.eventListenerGenerators[outerThis.tag_];
-      listenerList.map(function (kv) {
-        outerThis.domElement_.addEventListener(kv.eventName, kv.eventHandlerGenerator(outerThis));
-      })
-    }
-  }
+ 
   
   // static installEventListeners(domElement, eventListenerGenerators) {
   //   var entries = Object.entries(eventListenerGenerators);
@@ -324,13 +304,13 @@ class CLElement {
   //   }    
   // }
 
-  static installEventListeners2(cle, eventListenerGenerators) {
-    var entries = Object.entries(eventListenerGenerators);
-    for (const [eventName, generatorFunction] of entries) {   
-      var domElement = cle.domElement;   
-      domElement.addEventListener(eventName, generatorFunction(cle));
-    }    
-  }
+  // static installEventListeners2(cle, eventListenerGenerators) {
+  //   var entries = Object.entries(eventListenerGenerators);
+  //   for (const [eventName, generatorFunction] of entries) {   
+  //     var domElement = cle.domElement;   
+  //     domElement.addEventListener(eventName, generatorFunction(cle));
+  //   }    
+  // }
 
   static getEventListenerGenerators(eventListenerGeneratorsByTagAndType, elementTag, elementType = "") {
     if (elementType == "") 
