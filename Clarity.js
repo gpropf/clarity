@@ -100,41 +100,49 @@ class CLElement {
   static eventListenerGenerators = {
     "input": [{
       "eventName": "change", "eventHandlerGenerator":
-        function (element) {
-          return function (e) {
-            Module.ClarityNode.updateNodeFromDomById(element.id)
-            if (element.boundField != undefined)
-              console.log("CN, For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
-            else
-              console.log("CN, For ID: " + element.id + " Value changed");
-          }
-        }
+      CLElement.elgInputAlltypesChange
     }],
     "textarea": [{
       "eventName": "input", "eventHandlerGenerator":
-        function (element) {
-          return function (e) {
-            console.log("KEYPRESSED!");
-          }
-        }
+      CLElement.elgTextareaAlltypesInput
     },
     {
       "eventName": "change", "eventHandlerGenerator":
-        function (element) {
-          return function (e) {
-            console.log("textarea lost focus!");
-            Module.ClarityNode.updateNodeFromDomById(element.id)
-            if (element.boundField != undefined)
-              console.log("CN textarea, For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
-            else
-              console.log("CN textarea, For ID: " + element.id + " Value changed");
-          }
-        }
+      CLElement.elgTextareaAlltypesChange
     }]
   }
 
-  eventHandlerGeneratorsByClass = {
-    a:2
+  static elgInputAlltypesChange (element) {
+    return function (e) {
+      Module.ClarityNode.updateNodeFromDomById(element.id)
+      if (element.boundField != undefined)
+        console.log("CN, For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
+      else
+        console.log("CN, For ID: " + element.id + " Value changed");
+    }
+  }
+
+  static elgTextareaAlltypesChange (element) {
+    return function (e) {
+      console.log("textarea lost focus!");
+      Module.ClarityNode.updateNodeFromDomById(element.id)
+      if (element.boundField != undefined)
+        console.log("CN textarea, For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
+      else
+        console.log("CN textarea, For ID: " + element.id + " Value changed");
+    }
+  }
+
+  static elgTextareaAlltypesInput (element) {
+    return function (e) {      
+        console.log("KEYPRESSED!");      
+    }
+  }
+
+  static elgInputAlltypesMousedown (element) {
+    return function (e) {      
+      console.log("Mouse down!");
+    }
   }
 
 
@@ -332,26 +340,28 @@ class CLElement {
   }
 
   static getEventListenerGenerators2(eventListenerGeneratorsByTagAndType, elementTag, elementType = null) {
-    if (elementType == null) 
-      return eventListenerGeneratorsByTagAndType[elementTag];
-    else
+    var listenerGeneratorsForTag = eventListenerGeneratorsByTagAndType[elementTag];
+    if (listenerGeneratorsForTag == null) return null;
+    if (elementType == null) elementType = "NOTYPE";
       return eventListenerGeneratorsByTagAndType[elementTag][elementType];
   }
 
   static expListenerGens = {    
     "input": {
       "text": {
-        "mousedown": function (element) {
-          return function (e) {
-            //Module.ClarityNode.updateNodeFromDomById(element.id)
-            // if (element.domElement.checked) {
-            //   console.log("Checkbox is checked..");
-            // } else {
-            //   console.log("Checkbox is not checked..");
-            // }
-            console.log("Mouse down!");
-          }
-        }
+        "mousedown": CLElement.elgInputAlltypesMousedown,
+        "change":CLElement.elgInputAlltypesChange
+      },
+      "range": {
+        "mousedown": CLElement.elgInputAlltypesMousedown,
+        "change":CLElement.elgInputAlltypesChange
+      }
+    },
+    "textarea": {
+      "NOTYPE": 
+      {
+        "input": CLElement.elgTextareaAlltypesInput,
+        "change": CLElement.elgTextareaAlltypesChange
       }
     }
   }

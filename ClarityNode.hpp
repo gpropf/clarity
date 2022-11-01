@@ -439,10 +439,9 @@ class HybridNode : public ClarityNode {
 
     inline virtual void finalize() {
         // cout << "ID: " << this->id_ << ", HybridNode: virtual void finalize()\n";
-        cle_.call<void>("generateEventHandlers", cle_);
+        //cle_.call<void>("generateEventHandlers", cle_);
         val expListenerGens = CLElement_["expListenerGens"];
-        CLElement_.call<void>("installEventListenersByTagAndType",cle_, expListenerGens);
-        
+        CLElement_.call<void>("installEventListenersByTagAndType",cle_, expListenerGens);        
     }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
