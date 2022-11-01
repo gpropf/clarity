@@ -94,10 +94,13 @@ class Checkbox : public HybridNode<V> {
     }
 
     inline virtual void finalize() {
-        cout << "CHECKBOX: virtual void finalize()\n";
-        val Selectables = val::global("Selectables");
-        Selectables.call<void>("installEventListeners2", ClarityNode::getCLE(), val("input"),
-                               val("checkbox"));
+        // cout << "CHECKBOX: virtual void finalize()\n";
+         val Selectables = val::global("Selectables");
+        // Selectables.call<void>("installEventListeners2", ClarityNode::getCLE(), val("input"),
+        //                        val("checkbox"));
+        
+        val expListenerGens = Selectables["expListenerGens"];
+        ClarityNode::CLElement_.call<void>("installEventListenersByTagAndType",this->cle_, expListenerGens);      
     }
 
     ~Checkbox() { cout << "DESTROYING Checkbox with id: " << this->id_ << "\n"; }

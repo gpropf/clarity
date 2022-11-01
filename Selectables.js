@@ -8,7 +8,7 @@ class Selectables {
     console.log("Selectables.foo");
   }
 
-  static eventListenerGenerators = {
+  static expListenerGens = {
     "select": {
       "change": function (element) {
         return function (e) {
