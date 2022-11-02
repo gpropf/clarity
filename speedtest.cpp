@@ -19,11 +19,7 @@ vector<int *> ns;
 vector<HybridNode<int> *> clns;
 bool *destroyFieldsImmediately = new bool(false);
 
-template <>
-const array<string, 8> CanvasGrid<unsigned char>::colors = {
-    "#F5F5DC", "#00FF00", "#00AA00", "#FF00FF", "#AA00AA", "#00AAFF", "#9090AA", "#888888"};
-// We need this here because embindings.hpp pulls in CanvasElement and then you need to define the
-// colors. Need to make embindings.hpp less general.
+
 
 time_t msecs_time() {
     struct timeval time_now {};
@@ -84,20 +80,13 @@ void cppTestFn(val v) { cout << "I'm a C++ function called from JS.\n"; }
 EMSCRIPTEN_BINDINGS(speedtest) { emscripten::function("cppTestFn", &cppTestFn); }
 
 int main() {
-    val cppTestFn = val::global("Module")["cppTestFn"];
-    // val cppTestFn = speedtest["cppTestFn"];
-    // cppTestFn();
-    val utils_instance = val::global("Util").new_();
-    val CLE = val::global("CLElement");
-    // val doNothing = CLE["doNothing"];
-    val destroy_everything_cpp = CLE["destroy_everything"];
-    val make_trs_ints = CLE["make_trs_ints"];
-    // val square = CLE["square"];
-    val blackbody_st = CLE["blackbody_st"];
-    val nodeAudit = CLE["nodeAudit_int"];
+    val cppTestFn = val::global("Module")["cppTestFn"];    
+    val utils_instance = val::global("Util").new_();    
+    val destroy_everything_cpp = ClarityNode::CLElement_["destroy_everything"];
+    val make_trs_ints = ClarityNode::CLElement_["make_trs_ints"];    
+    val blackbody_st = ClarityNode::CLElement_["blackbody_st"];
+    val nodeAudit = ClarityNode::CLElement_["nodeAudit_int"];
 
-    double *d1 = new double(27.8);
-    // ModelNode<double> *amn = new ModelNode<double>(d1, "independently_created_modelnode");
     CLNodeFactory<HybridNode, int, double> builder("div", "maindiv");
     HybridNode<int> *maindiv = builder.build();
     CLNodeFactory<HybridNode, int, double> childOfMaindivBuilder =
@@ -122,8 +111,7 @@ int main() {
     HybridNode<int> *auditButton =
         childOfMaindivBuilder.button("auditButton", "Node Audit", nodeAudit);
 
-    CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
-    // string * checkme = new string("checked");
+    CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);    
 
     auto *destroyFieldsImmediately_cb = checkboxBuilder.withCppVal(destroyFieldsImmediately)
                                             .withName("destroyFieldsImmediately_cb")

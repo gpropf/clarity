@@ -14,8 +14,8 @@ using namespace clarity;
  */
 struct Showcase : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
-        val CLElement = val::global("CLElement");
-        val blackbody_st = CLElement["blackbody_st"];
+        //val CLElement = val::global("CLElement");
+        val blackbody_st = ClarityNode::CLElement_["blackbody_st"];
 
         double *temp = new double(330);
         double *cir1Radius_value = new double(88.4);

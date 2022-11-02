@@ -37,7 +37,7 @@ The current system is the result of several complete refactorings over the Summe
 ### Terminology ###
 
 **Node**
-: a single GUI element generally created using a node factory. Usually, but not necessarily, contains a C++ pointer to some part of the data model.
+: a single GUI element generally created using a node factory. Nodes contains a C++ pointer whose type is determined by the template parameter. Note that the pointer can be null but its type will be used to determine how data is handled in that node.
 
 **Node Factory**
 : Due to the large number of factors that come into play in creating nodes, we set up factory objects (using the CLNodeFactory class) that store certain persistent parameters relevant to setting up nodes. The most important of these parameters are the template parameters that determine the C++ data types of the underlying data.
@@ -70,7 +70,7 @@ When you create a node the system will install a set of event listeners that are
    
    2. Checkboxes: We have a Checkbox class in Selectables now.
    
-   3. Select boxes: Need to make a SimpleSelect class that uses a static option set and uses an underlying type representing the "value" component of `<option value="3" label="Toyota"></option>`. Initially this will be a single value. Multiselections can be vectors of those values. So picking Toyota *and* Ford in my Showcase.cpp test app would mean a vector or list with 1 and 2. A simple API can be used to modify the options if need be.
+   3. Select boxes: Need to make a SimpleSelect class that uses a static option set and uses an underlying type representing the "value" component of `<option value="3" label="Toyota"></option>`. Initially this will be a single value. Multiselections can be vectors of those values. So picking Toyota *and* Ford in my Showcase.cpp test app would mean a vector or list like [1,2]. A simple API can be used to modify the options if need be.
 
 ### Todo (cleanups and "doing things right" fixes - somewhat lower priority) ###
 
@@ -84,7 +84,7 @@ When you create a node the system will install a set of event listeners that are
 
 #### Templates? ####
 
-There is of course the possibility of developing something akin to JSX pages for Clarity but the problem with creating a novel template language is that editors will not initially support it. Losing autocompletion or automatic syntax checking is a pretty high price to pay just to have your C++ code and HTML/CSS all together in one place. Maybe if the library gets enough mindshare that people are willing to write VSCode or Emacs extensions for it...
+There is of course the possibility of developing something akin to React's JSX pages for Clarity but the problem with creating a novel template language is that editors will not initially support it. Losing autocompletion or automatic syntax checking is a pretty high price to pay just to have your C++ code and HTML/CSS all together in one place. Maybe if the library gets enough mindshare that people are willing to write VSCode or Emacs extensions for it...
 
 ---
 ### Programming Notes ###

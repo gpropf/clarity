@@ -15,14 +15,8 @@ using namespace clarity;
  * example program.
  *
  */
-struct PageContent {
-    // virtual ClarityNode *content() = 0;
+struct PageContent {    
     virtual ClarityNode *content(ClarityNode *innerContent = nullptr) = 0;
-    // template <template <typename V> class Nc, typename V, typename N>
-    // void displayContent(CLNodeFactory<Nc, V, N> &rootNodeBuilder, string rootNodeId = "", string
-    // rootNodeName = "") {
-
-    // }
 };
 
 /**
@@ -33,8 +27,8 @@ struct PageContent {
  */
 struct TestFramework : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
-        val CLE = val::global("CLElement");
-        val nodeAudit = CLE["nodeAudit_double"];
+
+        val nodeAudit = ClarityNode::CLElement_["nodeAudit_double"];
 
         CLNodeFactory<HybridNode, double, double> rootBuilder("div", "tf_root");
 

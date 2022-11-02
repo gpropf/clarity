@@ -2,8 +2,6 @@
 #include "CLNodeFactory.hpp"
 #include "ClarityNode.hpp"
 
-val CLElement_ = val::global("CLElement");
-
 template <>
 string CanvasGrid<unsigned char>::cppValToString() const {    
     if (cppVal_ == nullptr) return "CanvasGrid<unsigned char> NULLPTR";    

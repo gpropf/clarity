@@ -52,9 +52,7 @@ class CanvasElement : public HybridNode<V> {
  */
 template <typename V>
 class CanvasGrid : public CanvasElement<V> {
-
-    val CLElement_ = val::global("CLElement");
-
+    
    protected:
     int width_, height_;  //!< Width and Height in screen pixels.
     double scaleFactorH_ = 1.0;
@@ -110,7 +108,7 @@ class CanvasGrid : public CanvasElement<V> {
             cellCount++;
         }
         this->domElement_.template call<void>("addEventListener", val("click"),
-                                              CLElement_["setGridLocToCurrentVal"]);
+                                              ClarityNode::CLElement_["setGridLocToCurrentVal"]);
         // addJSEventListener("click", CLElement_["setGridLocToCurrentVal"] );
         drawGrid();
     }
