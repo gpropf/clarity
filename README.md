@@ -59,7 +59,7 @@ When you create a node the system will install a set of event listeners that are
 ### Programming Notes ###
 
 #### Data Flow Class Methods ####
-_These are the current methods that move data around in the system. I'm documenting them here mostly for my own benefit so that I can think about a better nomenclature and simpler structure for them._
+_These are the current methods that move data around in the system. They went through several reworkings as I refactored the system. I'm documenting them here mostly for my own benefit so that I can think about a better nomenclature and simpler structure for them._
 
 
 `HybridNode<V>::refreshDOMValueFromModel()`: Called by refresh() at beginning of GUI construction. Main purpose is to initialize the DOM value with the model val. Calls..
