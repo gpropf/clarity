@@ -1,4 +1,6 @@
-
+/**
+ * Selectables.js: event listener generators and 
+ */
 
 class Selectables {
 
@@ -37,13 +39,6 @@ class Selectables {
         "change": this.elgInputCheckboxChange
       }
     }
-  }
-
-  //static getEventListenerGenerators() { return eventListenerGenerators; }
-
-  static installEventListeners2(cle, elementTag, elementType) {
-    var eventListenerGenerators = CLElement.getEventListenerGenerators(Selectables.eventListenerGenerators, elementTag, elementType);
-    CLElement.installEventListeners2(cle, eventListenerGenerators);
   }
 
 }

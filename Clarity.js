@@ -1,7 +1,8 @@
 /**
- * 
  * CLElement class and helper functions. This is the main JS file in the project.
+ * 
  */
+
 
 function loadAuxScript(scriptName) {
   var el = document.createElement('script');
@@ -65,8 +66,7 @@ class CLElement {
     }
   }
 
-  get name() {
-    //return this.domElement_.name;
+  get name() {    
     return this.name_;
   }
 
@@ -79,38 +79,39 @@ class CLElement {
   }
 
   static tagToUrl = { "svg": "http://www.w3.org/2000/svg", "circle": "http://www.w3.org/2000/svg" };
-  static extraInitCode = {
-    "canvas": function (domElement) {
-      if (domElement.getContext) {
-        domElement.style.display = 'none';
-        domElement.style.display = 'block';
-        let ctx = domElement.getContext('2d');
-        ctx.fillStyle = 'red';
-        ctx.beginPath();
-        ctx.arc(250, 40, 32, 0, 2 * Math.PI);
-        ctx.fill();
-        // console.log("extraInitCode['canvas']()")
-      }
-    }
-  };
+
+  // static extraInitCode = {
+  //   "canvas": function (domElement) {
+  //     if (domElement.getContext) {
+  //       domElement.style.display = 'none';
+  //       domElement.style.display = 'block';
+  //       let ctx = domElement.getContext('2d');
+  //       ctx.fillStyle = 'red';
+  //       ctx.beginPath();
+  //       ctx.arc(250, 40, 32, 0, 2 * Math.PI);
+  //       ctx.fill();
+  //       // console.log("extraInitCode['canvas']()")
+  //     }
+  //   }
+  // };
 
   /**
    * See note below on these generator functions.
    */
-  static eventListenerGenerators = {
-    "input": [{
-      "eventName": "change", "eventHandlerGenerator":
-      CLElement.elgInputAlltypesChange
-    }],
-    "textarea": [{
-      "eventName": "input", "eventHandlerGenerator":
-      CLElement.elgTextareaAlltypesInput
-    },
-    {
-      "eventName": "change", "eventHandlerGenerator":
-      CLElement.elgTextareaAlltypesChange
-    }]
-  }
+  // static eventListenerGenerators = {
+  //   "input": [{
+  //     "eventName": "change", "eventHandlerGenerator":
+  //     CLElement.elgInputAlltypesChange
+  //   }],
+  //   "textarea": [{
+  //     "eventName": "input", "eventHandlerGenerator":
+  //     CLElement.elgTextareaAlltypesInput
+  //   },
+  //   {
+  //     "eventName": "change", "eventHandlerGenerator":
+  //     CLElement.elgTextareaAlltypesChange
+  //   }]
+  // }
 
   static elgInputAlltypesChange (element) {
     return function (e) {
@@ -228,9 +229,9 @@ class CLElement {
     else {
       el = document.createElement(this.tag_)
     }
-    if (CLElement.extraInitCode[this.tag_]) {
-      CLElement.extraInitCode[this.tag_](el);
-    }
+    // if (CLElement.extraInitCode[this.tag_]) {
+    //   CLElement.extraInitCode[this.tag_](el);
+    // }
     return el
   }
 
@@ -294,29 +295,6 @@ class CLElement {
     opt.value = v;
     opt.label = lbl;
     this.domElement_.appendChild(opt);
-  }
- 
-  
-  // static installEventListeners(domElement, eventListenerGenerators) {
-  //   var entries = Object.entries(eventListenerGenerators);
-  //   for (const [eventName, generatorFunction] of entries) {      
-  //     domElement.addEventListener(eventName, generatorFunction(domElement));
-  //   }    
-  // }
-
-  // static installEventListeners2(cle, eventListenerGenerators) {
-  //   var entries = Object.entries(eventListenerGenerators);
-  //   for (const [eventName, generatorFunction] of entries) {   
-  //     var domElement = cle.domElement;   
-  //     domElement.addEventListener(eventName, generatorFunction(cle));
-  //   }    
-  // }
-
-  static getEventListenerGenerators(eventListenerGeneratorsByTagAndType, elementTag, elementType = "") {
-    if (elementType == "") 
-      return eventListenerGeneratorsByTagAndType[elementTag];
-    else
-      return eventListenerGeneratorsByTagAndType[elementTag][elementType];
   }
 
   static getEventListenerGenerators2(eventListenerGeneratorsByTagAndType, elementTag, elementType = null) {
