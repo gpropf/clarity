@@ -4,17 +4,24 @@ Clarity is a web development framework written in C++ using Emscripten to compil
 
 I also had existing C++ code in mind as I wrote this. I wanted something that would allow you to put an existing C++ program (say a large finite element simulation) on a website with as little modification to the existing data structures as possible.
 
+## Getting Started ##
+
+The best place to start is the existing example programs. Currently, the `showcase.cpp` file is where you will find working examples of the types of nodes implemented so far. There is also `speedtest.cpp` which basically just creates and destroys a large number of nodes. This is both to monitor performance and also to test the system's ability to avoid memory leaks and segfaults (well, memory overruns since Emscripten doesn't really have segfaults). The basic rule is that any CPP file that starts with a lowercase letter is a runnable program. Files that start with an uppercase letter contain class definitions or implementations.
+
+
 ## Design ##
 
 Setting up responsive web components that allow an end user to interact smoothly with a data model while presenting the api user with an easy to use programming toolkit is a hugely complex task. Taking into account the fact that C++ is a strongly typed language multiplies the potential number of controls still further. The interactions with JavaScript's different and much weaker type system adds another dimension of complexity. 
 
 The current system is the result of several complete refactorings over the Summer of 2022 that I undertook as I realized the shortcomings of each successive approach. The current system basically uses several approaches rather than a single programming paradigm. We do not try to extract all the needed functionality from either an object hierarchy or a system of template functions. Thus, there are OO elements such as the fact that I implement some of the more complex controls (like the CanvasGrid) as child classes of more generalized ones. However, I also use templates extensively to allow C++ types to be used directly in web controls. Finally, there is a large templated factory class that can keep track of many of the parameters that go into making web UI elements.
 
-### Future Directions ###
+### The Object Hierarchy ###
 
-#### Templates? ####
+**ClarityNode**: Base class for all nodes. Implements most of the system's basic behavior. Does *not* contain a model pointer, and cannot be instantiated due to its pure virtual methods.
 
-There is of course the possibility of developing something akin to JSX pages for Clarity but the problem with creating a novel template language is that editors will not initially support it. Losing autocompletion or automatic syntax checking is a pretty high price to pay just to have your C++ code and HTML/CSS all together in one place. Maybe if the library gets enough mindshare that people are willing to write VSCode or Emacs extensions for it...
+**HybridNode<V>**: The first child class of ClarityNode. The template parameter determines the type of the model pointer. Most nodes are implemented as a HybridNode with the `tag_` member telling us what kind of HTML element to create for it.
+
+...
 
 ### Terminology ###
 
@@ -25,10 +32,13 @@ There is of course the possibility of developing something akin to JSX pages for
 : Due to the large number of factors that come into play in creating nodes, we set up factory objects (using the CLNodeFactory class) that store certain persistent parameters relevant to setting up nodes. The most important of these parameters are the template parameters that determine the C++ data types of the underlying data.
 
 **Peer**
-: Nodes can have relationships with other nodes that result in automatic data movement and updating when one node is changed. This can be either due to the end user or the model changing something. Nodes that have such a relationship with another are called its peers.
+: Nodes can have relationships with other nodes that result in automatic data movement and updating when one node is changed. This can be either due to the end user or the model changing something. A node that has such a relationship with another is called a peer.
 
 **Data Link**
 : These are the 'edges' mathematically in our graph. They can not only move but transform data in the process.
+
+**Model**
+: The underlying C++ data. Nodes contain pointers to model values. Even when the model pointer is null its type is used to determine what kind of data a given node is expected to store.
 
 ### An Interface is a Graph ###
 
@@ -63,6 +73,11 @@ When you create a node the system will install a set of event listeners that are
 
 1. Go through attributes list at w3schools and just look for fun stuff to add to the project.
 
+### Future Directions ###
+
+#### Templates? ####
+
+There is of course the possibility of developing something akin to JSX pages for Clarity but the problem with creating a novel template language is that editors will not initially support it. Losing autocompletion or automatic syntax checking is a pretty high price to pay just to have your C++ code and HTML/CSS all together in one place. Maybe if the library gets enough mindshare that people are willing to write VSCode or Emacs extensions for it...
 
 ---
 ### Programming Notes ###
