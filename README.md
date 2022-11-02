@@ -13,17 +13,19 @@ The current system is the result of several complete refactorings that I underto
 ### Terminology ###
 
 Node
-: a single GUI element generally created using a node factory.
+: a single GUI element generally created using a node factory. Usually, but not necessarily, contains a C++ pointer to some part of the data model.
 
 Node Factory
-: Due to the large number of factors that come into play in creating nodes, we set up factory objects (using the CLNodeFactory class) that store certain persistent parameters relevant to setting up nodes.
+: Due to the large number of factors that come into play in creating nodes, we set up factory objects (using the CLNodeFactory class) that store certain persistent parameters relevant to setting up nodes. The most important of these parameters are the template parameters that determine the C++ data types of the underlying data.
 
 Peer
 : Nodes can have relationships with other nodes that result in automatic data movement and updating when one node is changed. This can be either due to the end user or the model changing something. Nodes that have such a relationship with another are called its peers.
 
 
-### An Interface is a Graph
-...
+
+### An Interface is a Graph ###
+
+Mathematically, due to the fact that nodes can be connected together and that updating one node can trigger others to update, we can regard any Clarity GUI as a graph. I've attempted to take into account the differences between cyclic and acyclic graphs in the various update methods but this is limited right now to marking nodes with a boolean "clean/dirty" flag so that data will not bounce between nodes and create infinite loops. A future direction here would be to have page validation methods that would produce warnings or errors due to the presence of graph cycles or conflicting update rules.
 
 
 ### Events ###
@@ -31,11 +33,9 @@ Peer
 When you create a node the system will install a set of event listeners that are designed to implement the movement of data from the model to and from the GUI. We also need a way for api users to add their own event listeners. Preferably, this mechanism would be agnostic as to whether a listener is written in C++ or JS. It should also be possible to set it up so that such a listener is automatically attached to all nodes of a given type or just a particular one or group.
 
 
-
-
 ### Important Constants and Definitions ###
 
-ClarityInstallURL: global JS value that tells the systen where to looks for resources.
+`ClarityInstallURL`: global JS value that tells the system where to look for resources.
 
 
 ### Todo ###
