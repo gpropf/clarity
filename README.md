@@ -6,6 +6,16 @@ I also had existing C++ code in mind as I wrote this. I wanted something that wo
 
 ## Design
 
+### Terminology ###
+
+Node
+: a single GUI element generally created using a node factory.
+
+Node Factory
+: Due to the large number of factors that come into play in creating nodes, we set up factory objects (using the CLNodeFactory class) that store certain persistent parameters relevant to setting up nodes.
+
+Peer
+: Nodes can have relationships with other nodes that result in automatic data movement and updating when one node is changed either due to the end user or the model changing something. Nodes that have such a relationship with another are called its peers.
 
 ### Data Flow Class Methods ###
 _These are the current methods that move data around in the system. I'm documenting them here mostly for my own benefit so that I can think about a better nomenclature and simpler structure for them._
@@ -28,6 +38,7 @@ _These are the current methods that move data around in the system. I'm document
 
 ### Events ###
 
+When you create a node the system will install a set of event listeners that are designed to implement the movement of data from the model to and from the GUI. We also need a way for api users to add their own event listeners. Preferably, this mechanism would be agnostic as to whether a listener is written in C++ or JS. It should also be possible to set it up so that such a listener is automatically attached to all nodes of a given type or just a particular one or group.
 
 
 
