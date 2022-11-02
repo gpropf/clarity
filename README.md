@@ -32,29 +32,29 @@ Mathematically, due to the fact that nodes can be connected together and that up
 
 When you create a node the system will install a set of event listeners that are designed to implement the movement of data from the model to and from the GUI. We also need a way for api users to add their own event listeners. Preferably, this mechanism would be agnostic as to whether a listener is written in C++ or JS. It should also be possible to set it up so that such a listener is automatically attached to all nodes of a given type or just a particular one or group.
 
-
 ### Important Constants and Definitions ###
 
 `ClarityInstallURL`: global JS value that tells the system where to look for resources.
 
-
 ### Todo ###
 
-
 1. Event API. We still need a framework to offer people a way to easily use events. Need to be able to use C++ or JS for event handling. 
-   1. ~~CLElement.eventListenerGenerators needs to use the HybridNode descendent class names rather than HTML tags as keys since there might be more than one way to use a given HTML tag.~~ Actually the finalize() method in each descendent class is simpler and doesn't tend to create deep, complex maps of eventListenerGenerators.
+   
 2. Selectables could use a common base class.
+   
    1. Radio buttons
+   
    2. Checkboxes: We have a Checkbox class in Selectables now.
+   
    3. Select boxes: Need to make a SimpleSelect class that uses a static option set and uses an underlying type representing the "value" component of `<option value="3" label="Toyota"></option>`. Initially this will be a single value. Multiselections can be vectors of those values. So picking Toyota *and* Ford in my Showcase.cpp test app would mean a vector or list with 1 and 2. A simple API can be used to modify the options if need be.
 
-### Todo (Cleanups and "doing things right" fixes - Somewhat Lower Priority) ###
+### Todo (cleanups and "doing things right" fixes - somewhat lower priority) ###
+
 1. Go through and replace my improvised val(NULL) constructs with the (presumably more correct/efficient) val::nul()).
 
+### Todo (Lowest priority but probably more fun) ###
 
-### Todo (Lowest Priority but probably more fun) ###
 1. Go through attributes list at w3schools and just look for fun stuff to add to the project.
-
 
 ### Programming Notes ###
 
