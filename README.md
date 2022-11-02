@@ -4,7 +4,11 @@ Clarity is a web development framework written in C++ using emscripten to facili
 
 I also had existing C++ code in mind as I wrote this. I wanted something that would allow you to put an existing C++ program on a website with as little modification to the existing data structures as possible.
 
-## Design
+## Design ##
+
+Setting up responsive web components that allow an end user to interact smoothly with a data model while presenting the api user with an easy to use programming toolkit is a hugely complex task. Taking into account the fact that C++ is a strongly typed language multiplies the potential number of controls still further. The interactions with JavaScript's different and much weaker type system adds another dimension of complexity. 
+
+The current system is the result of several complete refactorings that I undertook as I realized the shortcomings of each successive approach. The current system basically uses several approaches rather than a single programming paradigm. We do not try to extract all the needed functionality from either an object hierarchy or a system of template functions. Thus, there are OO elements such as the fact that I implement some of the more complex controls (like the CanvasGrid) as child classes of more generalized ones. However, I also use templates extensively to allow C++ types to be used directly in web controls. Finally, there is a large templated factory class that can keep track of many of the parameters that go into making web UI elements.
 
 ### Terminology ###
 
@@ -15,21 +19,7 @@ Node Factory
 : Due to the large number of factors that come into play in creating nodes, we set up factory objects (using the CLNodeFactory class) that store certain persistent parameters relevant to setting up nodes.
 
 Peer
-: Nodes can have relationships with other nodes that result in automatic data movement and updating when one node is changed either due to the end user or the model changing something. Nodes that have such a relationship with another are called its peers.
-
-### Data Flow Class Methods ###
-_These are the current methods that move data around in the system. I'm documenting them here mostly for my own benefit so that I can think about a better nomenclature and simpler structure for them._
-
-
-`HybridNode<V>::refreshDOMValueFromModel()`: Called by refresh() at beginning of GUI construction. Main purpose is to initialize the DOM value with the model val. Calls..
-
-`virtual void HybridNode<V>::setDOMVal(const val &inval)`: Calls `ClarityNode::setDOMVal` but also dispatches value to peers.
-
-`virtual void ClarityNode::setDOMVal(const val &inval)`: Only affects the DOM value.
-
-`void HybridNode<V>::setCppValFromJSVal(const val &jsval)`: Writes the provided val object into the cppVal_ according to the template type using the emscripten as() method. At the end it calls pushValToPeers().
-
-`virtual void HybridNode<V>::updateNodeFromDom()`: The main driver of the data flow. When the user uses a control, the method `static INLINE void ClarityNode::updateNodeFromDomById(int id)` gets called and starts the update process moving data "down" from the DOM into the modelVal and possible also "sideways" to the node's peers (if any).
+: Nodes can have relationships with other nodes that result in automatic data movement and updating when one node is changed. This can be either due to the end user or the model changing something. Nodes that have such a relationship with another are called its peers.
 
 
 ### An Interface is a Graph
@@ -64,3 +54,21 @@ ClarityInstallURL: global JS value that tells the systen where to looks for reso
 
 ### Todo (Lowest Priority but probably more fun) ###
 1. Go through attributes list at w3schools and just look for fun stuff to add to the project.
+
+
+### Programming Notes ###
+
+#### Data Flow Class Methods ####
+_These are the current methods that move data around in the system. I'm documenting them here mostly for my own benefit so that I can think about a better nomenclature and simpler structure for them._
+
+
+`HybridNode<V>::refreshDOMValueFromModel()`: Called by refresh() at beginning of GUI construction. Main purpose is to initialize the DOM value with the model val. Calls..
+
+`virtual void HybridNode<V>::setDOMVal(const val &inval)`: Calls `ClarityNode::setDOMVal` but also dispatches value to peers.
+
+`virtual void ClarityNode::setDOMVal(const val &inval)`: Only affects the DOM value.
+
+`void HybridNode<V>::setCppValFromJSVal(const val &jsval)`: Writes the provided val object into the cppVal_ according to the template type using the emscripten as() method. At the end it calls pushValToPeers().
+
+`virtual void HybridNode<V>::updateNodeFromDom()`: The main driver of the data flow. When the user uses a control, the method `static INLINE void ClarityNode::updateNodeFromDomById(int id)` gets called and starts the update process moving data "down" from the DOM into the modelVal and possible also "sideways" to the node's peers (if any).
+
