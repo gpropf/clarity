@@ -6,7 +6,9 @@ I also had existing C++ code in mind as I wrote this. I wanted something that wo
 
 ## Getting Started ##
 
-The best place to start is the existing example programs. Currently, the `showcase.cpp` file is where you will find working examples of the types of nodes implemented so far. There is also `speedtest.cpp` which basically just creates and destroys a large number of nodes. This is both to monitor performance and also to test the system's ability to avoid memory leaks and segfaults (well, memory overruns since Emscripten doesn't really have segfaults). The basic rule is that any CPP file that starts with a lowercase letter is a runnable program. Files that start with an uppercase letter contain class definitions or implementations.
+The best place to start is the existing example programs. Doing `make showcase` should build the main example program which contains working examples of the types of nodes implemented so far. The actual "meat" of the showcase app, however, is in `Showcase.hpp` which is instantiated by `showcase.cpp`.
+
+There is also `speedtest.cpp` which basically just creates and destroys a large number of nodes. This is both to monitor performance and also to test the system's ability to avoid memory leaks and segfaults (well, memory overruns since Emscripten doesn't really have segfaults). The basic rule is that any CPP file that starts with a lowercase letter is a runnable program. Files that start with an uppercase letter contain class definitions or implementations.
 
 
 ## Design ##
@@ -20,6 +22,14 @@ The current system is the result of several complete refactorings over the Summe
 **ClarityNode**: Base class for all nodes. Implements most of the system's basic behavior. Does *not* contain a model pointer, and cannot be instantiated due to its pure virtual methods.
 
 **HybridNode<V>**: The first child class of ClarityNode. The template parameter determines the type of the model pointer. Most nodes are implemented as a HybridNode with the `tag_` member telling us what kind of HTML element to create for it.
+
+**CanvasElement<V>**: Descends from `HybridNode<V>`. Not currently used in the examples and meant more as a generic base class for `<canvas>` nodes that might implement games or other types graphical elements.
+
+**CanvasGrid<V>**: Descends from `CanvasElement<V>`. Uses an HTML5 `<canvas>` element to display a user-modifiable grid of pixels. I actually created this child class specifically for an app I'm planning to port from my old website and also to flesh out the particulars of implementing complex child classes that handle extended model data, in this case a large array representing the pixel values.
+
+**Select<V>**: Descends from `HybridNode<V>`. Selectable dropdown option lists. I think I'm going to make several variants of this since a simple select box doesn't need that same complexity as a multi-select with optgroup tags.
+
+**Checkbox<V>**: Descends from `HybridNode<V>`. Your basic checkable box. My example implementation uses V = bool but other types could work too.
 
 ...
 
