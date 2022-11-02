@@ -2,7 +2,7 @@
 
 Clarity is a web development framework written in C++ using emscripten to facilitate web programming. Its purpose is similar to the React or Vue JavaScript frameworks. It allows you to connect aspects of a data model to web controls in a "reactive" fashion. This means that if the model changes, the web presentation reflects those changes and if the user alters the state of the web controls, the corresponding model elements will update. This is all meant to occur automatically, without the need to explicitly handle web events. The name "Clarity" is meant to imply that you can see your underlying C++ data structures clearly and in an up-to-the-minute fashion without needing to constantly press buttons to reload what you've been working on.
 
-I also had existing C++ code in mind as I wrote this. I wanted something that would allow you to put an existing C++ program on a website with as little modification to the existing data structures as possible.
+I also had existing C++ code in mind as I wrote this. I wanted something that would allow you to put an existing C++ program (say a large finite element simulation) on a website with as little modification to the existing data structures as possible.
 
 ## Design ##
 
@@ -10,18 +10,25 @@ Setting up responsive web components that allow an end user to interact smoothly
 
 The current system is the result of several complete refactorings over the Summer of 2022 that I undertook as I realized the shortcomings of each successive approach. The current system basically uses several approaches rather than a single programming paradigm. We do not try to extract all the needed functionality from either an object hierarchy or a system of template functions. Thus, there are OO elements such as the fact that I implement some of the more complex controls (like the CanvasGrid) as child classes of more generalized ones. However, I also use templates extensively to allow C++ types to be used directly in web controls. Finally, there is a large templated factory class that can keep track of many of the parameters that go into making web UI elements.
 
+### Future Directions ###
+
+#### Templates? ####
+
+There is of course the possibility of developing something akin to JSX pages for Clarity but the problem with creating a novel template language is that editors will not initially support it. Losing autocompletion or automatic syntax checking is a pretty high price to pay just to have your C++ code and HTML/CSS all together in one place. Maybe if the library gets enough mindshare that people are willing to write VSCode or Emacs extensions for it...
+
 ### Terminology ###
 
-Node
+**Node**
 : a single GUI element generally created using a node factory. Usually, but not necessarily, contains a C++ pointer to some part of the data model.
 
-Node Factory
+**Node Factory**
 : Due to the large number of factors that come into play in creating nodes, we set up factory objects (using the CLNodeFactory class) that store certain persistent parameters relevant to setting up nodes. The most important of these parameters are the template parameters that determine the C++ data types of the underlying data.
 
-Peer
+**Peer**
 : Nodes can have relationships with other nodes that result in automatic data movement and updating when one node is changed. This can be either due to the end user or the model changing something. Nodes that have such a relationship with another are called its peers.
 
-
+**Data Link**
+: These are the 'edges' mathematically in our graph. They can not only move but transform data in the process.
 
 ### An Interface is a Graph ###
 
@@ -56,6 +63,8 @@ When you create a node the system will install a set of event listeners that are
 
 1. Go through attributes list at w3schools and just look for fun stuff to add to the project.
 
+
+---
 ### Programming Notes ###
 
 #### Data Flow Class Methods ####
