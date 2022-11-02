@@ -297,14 +297,14 @@ class CLElement {
     this.domElement_.appendChild(opt);
   }
 
-  static getEventListenerGenerators2(eventListenerGeneratorsByTagAndType, elementTag, elementType = null) {
+  static getEventListenerGenerators(eventListenerGeneratorsByTagAndType, elementTag, elementType = null) {
     var listenerGeneratorsForTag = eventListenerGeneratorsByTagAndType[elementTag];
     if (listenerGeneratorsForTag == null) return null;
     if (elementType == null) elementType = "NOTYPE";
       return eventListenerGeneratorsByTagAndType[elementTag][elementType];
   }
 
-  static expListenerGens = {    
+  static listenerGenerators = {    
     "input": {
       "text": {
         "mousedown": CLElement.elgInputAlltypesMousedown,
@@ -322,23 +322,16 @@ class CLElement {
         "change": CLElement.elgTextareaAlltypesChange
       }
     }
-  }
+  }  
 
-  static installEventListeners3(cle, eventListenerGenerators) {
+  static installEventListenersByTagAndType(cle,  listenerGeneratorMap) {      
+    if (cle.domElement == null) return;  
+    var eventListenerGenerators = CLElement.getEventListenerGenerators(listenerGeneratorMap, cle.tag_, cle.domElement.getAttribute("type"));
+    if (eventListenerGenerators == null) return;    
     var entries = Object.entries(eventListenerGenerators);
-    for (const [eventName, generatorFunction] of entries) {   
-      var domElement = cle.domElement;   
-      domElement.addEventListener(eventName, generatorFunction(cle));
-    }    
-  }
-
-
-  static installEventListenersByTagAndType(cle,  listenerGeneratorMap) {  
-    var domElement = cle.domElement_;
-    if (domElement == null) return;  
-    var eventListenerGenerators = CLElement.getEventListenerGenerators2(listenerGeneratorMap, cle.tag_, cle.domElement_.getAttribute("type"));
-    if (eventListenerGenerators != null)
-      CLElement.installEventListeners3(cle, eventListenerGenerators);
+    for (const [eventName, generatorFunction] of entries) {           
+      cle.domElement.addEventListener(eventName, generatorFunction(cle));
+    }         
   }
 
   addEventListenerById(eventName, id) {

@@ -434,8 +434,8 @@ class HybridNode : public ClarityNode {
         : ClarityNode(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
     inline virtual void finalize() {
-        val expListenerGens = CLElement_["expListenerGens"];
-        CLElement_.call<void>("installEventListenersByTagAndType", cle_, expListenerGens);
+        val listenerGenerators = CLElement_["listenerGenerators"];
+        CLElement_.call<void>("installEventListenersByTagAndType", cle_, listenerGenerators);
     }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
