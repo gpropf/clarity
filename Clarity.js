@@ -200,6 +200,21 @@ class CLElement {
     return rgbstr;
   }  
 
+  /**
+   * This is another generator function similar to the eventListener generators. The returned
+   * fuction performs some arbitrary transformation on a single JS value. These functions
+   * are used in the context of a data link between nodes and are meant to maintain a 
+   * mathematical relationship between the node values of the form n1 = f(n2). One of the simplest
+   * possible uses of an inter-node transform function is simple multiplication. This is likely
+   * to be a very common use case as well. An example would be where one node contains temperatures in
+   * Kelvin but we need another node with the corresponding values in Farenheit. Thus if this function
+   * detects that the provided value is not a function it will assume it to be a number and generate
+   * a function that returns an input value multiplied by that number.
+   * 
+   * 
+   * @param {number or function} constantOrFunction 
+   * @returns 
+   */
   static generateTransformFn(constantOrFunction) {
     if (constantOrFunction instanceof Function) {
       return constantOrFunction;
