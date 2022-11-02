@@ -193,7 +193,7 @@ class ClarityNode {
             domElement_.set(boundField_, inval);
             domElement_.call<void>("setAttribute", val(boundField_), inval);
         } else {
-            // FIXME: Should be an assert or exception
+            clarity::clog("Attempt to set DOM value of element with no bound field!");            
         }
     }
 
