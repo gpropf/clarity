@@ -341,13 +341,13 @@ class ClarityNode {
         }
     }
 
-    INLINE void addEventListenerByName(const string &eventName, const string &callbackName) {
-        cle_.call<void>("addEventListenerById", eventName, callbackName);
-    }
+    // INLINE void addEventListenerByName(const string &eventName, const string &callbackName) {
+    //     cle_.call<void>("addEventListenerById", eventName, callbackName);
+    // }
 
-    INLINE void addJSEventListener(const string &eventName, val eventCallback) {
-        cle_.call<void>("addEventListener", eventName, eventCallback);
-    }
+    // INLINE void addJSEventListener(const string &eventName, val eventCallback) {
+    //     cle_.call<void>("addEventListener", eventName, eventCallback);
+    // }
 
    protected:
     string tag_;

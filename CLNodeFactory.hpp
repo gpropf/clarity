@@ -472,13 +472,13 @@ class CLNodeFactory {
      * @param onPressCallback JS function to run when button is pressed.
      * @return Nc*
      */
-    INLINE Nc<V> *button(const string &name, const string &text, val onPressCallback = val::null()) {
+    INLINE Nc<V> *button(const string &name, const string &text, val onClickEL = val::null()) {
         Nc<V> *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setDOMVal(val(text));
-        if (onPressCallback != val::null()) {
+        if (onClickEL != val::null()) {
             val buttonDOMElement = button->getCLE()["domElement"];
-            buttonDOMElement.call<void>("addEventListener", val("click"), onPressCallback);
+            buttonDOMElement.call<void>("addEventListener", val("click"), onClickEL);
         }
 
         return button;

@@ -109,7 +109,6 @@ class CanvasGrid : public CanvasElement<V> {
         }
         this->domElement_.template call<void>("addEventListener", val("click"),
                                               ClarityNode::CLElement_["setGridLocToCurrentVal"]);
-        // addJSEventListener("click", CLElement_["setGridLocToCurrentVal"] );
         drawGrid();
     }
 

@@ -2,7 +2,7 @@
  * @file globals.hpp
  * @author Gregory Propf (gpropf@gmail.com)
  * @brief This is basically the boilerplate needed to create a Clarity app. It's mostly definitions
- * of the static globals we need to set up the Clarity web app framework.
+ * of the static class members we need to set up the Clarity web app framework.
  * @version 1.0
  * @date 2022-10-10
  *
