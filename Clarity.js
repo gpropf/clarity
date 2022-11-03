@@ -159,15 +159,15 @@ class CLElement {
     Module.HybridNode.nodeAudit_double();
   }
 
-  static destroy_everything() {
-    console.log("destroy_everything():BOOM!");
-    Module.ClarityNode.runCallbackById("destroy_everything")
-  }
+  // static destroy_everything() {
+  //   console.log("destroy_everything():BOOM!");
+  //   Module.ClarityNode.runCallbackById("destroy_everything")
+  // }
 
-  static make_trs_ints() {
-    //console.log("JS:make_trs_ints()");
-    Module.ClarityNode.runCallbackById("make_trs_ints");
-  }
+  // static make_trs_ints() {
+  //   //console.log("JS:make_trs_ints()");
+  //   Module.ClarityNode.runCallbackById("make_trs_ints");
+  // }
 
   printVal(v) {
     console.log("printval(v):" + "id: " + this.id + ". JSVAL = " + v);
@@ -353,6 +353,10 @@ class CLElement {
     this.domElement_.addEventListener(eventName, (e) => {
       Module.ClarityNode.runCallbackById(id)
     })
+  }
+
+  eventListenerify(fn) {
+    return (ev) => {fn()}
   }
   
   printState() {

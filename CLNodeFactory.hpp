@@ -472,12 +472,15 @@ class CLNodeFactory {
      * @param onPressCallback JS function to run when button is pressed.
      * @return Nc*
      */
-    INLINE Nc<V> *button(const string &name, const string &text, val onPressCallback = val(NULL)) {
+    INLINE Nc<V> *button(const string &name, const string &text, val onPressCallback = val::null()) {
         Nc<V> *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setDOMVal(val(text));
-        val buttonDOMElement = button->getCLE()["domElement"];
-        buttonDOMElement.call<void>("addEventListener", val("click"), onPressCallback);
+        if (onPressCallback != val::null()) {
+            val buttonDOMElement = button->getCLE()["domElement"];
+            buttonDOMElement.call<void>("addEventListener", val("click"), onPressCallback);
+        }
+
         return button;
     }
 
@@ -539,18 +542,16 @@ class CLNodeFactory {
         map<string, val> inputFieldAttrs = {{"type", val("checkbox")}};
         attrs_.merge(inputFieldAttrs);
 
-        Checkbox<V> *cb = new Checkbox<V>(name_, "input", useExistingDOMElement_, attachmentMode_, attachmentId_);
-        
-        
-        cb = static_cast<Checkbox<V> *>(withTag("input").withBoundField("value").withAttributes(attrs_).build(cb));
+        Checkbox<V> *cb =
+            new Checkbox<V>(name_, "input", useExistingDOMElement_, attachmentMode_, attachmentId_);
+
+        cb = static_cast<Checkbox<V> *>(
+            withTag("input").withBoundField("value").withAttributes(attrs_).build(cb));
         // inp->refreshDOMValueFromModel();
         // inp->pushValToPeers(inp);
         cb->refresh();
         return cb;
     }
-
-
-
 
     /**
      * @brief A range (slider) control.
@@ -662,7 +663,7 @@ class CLNodeFactory {
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
         attributeNode->setDomElement(parentDomelement);
-        modelNode_->pushValToPeers(modelNode_);        
+        modelNode_->pushValToPeers(modelNode_);
         return attributeNode;
     }
 
