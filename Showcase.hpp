@@ -82,17 +82,21 @@ struct Showcase : public PageContent {
                                .withTransformFns(blackbody_st, blackbody_st)
                                .attributeNode("fill", cir1);
         childOfMaindivBuilder.br();
+
         string *flexLabelText =
             new string("This is the label for 'svgarea'. You can edit the text below.");
         auto *flexLabel = childOfMaindivBuilder_str.withCppVal(flexLabelText)
                               .withName("flexLabel")
                               .label(svgarea, *flexLabelText);
-        childOfMaindivBuilder.hr();
+        childOfMaindivBuilder.br();
+
         auto *inputFlexTextLabel = childOfMaindivBuilder_str.withName("inputFlexTextLabel")
                                        .withPeer(flexLabel)
                                        .textInput();
         childOfMaindivBuilder.br();
+        
 
+        childOfMaindivBuilder.hr();
         double *d1 = new double(1.2);
         auto *daisyChain1_trinp = childOfMaindivBuilder.withCppVal(d1).textInput();
         auto *daisyChain2_trinp = childOfMaindivBuilder.withPeer(daisyChain1_trinp)
@@ -101,6 +105,14 @@ struct Showcase : public PageContent {
         auto *daisyChain3_trinp = childOfMaindivBuilder.withPeer(daisyChain2_trinp)
                                       .withLinkMultiplierConstant(0.1)
                                       .textInput();
+
+        auto *daisies =
+            childOfMaindivBuilder.group({daisyChain1_trinp, daisyChain2_trinp, daisyChain3_trinp});
+        auto *daisies_lbl = childOfMaindivBuilder.labelGivenNode(
+            daisies,
+            "These three nodes are linked in a daisy chain to illustrate intragraph value transformations. Only the leftmost has a cppVal_");
+
+        childOfMaindivBuilder.br();
         childOfMaindivBuilder.br();
 
         string *textarea_val = new string("This is a textarea.");
