@@ -19,18 +19,18 @@ vector<int *> ns;
 vector<HybridNode<int> *> clns;
 bool *destroyFieldsImmediately = new bool(false);
 
-time_t msecs_time() {
-    struct timeval time_now {};
-    gettimeofday(&time_now, nullptr);
-    time_t msecs_time = (time_now.tv_sec * 1000) + (time_now.tv_usec / 1000);
+time_t msecsTime() {
+    struct timeval timeNow {};
+    gettimeofday(&timeNow, nullptr);
+    time_t msecsTime = (timeNow.tv_sec * 1000) + (timeNow.tv_usec / 1000);
 
     // cout << "seconds since epoch: " << time_now.tv_sec << endl;
     // cout << "milliseconds since epoch: " << msecs_time << endl << endl;
 
-    return msecs_time;
+    return msecsTime;
 }
 
-void destroy_everything(val ev) {
+void destroyEverything(val ev) {
     cout << "Destroying " << clns.size() << " nodes.\n";
     for (auto cln : clns) {
         delete cln;
@@ -42,16 +42,16 @@ void destroy_everything(val ev) {
     ns.clear();
 }
 
-int *n_input_fields = new int(30);
-int *n_fieldsets = new int(5);
+int *nInputFields = new int(12);
+int *nFieldsets = new int(3);
 
 template <template <typename V> class Nc, typename V, typename N>
-void make_trs(CLNodeFactory<Nc, V, N> builder) {
+void makeTrs(CLNodeFactory<Nc, V, N> builder) {
     int fieldCount = 0;
     time_t totalTime = 0;
-    for (int j = 0; j < *n_fieldsets; j++) {
-        time_t t1 = msecs_time();
-        for (int i = 0; i < *n_input_fields; i++) {
+    for (int j = 0; j < *nFieldsets; j++) {
+        time_t t1 = msecsTime();
+        for (int i = 0; i < *nInputFields; i++) {
             int *iptr = new int(i);
             HybridNode<int> *cln = (CLNodeFactory<HybridNode, int, int>(builder))
                                        .withName("cln_" + to_string(fieldCount++))
@@ -62,10 +62,10 @@ void make_trs(CLNodeFactory<Nc, V, N> builder) {
             ns.push_back(iptr);
             clns.push_back(cln);
         }
-        time_t t2 = msecs_time();
-        time_t del_t = t2 - t1;
-        totalTime += del_t;
-        if (*destroyFieldsImmediately) destroy_everything(val::null());
+        time_t t2 = msecsTime();
+        time_t delT = t2 - t1;
+        totalTime += delT;
+        if (*destroyFieldsImmediately) destroyEverything(val::null());
     }
     cout << "Total elapsed time: " << totalTime << " (ms)\n";
     cout << "Total fields created: " << fieldCount << "\n";
@@ -85,18 +85,14 @@ void runLambda(val ev) {
 
 EMSCRIPTEN_BINDINGS(speedtest) {
     emscripten::function("cppTestFn", &cppTestFn);
-    emscripten::function("destroy_everything", &destroy_everything);
+    emscripten::function("destroyEverything", &destroyEverything);
     emscripten::function("runLambda", &runLambda);
 }
 
 int main() {
     val cppTestFn = val::global("Module")["cppTestFn"];
-    val destroy_everything = val::global("Module")["destroy_everything"];
-    val runLambda = val::global("Module")["runLambda"];
-    val utils_instance = val::global("Util").new_();
-    //val destroy_everything_cpp = ClarityNode::CLElement_["destroy_everything"];
-    // val destroy_everything_evh =
-    //val make_trs_ints = ClarityNode::CLElement_["make_trs_ints"];
+    val destroyEverything = val::global("Module")["destroyEverything"];
+    val runLambda = val::global("Module")["runLambda"];    
     val blackbody_st = ClarityNode::CLElement_["blackbody_st"];
     val nodeAudit = ClarityNode::CLElement_["nodeAudit_int"];
 
@@ -107,18 +103,18 @@ int main() {
 
     CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
 
-    HybridNode<int> *fieldsets_inp = childOfMaindivBuilder_int.withCppVal(n_fieldsets).textInput();
+    HybridNode<int> *fieldsets_inp = childOfMaindivBuilder_int.withCppVal(nFieldsets).textInput();
     HybridNode<int> *labelled_fieldsets_inp =
         childOfMaindivBuilder_int.labelGivenNode(fieldsets_inp, "fieldsets");
-    HybridNode<int> *n_input_fields_inp =
-        childOfMaindivBuilder_int.withCppVal(n_input_fields).textInput();
-    HybridNode<int> *labelled_n_input_fields_inp =
-        childOfMaindivBuilder_int.labelGivenNode(n_input_fields_inp, "fields per set");
+    HybridNode<int> *nInputFields_inp =
+        childOfMaindivBuilder_int.withCppVal(nInputFields).textInput();
+    HybridNode<int> *labelled_nInputFields_inp =
+        childOfMaindivBuilder_int.labelGivenNode(nInputFields_inp, "fields per set");
     // HybridNode<int> *statusButton =
     //     childOfMaindivBuilder.button("statusButton", "BOOM!", destroy_everything_cpp);
-    HybridNode<int> *statusButton = childOfMaindivBuilder.button("statusButton", "BOOM!", destroy_everything);
+    HybridNode<int> *statusButton = childOfMaindivBuilder.button("statusButton", "BOOM!", destroyEverything);
 
-    //statusButton->addEventListener(destroy_everything, "click");
+    //statusButton->addEventListener(destroyEverything, "click");
 
     HybridNode<int> *hello_button =
         childOfMaindivBuilder.button("make_trs_button", "Say Hello!", cppTestFn);
@@ -138,11 +134,11 @@ int main() {
     auto *labelled_destroyFieldsImmediately_cb =
         checkboxBuilder.labelGivenNode(destroyFieldsImmediately_cb, "Destroy fields as we go");
 
-    // clarity::ClarityNode::callbackMap["destroy_everything"] = [=] { destroy_everything(); };
+    // clarity::ClarityNode::callbackMap["destroyEverything"] = [=] { destroyEverything(); };
     
 
     lbd = [=] {
-        make_trs(childOfMaindivBuilder_int);
+        makeTrs(childOfMaindivBuilder_int);
     };
 
     printf("Setup complete!\n");
