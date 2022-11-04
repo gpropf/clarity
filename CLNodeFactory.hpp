@@ -473,7 +473,7 @@ class CLNodeFactory {
      * @return Nc*
      */
     INLINE Nc<V> *button(const string &name, const string &text, val onClickEL = val::null()) {
-        Nc<V> *button = withTag("button").build();
+        Nc<V> *button = withName(name).withTag("button").build();
         button->setBoundField("textContent");
         button->setDOMVal(val(text));
         if (onClickEL != val::null()) {

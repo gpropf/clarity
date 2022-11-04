@@ -53,7 +53,7 @@ void makeTrs(CLNodeFactory<Nc, V, N> builder) {
         time_t t1 = msecsTime();
         for (int i = 0; i < *nInputFields; i++) {
             int *iptr = new int(i);
-            HybridNode<int> *cln = (CLNodeFactory<HybridNode, int, int>(builder))
+            auto *cln = (CLNodeFactory<HybridNode, int, int>(builder))
                                        .withName("cln_" + to_string(fieldCount++))
                                        .withCppVal(iptr)
                                        .trInput();
@@ -97,32 +97,32 @@ int main() {
     val nodeAudit = ClarityNode::CLElement_["nodeAudit_int"];
 
     CLNodeFactory<HybridNode, int, double> builder("div", "maindiv");
-    HybridNode<int> *maindiv = builder.build();
+    auto *maindiv = builder.build();
     CLNodeFactory<HybridNode, int, double> childOfMaindivBuilder =
         builder.createChildrenOf(maindiv);
 
     CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
 
-    HybridNode<int> *fieldsets_inp = childOfMaindivBuilder_int.withCppVal(nFieldsets).textInput();
-    HybridNode<int> *labelled_fieldsets_inp =
-        childOfMaindivBuilder_int.labelGivenNode(fieldsets_inp, "fieldsets");
-    HybridNode<int> *nInputFields_inp =
-        childOfMaindivBuilder_int.withCppVal(nInputFields).textInput();
-    HybridNode<int> *labelled_nInputFields_inp =
+    auto *nFieldsets_inp = childOfMaindivBuilder_int.withName("fieldsets_inp").withCppVal(nFieldsets).textInput();
+    auto *labelled_fieldsets_inp =
+        childOfMaindivBuilder_int.labelGivenNode(nFieldsets_inp, "fieldsets");
+    auto *nInputFields_inp =
+        childOfMaindivBuilder_int.withName("nInputFields_inp").withCppVal(nInputFields).textInput();
+    auto *labelled_nInputFields_inp =
         childOfMaindivBuilder_int.labelGivenNode(nInputFields_inp, "fields per set");
-    // HybridNode<int> *statusButton =
-    //     childOfMaindivBuilder.button("statusButton", "BOOM!", destroy_everything_cpp);
-    HybridNode<int> *statusButton = childOfMaindivBuilder.button("statusButton", "BOOM!", destroyEverything);
+    // auto *boomButton =
+    //     childOfMaindivBuilder.button("boomButton", "BOOM!", destroy_everything_cpp);
+    auto *boomButton = childOfMaindivBuilder.button("boomButton", "BOOM!", destroyEverything);
 
-    //statusButton->addEventListener(destroyEverything, "click");
+    //boomButton->addEventListener(destroyEverything, "click");
 
-    HybridNode<int> *hello_button =
-        childOfMaindivBuilder.button("make_trs_button", "Say Hello!", cppTestFn);
-    // HybridNode<int> *make_trs_button =
-    //     childOfMaindivBuilder.button("make_trs_button", "Make the fields!", make_trs_ints);
-    HybridNode<int> *make_trs_button =
-        childOfMaindivBuilder.button("make_trs_button", "Make the fields!", runLambda);
-    HybridNode<int> *auditButton =
+    auto *helloButton =
+        childOfMaindivBuilder.button("helloButton", "Say Hello!", cppTestFn);
+    // auto *makeTrsButton =
+    //     childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", make_trs_ints);
+    auto *makeTrsButton =
+        childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", runLambda);
+    auto *auditButton =
         childOfMaindivBuilder.button("auditButton", "Node Audit", nodeAudit);
 
     CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
