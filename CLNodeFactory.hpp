@@ -41,7 +41,7 @@ class CLNodeFactory {
     ClarityNode *parent_ = nullptr;  //!< If we have this set, we are creating
                                      //!< any new nodes as its children.
 
-    Nc<V> *modelNode_ = nullptr;  //!< If we create a new MN or attach one, we set this. Note
+    Nc<V> *peer_ = nullptr;  //!< If we create a new MN or attach one, we set this. Note
                                   //!< that we can create ClarityNodes with no MN. These would store
                                   //!< their data entirely in their DOM elements.
 
@@ -95,7 +95,7 @@ class CLNodeFactory {
         useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
         attrs_ = clnf_from.attrs_;
 
-        modelNode_ = nullptr;
+        peer_ = nullptr;
         cppVal_ = nullptr;
     }
 
@@ -115,19 +115,6 @@ class CLNodeFactory {
     INLINE CLNodeFactory(const string &tag, const string &name) : tag_(tag), name_(name) {}
 
     /**
-     * @brief Construct a new CLNodeFactory object
-     *
-     * @param tag
-     * @param name
-     * @param storedValue If we use this, we are creating a corresponding MN to
-     * hold the value.
-     */
-    INLINE CLNodeFactory(const string &tag, const string &name, V *storedValue)
-        : tag_(tag), name_(name) {
-        withStoredValue(storedValue, true);
-    }
-
-    /**
      * @brief This is something I'm trying out that might be a bit novel and
      * that I haven't tested well yet. The idea is that you can use mutable
      * arguments to methods to pull values "out the side" of a chain of pure
@@ -139,10 +126,10 @@ class CLNodeFactory {
      *
      * Initially this didn't work and I decided to move on and work on other
      * stuff. When I came back to it I realized that the problem was that I was
-     * only changing the **copy** of the modelNode pointer that was passed into
+     * only changing the **copy** of the peer pointer that was passed into
      * the method. As a result the calling function's pointer never changed. So
      * now we do this odd thing where we modify a pointer through a reference
-     * and this allows us to have access to the internally created modelNode in
+     * and this allows us to have access to the internally created peer in
      * the calling scope.
      *
      * In short, having a (non-const) pointer allows you to change the thing the
@@ -151,13 +138,19 @@ class CLNodeFactory {
      * to do.
      *
      * @tparam T
-     * @param modelNode
+     * @param peer
      * @return CLNodeFactory
      */
     template <typename T>
-    INLINE CLNodeFactory extractModelNode(Nc<V> *&modelNode) {
-        modelNode = modelNode_;
+    INLINE CLNodeFactory extractPeer(Nc<V> *&peer) const & {
+        peer = peer_;
         return *this;
+    }
+
+    template <typename T>
+    INLINE CLNodeFactory extractPeer(Nc<V> *&peer) const && {
+        peer = peer_;
+        return std::move(*this);
     }
 
     /**
@@ -200,14 +193,14 @@ class CLNodeFactory {
         if (parent_) {
             parent_->appendChild(newNode);
         }
-        
-        if (modelNode_) {
+
+        if (peer_) {
             if (a2b_xfmr_ != val(NULL)) {
-                modelNode_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);
+                peer_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);
             } else {
-                modelNode_->addPeer(newNode, linkMultiplierConstant_);
+                peer_->addPeer(newNode, linkMultiplierConstant_);
             }
-            if (!useExistingDOMElement_) modelNode_->pushValToPeers(modelNode_);
+            if (!useExistingDOMElement_) peer_->pushValToPeers(peer_);
         }
 
         if (cppVal_) {
@@ -223,7 +216,7 @@ class CLNodeFactory {
     }
 
     INLINE void warnNoName(ClarityNode *node, const string &nodeType) {
-        if (tag_ == "br" || tag_ == "hr" ) return;
+        if (tag_ == "br" || tag_ == "hr") return;
         if (node->getName() == "") node->nodelog("Built a <" + nodeType + "> tag without a name!");
     }
 
@@ -257,22 +250,36 @@ class CLNodeFactory {
      * @param attrs
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory withAttributes(const map<string, val> &attrs) {
+    INLINE CLNodeFactory withAttributes(const map<string, val> &attrs) const & {
         CLNodeFactory cpy(*this);
         cpy.attrs_ = attrs;
         return cpy;
     }
 
+    INLINE CLNodeFactory withAttributes(const map<string, val> &attrs) && {
+        CLNodeFactory cpy(std::move(*this));
+        cpy.attrs_ = attrs;
+        return cpy;
+    }
+
     /**
-     * @brief The "bound" field is the one that stores the data and reflects the
-     * current state of the associated ModelNode.
+     * @brief The "bound" DOM element field is the one that stores the data and reflects the
+     * current state of the associated node.
      *
      * @param boundField
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory withBoundField(const string &boundField) {
+    INLINE CLNodeFactory withBoundField(const string &boundField) const & {
         assert(boundField != "");
         CLNodeFactory cpy(*this);
+        cpy.boundField_ = boundField;
+        // cout << "withBoundField:: boundField = " << boundField << "\n";
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withBoundField(const string &boundField) && {
+        assert(boundField != "");
+        CLNodeFactory cpy(std::move(*this));
         cpy.boundField_ = boundField;
         // cout << "withBoundField:: boundField = " << boundField << "\n";
         return cpy;
@@ -286,9 +293,16 @@ class CLNodeFactory {
      * @param parent
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory createChildrenOf(Nc<V> *parent) {
+    INLINE CLNodeFactory createChildrenOf(Nc<V> *parent) const & {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
+        cpy.parent_ = parent;
+        return cpy;
+    }
+
+    INLINE CLNodeFactory createChildrenOf(Nc<V> *parent) && {
+        assert(parent != nullptr);
+        CLNodeFactory cpy(std::move(*this));
         cpy.parent_ = parent;
         return cpy;
     }
@@ -356,7 +370,7 @@ class CLNodeFactory {
         return cpy;
     }
 
-    INLINE CLNodeFactory withCppVal(V *cppVal) const && {
+    INLINE CLNodeFactory withCppVal(V *cppVal) && {
         // assert(cppVal != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.cppVal_ = cppVal;
@@ -366,23 +380,22 @@ class CLNodeFactory {
     /**
      * @brief In the case where a ModelNode already exists we can store it in
      * the factory and it will be linked to the built node as a peer in the
-     * build() method. Note that this method and withStoredValue() are
-     * incompatible.
+     * build() method.
      *
-     * @param modelNode
+     * @param peer
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory withModelNode(Nc<V> *modelNode) const & {
-        assert(modelNode != nullptr);
+    INLINE CLNodeFactory withPeer(Nc<V> *peer) const & {
+        assert(peer != nullptr);
         CLNodeFactory cpy(*this);
-        cpy.modelNode_ = modelNode;
+        cpy.peer_ = peer;
         return cpy;
     }
 
-    INLINE CLNodeFactory withModelNode(Nc<V> *modelNode) && {
-        assert(modelNode != nullptr);
+    INLINE CLNodeFactory withPeer(Nc<V> *peer) && {
+        assert(peer != nullptr);
         CLNodeFactory cpy(std::move(*this));
-        cpy.modelNode_ = modelNode;
+        cpy.peer_ = peer;
         return cpy;
     }
 
@@ -462,7 +475,7 @@ class CLNodeFactory {
      * @param innerHTML
      * @return INLINE
      */
-    INLINE CLNodeFactory withInnerHTML(const string &innerHTML) & {
+    INLINE CLNodeFactory withInnerHTML(const string &innerHTML) const & {
         CLNodeFactory cpy(*this);
         cpy.innerHTML_ = innerHTML;
         return cpy;
@@ -530,23 +543,12 @@ class CLNodeFactory {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
         attrs_.merge(inputFieldAttrs);
 
-        Nc<V> *inp = withTag("input").withBoundField("value").build();        
+        Nc<V> *inp = withTag("input").withBoundField("value").build();
         // inp->refreshDOMValueFromModel();
         // inp->pushValToPeers(inp);
         inp->refresh();
         return inp;
     }
-
-    // INLINE Nc<V> *checkbox_g() {
-    //     map<string, val> inputFieldAttrs = {{"type", val("checkbox")}};
-    //     attrs_.merge(inputFieldAttrs);
-
-    //     Nc<V> *inp = withTag("input").withBoundField("value").build();
-    //     // inp->refreshDOMValueFromModel();
-    //     // inp->pushValToPeers(inp);
-    //     inp->refresh();
-    //     return inp;
-    // }
 
     INLINE Checkbox<V> *checkbox() {
         map<string, val> inputFieldAttrs = {{"type", val("checkbox")}};
@@ -572,7 +574,7 @@ class CLNodeFactory {
         map<string, val> inputFieldAttrs = {
             {"type", val("range")}, {"min", val(min)}, {"max", val(max)}};
         attrs_.merge(inputFieldAttrs);
-        Nc<V> *inp = withTag("input").withBoundField("value").build();        
+        Nc<V> *inp = withTag("input").withBoundField("value").build();
         // inp->refreshDOMValueFromModel();
         // inp->pushValToPeers(inp);
         inp->refresh();
@@ -650,16 +652,9 @@ class CLNodeFactory {
     INLINE Select<V> *select() {
         Select<V> *sel = new Select<V>(name_, "select", useExistingDOMElement_, attachmentMode_);
         sel = static_cast<Select<V> *>(build(sel));
-        sel->populateOptions();
-        // sel->getCLE().template call<void>("addOptionElementFromString",
-        // val((*sel->getCppVal())[0])); // FIXME sel->getCLE().template
-        // call<void>("addOptionElementFromString", val((*sel->getCppVal())[1]));
+        sel->populateOptions();        
         return sel;
-    }
-
-    // cel->setDrawFuntionName("canvasTestPattern");
-    // cel->refreshView();
-    // return cel;
+    }   
 
     /**
      * @brief Attribute nodes are a special case. They represent a single
@@ -668,12 +663,12 @@ class CLNodeFactory {
      * @param attributeName
      * @return Nc*
      */
-    INLINE Nc<V> *attributeNode(const string &attributeName) {
+    INLINE Nc<V> *attributeNode(const string &attributeName) const {
         Nc<V> *attributeNode = withExistingDOMElement().withBoundField(attributeName).build();
         val parentDomelement = parent_->getCLE()["domElement"];
         attributeNode->getCLE().set("domElement", parentDomelement);
         attributeNode->setDomElement(parentDomelement);
-        modelNode_->pushValToPeers(modelNode_);
+        peer_->pushValToPeers(peer_);
         return attributeNode;
     }
 

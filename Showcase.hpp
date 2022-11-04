@@ -66,7 +66,7 @@ struct Showcase : public PageContent {
                                           {"stroke-width", val(4)}})
                          .build();
 
-        auto *cir1Radius = childOfMaindivBuilder.withModelNode(cir1Radius_tinp)
+        auto *cir1Radius = childOfMaindivBuilder.withPeer(cir1Radius_tinp)
                                .withName("cir1Radius")
                                .withLinkMultiplierConstant(1)
                                .withAttributes({})
@@ -77,7 +77,7 @@ struct Showcase : public PageContent {
                               .withCppVal(temp)
                               .rangeInput(0, 2000);
 
-        auto *circleFill = childOfMaindivBuilder.withModelNode(temp_rinp)
+        auto *circleFill = childOfMaindivBuilder.withPeer(temp_rinp)
                                .withName("circleFill")
                                .withTransformFns(blackbody_st, blackbody_st)
                                .attributeNode("fill", cir1);
@@ -89,16 +89,16 @@ struct Showcase : public PageContent {
                               .label(svgarea, *flexLabelText);
         childOfMaindivBuilder.hr();
         auto *inputFlexTextLabel = childOfMaindivBuilder_str.withName("inputFlexTextLabel")
-                                       .withModelNode(flexLabel)
+                                       .withPeer(flexLabel)
                                        .textInput();
         childOfMaindivBuilder.br();
 
         double *d1 = new double(1.2);
         auto *daisyChain1_trinp = childOfMaindivBuilder.withCppVal(d1).textInput();
-        auto *daisyChain2_trinp = childOfMaindivBuilder.withModelNode(daisyChain1_trinp)
+        auto *daisyChain2_trinp = childOfMaindivBuilder.withPeer(daisyChain1_trinp)
                                       .withLinkMultiplierConstant(0.1)
                                       .textInput();
-        auto *daisyChain3_trinp = childOfMaindivBuilder.withModelNode(daisyChain2_trinp)
+        auto *daisyChain3_trinp = childOfMaindivBuilder.withPeer(daisyChain2_trinp)
                                       .withLinkMultiplierConstant(0.1)
                                       .textInput();
         childOfMaindivBuilder.br();
