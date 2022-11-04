@@ -109,6 +109,11 @@ class ClarityNode {
         }
     }
 
+    void nodelog(const string& msg, ClogType clt = ClogType::WARNING) const {
+        string msgout("node " + clto_str(id_)+ ":" + msg);
+        clog(msgout, clt);
+    }
+
     static void addEventListenerGenerator(const string &nodeTypeCode, val handlerGenerator) {}
 
     void addEventListener(std::function<void()> fn, const string &eventName) {
@@ -169,7 +174,7 @@ class ClarityNode {
 
         domElement_ = cle_["domElement"];
         boundField_ = "value";
-        ClarityNode::switchboard[id_] = this;
+        ClarityNode::switchboard[id_] = this;       
     }
 
     INLINE ClarityNode *getParent() const { return this->parent_; }

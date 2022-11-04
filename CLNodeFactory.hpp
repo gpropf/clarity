@@ -211,10 +211,17 @@ class CLNodeFactory {
             newNode->setCppVal(cppVal_);
         }
 
+        warnNoName(newNode, tag_);
+
         // newNode->refresh();
         if (nameIsForSingleUse_) name_ = "";
         newNode->finalize();
         return newNode;
+    }
+
+    INLINE void warnNoName(ClarityNode *node, const string &nodeType) {
+        if (tag_ == "br" || tag_ == "hr" ) return;
+        if (node->getName() == "") node->nodelog("Built a <" + nodeType + "> tag without a name!");
     }
 
     INLINE CLNodeFactory withAttachmentId(const string &attachmentId_) const & {
@@ -520,7 +527,7 @@ class CLNodeFactory {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
         attrs_.merge(inputFieldAttrs);
 
-        Nc<V> *inp = withTag("input").withBoundField("value").build();
+        Nc<V> *inp = withTag("input").withBoundField("value").build();        
         // inp->refreshDOMValueFromModel();
         // inp->pushValToPeers(inp);
         inp->refresh();
@@ -562,7 +569,7 @@ class CLNodeFactory {
         map<string, val> inputFieldAttrs = {
             {"type", val("range")}, {"min", val(min)}, {"max", val(max)}};
         attrs_.merge(inputFieldAttrs);
-        Nc<V> *inp = withTag("input").withBoundField("value").build();
+        Nc<V> *inp = withTag("input").withBoundField("value").build();        
         // inp->refreshDOMValueFromModel();
         // inp->pushValToPeers(inp);
         inp->refresh();
