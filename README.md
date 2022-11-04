@@ -10,7 +10,15 @@ The best place to start is the existing example programs. Doing `make showcase` 
 
 There is also `speedtest.cpp` which basically just creates and destroys a large number of nodes. This is both to monitor performance and also to test the system's ability to avoid memory leaks and segfaults (well, memory overruns since Emscripten doesn't really have segfaults). The basic rule is that any CPP file that starts with a lowercase letter is a runnable program. Files that start with an uppercase letter contain class definitions or implementations. The only exceptions to this are the files `clarity.cpp` and `clarity.hpp`, which contain utility code and namespace code that doesn't really belong to any partucular class.
 
-I've been pretty good about documenting as I go and there are a lot of Doxygen docstrings. If you do `make docs` you'll get a detailed reference on the API and some auto-generated class diagrams.
+I've also been pretty good about documenting as I go and there are a lot of Doxygen docstrings. If you do `make docs` you'll get a detailed reference on the API and some auto-generated class diagrams.
+
+### But how do I make a model of a nuclear power plant that you can interact with? ###
+
+Or some such question. Well, I don't know what exactly you want to model here but the basic plan of attack and rules of engagement are these...
+
+1. Clarity can only "see" things that are on the heap. If you create a model that is created within a function and is destroyed when it ends there's no way to attach web controls to it. Basically, your model needs to be persistent and visible within the `main()` function of your program.
+2. Figure out what you plan to expose to the user and create Clarity nodes of whatever type is appropriate to manipulating that part of the data model. When creating these controls you will invoke the `withCppVal()` method of the `CLNodeFactory` class. The argument to this method will be a pointer to whatever data you want to make accessible to the user. When the user changes a value in the web control the actual value in your model should change as well. 
+3. To "close the loop" and have the model update the interface you will call the `refresh()` method of the relevant nodes when your model updates itself. The usual method for this is still to use JavaScript's setInterval and setTimeout methods to periodically iterate your model and refresh the relevant Clarity nodes. I'd like to make use of web workers or Emscripten's thread capability for this eventually.
 
 ## Design ##
 
@@ -19,6 +27,12 @@ Setting up responsive web components that allow an end user to interact smoothly
 The current system is the result of several complete refactorings over the Summer of 2022 that I undertook as I realized the shortcomings of each successive approach. The current system basically uses several approaches rather than a single programming paradigm. We do not try to extract all the needed functionality from either an object hierarchy or a system of template functions. Thus, there are OO elements such as the fact that I implement some of the more complex controls (like the CanvasGrid) as child classes of more generalized ones. However, I also use templates extensively to allow C++ types to be used directly in web controls. Finally, there is a large templated factory class that can keep track of many of the parameters that go into making web UI elements.
 
 ### The Object Hierarchy ###
+
+__JavaScript__
+
+There is one main JavaScript file called `Clarity.js`. It contains a class called `CLElement` that acts as a kind of "mirror image" of `ClarityNode` in the JS world. A better name might have been JSProxy since that's what it really is and does. It exists to carry out the system's tasks for a given node on the JS side. There's also `Selectables.js` which performs similar tasks for the C++ classes in `Selectables.cpp`. These files might end up getting merged. There's also `Util.js` which does what the name suggests it might.
+
+__C++__
 
 **`ClarityNode`**: Base class for all nodes. Implements most of the system's basic behavior. Does *not* contain a model pointer, and cannot be instantiated due to its pure virtual methods.
 
