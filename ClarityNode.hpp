@@ -55,8 +55,8 @@ class ClarityNode {
        public:
         ClarityNode *nodeA_;
         ClarityNode *nodeB_;
-        int intMultiplier = 1;
-        double dblMultiplier = 1.0;
+        // int intMultiplier = 1;
+        // double dblMultiplier = 1.0;
         val a2b_xfmr_;
         val b2a_xfmr_;
 
