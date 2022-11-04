@@ -313,15 +313,17 @@ class ClarityNode {
         if (excludedPeer == nullptr) {
             for (auto dl : dlpeers_) {
                 auto [peer, xfmr] = dl->getOtherNode(this);
-                peer->pushValToPeers(this);
                 pushValToPeer(*dl);
+                peer->pushValToPeers(this);
+               
             }
         } else {
             for (auto dl : dlpeers_) {
                 auto [peer, xfmr] = dl->getOtherNode(this);
                 if (peer != excludedPeer) {
-                    peer->pushValToPeers(this);
                     pushValToPeer(*dl);
+                    peer->pushValToPeers(this);
+                    
                 }
             }
         }

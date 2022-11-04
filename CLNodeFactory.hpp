@@ -193,11 +193,14 @@ class CLNodeFactory {
         if (innerHTML_ != "") {
             (newNode->getDomElement()).set("innerHTML", val(innerHTML_));
         }
+
         newNode->setBoundField(boundField_);
         newNode->setAttributes(attrs_);
+
         if (parent_) {
             parent_->appendChild(newNode);
         }
+        
         if (modelNode_) {
             if (a2b_xfmr_ != val(NULL)) {
                 modelNode_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);

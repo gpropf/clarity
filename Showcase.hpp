@@ -14,7 +14,7 @@ using namespace clarity;
  */
 struct Showcase : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
-        //val CLElement = val::global("CLElement");
+        // val CLElement = val::global("CLElement");
         val blackbody_st = ClarityNode::CLElement_["blackbody_st"];
 
         double *temp = new double(330);
@@ -93,8 +93,19 @@ struct Showcase : public PageContent {
                                        .textInput();
         childOfMaindivBuilder.br();
 
+        double *d1 = new double(1.2);
+        auto *daisyChain1_trinp = childOfMaindivBuilder.withCppVal(d1).textInput();
+        auto *daisyChain2_trinp = childOfMaindivBuilder.withModelNode(daisyChain1_trinp)
+                                      .withLinkMultiplierConstant(0.1)
+                                      .textInput();
+        auto *daisyChain3_trinp = childOfMaindivBuilder.withModelNode(daisyChain2_trinp)
+                                      .withLinkMultiplierConstant(0.1)
+                                      .textInput();
+        childOfMaindivBuilder.br();
+
         string *textarea_val = new string("This is a textarea.");
-        auto *textarea1 = childOfMaindivBuilder_str.withName("textarea1").textarea(textarea_val, 3, 40);
+        auto *textarea1 =
+            childOfMaindivBuilder_str.withName("textarea1").textarea(textarea_val, 3, 40);
         childOfMaindivBuilder.br();
 
         CLNodeFactory<HybridNode, unsigned char, double> canvasBuilder("div", "canvasDiv");
@@ -136,8 +147,8 @@ struct Showcase : public PageContent {
         //  call<void>("addOptionElementFromString", val((*carSelect->getCppVal())[1]));
 
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
-        //string * checkme = new string("checked");
-        bool * checkme = new bool(false);
+        // string * checkme = new string("checked");
+        bool *checkme = new bool(false);
         checkboxBuilder.withCppVal(checkme).withName("checkme").checkbox();
 
         printf("Setup complete!\n");
