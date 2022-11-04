@@ -82,9 +82,9 @@ When you create a node the system will install a set of event listeners that are
 
 ### Future Directions ###
 
-#### Templates? ####
+#### Web Templates? ####
 
-There is of course the possibility of developing something akin to React's JSX pages for Clarity but the problem with creating a novel template language is that editors will not initially support it. Losing autocompletion or automatic syntax checking is a pretty high price to pay just to have your C++ code and HTML/CSS all together in one place. Maybe if the library gets enough mindshare that people are willing to write VSCode or Emacs extensions for it...
+There is of course the possibility of developing something akin to React's JSX pages for Clarity (CSX pages?) but the problem with creating a novel template language is that editors will not initially support it. Losing autocompletion or automatic syntax checking is a pretty high price to pay just to have your C++ code and HTML/CSS all together in one place. Maybe if the library gets enough mindshare that people are willing to write VSCode or Vim/Emacs extensions for it...
 
 ---
 ### Programming Notes ###
@@ -95,6 +95,10 @@ There is of course the possibility of developing something akin to React's JSX p
 * All of the C++ library code is contained within the `clarity` namespace.
 * Brackets: the first bracket is on the same line as the method name.
 * Member variables: member vars end with an underscore in both C++ and JS code.
+  
+##### Source Code Files #####
+
+My initial plan was to try to avoid the "header-only library" style that has become popular today and is exemplified by Boost and other popular libraries. I started to realize that using a lot of template metaprogramming made this almost impossible and led to constant struggles with the linker. So basically I now have almost all the code in hpp files. The cpp files are basically where template specializations live. A great deal of the behavior of the library is due to these specializations though and in particular, this is how nodes "know" what type they are even if they have a null in `cppVal_`.
 
 
 #### Data Flow Class Methods ####
