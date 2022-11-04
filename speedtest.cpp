@@ -99,7 +99,7 @@ int main() {
     CLNodeFactory<HybridNode, int, double> builder("div", "maindiv");
     auto *maindiv = builder.build();
     CLNodeFactory<HybridNode, int, double> childOfMaindivBuilder =
-        builder.createChildrenOf(maindiv);
+        builder.withChildrenOf(maindiv);
 
     CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
 

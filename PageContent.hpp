@@ -54,9 +54,9 @@ struct TestFramework : public PageContent {
         testarea->appendChild(innerContent);
 
         CLNodeFactory<HybridNode, double, double> sidebarBuilder =
-            rootBuilder.withName("sidebar_subnode").createChildrenOf(sidebar);
+            rootBuilder.withName("sidebar_subnode").withChildrenOf(sidebar);
         CLNodeFactory<HybridNode, double, double> testareaBuilder =
-            rootBuilder.withName("testarea_subnode").createChildrenOf(testarea);
+            rootBuilder.withName("testarea_subnode").withChildrenOf(testarea);
 
         auto *nodeAuditButton = (CLNodeFactory<HybridNode, int, int>(sidebarBuilder))
                                     .button("nodeAuditButton", "Node Audit", nodeAudit);

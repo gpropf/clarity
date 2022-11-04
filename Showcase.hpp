@@ -24,7 +24,7 @@ struct Showcase : public PageContent {
         auto *maindiv = builder.build();
 
         CLNodeFactory<HybridNode, double, double> childOfMaindivBuilder =
-            builder.createChildrenOf(maindiv);
+            builder.withChildrenOf(maindiv);
 
         auto *cir1Radius_tinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
                                     .withName("cir1Radius_tinp")
