@@ -89,6 +89,14 @@ There is of course the possibility of developing something akin to React's JSX p
 ---
 ### Programming Notes ###
 
+#### Coding Conventions ####
+
+* Variable names follow the usual camel case style used in C++
+* All of the C++ library code is contained within the `clarity` namespace.
+* Brackets: the first bracket is on the same line as the method name.
+* Member variables: member vars end with an underscore in both C++ and JS code.
+
+
 #### Data Flow Class Methods ####
 _These are the current methods that move data around in the system. They went through several reworkings as I refactored the system. I'm documenting them here mostly for my own benefit so that I can think about a better nomenclature and simpler structure for them._
 
