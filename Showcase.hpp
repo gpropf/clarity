@@ -94,7 +94,6 @@ struct Showcase : public PageContent {
                                        .withPeer(flexLabel)
                                        .textInput();
         childOfMaindivBuilder.br();
-        
 
         childOfMaindivBuilder.hr();
         double *d1 = new double(1.2);
@@ -110,7 +109,9 @@ struct Showcase : public PageContent {
             childOfMaindivBuilder.group({daisyChain1_trinp, daisyChain2_trinp, daisyChain3_trinp});
         auto *daisies_lbl = childOfMaindivBuilder.labelGivenNode(
             daisies,
-            "These three nodes are linked in a daisy chain to illustrate intragraph value transformations. Only the leftmost has a cppVal_");
+            "These three nodes are linked in a daisy chain to illustrate intragraph value "
+            "transformations and the ability to have nodes that do not themselves contain a model "
+            "value. Only the leftmost has a cppVal_");
 
         childOfMaindivBuilder.br();
         childOfMaindivBuilder.br();
