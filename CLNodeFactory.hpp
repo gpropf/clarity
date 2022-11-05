@@ -220,8 +220,10 @@ class CLNodeFactory {
 
         if (eventListenerGenerator_.first != "") {
             val domElement = newNode->getDomElement();
-            val eventListener = eventListenerGenerator_.second(domElement);
-            newNode->addEventListener(eventListener, eventListenerGenerator_.first);
+            if (domElement != val::null()) {
+                val eventListener = eventListenerGenerator_.second(domElement);
+                newNode->addEventListener(eventListener, eventListenerGenerator_.first);
+            }
         }
 
         return newNode;
