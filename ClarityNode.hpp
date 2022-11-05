@@ -99,7 +99,7 @@ class ClarityNode {
 
     virtual string cppValToString() const = 0;  //{ return "CN::cppValToString()"; }
 
-    static void nodeAudit() {
+    static void listNodes() {
         for (auto [id, node] : switchboard) {
             string name = node->getName();
             // string cppValStr;// = "NULL PTR2";

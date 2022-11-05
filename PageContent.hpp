@@ -20,7 +20,7 @@ struct PageContent {
 };
 
 /**
- * @brief Provides a node audit button and eventually perhaps other controls meant to provide a test
+ * @brief Provides a 'List Nodes' button and eventually perhaps other controls meant to provide a test
  * framework for new and existing controls as well as aid users in developing and testing their
  * projects.
  *
@@ -28,7 +28,7 @@ struct PageContent {
 struct TestFramework : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
 
-        val nodeAudit = ClarityNode::CLElement_["nodeAudit_double"];
+        val listNodes = ClarityNode::CLElement_["listNodes_double"];
 
         CLNodeFactory<HybridNode, double, double> rootBuilder("div", "tf_root");
 
@@ -58,8 +58,8 @@ struct TestFramework : public PageContent {
         CLNodeFactory<HybridNode, double, double> testareaBuilder =
             rootBuilder.withName("testarea_subnode").withChildrenOf(testarea);
 
-        auto *nodeAuditButton = (CLNodeFactory<HybridNode, int, int>(sidebarBuilder))
-                                    .button("nodeAuditButton", "Node Audit", nodeAudit);
+        auto *listNodesButton = (CLNodeFactory<HybridNode, int, int>(sidebarBuilder))
+                                    .button("listNodesButton", "List Nodes", listNodes);
         return root;
     }
 };

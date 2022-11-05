@@ -94,7 +94,7 @@ int main() {
     val destroyEverything = val::global("Module")["destroyEverything"];
     val runLambda = val::global("Module")["runLambda"];    
     val blackbody_st = ClarityNode::CLElement_["blackbody_st"];
-    val nodeAudit = ClarityNode::CLElement_["nodeAudit_int"];
+    val listNodes = ClarityNode::CLElement_["listNodes_int"];
 
     CLNodeFactory<HybridNode, int, double> builder("div", "maindiv");
     auto *maindiv = builder.build();
@@ -122,8 +122,8 @@ int main() {
     //     childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", make_trs_ints);
     auto *makeTrsButton =
         childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", runLambda);
-    auto *auditButton =
-        childOfMaindivBuilder.button("auditButton", "Node Audit", nodeAudit);
+    auto *listNodes_btn =
+        childOfMaindivBuilder.button("listNodes_btn", "List Nodes", listNodes);
 
     CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
 

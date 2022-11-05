@@ -151,12 +151,12 @@ class CLElement {
     console.log("doNothing(): a function that proudly does nothing...");
   }
 
-  static nodeAudit_int() {
-    Module.HybridNode.nodeAudit_int();
+  static listNodes_int() {
+    Module.HybridNode.listNodes_int();
   }
 
-  static nodeAudit_double() {
-    Module.HybridNode.nodeAudit_double();
+  static listNodes_double() {
+    Module.HybridNode.listNodes_double();
   }
 
   // static destroy_everything() {
