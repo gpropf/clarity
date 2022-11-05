@@ -15,19 +15,18 @@ using namespace clarity;
  * example program.
  *
  */
-struct PageContent {    
+struct PageContent {
     virtual ClarityNode *content(ClarityNode *innerContent = nullptr) = 0;
 };
 
 /**
- * @brief Provides a 'List Nodes' button and eventually perhaps other controls meant to provide a test
- * framework for new and existing controls as well as aid users in developing and testing their
+ * @brief Provides a 'List Nodes' button and eventually perhaps other controls meant to provide a
+ * test framework for new and existing controls as well as aid users in developing and testing their
  * projects.
  *
  */
 struct TestFramework : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
-
         val listNodes = ClarityNode::CLElement_["listNodes_double"];
 
         CLNodeFactory<HybridNode, double, double> rootBuilder("div", "tf_root");
@@ -58,8 +57,18 @@ struct TestFramework : public PageContent {
         CLNodeFactory<HybridNode, double, double> testareaBuilder =
             rootBuilder.withName("testarea_subnode").withChildrenOf(testarea);
 
+        auto *pageViewer = sidebarBuilder.withName("pageViewer")
+                               .withTag("svg")
+                               .withAttributes({{"width", val("600")},
+                                                {"height", val("100")},
+                                                {"viewBox", val("0 0 600 100")},
+                                                {"style", val("border: 1px solid black")}})
+                               .build();
+        sidebarBuilder.br();
+
         auto *listNodesButton = (CLNodeFactory<HybridNode, int, int>(sidebarBuilder))
                                     .button("listNodesButton", "List Nodes", listNodes);
+
         return root;
     }
 };

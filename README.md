@@ -96,6 +96,14 @@ When you create a node the system will install a set of event listeners that are
 
 ### Future Directions ###
 
+#### Interface Builder ####
+
+The `TestFramework` class could become a full blown interface builder. The idea is to use SVG to create a graphical representations of the nodes and have click and drag capability allowing you to create and destroy data links. An "emit source" button would allow you to produce compile-able C++ code once you get things working. While thinking about representing each node as a little circle or something in SVG I realized that we would need to solve a more general problem which is how to maintain "node mappings" of collections of things to collections of nodes. Things like the select boxes with each option being an actual Option node are an obvious application. Basically there needs to be a sort of Clarity event system with events like "nodeCreated" and "nodeDestroyed" that would fire when things changed in the data. Keeping the factories around and allowing them to respond to and generate these events might be necessary.
+
+##### Merge Switchboard and Factory? #####
+
+The "switchboard" static map in `ClarityNode` was an early hack that I came up with when I couldn't work out how to store a pointer to the `ClarityNode` that owned each `CLElement` in that `CLElement` even using allow_raw_pointers(). My initial plan had always been to store such a pointer so that things like eventListeners could directly alter the C++ data. I eventually figured it out but the switchboard remains useful for things like the node list method and is now a pretty low level part of the system.  It might be a good idea to keep the switchboard concept alive but have each `CLNF` store a pointer to all the nodes it builds. When we use a factory to create a new node this can potentially send messages to other nodes it has built. The example of adding an option to a select box again comes to mind but this could also be used to update things like the proposed interface builder above.
+
 #### Web Templates? ####
 
 There is of course the possibility of developing something akin to React's JSX pages for Clarity (CSX pages?) but the problem with creating a novel template language is that editors will not initially support it. Losing autocompletion or automatic syntax checking is a pretty high price to pay just to have your C++ code and HTML/CSS all together in one place. Maybe if the library gets enough mindshare that people are willing to write VSCode or Vim/Emacs extensions for it...
