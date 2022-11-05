@@ -92,6 +92,7 @@ struct Showcase : public PageContent {
 
         auto *inputFlexTextLabel = childOfMaindivBuilder_str.withName("inputFlexTextLabel")
                                        .withPeer(flexLabel)
+                                       .withAttributes({{"title", val("YOU CAN CHANGE THE LABEL TEXT")}})
                                        .textInput();
         childOfMaindivBuilder.br();
 
