@@ -223,7 +223,7 @@ class CLNodeFactory {
                 // the node, and then set cppVal_ back to null.
                 newNode->setCppVal(initVal_);
                 newNode->refresh();
-                newNode->setCppVal(nullptr);
+                newNode->setCppVal(nullptr);               
             }
         }
 
@@ -434,18 +434,18 @@ class CLNodeFactory {
      * @param cppVal
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory withInitVal(V *initVal) const & {
+    INLINE CLNodeFactory withInitVal(V &initVal) const & {
         // assert(cppVal != nullptr);
 
         CLNodeFactory cpy(*this);
-        cpy.initVal_ = initVal;
+        cpy.initVal_ = &initVal;
         return cpy;
     }
 
-    INLINE CLNodeFactory withInitVal(V *initVal) && {
+    INLINE CLNodeFactory withInitVal(V &initVal) && {
         // assert(cppVal != nullptr);
         CLNodeFactory cpy(std::move(*this));
-        cpy.initVal_ = initVal;
+        cpy.initVal_ = &initVal;
         return cpy;
     }
 

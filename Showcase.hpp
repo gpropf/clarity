@@ -116,14 +116,15 @@ struct Showcase : public PageContent {
         childOfMaindivBuilder.br();
         childOfMaindivBuilder.br();
 
-        string *clickme = new string("CLICK ME");
+        //string *clickme = new string("CLICK ME");
+        string clickme2("CLICK ME TOO");
         // Demonstrates the withEventListenerGenerator method.
         auto *elgDemo_tinp =
             CLNodeFactory<HybridNode, string, double>(childOfMaindivBuilder).withName("elgDemo_tinp")
                 //.withCppVal(canvas1->getPtr2CurrentCellVal())
                 .withAttributes({{"style", val("border: 3px solid #4055aa")}, {"size", val(15)}})
                 .withEventListenerGenerator("mousedown", ClarityNode::CLElement_["elgInputAlltypesMousedown"])
-                .withInitVal(clickme)
+                .withInitVal(clickme2)
                 .textInput();
 
         childOfMaindivBuilder.br();
