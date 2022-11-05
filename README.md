@@ -54,7 +54,7 @@ __C++__
 : a single GUI element generally created using a node factory. Nodes contains a C++ pointer whose type is determined by the template parameter. Note that the pointer can be null but its type will be used to determine how data is handled in that node.
 
 **Node Factory**
-: Due to the large number of factors that come into play in creating nodes, we set up factory objects (using the CLNodeFactory class) that store certain persistent parameters relevant to setting up nodes. The most important of these parameters are the template parameters that determine the C++ data types of the underlying data.
+: Due to the large number of factors that come into play in creating nodes, we set up factory objects (using the `CLNodeFactory` class) that store certain persistent parameters relevant to setting up nodes. The most important of these parameters are the template parameters that determine the C++ data types of the underlying data. The `CLNodeFactory` class has a number of methods whose names start with "with" such as `withName()`. Use these methods to construct your interface.
 
 **Peer**
 : Nodes can have relationships with other nodes that result in automatic data movement and updating when one node is changed. This can be either due to the end user or the model changing something. A node that has such a relationship with another is called a peer.
