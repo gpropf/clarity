@@ -322,7 +322,7 @@ class CLElement {
   static listenerGenerators = {    
     "input": {
       "text": {
-        "mousedown": CLElement.elgInputAlltypesMousedown,
+        //"mousedown": CLElement.elgInputAlltypesMousedown,
         "change":CLElement.elgInputAlltypesChange
       },
       "range": {

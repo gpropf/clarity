@@ -116,10 +116,12 @@ class ClarityNode {
 
     static void addEventListenerGenerator(const string &nodeTypeCode, val handlerGenerator) {}
 
-    void addEventListener(std::function<void()> fn, const string &eventName) {
-        //val jsEventListener = cle_.call<val>("eventListenerify", val(fn));
-        domElement_.call<void>("addEventListener", eventName, val(fn));
-        //return jsEventListener;
+    void addEventListener(std::function<void()> fn, const string &eventName) {        
+        domElement_.call<void>("addEventListener", eventName, val(fn));        
+    }
+
+    void addEventListener(val elfn, const string &eventName) {        
+        domElement_.call<void>("addEventListener", eventName, elfn);        
     }
 
     INLINE string getTag() const { return tag_; }

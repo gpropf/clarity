@@ -116,6 +116,14 @@ struct Showcase : public PageContent {
         childOfMaindivBuilder.br();
         childOfMaindivBuilder.br();
 
+        auto *elgDemo_tinp =
+            CLNodeFactory<HybridNode, string, double>(childOfMaindivBuilder).withName("elgDemo_tinp")
+                //.withCppVal(canvas1->getPtr2CurrentCellVal())
+                .withAttributes({{"style", val("border: 3px solid #4055aa")}, {"size", val(15)}})
+                .withEventListenerGenerator("mousedown", ClarityNode::CLElement_["elgInputAlltypesMousedown"])
+                .textInput();
+        childOfMaindivBuilder.br();
+
         string *textarea_val = new string("This is a textarea.");
         auto *textarea1 =
             childOfMaindivBuilder_str.withName("textarea1").textarea(textarea_val, 3, 40);

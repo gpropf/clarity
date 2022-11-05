@@ -42,14 +42,18 @@ class CLNodeFactory {
                                      //!< any new nodes as its children.
 
     Nc<V> *peer_ = nullptr;  //!< If we create a new MN or attach one, we set this. Note
-                                  //!< that we can create ClarityNodes with no MN. These would store
-                                  //!< their data entirely in their DOM elements.
+                             //!< that we can create ClarityNodes with no MN. These would store
+                             //!< their data entirely in their DOM elements.
 
     N linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
                                     //!< values from node to node unchanged.
 
-    val a2b_xfmr_ = val(NULL);
-    val b2a_xfmr_ = val(NULL);
+    val a2b_xfmr_ = val(NULL);  //!< JS value transformer when moving data from node a-->b.
+    val b2a_xfmr_ = val(NULL);  //!< JS value transformer when moving data from node b-->a.
+
+    pair<string, val> eventListenerGenerator_;
+    // val eventListenerGenerator_ = val::null();
+
     bool useExistingDOMElement_ = false;  //!< Primarily this is intended for creating attribute
                                           //!< nodes. The idea is that some nodes control attributes
                                           //!< of other nodes. The canonical example of this would
@@ -94,6 +98,7 @@ class CLNodeFactory {
         b2a_xfmr_ = clnf_from.b2a_xfmr_;
         useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
         attrs_ = clnf_from.attrs_;
+        eventListenerGenerator_ = clnf_from.eventListenerGenerator_;
 
         peer_ = nullptr;
         cppVal_ = nullptr;
@@ -212,14 +217,35 @@ class CLNodeFactory {
         // newNode->refresh();
         if (nameIsForSingleUse_) name_ = "";
         newNode->finalize();
+
+        if (eventListenerGenerator_.first != "") {
+            val domElement = newNode->getDomElement();
+            val eventListener = eventListenerGenerator_.second(domElement);
+            newNode->addEventListener(eventListener, eventListenerGenerator_.first);
+        }
+
         return newNode;
     }
 
+    /**
+     * @brief Emits a warning if the provided node lacks a name.
+     *
+     * @param node
+     * @param nodeType
+     * @return void
+     */
     INLINE void warnNoName(ClarityNode *node, const string &nodeType) {
         if (tag_ == "br" || tag_ == "hr") return;
         if (node->getName() == "") node->nodelog("Built a <" + nodeType + "> tag without a name!");
     }
 
+    /**
+     * @brief If we are attaching the node to an existing HTML tag, the attachmentId_
+     * argument is the id of that tag.
+     *
+     * @param attachmentId_
+     * @return INLINE
+     */
     INLINE CLNodeFactory withAttachmentId(const string &attachmentId_) const & {
         CLNodeFactory cpy(*this);
         cpy.attachmentId_ = attachmentId_;
@@ -232,6 +258,13 @@ class CLNodeFactory {
         return cpy;
     }
 
+    /**
+     * @brief Tells the system how we are attaching the new node. See docs on
+     * ClarityNode::AttachmentMode for further information.
+     *
+     * @param attachmentMode
+     * @return INLINE
+     */
     INLINE CLNodeFactory withAttachmentMode(ClarityNode::AttachmentMode attachmentMode) const & {
         CLNodeFactory cpy(*this);
         cpy.attachmentMode_ = attachmentMode;
@@ -245,7 +278,7 @@ class CLNodeFactory {
     }
 
     /**
-     * @brief Create the element with the listed attrs.
+     * @brief Create the node with the listed DOM element attrs.
      *
      * @param attrs
      * @return CLNodeFactory
@@ -488,6 +521,28 @@ class CLNodeFactory {
     }
 
     /**
+     * @brief attach a custom event listener to the nodes we create using the provided generator
+     * function.
+     *
+     * @param eventName
+     * @param elgfn
+     * @return CLNodeFactory
+     */
+    INLINE CLNodeFactory withEventListenerGenerator(const string &eventName, val elgfn) const & {
+        CLNodeFactory cpy(*this);
+        cpy.eventListenerGenerator_.first = eventName;
+        cpy.eventListenerGenerator_.second = elgfn;
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withEventListenerGenerator(const string &eventName, val elgfn) && {
+        CLNodeFactory cpy(std::move(*this));
+        cpy.eventListenerGenerator_.first = eventName;
+        cpy.eventListenerGenerator_.second = elgfn;
+        return cpy;
+    }
+
+    /**
      * @brief A button.
      *
      * @param name
@@ -499,6 +554,7 @@ class CLNodeFactory {
         Nc<V> *button = withName(name).withTag("button").build();
         button->setBoundField("textContent");
         button->setDOMVal(val(text));
+
         if (onClickEL != val::null()) {
             val buttonDOMElement = button->getCLE()["domElement"];
             buttonDOMElement.call<void>("addEventListener", val("click"), onClickEL);
@@ -507,6 +563,12 @@ class CLNodeFactory {
         return button;
     }
 
+    /**
+     * @brief Puts the provided nodes inside a div.
+     *
+     * @param nodes
+     * @return CLNodeFactory
+     */
     INLINE Nc<V> *group(const vector<ClarityNode *> &nodes) {
         Nc<V> *group = withTag("div").build();
         for (auto node : nodes) {
@@ -652,9 +714,9 @@ class CLNodeFactory {
     INLINE Select<V> *select() {
         Select<V> *sel = new Select<V>(name_, "select", useExistingDOMElement_, attachmentMode_);
         sel = static_cast<Select<V> *>(build(sel));
-        sel->populateOptions();        
+        sel->populateOptions();
         return sel;
-    }   
+    }
 
     /**
      * @brief Attribute nodes are a special case. They represent a single
