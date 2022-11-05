@@ -31,7 +31,14 @@ class CLNodeFactory {
     string name_;                     //!< Name to be used with elements this factory builds.
     bool nameIsForSingleUse_ = true;  //!< If true the name value is set to '' after one use.
 
-    V *cppVal_ = nullptr;
+    V *cppVal_ =
+        nullptr;  //!< The C++ model data that this node is connected to. This can be null but if it
+                  //!< is, the node will probably be rather useless unless it gets its data by being
+                  //!< a peer of a node that does have a non-null here.
+
+    V *initVal_ = nullptr;  //!< If a node does not have a cppVal_ and doesn't get initialized
+                            //!< through peering we can provide a value to initialize it with. Note
+                            //!< that this value is not preserved after initialization.
 
     string innerHTML_ = "";
 
@@ -93,7 +100,6 @@ class CLNodeFactory {
         boundField_ = clnf_from.boundField_;
         parent_ = clnf_from.parent_;
         linkMultiplierConstant_ = clnf_from.linkMultiplierConstant_;
-        // transformFn_ = clnf_from.transformFn_;
         a2b_xfmr_ = clnf_from.a2b_xfmr_;
         b2a_xfmr_ = clnf_from.b2a_xfmr_;
         useExistingDOMElement_ = clnf_from.useExistingDOMElement_;
@@ -102,6 +108,7 @@ class CLNodeFactory {
 
         peer_ = nullptr;
         cppVal_ = nullptr;
+        initVal_ = nullptr;
     }
 
     /**
@@ -210,6 +217,14 @@ class CLNodeFactory {
 
         if (cppVal_) {
             newNode->setCppVal(cppVal_);
+        } else {
+            if (initVal_) {
+                // If we have a special initializer value we set cppVal_ temporarily to it, refresh
+                // the node, and then set cppVal_ back to null.
+                newNode->setCppVal(initVal_);
+                newNode->refresh();
+                newNode->setCppVal(nullptr);
+            }
         }
 
         warnNoName(newNode, tag_);
@@ -409,6 +424,28 @@ class CLNodeFactory {
         // assert(cppVal != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.cppVal_ = cppVal;
+        return cpy;
+    }
+
+    /**
+     * @brief For nodes that don't have a cppVal_ or a peer that can provide them with an initial
+     * value we can supply one here.
+     *
+     * @param cppVal
+     * @return CLNodeFactory
+     */
+    INLINE CLNodeFactory withInitVal(V *initVal) const & {
+        // assert(cppVal != nullptr);
+
+        CLNodeFactory cpy(*this);
+        cpy.initVal_ = initVal;
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withInitVal(V *initVal) && {
+        // assert(cppVal != nullptr);
+        CLNodeFactory cpy(std::move(*this));
+        cpy.initVal_ = initVal;
         return cpy;
     }
 
