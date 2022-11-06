@@ -177,7 +177,7 @@ struct Showcase : public PageContent {
         carOptions2->push_back({3, "Lada"});
         carOptions2->push_back({4, "Ferrari"});
 
-        int * carSelection = new int(3);
+        int * carSelection = new int(4);
 
         SimpleSelect<int> *carSelect_ss =
             simpleSelectBuilder.withName("carSelect_ss").withCppVal(carSelection).simpleSelect<string>(*carOptions2);

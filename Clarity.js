@@ -305,10 +305,11 @@ class CLElement {
     this.domElement_ = el    
   }  
 
-  addOptionElementFromValueLabelPair(v, lbl) {
+  addOptionElementFromValueLabelPair(v, lbl, selected = false) {
     var opt = document.createElement("option");
     opt.value = v;
     opt.label = lbl;
+    if (selected) opt.selected = true;
     this.domElement_.appendChild(opt);
   }
 

@@ -90,17 +90,16 @@ class SimpleSelect : public HybridNode<V> {
 
     virtual string cppValToString() const;
 
-    //  {
-    //     if (this->cppVal_ == nullptr) return "Select NULLPTR";
-    //     // return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
-    //     return string("FIXME");
-    // }
-
+    /**
+     * @brief Make <option> tags for each option. If any option's value is equal to the current
+     * modelVal we show it as pre-selected.
+     *
+     */
     void populateOptions() {
         for (auto opt : options_) {
             auto [optFirst, optSecond] = opt;
             this->getCLE().template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
-                                               val(optSecond));
+                                               val(optSecond), val(optFirst == *this->cppVal_));
         }
     }
 
@@ -162,7 +161,7 @@ class Checkbox : public HybridNode<V> {
 
     virtual val getVal() const;
 
-    virtual void setDOMVal(const val &inval);    
+    virtual void setDOMVal(const val &inval);
 
    protected:
 };
