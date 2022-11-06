@@ -305,7 +305,7 @@ class CLElement {
     this.domElement_ = el    
   }  
 
-  addOptionElementFromString(v, lbl) {
+  addOptionElementFromValueLabelPair(v, lbl) {
     var opt = document.createElement("option");
     opt.value = v;
     opt.label = lbl;

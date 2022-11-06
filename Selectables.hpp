@@ -31,15 +31,11 @@ class Select : public HybridNode<V> {
    public:
     Select(const string &name, const string &tag, bool useExistingDOMElement,
            ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
-        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
-        // if (domElement != val::null()) {
-        // Selectables.call<void>("installEventListeners", domElement, val("select"), val(""));
-        //}
-    }
+        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
     ~Select() { cout << "DESTROYING Select with id: " << this->id_ << "\n"; }
 
-    inline virtual void finalize() {
+    INLINE virtual void finalize() {
         cout << "Select::finalize()\n";
         val Selectables = val::global("Selectables");
         val expListenerGens = Selectables["expListenerGens"];
@@ -47,29 +43,26 @@ class Select : public HybridNode<V> {
                                            expListenerGens);
     }
 
-    inline string cppValToString() const {
-        if (this->cppVal_ == nullptr) return "Select NULLPTR";
-        // return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
-        return string("FIXME");
-    }
+    virtual string cppValToString() const;
+
+    //  {
+    //     if (this->cppVal_ == nullptr) return "Select NULLPTR";
+    //     // return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
+    //     return string("FIXME");
+    // }
 
     void populateOptions() {
         for (auto opt : *this->cppVal_) {
             auto [optFirst, optSecond] = opt;
-            this->getCLE().template call<void>("addOptionElementFromString", val(optFirst),
+            this->getCLE().template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
                                                val(optSecond));
         }
     }
 
-    virtual void refreshDOMValueFromModel(){};
+    inline virtual void refreshDOMValueFromModel() { populateOptions(); };
 
     virtual void updateNodeFromDom() {
         cout << "Select::updateNodeFromDom() FIXME! This method does nothing.\n";
-        // val jsval = this->getVal();
-        // if (this->cppVal_ != nullptr) {
-        //     cout << "cppVal_ exists!\n";
-        //     //*cppVal_ = jsval.as<V>();
-        // }
     }
 
     // The "V" is for vector.

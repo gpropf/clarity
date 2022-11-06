@@ -753,7 +753,8 @@ class CLNodeFactory {
     INLINE Select<V> *select() {
         Select<V> *sel = new Select<V>(name_, "select", useExistingDOMElement_, attachmentMode_);
         sel = static_cast<Select<V> *>(build(sel));
-        sel->populateOptions();
+        //sel->populateOptions();
+        sel->refresh();
         return sel;
     }
 

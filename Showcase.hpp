@@ -168,10 +168,10 @@ struct Showcase : public PageContent {
         Select<vector<pair<int, string>>> *carSelect =
             selectBuilder.withName("cars").withCppVal(carOptions).select();
 
-        // carSelect->getCLE().template call<void>("addOptionElementFromString");
-        //  carSelect->getCLE().template call<void>("addOptionElementFromString",
+        // carSelect->getCLE().template call<void>("addOptionElementFromValueLabelPair");
+        //  carSelect->getCLE().template call<void>("addOptionElementFromValueLabelPair",
         //  val((*carSelect->getCppVal())[0])); carSelect->getCLE().template
-        //  call<void>("addOptionElementFromString", val((*carSelect->getCppVal())[1]));
+        //  call<void>("addOptionElementFromValueLabelPair", val((*carSelect->getCppVal())[1]));
 
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
         // string * checkme = new string("checked");
