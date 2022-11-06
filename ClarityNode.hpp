@@ -236,7 +236,7 @@ class ClarityNode {
     INLINE void setDomElement(val domElement) { domElement_ = domElement; }
     INLINE string getName() const { return name_; }
     INLINE virtual void printState() const { cle_.call<void>("printState"); }
-    INLINE static ClarityNode *getCLElementById(const int id) { return switchboard[id]; }
+    INLINE static ClarityNode *getClarityNodeById(const int id) { return switchboard[id]; }
     // INLINE static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
     INLINE void toggleClean() { clean_ = !clean_; }
 
@@ -270,14 +270,14 @@ class ClarityNode {
     }
 
     static void pushValToPeersById(int id) {
-        ClarityNode *cnn = getCLElementById(id);
+        ClarityNode *cnn = getClarityNodeById(id);
         cnn->pushValToPeers(cnn);
     }
 
     virtual void updateNodeFromDom() = 0;
 
     static INLINE void updateNodeFromDomById(int id) {
-        ClarityNode *cnn = getCLElementById(id);
+        ClarityNode *cnn = getClarityNodeById(id);
         cnn->updateNodeFromDom();
         cnn->pushValToPeers(cnn);
     }
@@ -434,7 +434,7 @@ class ClarityNode {
         }
 
         static void pullValFromPeersById(int id) {
-            ClarityNode *cnn = getCLElementById(id);
+            ClarityNode *cnn = getClarityNodeById(id);
             cnn->pullValFromPeers(cnn);
         }
     */

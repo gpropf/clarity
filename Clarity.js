@@ -272,7 +272,7 @@ class CLElement {
   //createDOMElement(id, tag, name, attachmentMode, attachmentId = null) {
   createDOMElement(id, attachmentMode, attachmentId = null) {
 
-    this.clarityNode_ = Module.ClarityNode.getCLElementById(id);
+    this.clarityNode_ = Module.ClarityNode.getClarityNodeById(id);
     this.id_ = this.clarityNode_.getId();
     this.tag_ = this.clarityNode_.getTag();
     this.name = this.clarityNode_.getName();

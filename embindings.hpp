@@ -29,7 +29,7 @@ EMSCRIPTEN_BINDINGS(clarity) {
         // .class_function("pullValFromPeersById",
         //                 &ClarityNode::pullValFromPeersById,
         //                 allow_raw_pointers())
-        .class_function("getCLElementById", &ClarityNode::getCLElementById,
+        .class_function("getClarityNodeById", &ClarityNode::getClarityNodeById,
                         allow_raw_pointers())
         //.class_function("markNodeDirtyById", &ClarityNode::markNodeDirtyById,
         //                allow_raw_pointers())
