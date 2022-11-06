@@ -42,10 +42,6 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .class_function("listNodes_double", &HybridNode<double>::listNodes, allow_raw_pointers());
         //.function("setDOMVal", &HybridNode<int>::setDOMVal, allow_raw_pointers());
 
-
-    class_<SimpleSelect<int>>("SimpleSelect")
-        .function("setCppVal", &SimpleSelect<int>::setCppVal, allow_raw_pointers());
-
     enum_<ClarityNode::AttachmentMode>("AttachmentMode")
         .value("NEW", ClarityNode::AttachmentMode::NEW)
         .value("REPLACE_ID", ClarityNode::AttachmentMode::REPLACE_ID)
