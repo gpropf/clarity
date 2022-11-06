@@ -20,7 +20,7 @@ namespace clarity {
 // Example from Stack Overflow about collection template might be relevant here.
 // https://stackoverflow.com/questions/956658/can-you-use-c-templates-to-specify-a-collection-type-and-the-specialization-of
 template <template <typename, typename> class CollectionType, class ItemType,
-          class Allocator = std::allocator<ItemType> >
+          class Allocator = std::allocator<ItemType>>
 class Test {
    public:
     CollectionType<ItemType, Allocator> m_collection;
@@ -72,6 +72,58 @@ class Select : public HybridNode<V> {
 };
 
 template <typename V>
+class SimpleSelect : public HybridNode<V> {
+   public:
+    SimpleSelect(const string &name, const string &tag, bool useExistingDOMElement,
+                 ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
+        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
+
+    ~SimpleSelect() { cout << "DESTROYING SimpleSelect with id: " << this->id_ << "\n"; }
+
+    INLINE virtual void finalize() {
+        cout << "SimpleSelect::finalize()\n";
+        val Selectables = val::global("Selectables");
+        val simpleSelectGens = Selectables["simpleSelectGens"];
+        ClarityNode::CLElement_.call<void>("installEventListenersByTagAndType", this->cle_,
+                                           simpleSelectGens);
+    }
+
+    virtual string cppValToString() const;
+
+    //  {
+    //     if (this->cppVal_ == nullptr) return "Select NULLPTR";
+    //     // return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
+    //     return string("FIXME");
+    // }
+
+    void populateOptions() {
+        for (auto opt : options_) {
+            auto [optFirst, optSecond] = opt;
+            this->getCLE().template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
+                                               val(optSecond));
+        }
+    }
+
+    inline virtual void refreshDOMValueFromModel() { populateOptions(); };
+
+    virtual void updateNodeFromDom() {
+        int currentSelection = this->cle_["currentSelection"].template as<int>();
+        cout << "SimpleSelect::updateNodeFromDom() currentSelection = " << currentSelection << endl;
+        *this->cppVal_ = currentSelection;
+    }
+
+    // The "V" is for vector.
+    INLINE virtual string getNodeTypeCode() { return string("SS"); }
+
+    inline void setOptions(vector<pair<V, string>> &options) { options_ = options; }
+
+    virtual void setDOMVal(const val &inval);
+
+   protected:
+    vector<pair<V, string>> options_;
+};
+
+template <typename V>
 class Checkbox : public HybridNode<V> {
    public:
     Checkbox(const string &name, const string &tag, bool useExistingDOMElement,
@@ -110,22 +162,7 @@ class Checkbox : public HybridNode<V> {
 
     virtual val getVal() const;
 
-    virtual void setDOMVal(const val &inval);
-
-    // virtual void updateNodeFromDom() {
-    //     cout << "************************************ Checkbox::updateNodeFromDom()\n";
-    //     val jsval = this->getVal();
-    //     val checked = this->domElement_["checked"];
-    //     cout << "this->domElement_['checked'] = " << checked.as<bool>() << "\n";
-    //     bool v = this->domElement_.template call<bool>("getAttribute", val("checked"));
-    //     cout << "Box is: " << v << "\n";
-
-    //     if (this->cppVal_ != nullptr) {
-    //         cout << "cppVal_ exists!\n";
-    //         *this->cppVal_ = jsval.as<V>();
-    //         cout << "Checkbox cppVal_ is now: " << *this->cppVal_ << "\n";
-    //     }
-    // }
+    virtual void setDOMVal(const val &inval);    
 
    protected:
 };

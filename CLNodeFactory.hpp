@@ -758,6 +758,16 @@ class CLNodeFactory {
         return sel;
     }
 
+    template <typename OptLT>
+    INLINE SimpleSelect<V> *simpleSelect(vector<pair<V, OptLT>> &options) {
+        SimpleSelect<V> *sel = new SimpleSelect<V>(name_, "select", useExistingDOMElement_, attachmentMode_);
+        sel = static_cast<SimpleSelect<V> *>(build(sel));
+        //sel->populateOptions();
+        sel->setOptions(options);
+        sel->refresh();
+        return sel;
+    }
+
     /**
      * @brief Attribute nodes are a special case. They represent a single
      * attribute of another node and thus do not have their own DOM element.

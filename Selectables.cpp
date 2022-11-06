@@ -6,6 +6,19 @@
 // val CLElement_ = val::global("CLElement");
 
 template <>
+string SimpleSelect<int>::cppValToString() const {
+    // cout << "HybridNode<string>::cppValToString()\n";
+    if (cppVal_ == nullptr) return "SimpleSelect<int> NULLPTR";
+    return string("Current selection index: ") + to_string(*cppVal_);  
+}
+
+template <>
+void SimpleSelect<int>::setDOMVal(const val &inval) {
+    //this->domElement_.set("checked", inval);
+    cout << "SimpleSelect<int>::setDOMVal(const val &inval)\n";
+}
+
+template <>
 string Select<vector<pair<int, string>>>::cppValToString() const {
     // cout << "HybridNode<string>::cppValToString()\n";
     if (cppVal_ == nullptr) return "Select<vector<pair<int, string>>> NULLPTR";
