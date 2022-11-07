@@ -19,12 +19,14 @@ namespace clarity {
 
 // Example from Stack Overflow about collection template might be relevant here.
 // https://stackoverflow.com/questions/956658/can-you-use-c-templates-to-specify-a-collection-type-and-the-specialization-of
-template <template <typename, typename> class CollectionType, class ItemType,
-          class Allocator = std::allocator<ItemType>>
-class Test {
-   public:
-    CollectionType<ItemType, Allocator> m_collection;
-};
+// Leaving this commented out since it's not actually used here.
+
+// template <template <typename, typename> class CollectionType, class ItemType,
+//           class Allocator = std::allocator<ItemType>>
+// class Test {
+//    public:
+//     CollectionType<ItemType, Allocator> m_collection;
+// };
 
 template <typename V>
 class Select : public HybridNode<V> {
@@ -45,12 +47,6 @@ class Select : public HybridNode<V> {
 
     virtual string cppValToString() const;
 
-    //  {
-    //     if (this->cppVal_ == nullptr) return "Select NULLPTR";
-    //     // return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
-    //     return string("FIXME");
-    // }
-
     void populateOptions() {
         for (auto opt : *this->cppVal_) {
             auto [optFirst, optSecond] = opt;
@@ -65,7 +61,6 @@ class Select : public HybridNode<V> {
         cout << "Select::updateNodeFromDom() FIXME! This method does nothing.\n";
     }
 
-    // The "V" is for vector.
     INLINE virtual string getNodeTypeCode() { return string("SV"); }
 
    protected:
@@ -111,8 +106,9 @@ class SimpleSelect : public HybridNode<V> {
         *this->cppVal_ = currentSelection;
     }
 
-    // The "V" is for vector.
     INLINE virtual string getNodeTypeCode() { return string("SS"); }
+
+    inline pair<V, string> &getSelectedPair()  { return this->options_[*this->cppVal_]; }
 
     inline void setOptions(vector<pair<V, string>> &options) { options_ = options; }
 
@@ -127,13 +123,7 @@ class Checkbox : public HybridNode<V> {
    public:
     Checkbox(const string &name, const string &tag, bool useExistingDOMElement,
              ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
-        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {
-        // val domElement = ClarityNode::getDomElement();
-
-        // if (domElement != val::null()) {
-
-        //}
-    }
+        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
     inline virtual void finalize() {
         cout << "Checkbox::finalize()\n";
@@ -147,7 +137,6 @@ class Checkbox : public HybridNode<V> {
 
     inline string cppValToString() const {
         if (this->cppVal_ == nullptr) return "Checkbox NULLPTR";
-        // return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
         return string("FIXME");
     }
 
@@ -156,7 +145,6 @@ class Checkbox : public HybridNode<V> {
         HybridNode<V>::refreshDOMValueFromModel();
     };
 
-    // The "V" is for vector.
     INLINE virtual string getNodeTypeCode() { return string("CB"); }
 
     virtual val getVal() const;

@@ -46,9 +46,9 @@ class Selectables {
       element.currentSelection = parseInt(e.target.value);
       console.log("elgSimpleSelectAlltypesChange element id: " + element.id + " Value changed to: " + e.target.value); 
       Module.ClarityNode.updateNodeFromDomById(element.id)      
-      //var selectNode = Module.ClarityNode.getClarityNodeById(element.id);
-      //selectNode.setDOMVal(e.target.value);
-           
+      // var selectNode = Module.ClarityNode.getClarityNodeById(element.id);
+      // var selectionPair = selectNode.getSelectedPair();
+      //selectNode.setDOMVal(e.target.value);           
     }
   }
 
