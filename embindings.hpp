@@ -43,7 +43,8 @@ EMSCRIPTEN_BINDINGS(clarity) {
     //.function("setDOMVal", &HybridNode<int>::setDOMVal, allow_raw_pointers());
 
     class_<SimpleSelect<int>>("SimpleSelect")
-        .function("getSelectedPair", &SimpleSelect<int>::getSelectedPair, allow_raw_pointers());
+        .function("getSelectedLabel", &SimpleSelect<int>::getSelectedLabel, allow_raw_pointers())
+        .function("foo", &SimpleSelect<int>::foo, allow_raw_pointers());
 
     enum_<ClarityNode::AttachmentMode>("AttachmentMode")
         .value("NEW", ClarityNode::AttachmentMode::NEW)

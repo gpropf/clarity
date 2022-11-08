@@ -45,10 +45,13 @@ class Selectables {
     return function (e) {
       element.currentSelection = parseInt(e.target.value);
       console.log("elgSimpleSelectAlltypesChange element id: " + element.id + " Value changed to: " + e.target.value); 
-      Module.ClarityNode.updateNodeFromDomById(element.id)      
+      Module.ClarityNode.updateNodeFromDomById(element.id)   
+      console.log("Now we say foo!~");
+      element.cn.foo();   
       // var selectNode = Module.ClarityNode.getClarityNodeById(element.id);
-      // var selectionPair = selectNode.getSelectedPair();
-      //selectNode.setDOMVal(e.target.value);           
+      var selectedCar = element.cn.getSelectedLabel();
+      //selectNode.setDOMVal(e.target.value);       
+      console.log("Selected car is " + selectedCar); 
     }
   }
 

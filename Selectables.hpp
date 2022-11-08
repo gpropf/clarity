@@ -75,7 +75,10 @@ class SimpleSelect : public HybridNode<V> {
 
     ~SimpleSelect() { cout << "DESTROYING SimpleSelect with id: " << this->id_ << "\n"; }
 
+    inline void foo() { cout << "SimpleSelect says FOO!" << endl; }
+
     INLINE virtual void finalize() {
+        this->cle_.set("cn", this);
         cout << "SimpleSelect::finalize()\n";
         val Selectables = val::global("Selectables");
         val simpleSelectGens = Selectables["simpleSelectGens"];
@@ -108,7 +111,7 @@ class SimpleSelect : public HybridNode<V> {
 
     INLINE virtual string getNodeTypeCode() { return string("SS"); }
 
-    inline pair<V, string> &getSelectedPair()  { return this->options_[*this->cppVal_]; }
+    inline string getSelectedLabel() { return this->options_[*this->cppVal_].second; }
 
     inline void setOptions(vector<pair<V, string>> &options) { options_ = options; }
 
