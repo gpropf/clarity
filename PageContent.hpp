@@ -27,7 +27,7 @@ struct PageContent {
  */
 struct TestFramework : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
-        val listNodes = ClarityNode::CLElement_["listNodes_double"];
+        val listNodes = ClarityNode::JSProxyNode_["listNodes_double"];
 
         CLNodeFactory<HybridNode, double, double> rootBuilder("div", "tf_root");
 

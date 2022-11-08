@@ -1,5 +1,5 @@
 /**
- * CLElement class and helper functions. This is the main JS file in the project.
+ * JSProxyNode class and helper functions. This is the main JS file in the project.
  * 
  */
 
@@ -15,7 +15,7 @@ function loadAuxScript(scriptName) {
 var auxScripts = ["auxExample1.js","auxExample2.js"];
 auxScripts.map(loadAuxScript);
 
-class CLElement {
+class JSProxyNode {
 
   constructor() { }  
   
@@ -101,15 +101,15 @@ class CLElement {
   // static eventListenerGenerators = {
   //   "input": [{
   //     "eventName": "change", "eventHandlerGenerator":
-  //     CLElement.elgInputAlltypesChange
+  //     JSProxyNode.elgInputAlltypesChange
   //   }],
   //   "textarea": [{
   //     "eventName": "input", "eventHandlerGenerator":
-  //     CLElement.elgTextareaAlltypesInput
+  //     JSProxyNode.elgTextareaAlltypesInput
   //   },
   //   {
   //     "eventName": "change", "eventHandlerGenerator":
-  //     CLElement.elgTextareaAlltypesChange
+  //     JSProxyNode.elgTextareaAlltypesChange
   //   }]
   // }
 
@@ -189,9 +189,9 @@ class CLElement {
   static blackbody_st(temp, originalColor = { "r": 15, "g": 15, "b": 15 }) {
     temp += 273;
 
-    var r = originalColor.r + CLElement.zerofloor(temp - 500);
-    var g = originalColor.g + CLElement.zerofloor(temp - 1000) / 10;
-    var b = originalColor.b + CLElement.zerofloor(temp - 1500) / 10;
+    var r = originalColor.r + JSProxyNode.zerofloor(temp - 500);
+    var g = originalColor.g + JSProxyNode.zerofloor(temp - 1000) / 10;
+    var b = originalColor.b + JSProxyNode.zerofloor(temp - 1500) / 10;
 
     if (r > 255) r = 255;
     if (g > 255) g = 255;
@@ -238,14 +238,14 @@ class CLElement {
 
   createDOMElementByTagType() {
     var el
-    if (CLElement.tagToUrl[this.tag_]) {
-      el = document.createElementNS(CLElement.tagToUrl[this.tag_], this.tag_)
+    if (JSProxyNode.tagToUrl[this.tag_]) {
+      el = document.createElementNS(JSProxyNode.tagToUrl[this.tag_], this.tag_)
     }
     else {
       el = document.createElement(this.tag_)
     }
-    // if (CLElement.extraInitCode[this.tag_]) {
-    //   CLElement.extraInitCode[this.tag_](el);
+    // if (JSProxyNode.extraInitCode[this.tag_]) {
+    //   JSProxyNode.extraInitCode[this.tag_](el);
     // }
     return el
   }
@@ -323,26 +323,26 @@ class CLElement {
   static listenerGenerators = {    
     "input": {
       "text": {
-        //"mousedown": CLElement.elgInputAlltypesMousedown,
-        "change":CLElement.elgInputAlltypesChange
+        //"mousedown": JSProxyNode.elgInputAlltypesMousedown,
+        "change":JSProxyNode.elgInputAlltypesChange
       },
       "range": {
-        "mousedown": CLElement.elgInputAlltypesMousedown,
-        "change":CLElement.elgInputAlltypesChange
+        "mousedown": JSProxyNode.elgInputAlltypesMousedown,
+        "change":JSProxyNode.elgInputAlltypesChange
       }
     },
     "textarea": {
       "NOTYPE": 
       {
-        "input": CLElement.elgTextareaAlltypesInput,
-        "change": CLElement.elgTextareaAlltypesChange
+        "input": JSProxyNode.elgTextareaAlltypesInput,
+        "change": JSProxyNode.elgTextareaAlltypesChange
       }
     }
   }  
 
   static installEventListenersByTagAndType(cle,  listenerGeneratorMap) {      
     if (cle.domElement == null) return;  
-    var eventListenerGenerators = CLElement.getEventListenerGenerators(listenerGeneratorMap, cle.tag_, cle.domElement.getAttribute("type"));
+    var eventListenerGenerators = JSProxyNode.getEventListenerGenerators(listenerGeneratorMap, cle.tag_, cle.domElement.getAttribute("type"));
     if (eventListenerGenerators == null) return;    
     var entries = Object.entries(eventListenerGenerators);
     for (const [eventName, generatorFunction] of entries) {           
@@ -389,7 +389,7 @@ function myTimer() {
   Module.ClarityNode.runCallbackById("tick")
 }
 
-window.CLElement = CLElement
+window.JSProxyNode = JSProxyNode
 
 // DEPRECATED BELOW THIS LINE ------------------------------
 
@@ -406,8 +406,8 @@ window.CLElement = CLElement
   //   console.log(opts);
   // }
 
-  // createCLElement() {
-  //   return new CLElement()
+  // createJSProxyNode() {
+  //   return new JSProxyNode()
   // }
 
     // multiplyValues(a, b) {
@@ -425,7 +425,7 @@ window.CLElement = CLElement
   // static draw_test_pattern() {
   //   console.log("draw_test_pattern");
   //   let canvasEl = document.getElementById(2);
-  //   var canvasCode = CLElement.extraInitCode["canvas"];
+  //   var canvasCode = JSProxyNode.extraInitCode["canvas"];
   //   canvasCode(canvasEl);
   // }
 
@@ -488,7 +488,7 @@ window.CLElement = CLElement
 
   // blackbody(temp) {
   //   var originalColor = { "r": 0, "g": 200, "b": 75 };
-  //   return CLElement.blackbody_st(temp, originalColor);
+  //   return JSProxyNode.blackbody_st(temp, originalColor);
   // }
 
   

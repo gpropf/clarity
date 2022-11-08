@@ -93,8 +93,8 @@ int main() {
     val cppTestFn = val::global("Module")["cppTestFn"];
     val destroyEverything = val::global("Module")["destroyEverything"];
     val runLambda = val::global("Module")["runLambda"];    
-    val blackbody_st = ClarityNode::CLElement_["blackbody_st"];
-    val listNodes = ClarityNode::CLElement_["listNodes_int"];
+    val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
+    val listNodes = ClarityNode::JSProxyNode_["listNodes_int"];
 
     CLNodeFactory<HybridNode, int, double> builder("div", "maindiv");
     auto *maindiv = builder.build();

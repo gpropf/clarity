@@ -26,7 +26,7 @@ std::string clto_str(const T &v) {
  * behavior to synchronize a data model and a web view. WebElements can contain
  * others and complex web controls can be built up in a hierarchal fashion. The
  * class is not necessarily homologous to JavaScript Dom elements but the
- * "mirror" class CLElement is currently used to store a JS Dom element and
+ * "mirror" class JSProxyNode is currently used to store a JS Dom element and
  * retain other state on the JS side. This is also the base class for all other
  * types. ClarityNode is now an abstract class. The HybridNode<T> child class is
  * what we actually use to represent web elements.
@@ -35,7 +35,7 @@ std::string clto_str(const T &v) {
 class ClarityNode {
    public:
     static map<string, std::function<void()>> callbackMap;
-    static val CLElement_;
+    static val JSProxyNode_;
 
     enum class AttachmentMode : unsigned char {
         NEW = 0,
@@ -60,7 +60,7 @@ class ClarityNode {
         val a2b_xfmr_;
         val b2a_xfmr_;
 
-        // static val CLElement_;
+        // static val JSProxyNode_;
         val get_a2b_xfmr() const;
         val get_b2a_xfmr() const;
         void set_a2b_xfmr(val xfmr);
@@ -69,8 +69,8 @@ class ClarityNode {
         template <typename T>
         DualLink(ClarityNode *nodeA, ClarityNode *nodeB, const T multiplier = 1)
             : nodeA_(nodeA), nodeB_(nodeB) {
-            a2b_xfmr_ = CLElement_.call<val>("generateTransformFn", multiplier);
-            b2a_xfmr_ = CLElement_.call<val>("generateTransformFn", 1 / multiplier);
+            a2b_xfmr_ = JSProxyNode_.call<val>("generateTransformFn", multiplier);
+            b2a_xfmr_ = JSProxyNode_.call<val>("generateTransformFn", 1 / multiplier);
         };
 
         DualLink(ClarityNode *nodeA, ClarityNode *nodeB, val a2b_xfmr, val b2a_xfmr = val(NULL))
@@ -224,7 +224,7 @@ class ClarityNode {
      * creation. I went with a short code instead of an enum to make expanding the types easier for
      * end users.
      *
-     * Update: using finalize() and CLElement.installEventListeners probably makes this unnecessary
+     * Update: using finalize() and JSProxyNode.installEventListeners probably makes this unnecessary
      * except for debugging output.
      *
      * @return string
@@ -299,7 +299,7 @@ class ClarityNode {
 
         auto [peer, xfmr] = dl.getOtherNode(this);
         if (internalVal.isNumber()) {
-            val transformedVal = CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
+            val transformedVal = JSProxyNode_.call<val>("applyTransformFn", xfmr, internalVal);
             peer->setDOMVal(transformedVal);
         } else {
             peer->setDOMVal(internalVal);
@@ -376,9 +376,9 @@ class ClarityNode {
      * node you can get a pointer to it here. */
     static map<const int, ClarityNode *> switchboard;
 
-    /** \brief Instance of the CLElement class that acts as a "proxy" in JS
+    /** \brief Instance of the JSProxyNode class that acts as a "proxy" in JS
      * space. */
-    val cle_ = val::global("CLElement").new_();
+    val cle_ = val::global("JSProxyNode").new_();
 
     val domElement_;  //!< This will be initialized if the node has its own DOM
                       //!< element.
@@ -409,7 +409,7 @@ class ClarityNode {
             auto [peer, xfmr] = dl.getOtherNode(this);
             val internalVal = peer->getVal();
             if (internalVal.isNumber()) {
-                val transformedVal = CLElement_.call<val>("applyTransformFn", xfmr, internalVal);
+                val transformedVal = JSProxyNode_.call<val>("applyTransformFn", xfmr, internalVal);
                 setDOMVal(transformedVal);
             } else {
                 setDOMVal(internalVal);
@@ -449,8 +449,8 @@ class HybridNode : public ClarityNode {
         : ClarityNode(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
     inline virtual void finalize() {
-        val listenerGenerators = CLElement_["listenerGenerators"];
-        CLElement_.call<void>("installEventListenersByTagAndType", cle_, listenerGenerators);
+        val listenerGenerators = JSProxyNode_["listenerGenerators"];
+        JSProxyNode_.call<void>("installEventListenersByTagAndType", cle_, listenerGenerators);
     }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }

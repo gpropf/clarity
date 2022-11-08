@@ -14,8 +14,8 @@ using namespace clarity;
  */
 struct Showcase : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
-        // val CLElement = val::global("CLElement");
-        val blackbody_st = ClarityNode::CLElement_["blackbody_st"];
+        // val JSProxyNode = val::global("JSProxyNode");
+        val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
 
         double *temp = new double(330);
         double *cir1Radius_value = new double(88.4);
@@ -124,7 +124,7 @@ struct Showcase : public PageContent {
             CLNodeFactory<HybridNode, string, double>(childOfMaindivBuilder).withName("elgDemo_tinp")
                 //.withCppVal(canvas1->getPtr2CurrentCellVal())
                 .withAttributes({{"style", val("border: 3px solid #4055aa")}, {"size", val(15)}})
-                .withEventListenerGenerator("mousedown", ClarityNode::CLElement_["elgInputAlltypesMousedown"])
+                .withEventListenerGenerator("mousedown", ClarityNode::JSProxyNode_["elgInputAlltypesMousedown"])
                 .withInitVal(clickme2)
                 .textInput();
 

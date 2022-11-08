@@ -30,7 +30,7 @@ The current system is the result of several complete refactorings over the Summe
 
 __JavaScript__
 
-There is one main JavaScript file called `Clarity.js`. It contains a class called `CLElement` that acts as a kind of "mirror image" of `ClarityNode` in the JS world. A better name might have been JSProxy since that's what it really is and does. It exists to carry out the system's tasks for a given node on the JS side. There's also `Selectables.js` which performs similar tasks for the C++ classes in `Selectables.cpp`. These files might end up getting merged. There's also `Util.js` which does what the name suggests it might.
+There is one main JavaScript file called `Clarity.js`. It contains a class called `JSProxyNode` that acts as a kind of "mirror image" of `ClarityNode` in the JS world. A better name might have been JSProxy since that's what it really is and does. It exists to carry out the system's tasks for a given node on the JS side. There's also `Selectables.js` which performs similar tasks for the C++ classes in `Selectables.cpp`. These files might end up getting merged. There's also `Util.js` which does what the name suggests it might.
 
 __C++__
 
@@ -102,7 +102,7 @@ The `TestFramework` class could become a full blown interface builder. The idea 
 
 ##### Merge Switchboard and Factory? #####
 
-The "switchboard" static map in `ClarityNode` was an early hack that I came up with when I couldn't work out how to store a pointer to the `ClarityNode` that owned each `CLElement` in that `CLElement` even using allow_raw_pointers(). My initial plan had always been to store such a pointer so that things like eventListeners could directly alter the C++ data. I eventually figured it out but the switchboard remains useful for things like the node list method and is now a pretty low level part of the system.  It might be a good idea to keep the switchboard concept alive but have each `CLNF` store a pointer to all the nodes it builds. When we use a factory to create a new node this can potentially send messages to other nodes it has built. The example of adding an option to a select box again comes to mind but this could also be used to update things like the proposed interface builder above.
+The "switchboard" static map in `ClarityNode` was an early hack that I came up with when I couldn't work out how to store a pointer to the `ClarityNode` that owned each `JSProxyNode` in that `JSProxyNode` even using allow_raw_pointers(). My initial plan had always been to store such a pointer so that things like eventListeners could directly alter the C++ data. I eventually figured it out but the switchboard remains useful for things like the node list method and is now a pretty low level part of the system.  It might be a good idea to keep the switchboard concept alive but have each `CLNF` store a pointer to all the nodes it builds. When we use a factory to create a new node this can potentially send messages to other nodes it has built. The example of adding an option to a select box again comes to mind but this could also be used to update things like the proposed interface builder above.
 
 #### Web Templates? ####
 
