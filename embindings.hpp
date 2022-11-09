@@ -43,7 +43,7 @@ EMSCRIPTEN_BINDINGS(clarity) {
 
     //.class_function("listNodes_double", &HybridNode<double>::listNodes, allow_raw_pointers());
 
-    class_<HybridNode<double>>("HybridNode_dbl")
+    class_<HybridNode<double>>("HybridNode_d")
         //.class_function("listNodes_int2", &HybridNode<int>::listNodes, allow_raw_pointers())
         .class_function("listNodes_double", &HybridNode<double>::listNodes, allow_raw_pointers());
 
