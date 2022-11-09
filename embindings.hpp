@@ -39,8 +39,8 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .function("doNothing", &CanvasGrid<unsigned char>::doNothing, allow_raw_pointers());
 
     class_<HybridNode<int>>("HybridNode")
-        .class_function("listNodes_int", &HybridNode<int>::listNodes, allow_raw_pointers());
-        //.class_function("listNodes_double", &HybridNode<double>::listNodes, allow_raw_pointers());
+        .class_function("listNodes_int", &HybridNode<int>::listNodes, allow_raw_pointers())
+        .class_function("listNodes_double", &HybridNode<double>::listNodes, allow_raw_pointers());
 
     class_<HybridNode<double>>("HybridNode_dbl")
         .class_function("listNodes_int2", &HybridNode<int>::listNodes, allow_raw_pointers())
