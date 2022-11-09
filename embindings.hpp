@@ -38,7 +38,7 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .function("setValXY", &CanvasGrid<unsigned char>::setValXY, allow_raw_pointers())
         .function("doNothing", &CanvasGrid<unsigned char>::doNothing, allow_raw_pointers());
 
-    class_<HybridNode<int>>("HybridNode")
+    class_<HybridNode<int>>("HybridNode_i")
         .class_function("listNodes_int", &HybridNode<int>::listNodes, allow_raw_pointers());
 
     //.class_function("listNodes_double", &HybridNode<double>::listNodes, allow_raw_pointers());
@@ -48,6 +48,8 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .class_function("listNodes_double", &HybridNode<double>::listNodes, allow_raw_pointers());
 
     class_<HybridNode<string>>("HybridNode_str")
+    // The type code that comes back from typeid.name() is literally 'NSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE'
+    // so we're just going to use _str as the suffix for this one.
         .function("doNothing", &HybridNode<string>::doNothing, allow_raw_pointers());
     // .class_function("listNodes_int3", &HybridNode<int>::listNodes, allow_raw_pointers())
     // .class_function("listNodes_double3", &HybridNode<double>::listNodes, allow_raw_pointers());

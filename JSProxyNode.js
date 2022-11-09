@@ -157,7 +157,7 @@ class JSProxyNode {
   }
 
   static listNodes_double() {
-    Module.HybridNode_dbl.listNodes_double();
+    Module.HybridNode_d.listNodes_double();
   }
 
   // static destroy_everything() {
