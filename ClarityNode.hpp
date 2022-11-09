@@ -449,6 +449,7 @@ class HybridNode : public ClarityNode {
         : ClarityNode(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
     inline virtual void finalize() {
+        this->cle_.set("clarityNode", this);
         val listenerGenerators = JSProxyNode_["listenerGenerators"];
         JSProxyNode_.call<void>("installEventListenersByTagAndType", cle_, listenerGenerators);
     }

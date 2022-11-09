@@ -40,6 +40,18 @@ EMSCRIPTEN_BINDINGS(clarity) {
     class_<HybridNode<int>>("HybridNode")
         .class_function("listNodes_int", &HybridNode<int>::listNodes, allow_raw_pointers())
         .class_function("listNodes_double", &HybridNode<double>::listNodes, allow_raw_pointers());
+
+    class_<HybridNode<double>>("HybridNode_dbl")
+        .class_function("listNodes_int2", &HybridNode<int>::listNodes, allow_raw_pointers())
+        .class_function("listNodes_double2", &HybridNode<double>::listNodes, allow_raw_pointers());
+
+    class_<HybridNode<string>>("HybridNode_str")
+        .class_function("listNodes_int3", &HybridNode<int>::listNodes, allow_raw_pointers())
+        .class_function("listNodes_double3", &HybridNode<double>::listNodes, allow_raw_pointers());
+
+    class_<HybridNode<unsigned char>>("HybridNode_h")
+        .class_function("listNodes_int4", &HybridNode<int>::listNodes, allow_raw_pointers())
+        .class_function("listNodes_double4", &HybridNode<double>::listNodes, allow_raw_pointers());
     //.function("setDOMVal", &HybridNode<int>::setDOMVal, allow_raw_pointers());
 
     class_<SimpleSelect<int>>("SimpleSelect")

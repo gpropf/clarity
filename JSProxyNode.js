@@ -116,6 +116,7 @@ class JSProxyNode {
   static elgInputAlltypesChange (element) {
     return function (e) {
       Module.ClarityNode.updateNodeFromDomById(element.id)
+      console.log(element.clarityNode)
       if (element.boundField != undefined)
         console.log("CN, For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
       else
