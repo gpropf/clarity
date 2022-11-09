@@ -20,7 +20,7 @@ template <typename V>
 class CanvasElement : public HybridNode<V> {
    public:
     CanvasElement(const string &name, const string &tag, bool useExistingDOMElement,
-                  ClarityNode::AttachmentMode attachmentMode, const string& attachmentId = "")
+                  ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
         : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
     ~CanvasElement() { cout << "DESTROYING CanvasElement with id: " << this->id_ << "\n"; }
@@ -30,7 +30,21 @@ class CanvasElement : public HybridNode<V> {
         return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
     }
 
-    virtual void refreshDOMValueFromModel(){}; // FIXME: should probably move the initcg or testfunction code in here.
+    inline virtual void doNothing() {
+        cout << "This method exists so that Embind will create a type when this method in bound."
+             << endl;
+    }
+
+    inline virtual void finalize() {
+        cout << "CanvasElement::finalize()\n";
+        this->cle_.set("clarityNode", this);
+        val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
+        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
+                                             listenerGenerators);
+    }
+
+    virtual void refreshDOMValueFromModel(){};  // FIXME: should probably move the initcg or
+                                                // testfunction code in here.
 
     inline void setDrawFuntionName(const string &drawFuntionName) {
         drawFuntionName_ = drawFuntionName;
@@ -52,7 +66,6 @@ class CanvasElement : public HybridNode<V> {
  */
 template <typename V>
 class CanvasGrid : public CanvasElement<V> {
-    
    protected:
     int width_, height_;  //!< Width and Height in screen pixels.
     double scaleFactorH_ = 1.0;
@@ -83,7 +96,8 @@ class CanvasGrid : public CanvasElement<V> {
     //     cout << "CG: virtual void finalize()\n";
     // }
 
-    virtual void refreshDOMValueFromModel(){}; // FIXME: should probably move the initcg or testfunction code in here.
+    virtual void refreshDOMValueFromModel(){};  // FIXME: should probably move the initcg or
+                                                // testfunction code in here.
 
     val getVal() const {
         val domElement = this->cle_["domElement"];
@@ -91,6 +105,19 @@ class CanvasGrid : public CanvasElement<V> {
         // Needs to read the internal state of the CG object and transfer it
         // back to the array.
         return val(NULL);  // FIXME
+    }
+
+    inline virtual void doNothing() {
+        cout << "This method exists so that Embind will create a type when this method in bound."
+             << endl;
+    }
+
+    inline virtual void finalize() {
+        cout << "CanvasGrid::finalize()\n";
+        this->cle_.set("clarityNode", this);
+        val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
+        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
+                                             listenerGenerators);
     }
 
     INLINE virtual string getNodeTypeCode() { return string("CG"); }
@@ -154,7 +181,7 @@ class CanvasGrid : public CanvasElement<V> {
 
     CanvasGrid(const string &name, const string &tag, bool useExistingDOMElement,
                ClarityNode::AttachmentMode attachmentMode, int gridWidth, int gridHeight,
-               int pixelWidth, int pixelHeight, const string& domId = "")
+               int pixelWidth, int pixelHeight, const string &domId = "")
         : CanvasGrid(name, tag, useExistingDOMElement, attachmentMode, domId) {
         gridWidth_ = gridWidth;
         gridHeight_ = gridHeight;

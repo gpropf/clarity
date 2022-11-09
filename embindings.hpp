@@ -35,7 +35,8 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .class_function("runCallbackById", &ClarityNode::runCallbackById, allow_raw_pointers());
 
     class_<CanvasGrid<unsigned char>>("CanvasGrid")
-        .function("setValXY", &CanvasGrid<unsigned char>::setValXY, allow_raw_pointers());
+        .function("setValXY", &CanvasGrid<unsigned char>::setValXY, allow_raw_pointers())
+        .function("doNothing", &CanvasGrid<unsigned char>::doNothing, allow_raw_pointers());
 
     class_<HybridNode<int>>("HybridNode")
         .class_function("listNodes_int", &HybridNode<int>::listNodes, allow_raw_pointers())
@@ -52,7 +53,6 @@ EMSCRIPTEN_BINDINGS(clarity) {
     class_<HybridNode<unsigned char>>("HybridNode_h")
         .class_function("listNodes_int4", &HybridNode<int>::listNodes, allow_raw_pointers())
         .class_function("listNodes_double4", &HybridNode<double>::listNodes, allow_raw_pointers());
-    //.function("setDOMVal", &HybridNode<int>::setDOMVal, allow_raw_pointers());
 
     class_<SimpleSelect<int>>("SimpleSelect")
         .function("getSelectedLabel", &SimpleSelect<int>::getSelectedLabel, allow_raw_pointers())
