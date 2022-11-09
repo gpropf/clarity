@@ -153,7 +153,7 @@ class JSProxyNode {
   }
 
   static listNodes_int() {
-    Module.HybridNode.listNodes_int();
+    Module.HybridNode_i.listNodes_int();
   }
 
   static listNodes_double() {

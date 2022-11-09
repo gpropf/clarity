@@ -718,7 +718,7 @@ class CLNodeFactory {
      * @param labelText
      * @return Nc*
      */
-    INLINE Nc<V> *labelGivenNode(Nc<V> *nodeToBeLabelled, const string &labelText) {
+    INLINE Nc<V> *labelGivenNode(ClarityNode *nodeToBeLabelled, const string &labelText) {
         Nc<V> *outerDiv =
             withTag("div").withName("labeldiv_" + nodeToBeLabelled->getName()).build();
         Nc<V> *labelNode =

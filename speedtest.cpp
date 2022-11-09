@@ -132,7 +132,7 @@ int main() {
                                             .checkbox();
 
     auto *labelled_destroyFieldsImmediately_cb =
-        checkboxBuilder.labelGivenNode(destroyFieldsImmediately_cb, "Destroy fields as we go");
+        childOfMaindivBuilder.labelGivenNode(destroyFieldsImmediately_cb, "Destroy fields as we go");
 
     // clarity::ClarityNode::callbackMap["destroyEverything"] = [=] { destroyEverything(); };
     
