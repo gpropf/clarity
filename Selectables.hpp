@@ -39,10 +39,11 @@ class Select : public HybridNode<V> {
 
     INLINE virtual void finalize() {
         cout << "Select::finalize()\n";
+        this->cle_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val expListenerGens = Selectables["expListenerGens"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
-                                           expListenerGens);
+                                             expListenerGens);
     }
 
     virtual string cppValToString() const;
@@ -63,6 +64,11 @@ class Select : public HybridNode<V> {
 
     INLINE virtual string getNodeTypeCode() { return string("SV"); }
 
+    inline void doNothing() {
+        cout << "This method exists so that Embind will create a type when this method in bound."
+             << endl;
+    }
+
    protected:
 };
 
@@ -78,12 +84,12 @@ class SimpleSelect : public HybridNode<V> {
     inline void foo() { cout << "SimpleSelect says FOO!" << endl; }
 
     INLINE virtual void finalize() {
-        this->cle_.set("cn", this);
+        this->cle_.set("clarityNode", this);
         cout << "SimpleSelect::finalize()\n";
         val Selectables = val::global("Selectables");
         val simpleSelectGens = Selectables["simpleSelectGens"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
-                                           simpleSelectGens);
+                                             simpleSelectGens);
     }
 
     virtual string cppValToString() const;
@@ -130,10 +136,11 @@ class Checkbox : public HybridNode<V> {
 
     inline virtual void finalize() {
         cout << "Checkbox::finalize()\n";
+        this->cle_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val expListenerGens = Selectables["expListenerGens"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
-                                           expListenerGens);
+                                             expListenerGens);
     }
 
     ~Checkbox() { cout << "DESTROYING Checkbox with id: " << this->id_ << "\n"; }
@@ -153,6 +160,11 @@ class Checkbox : public HybridNode<V> {
     virtual val getVal() const;
 
     virtual void setDOMVal(const val &inval);
+
+    inline void doNothing() {
+        cout << "This method exists so that Embind will create a type when this method in bound."
+             << endl;
+    }
 
    protected:
 };

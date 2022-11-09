@@ -58,6 +58,14 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .function("getSelectedLabel", &SimpleSelect<int>::getSelectedLabel, allow_raw_pointers())
         .function("foo", &SimpleSelect<int>::foo, allow_raw_pointers());
 
+    class_<Select<vector<pair<int, string>>>>("Select_vector_pair_int_string")
+        .function("doNothing", &Select<void>::doNothing, allow_raw_pointers());
+
+    class_<Checkbox<bool>>("Checkbox_bool")
+        .function("doNothing", &Checkbox<void>::doNothing, allow_raw_pointers());
+
+    //
+
     enum_<ClarityNode::AttachmentMode>("AttachmentMode")
         .value("NEW", ClarityNode::AttachmentMode::NEW)
         .value("REPLACE_ID", ClarityNode::AttachmentMode::REPLACE_ID)

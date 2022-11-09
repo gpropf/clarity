@@ -137,6 +137,25 @@ _These are the current methods that move data around in the system. They went th
 
 `virtual void HybridNode<V>::updateNodeFromDom()`: The main driver of the data flow. When the user uses a control, the method `static INLINE void ClarityNode::updateNodeFromDomById(int id)` gets called and starts the update process moving data "down" from the DOM into the modelVal and possible also "sideways" to the node's peers (if any).
 
+
+#### Troubleshooting Common Problems
+
+If you see a BindingError like this on loading a page you've created the issue is that you don't have an embinding for the _specific_ node type you've instantiated.
+
+
+```
+{
+    "name": "BindingError",
+    "message": "_emval_take_value has unknown type PN7clarity8CheckboxIbEE",
+    "stack": "BindingError: _emval_take_value has unknown type PN7clarity8CheckboxIbEE\n
+    ...
+}
+```
+
+The 4 letters at the end of the type actually tell you exactly what's missing. In this case the most relevant part is the 'b' which means type `bool`.
+
+
+
 #### Important Constants and Definitions ####
 
 `ClarityInstallURL`: global JS value that tells the system where to look for resources. In the examples I set this inside a `<script>` tag in the HTML template file.

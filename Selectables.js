@@ -4,11 +4,7 @@
 
 class Selectables {
 
-  constructor() { }
-
-  static foo() {
-    console.log("Selectables.foo");
-  }
+  constructor() { }  
 
   static elgInputCheckboxChange(element) {
     return function (e) {
@@ -45,12 +41,8 @@ class Selectables {
     return function (e) {
       element.currentSelection = parseInt(e.target.value);
       console.log("elgSimpleSelectAlltypesChange element id: " + element.id + " Value changed to: " + e.target.value); 
-      Module.ClarityNode.updateNodeFromDomById(element.id)   
-      console.log("Now we say foo!~");
-      element.cn.foo();   
-      // var selectNode = Module.ClarityNode.getClarityNodeById(element.id);
-      var selectedCar = element.cn.getSelectedLabel();
-      //selectNode.setDOMVal(e.target.value);       
+      Module.ClarityNode.updateNodeFromDomById(element.id)
+      let selectedCar = element.clarityNode.getSelectedLabel();      
       console.log("Selected car is " + selectedCar); 
     }
   }
