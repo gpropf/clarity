@@ -212,6 +212,8 @@ class ClarityNode {
 
     inline virtual void finalize() = 0;
 
+    virtual void doNothing() = 0;
+
     INLINE string getBoundField() const { return boundField_; }
 
     INLINE void setBoundField(const string &boundField) {
@@ -447,6 +449,11 @@ class HybridNode : public ClarityNode {
                ClarityNode::AttachmentMode attachmentMode = ClarityNode::AttachmentMode::NEW,
                const string &attachmentId = "")
         : ClarityNode(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
+
+    inline virtual void doNothing() {
+        cout << "This method exists so that Embind will create a type when this method in bound."
+             << endl;
+    }
 
     inline virtual void finalize() {
         this->cle_.set("clarityNode", this);

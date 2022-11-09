@@ -56,7 +56,7 @@ EMSCRIPTEN_BINDINGS(clarity) {
 
     class_<SimpleSelect<int>>("SimpleSelect")
         .function("getSelectedLabel", &SimpleSelect<int>::getSelectedLabel, allow_raw_pointers())
-        .function("foo", &SimpleSelect<int>::foo, allow_raw_pointers());
+        .function("doNothing", &Checkbox<void>::doNothing, allow_raw_pointers());
 
     class_<Select<vector<pair<int, string>>>>("Select_vector_pair_int_string")
         .function("doNothing", &Select<void>::doNothing, allow_raw_pointers());

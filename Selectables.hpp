@@ -64,7 +64,7 @@ class Select : public HybridNode<V> {
 
     INLINE virtual string getNodeTypeCode() { return string("SV"); }
 
-    inline void doNothing() {
+    inline virtual void doNothing() {
         cout << "This method exists so that Embind will create a type when this method in bound."
              << endl;
     }
@@ -82,6 +82,11 @@ class SimpleSelect : public HybridNode<V> {
     ~SimpleSelect() { cout << "DESTROYING SimpleSelect with id: " << this->id_ << "\n"; }
 
     inline void foo() { cout << "SimpleSelect says FOO!" << endl; }
+
+    inline virtual void doNothing() {
+        cout << "This method exists so that Embind will create a type when this method in bound."
+             << endl;
+    }
 
     INLINE virtual void finalize() {
         this->cle_.set("clarityNode", this);
@@ -161,7 +166,7 @@ class Checkbox : public HybridNode<V> {
 
     virtual void setDOMVal(const val &inval);
 
-    inline void doNothing() {
+    inline virtual void doNothing() {
         cout << "This method exists so that Embind will create a type when this method in bound."
              << endl;
     }
