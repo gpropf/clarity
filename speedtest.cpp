@@ -19,6 +19,8 @@ vector<int *> ns;
 vector<HybridNode<int> *> clns;
 bool *destroyFieldsImmediately = new bool(false);
 
+
+
 time_t msecsTime() {
     struct timeval timeNow {};
     gettimeofday(&timeNow, nullptr);
@@ -102,6 +104,8 @@ EMSCRIPTEN_BINDINGS(speedtest) {
 }
 
 int main() {
+    ClarityNode::setClogSilent();
+
     val cppTestFn = val::global("Module")["cppTestFn"];
     val destroyEverything = val::global("Module")["destroyEverything"];
     val runLambda = val::global("Module")["runLambda"];

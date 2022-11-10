@@ -35,7 +35,11 @@ std::string clto_str(const T &v) {
 class ClarityNode {
    public:
 
-    const static bool clogSilent = true;
+    static bool clogSilent;
+
+    static void setClogSilent(bool silent = true) {
+        clogSilent = silent;
+    }
 
     static map<string, std::function<void()>> callbackMap;
     static val JSProxyNode_;

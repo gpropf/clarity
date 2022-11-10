@@ -16,6 +16,7 @@
 //#include "CanvasElement.hpp"
 #include "ClarityNode.hpp"
 
+bool ClarityNode::clogSilent = false;
 map<const int, ClarityNode *> ClarityNode::switchboard;
 map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm;
