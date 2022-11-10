@@ -24,7 +24,7 @@ class Selectables {
     }
   }
 
-  static expListenerGens = {
+  static listenerGenerators = {
     "select": {
       "NOTYPE": {
         "change": this.elgSelectAlltypesChange

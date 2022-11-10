@@ -301,6 +301,10 @@ class ClarityNode {
         ClarityNode::switchboard[id_] = this;
     }
 
+    static INLINE void installListenerGenerators(const string &nodeClassName, const string& tag, const string& tagType = NULL) {
+        val nodeClass = val::global(nodeClassName.c_str());
+    }
+
     /**
      * @brief Use the provided DualLink to send data to the peers of this node.
      *

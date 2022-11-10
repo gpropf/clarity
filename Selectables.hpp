@@ -41,9 +41,9 @@ class Select : public HybridNode<V> {
         cout << "Select::finalize()\n";
         this->cle_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
-        val expListenerGens = Selectables["expListenerGens"];
+        val listenerGenerators = Selectables["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
-                                             expListenerGens);
+                                             listenerGenerators);
     }
 
     virtual string cppValToString() const;
@@ -143,9 +143,9 @@ class Checkbox : public HybridNode<V> {
         cout << "Checkbox::finalize()\n";
         this->cle_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
-        val expListenerGens = Selectables["expListenerGens"];
+        val listenerGenerators = Selectables["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
-                                             expListenerGens);
+                                             listenerGenerators);
     }
 
     ~Checkbox() { cout << "DESTROYING Checkbox with id: " << this->id_ << "\n"; }
