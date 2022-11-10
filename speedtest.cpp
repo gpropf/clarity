@@ -31,7 +31,8 @@ time_t msecsTime() {
 }
 
 void destroyEverything(val ev) {
-    cout << "Destroying " << clns.size() << " nodes.\n";
+    //cout << "Destroying " << clns.size() << " nodes.\n";
+    ClarityNode::nodelogStatic("Destroying " + clto_str(clns.size()) + " nodes.\n");
     for (auto cln : clns) {
         delete cln;
     }

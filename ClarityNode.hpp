@@ -34,6 +34,9 @@ std::string clto_str(const T &v) {
  */
 class ClarityNode {
    public:
+
+    const static bool clogSilent = true;
+
     static map<string, std::function<void()>> callbackMap;
     static val JSProxyNode_;
 
@@ -110,8 +113,15 @@ class ClarityNode {
     }
 
     void nodelog(const string& msg, ClogType clt = ClogType::WARNING) const {
+        if (ClarityNode::clogSilent) return;
         string msgout("node " + clto_str(id_)+ ":" + msg);
         clog(msgout, clt);
+    }
+
+    static void nodelogStatic(const string& msg, ClogType clt = ClogType::WARNING) {
+        if (ClarityNode::clogSilent) return;
+        //string msgout("node " + clto_str(id_)+ ":" + msg);
+        clog(msg, clt);
     }
 
     static void addEventListenerGenerator(const string &nodeTypeCode, val handlerGenerator) {}
@@ -206,7 +216,7 @@ class ClarityNode {
             domElement_.set(boundField_, inval);
             domElement_.call<void>("setAttribute", val(boundField_), inval);
         } else {
-            clarity::clog("Attempt to set DOM value of element with no bound field!");            
+            nodelog("Attempt to set DOM value of element with no bound field!");            
         }
     }
 
