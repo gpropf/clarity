@@ -351,6 +351,24 @@ class JSProxyNode {
     }         
   }
 
+  static getEventListenerGenerators2(eventListenerGeneratorsByTagAndType, clarityNodeClass, elementTag, elementType = null) {
+    var listenerGeneratorsForTag = eventListenerGeneratorsByTagAndType[clarityNodeClass][elementTag];
+    if (listenerGeneratorsForTag == null) return null;
+    if (elementType == null) elementType = "NOTYPE";
+      return listenerGeneratorsForTag[elementType];
+  }
+
+
+  static installEventListenersByTagAndType2(clarityNodeClass, cle,  listenerGeneratorMap) {      
+    if (cle.domElement == null) return;  
+    var eventListenerGenerators = JSProxyNode.getEventListenerGenerators2(listenerGeneratorMap, clarityNodeClass, cle.tag_, cle.domElement.getAttribute("type"));
+    if (eventListenerGenerators == null) return;    
+    var entries = Object.entries(eventListenerGenerators);
+    for (const [eventName, generatorFunction] of entries) {           
+      cle.domElement.addEventListener(eventName, generatorFunction(cle));
+    }         
+  }
+
   addEventListenerById(eventName, id) {
     this.domElement_.addEventListener(eventName, (e) => {
       Module.ClarityNode.runCallbackById(id)

@@ -4,7 +4,7 @@
 
 class Selectables {
 
-  constructor() { }  
+  constructor() { }
 
   static elgInputCheckboxChange(element) {
     return function (e) {
@@ -17,43 +17,69 @@ class Selectables {
     }
   }
 
-  static elgSelectAlltypesChange (element) {
+  static elgSelectAlltypesChange(element) {
     return function (e) {
-      Module.ClarityNode.updateNodeFromDomById(element.id)      
-      console.log("<SELECT> element id: " + element.id + " Value changed to: " + e.target.value);      
+      Module.ClarityNode.updateNodeFromDomById(element.id)
+      console.log("<SELECT> element id: " + element.id + " Value changed to: " + e.target.value);
     }
   }
 
-  static listenerGenerators = {
-    "select": {
-      "NOTYPE": {
-        "change": this.elgSelectAlltypesChange
+  // static listenerGenerators = {
+  //   "select": {
+  //     "NOTYPE": {
+  //       "change": this.elgSelectAlltypesChange
+  //     }
+  //   },
+  //   "input": {
+  //     "checkbox": {
+  //       "change": this.elgInputCheckboxChange
+  //     }
+  //   }
+  // }
+
+  static listenerGenerators2 = {
+    "Select":
+    {
+      "select": {
+        "NOTYPE": {
+          "change": this.elgSelectAlltypesChange
+        }
       }
     },
-    "input": {
-      "checkbox": {
-        "change": this.elgInputCheckboxChange
+    "Checkbox": {
+      "input": {
+        "checkbox": {
+          "change": this.elgInputCheckboxChange
+        }
+      }
+    },
+    "SimpleSelect":
+    {
+      "select": {
+        "NOTYPE": {
+          "change": this.elgSimpleSelectAlltypesChange
+        }
       }
     }
   }
 
-  static elgSimpleSelectAlltypesChange (element) {
+  static elgSimpleSelectAlltypesChange(element) {
     return function (e) {
       element.currentSelection = parseInt(e.target.value);
-      console.log("elgSimpleSelectAlltypesChange element id: " + element.id + " Value changed to: " + e.target.value); 
+      console.log("elgSimpleSelectAlltypesChange element id: " + element.id + " Value changed to: " + e.target.value);
       Module.ClarityNode.updateNodeFromDomById(element.id)
-      let selectedCar = element.clarityNode.getSelectedLabel();      
-      console.log("Selected car is " + selectedCar); 
+      let selectedCar = element.clarityNode.getSelectedLabel();
+      console.log("Selected car is " + selectedCar);
     }
   }
 
-  static simpleSelectGens = {
-    "select": {
-      "NOTYPE": {
-        "change": this.elgSimpleSelectAlltypesChange
-      }
-    }
-  }
+  // static simpleSelectGens = {
+  //   "select": {
+  //     "NOTYPE": {
+  //       "change": this.elgSimpleSelectAlltypesChange
+  //     }
+  //   }
+  // }
 
 
 }
