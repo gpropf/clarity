@@ -113,41 +113,41 @@ class JSProxyNode {
   //   }]
   // }
 
-  static elgInputAlltypesChange (element) {
+  static elgInputAlltypesChange (jsProxyNode) {
     return function (e) {
-      Module.ClarityNode.updateNodeFromDomById(element.id)
-      console.log(element.clarityNode)
-      if (element.boundField != undefined)
-        console.log("CN, For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
+      Module.ClarityNode.updateNodeFromDomById(jsProxyNode.id)
+      console.log(jsProxyNode.clarityNode)
+      if (jsProxyNode.boundField != undefined)
+        console.log("CN, For ID: " + jsProxyNode.id + " Value changed to: " + jsProxyNode.domElement[jsProxyNode.boundField]);
       else
-        console.log("CN, For ID: " + element.id + " Value changed");
+        console.log("CN, For ID: " + jsProxyNode.id + " Value changed");
     }
   }
 
-  static elgTextareaAlltypesChange (element) {
+  static elgTextareaAlltypesChange (jsProxyNode) {
     return function (e) {
       console.log("textarea lost focus!");
-      Module.ClarityNode.updateNodeFromDomById(element.id)
-      if (element.boundField != undefined)
-        console.log("CN textarea, For ID: " + element.id + " Value changed to: " + element.domElement[element.boundField]);
+      Module.ClarityNode.updateNodeFromDomById(jsProxyNode.id)
+      if (jsProxyNode.boundField != undefined)
+        console.log("CN textarea, For ID: " + jsProxyNode.id + " Value changed to: " + jsProxyNode.domElement[jsProxyNode.boundField]);
       else
-        console.log("CN textarea, For ID: " + element.id + " Value changed");
+        console.log("CN textarea, For ID: " + jsProxyNode.id + " Value changed");
     }
   }
 
-  static elgTextareaAlltypesInput (element) {
+  static elgTextareaAlltypesInput (jsProxyNode) {
     return function (e) {      
         console.log("KEYPRESSED!");      
     }
   }
 
-  static elgInputAlltypesMousedown (element) {
+  static elgInputAlltypesMousedown (jsProxyNode) {
     return function (e) {      
       console.log("Mouse down!");
     }
   }
 
-  static elgCanvasGridAlltypesClick (element) {
+  static elgCanvasGridAlltypesClick (jsProxyNode) {
     return function(ev) {
       let domElement = ev.target;
       let domrect = domElement.getBoundingClientRect();
@@ -161,13 +161,10 @@ class JSProxyNode {
       let loc = { x: (ev.x - domrect.x), y: (ev.y - domrect.y) };
       var locIn = { x: Math.floor(loc.x / cw), y: Math.floor(loc.y / ch) };    
       var locOut = Util.capCoords(locIn, gridDimensions);
-      element.clarityNode.setValXY(locOut.x, locOut.y);
+      jsProxyNode.clarityNode.setValXY(locOut.x, locOut.y);
       console.log(locOut);
     }
   }
-
-  
-
 
   static doNothing() {
     console.log("doNothing(): a function that proudly does nothing...");
