@@ -165,8 +165,11 @@ int main() {
                                             .withName("destroyFieldsImmediately_cb")
                                             .checkbox();
 
-    auto *labelled_destroyFieldsImmediately_cb = childOfMaindivBuilder.labelGivenNode(
-        destroyFieldsImmediately_cb, "Destroy fields as we go");
+    // auto *labelled_destroyFieldsImmediately_cb = childOfMaindivBuilder.labelGivenNode(
+    //     destroyFieldsImmediately_cb, "Destroy fields as we go");
+
+    auto *labelled_destroyFieldsImmediately_cb = childOfMaindivBuilder.label(
+        destroyFieldsImmediately_cb, "Destroy fields as we go", true);
 
     // clarity::ClarityNode::callbackMap["destroyEverything"] = [=] { destroyEverything(); };
     updateTotalFields = [=] {

@@ -223,7 +223,7 @@ class CLNodeFactory {
                 // the node, and then set cppVal_ back to null.
                 newNode->setCppVal(initVal_);
                 newNode->refresh();
-                newNode->setCppVal(nullptr);               
+                newNode->setCppVal(nullptr);
             }
         }
 
@@ -624,14 +624,17 @@ class CLNodeFactory {
      * labelled.
      * @param forNode
      * @param text
+     * @param engulfForNode Set to true to make label swallow the thing it's labelling. Much
+     * preferable to labelGivenNode I think.
      * @return Nc*
      */
     template <class Nc_any>
-    INLINE Nc<V> *label(Nc_any *forNode, const string &text) {
+    INLINE Nc<V> *label(Nc_any *forNode, const string &text, bool engulfForNode = false) {
         Nc<V> *label = withTag("label").build();
         label->setBoundField("innerHTML");
         label->setDOMVal(val(text));
         label->setAttribute("for", val(forNode->getId()));
+        if (engulfForNode) label->appendChild(forNode);
         return label;
     }
 
@@ -753,16 +756,17 @@ class CLNodeFactory {
     INLINE Select<V> *select() {
         Select<V> *sel = new Select<V>(name_, "select", useExistingDOMElement_, attachmentMode_);
         sel = static_cast<Select<V> *>(build(sel));
-        //sel->populateOptions();
+        // sel->populateOptions();
         sel->refresh();
         return sel;
     }
 
     template <typename OptLT>
     INLINE SimpleSelect<V> *simpleSelect(vector<pair<V, OptLT>> &options) {
-        SimpleSelect<V> *sel = new SimpleSelect<V>(name_, "select", useExistingDOMElement_, attachmentMode_);
+        SimpleSelect<V> *sel =
+            new SimpleSelect<V>(name_, "select", useExistingDOMElement_, attachmentMode_);
         sel = static_cast<SimpleSelect<V> *>(build(sel));
-        //sel->populateOptions();
+        // sel->populateOptions();
         sel->setOptions(options);
         sel->refresh();
         return sel;

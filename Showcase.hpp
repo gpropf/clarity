@@ -187,7 +187,9 @@ struct Showcase : public PageContent {
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
         // string * checkme = new string("checked");
         bool *checkme = new bool(false);
-        checkboxBuilder.withCppVal(checkme).withName("checkme").checkbox();
+        auto *cbTest = checkboxBuilder.withCppVal(checkme).withName("checkme").checkbox();
+
+        auto *lblTest = childOfMaindivBuilder_str.label(cbTest, "Label should engulf CB", true);
 
         printf("Setup complete!\n");
         return maindiv;
