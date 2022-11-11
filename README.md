@@ -152,7 +152,7 @@ If you see a BindingError like this on loading a page you've created the issue i
 }
 ```
 
-The 4 letters at the end of the type actually tell you exactly what's missing. In this case the most relevant part is the 'b' which means type `bool`.
+The 4 letters at the end of the type actually tell you exactly what's missing. In this case the most relevant part is the 'b' which means type `bool`. So essentially we didn't have a Checkbox<bool> type defined anywhere.
 
 
 
