@@ -473,10 +473,19 @@ class HybridNode : public ClarityNode {
              << endl;
     }
 
-    inline virtual void finalize() {
+    // inline virtual void finalize() {
+    //     this->cle_.set("clarityNode", this);
+    //     val listenerGenerators = JSProxyNode_["listenerGenerators"];
+    //     JSProxyNode_.call<void>("installEventListenersByTagAndType", cle_, listenerGenerators);
+    // }
+
+    INLINE virtual void finalize() {
+        cout << "HybridNode::finalize()\n";
         this->cle_.set("clarityNode", this);
-        val listenerGenerators = JSProxyNode_["listenerGenerators"];
-        JSProxyNode_.call<void>("installEventListenersByTagAndType", cle_, listenerGenerators);
+        //val Selectables = val::global("Selectables");
+        val listenerGenerators = JSProxyNode_["listenerGenerators2"];
+        JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("HybridNode"),
+                                             this->cle_, listenerGenerators);
     }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }

@@ -38,8 +38,7 @@ class Selectables {
   // }
 
   static listenerGenerators2 = {
-    "Select":
-    {
+    "Select": {
       "select": {
         "NOTYPE": {
           "change": this.elgSelectAlltypesChange

@@ -35,12 +35,21 @@ class CanvasElement : public HybridNode<V> {
              << endl;
     }
 
-    inline virtual void finalize() {
+    // inline virtual void finalize() {
+    //     cout << "CanvasElement::finalize()\n";
+    //     this->cle_.set("clarityNode", this);
+    //     val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
+    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
+    //                                          listenerGenerators);
+    // }
+
+    INLINE virtual void finalize() {
         cout << "CanvasElement::finalize()\n";
         this->cle_.set("clarityNode", this);
-        val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
-        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
-                                             listenerGenerators);
+        //val Selectables = val::global("Selectables");
+        val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators2"];
+        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("CanvasElement"),
+                                             this->cle_, listenerGenerators);
     }
 
     virtual void refreshDOMValueFromModel(){};  // FIXME: should probably move the initcg or
@@ -112,12 +121,21 @@ class CanvasGrid : public CanvasElement<V> {
              << endl;
     }
 
-    inline virtual void finalize() {
+    // inline virtual void finalize() {
+    //     cout << "CanvasGrid::finalize()\n";
+    //     this->cle_.set("clarityNode", this);
+    //     val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
+    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
+    //                                          listenerGenerators);
+    // }
+
+    INLINE virtual void finalize() {
         cout << "CanvasGrid::finalize()\n";
         this->cle_.set("clarityNode", this);
-        val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
-        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
-                                             listenerGenerators);
+        //val Selectables = val::global("Selectables");
+        val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators2"];
+        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("CanvasGrid"),
+                                             this->cle_, listenerGenerators);
     }
 
     INLINE virtual string getNodeTypeCode() { return string("CG"); }
@@ -134,8 +152,8 @@ class CanvasGrid : public CanvasElement<V> {
             // cout << "\n";
             cellCount++;
         }
-        this->domElement_.template call<void>("addEventListener", val("click"),
-                                              ClarityNode::JSProxyNode_["setGridLocToCurrentVal"]);
+        // this->domElement_.template call<void>("addEventListener", val("click"),
+        //                                       ClarityNode::JSProxyNode_["setGridLocToCurrentVal"]);
         drawGrid();
     }
 

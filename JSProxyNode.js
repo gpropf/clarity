@@ -147,6 +147,27 @@ class JSProxyNode {
     }
   }
 
+  static elgCanvasGridAlltypesClick (element) {
+    return function(ev) {
+      let domElement = ev.target;
+      let domrect = domElement.getBoundingClientRect();
+  
+      let gw = domElement.gw;
+      let cw = domElement.cw;
+      let gh = domElement.gh;
+      let ch = domElement.ch;
+      
+      var gridDimensions = { w: gw, h: gh };
+      let loc = { x: (ev.x - domrect.x), y: (ev.y - domrect.y) };
+      var locIn = { x: Math.floor(loc.x / cw), y: Math.floor(loc.y / ch) };    
+      var locOut = Util.capCoords(locIn, gridDimensions);
+      element.clarityNode.setValXY(locOut.x, locOut.y);
+      console.log(locOut);
+    }
+  }
+
+  
+
 
   static doNothing() {
     console.log("doNothing(): a function that proudly does nothing...");
@@ -321,22 +342,32 @@ class JSProxyNode {
       return eventListenerGeneratorsByTagAndType[elementTag][elementType];
   }
 
-  static listenerGenerators = {    
-    "input": {
-      "text": {
-        //"mousedown": JSProxyNode.elgInputAlltypesMousedown,
-        "change":JSProxyNode.elgInputAlltypesChange
-      },
-      "range": {
-        "mousedown": JSProxyNode.elgInputAlltypesMousedown,
-        "change":JSProxyNode.elgInputAlltypesChange
+  static listenerGenerators2 = {
+    "CanvasGrid": {
+      "canvas": {
+        "NOTYPE":
+        {
+          "click": JSProxyNode.elgCanvasGridAlltypesClick
+        }
       }
-    },
-    "textarea": {
-      "NOTYPE": 
-      {
-        "input": JSProxyNode.elgTextareaAlltypesInput,
-        "change": JSProxyNode.elgTextareaAlltypesChange
+    },    
+    "HybridNode": {
+      "input": {
+        "text": {
+          //"mousedown": JSProxyNode.elgInputAlltypesMousedown,
+          "change":JSProxyNode.elgInputAlltypesChange
+        },
+        "range": {
+          "mousedown": JSProxyNode.elgInputAlltypesMousedown,
+          "change":JSProxyNode.elgInputAlltypesChange
+        }
+      },
+      "textarea": {
+        "NOTYPE": 
+        {
+          "input": JSProxyNode.elgTextareaAlltypesInput,
+          "change": JSProxyNode.elgTextareaAlltypesChange
+        }
       }
     }
   }  
