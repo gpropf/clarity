@@ -31,6 +31,8 @@ class CLNodeFactory {
     string name_;                     //!< Name to be used with elements this factory builds.
     bool nameIsForSingleUse_ = true;  //!< If true the name value is set to '' after one use.
 
+    string labelText_ = "";
+
     V *cppVal_ =
         nullptr;  //!< The C++ model data that this node is connected to. This can be null but if it
                   //!< is, the node will probably be rather useless unless it gets its data by being
@@ -241,6 +243,12 @@ class CLNodeFactory {
             }
         }
 
+        // if (labelText_ != "") {
+        //     Nc<V> *labelNode = label(newNode, labelText_, true);
+        //     labelText_ = "";
+        //     return labelNode;
+        // }
+
         return newNode;
     }
 
@@ -390,6 +398,20 @@ class CLNodeFactory {
     INLINE CLNodeFactory withName(const string &name) && {
         CLNodeFactory cpy(std::move(*this));
         cpy.name_ = name;
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withLabelText(const string labelText) const & {
+        clog("withLabelText() method currently unimplemented and has no effect.");
+        CLNodeFactory cpy(*this);
+        cpy.labelText_ = labelText;
+        return cpy;
+    }
+
+     INLINE CLNodeFactory withLabelText(const string labelText) && {
+        clog("withLabelText() method currently unimplemented and has no effect.");
+        CLNodeFactory cpy(std::move(*this));
+        cpy.labelText_ = labelText;
         return cpy;
     }
 

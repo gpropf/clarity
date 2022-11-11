@@ -180,7 +180,7 @@ struct Showcase : public PageContent {
         int * carSelection = new int(2);
 
         SimpleSelect<int> *carSelect_ss =
-            simpleSelectBuilder.withName("carSelect_ss").withCppVal(carSelection).simpleSelect<string>(*carOptions2);
+            simpleSelectBuilder.withName("carSelect_ss").withCppVal(carSelection).withLabelText("Pick a better car").simpleSelect<string>(*carOptions2);
 
         
 
