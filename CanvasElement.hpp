@@ -44,7 +44,7 @@ class CanvasElement : public HybridNode<V> {
     // }
 
     INLINE virtual void finalize() {
-        cout << "CanvasElement::finalize()\n";
+        //cout << "CanvasElement::finalize()\n";
         this->cle_.set("clarityNode", this);
         //val Selectables = val::global("Selectables");
         val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators2"];
@@ -130,7 +130,7 @@ class CanvasGrid : public CanvasElement<V> {
     // }
 
     INLINE virtual void finalize() {
-        cout << "CanvasGrid::finalize()\n";
+        //cout << "CanvasGrid::finalize()\n";
         this->cle_.set("clarityNode", this);
         //val Selectables = val::global("Selectables");
         val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators2"];

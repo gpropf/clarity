@@ -60,8 +60,7 @@ void makeTrs(CLNodeFactory<Nc, V, N> builder) {
     time_t totalTime = 0;
     for (int k = 0; k < *nSetGroups; k++) {
         cout << "Setgroup: " << k << endl;
-        for (int j = 0; j < *nFieldsets; j++) {
-            cout << "\tSet: " << j << endl;
+        for (int j = 0; j < *nFieldsets; j++) {            
             time_t t1 = msecsTime();
             for (int i = 0; i < *nInputFields; i++) {
                 int *iptr = new int(i);
@@ -76,6 +75,8 @@ void makeTrs(CLNodeFactory<Nc, V, N> builder) {
             }
             time_t t2 = msecsTime();
             time_t delT = t2 - t1;
+            double msPerField = double(delT) / double(*nInputFields);
+            cout << "\tSet: " << j << ", ms/field: " << msPerField << endl;
             totalTime += delT;
             if (*destroyFieldsImmediately) destroyEverything(val::null());
         }

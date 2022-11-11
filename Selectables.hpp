@@ -38,7 +38,7 @@ class Select : public HybridNode<V> {
     ~Select() { cout << "DESTROYING Select with id: " << this->id_ << "\n"; }
 
     INLINE virtual void finalize() {
-        cout << "Select::finalize()\n";
+        //cout << "Select::finalize()\n";
         this->cle_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators2"];
@@ -98,7 +98,7 @@ class SimpleSelect : public HybridNode<V> {
     // }
 
     INLINE virtual void finalize() {
-        cout << "SimpleSelect::finalize()\n";
+        //cout << "SimpleSelect::finalize()\n";
         this->cle_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators2"];
@@ -158,7 +158,7 @@ class Checkbox : public HybridNode<V> {
     // }
 
     INLINE virtual void finalize() {
-        cout << "Checkbox::finalize()\n";
+        //cout << "Checkbox::finalize()\n";
         this->cle_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators2"];

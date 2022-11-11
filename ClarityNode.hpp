@@ -480,7 +480,7 @@ class HybridNode : public ClarityNode {
     // }
 
     INLINE virtual void finalize() {
-        cout << "HybridNode::finalize()\n";
+        //cout << "HybridNode::finalize()\n";
         this->cle_.set("clarityNode", this);
         //val Selectables = val::global("Selectables");
         val listenerGenerators = JSProxyNode_["listenerGenerators2"];
