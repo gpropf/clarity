@@ -159,3 +159,9 @@ The 4 letters at the end of the type actually tell you exactly what's missing. I
 #### Important Constants and Definitions ####
 
 `ClarityInstallURL`: global JS value that tells the system where to look for resources. In the examples I set this inside a `<script>` tag in the HTML template file.
+
+
+#### Known Bugs
+
+* Setting `engulfForNode` to true when using a label causes problems when the thing being engulfed is an SVG area or attributeNode. Probabaly because the label "yanks away" the SVG components form their rightful parent nodes. Seems to work fine for other controls.
+* 

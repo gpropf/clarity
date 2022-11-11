@@ -108,11 +108,11 @@ struct Showcase : public PageContent {
 
         auto *daisies =
             childOfMaindivBuilder.group({daisyChain1_trinp, daisyChain2_trinp, daisyChain3_trinp});
-        auto *daisies_lbl = childOfMaindivBuilder.labelGivenNode(
+        auto *daisies_lbl = childOfMaindivBuilder.label(
             daisies,
             "These three nodes are linked in a daisy chain to illustrate intragraph value "
             "transformations and the ability to have nodes that do not themselves contain a model "
-            "value. Only the leftmost has a cppVal_");
+            "value. Only the leftmost has a cppVal_", true);
 
         childOfMaindivBuilder.br();
         childOfMaindivBuilder.br();
