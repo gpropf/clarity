@@ -104,6 +104,10 @@ The `TestFramework` class could become a full blown interface builder. The idea 
 
 The "switchboard" static map in `ClarityNode` was an early hack that I came up with when I couldn't work out how to store a pointer to the `ClarityNode` that owned each `JSProxyNode` in that `JSProxyNode` even using allow_raw_pointers(). My initial plan had always been to store such a pointer so that things like eventListeners could directly alter the C++ data. I eventually figured it out but the switchboard remains useful for things like the node list method and is now a pretty low level part of the system.  It might be a good idea to keep the switchboard concept alive but have each `CLNF` store a pointer to all the nodes it builds. When we use a factory to create a new node this can potentially send messages to other nodes it has built. The example of adding an option to a select box again comes to mind but this could also be used to update things like the proposed interface builder above.
 
+#### Dynamic CSS
+
+Basically something like a CSS node type so we can have styling information built into the page.
+
 #### Web Templates? ####
 
 There is of course the possibility of developing something akin to React's JSX pages for Clarity (CSX pages?) but the problem with creating a novel template language is that editors will not initially support it. Losing autocompletion or automatic syntax checking is a pretty high price to pay just to have your C++ code and HTML/CSS all together in one place. Maybe if the library gets enough mindshare that people are willing to write VSCode or Vim/Emacs extensions for it...
@@ -164,4 +168,4 @@ The 4 letters at the end of the type actually tell you exactly what's missing. I
 #### Known Bugs
 
 * Setting `engulfForNode` to true when using a label causes problems when the thing being engulfed is an SVG area or attributeNode. Probabaly because the label "yanks away" the SVG components form their rightful parent nodes. Seems to work fine for other controls.
-* 
+* CanvasGrid uses an int for the cell width and height but this is derived by dividing the CG width in pixels by its width in cells. So if you have a canvas that is 210 pixels wide but 20 cells wide, the cells get rounded to 10px and then don't fill the whole width of the allocated canvas.
