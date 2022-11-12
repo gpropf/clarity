@@ -14,9 +14,10 @@ EM_JS(void, call_alert, (), {
 });
 
 EM_JS(val, elgs, (), {
-    // return function (jsProxyNode) {
-    //     return function (ev) { console.log("MOUSEOVER WORKS! for ID = " jsProxyNode.getId());};
-    // }; 
+    return function () {
+        return function (jsProxyNode) {
+            return function (ev) { console.log("MOUSEOVER WORKS! for ID = " jsProxyNode.getId());};
+    }; };
 });
 
 /**
@@ -28,7 +29,7 @@ struct Showcase : public PageContent {
         
         val elgInputAlltypesMousedown = ClarityNode::JSProxyNode_["elgInputAlltypesMousedown"];
 
-        ClarityNode::installListenerGenerators("JSProxyNode", "HybridNode", elgInputAlltypesMousedown, "input", "text", "mouseover");
+        ClarityNode::installListenerGenerators("JSProxyNode", "HybridNode", elgs(), "input", "text", "mouseover");
 
         val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
 
