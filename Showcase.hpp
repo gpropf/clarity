@@ -8,28 +8,17 @@
 
 using namespace clarity;
 
-// EM_JS(void, call_alert, (), {
-//     alert('hello world!');
-//     throw 'all done';
-// });
-
-// EM_JS(val, elgs, (), {
-//     return function () {
-//         return function (jsProxyNode) {
-//             return function (ev) { console.log("MOUSEOVER WORKS! for ID = " jsProxyNode.getId());};
-//     }; };
-// });
-
 /**
  * @brief Used to test all the major types of web controls.
  *
  */
 struct Showcase : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
-        
+
         val elgInputAlltypesMouseover = ClarityNode::JSProxyNode_["elgInputAlltypesMouseover"];
 
-        ClarityNode::installListenerGenerators("JSProxyNode", "HybridNode", elgInputAlltypesMouseover, "input", "text", "mouseover");
+        ClarityNode::installListenerGenerators(
+            "JSProxyNode", "HybridNode", elgInputAlltypesMouseover, "input", "range", "mouseover");
 
         val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
 

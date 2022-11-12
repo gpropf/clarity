@@ -297,6 +297,7 @@ class JSProxyNode {
   //createDOMElement(id, tag, name, attachmentMode, attachmentId = null) {
   createDOMElement(id, attachmentMode, attachmentId = null) {
 
+    //console.log(JSProxyNode.listenerGenerators);
     this.clarityNode_ = Module.ClarityNode.getClarityNodeById(id);
     this.id_ = this.clarityNode_.getId();
     this.tag_ = this.clarityNode_.getTag();

@@ -261,7 +261,7 @@ class CLNodeFactory {
      */
     INLINE void warnNoName(ClarityNode *node, const string &nodeType) {
         if (tag_ == "br" || tag_ == "hr") return;
-        if (node->getName() == "") node->nodelog("Built a <" + nodeType + "> tag without a name!");
+        if (node->getName() == "") node->nodelog("<" + nodeType + "> tag created without a name!");
     }
 
     /**

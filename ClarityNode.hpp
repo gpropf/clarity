@@ -115,7 +115,7 @@ class ClarityNode {
 
     void nodelog(const string &msg, ClogType clt = ClogType::WARNING) const {
         if (ClarityNode::clogSilent) return;
-        string msgout("node " + clto_str(id_) + ":" + msg);
+        string msgout("node " + clto_str(id_) + ": " + msg);
         clog(msgout, clt);
     }
 
@@ -303,13 +303,16 @@ class ClarityNode {
     }
 
     /**
-     * @brief
+     * @brief Allows the API user to install his own LGs with varying specificity as to tag, type,
+     * event name, etc...
      *
-     * @param nodeClassName
-     * @param newListenerGenerators
-     * @param tag
-     * @param tagType
-     * @param eventName
+     * @param jsModuleName JSProxyNode, Selectables, etc...
+     * @param nodeClassName HybridNode, SimpleSelect, CanvasGrid, etc...
+     * @param newListenerGenerators can be a single LG as a "val" object or an entire set of LGs,
+     * the presence of null values in the parameters determines how this param is used.
+     * @param tag HTML tag
+     * @param tagType "type" attribute for the HTML tag.
+     * @param eventName JS event name: "mousedown", "click", etc...
      * @return void
      */
     static INLINE void installListenerGenerators(const string &jsModuleName,
@@ -317,25 +320,37 @@ class ClarityNode {
                                                  val newListenerGenerators, const string &tag = "",
                                                  string tagType = string(""),
                                                  const string &eventName = "") {
-        val lgmap;
         assert(nodeClassName != "");
         if (tag == "") {
             val::global(jsModuleName.c_str()).set("listenerGenerators", newListenerGenerators);
             return;
         }
-        lgmap = val::global(jsModuleName.c_str())[nodeClassName.c_str()];
+
+        // Since the "type" attribute seems to be just for the <input> tag, we use the explicit
+        // value "NOTYPE" as the type for anything where type is left blank.
         if (tagType == "") tagType = string("NOTYPE");
+
+        val lgmap = val::global(
+            jsModuleName.c_str())["listenerGenerators"][nodeClassName.c_str()][tag.c_str()];
+
+        // If there's no key for the tagType we create a placeholder value. This is mainly so
+        // that listeners for "NOTYPE" can be installed.
+        if (lgmap[tagType.c_str()] == val::null())
+            val::global(
+                jsModuleName.c_str())["listenerGenerators"][nodeClassName.c_str()][tag.c_str()]
+                .set(tagType.c_str(), val(1));
+
+        // If there's no eventName we assume that we are replacing the entire set of ELGs for a
+        // given tag.
         if (eventName == "") {
             val::global(
                 jsModuleName.c_str())["listenerGenerators"][nodeClassName.c_str()][tag.c_str()]
                 .set(tagType.c_str(), newListenerGenerators);
-            //            lgmap[tag].set(tagType.c_str(), newListenerGenerators);
         } else {
             val::global(jsModuleName.c_str())["listenerGenerators"][nodeClassName.c_str()]
                                              [tag.c_str()][tagType.c_str()]
                                                  .set(eventName.c_str(), newListenerGenerators);
         }
-        // if (tag == "")
     }
 
     /**
