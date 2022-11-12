@@ -147,6 +147,12 @@ class JSProxyNode {
     }
   }
 
+  static elgInputAlltypesMouseover (jsProxyNode) {
+    return function (e) {      
+      console.log("Mouse Hover!");
+    }
+  }
+
   static elgCanvasGridAlltypesClick (jsProxyNode) {
     return function(ev) {
       let domElement = ev.target;
