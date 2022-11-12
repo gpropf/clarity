@@ -73,18 +73,19 @@ Nodes can be connected together using data links and updating one node can trigg
 
 When you create a node the system will install a set of event listeners that are designed to implement the movement of data from the model to and from the GUI. We also need a way for api users to add their own event listeners. Preferably, this mechanism would be agnostic as to whether a listener is written in C++ or JS. It should also be possible to set it up so that such a listener is automatically attached to all nodes of a given type or just a particular one or group.
 
-
 ### Todo ###
 
-1. Event API. We still need a framework to offer people a way to easily use events. Need to be able to use C++ or JS for event handling. 
+1. Event API. We still need a framework to offer people a way to easily use events. Need to be able to use C++ or JS for event handling. I now have the ClarityNode::installListenerGenerators() static method to allow the user to replace or augment the standard event listeners in their programs.
+
+1. The template parameterized multiplier value in DualLink should be stored so it can be the target of user interaction. Basically, you could edit the conversion factor for some peer value.
    
-2. Selectables could use a common base class.
+2. Selectables could use a common base class?
    
-   1. Radio buttons
+1. Radio buttons.
    
-   2. Checkboxes: We have a Checkbox class in Selectables now.
+2. ~~Checkboxes~~: We have a Checkbox class in Selectables now.
    
-   3. Select boxes: Need to make a SimpleSelect class that uses a static option set and uses an underlying type representing the "value" component of `<option value="3" label="Toyota"></option>`. Initially this will be a single value. Multiselections can be vectors of those values. So picking Toyota *and* Ford in my Showcase.cpp test app would mean a vector or list like [1,2]. A simple API can be used to modify the options if need be.
+3. Select boxes: SimpleSelect class now uses a single value to represent the current selection and has eventListeners and other constructs to update that value as the user changes their selection.
 
 ### Todo (cleanups and "doing things right" fixes - somewhat lower priority) ###
 

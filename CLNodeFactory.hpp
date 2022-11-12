@@ -401,6 +401,14 @@ class CLNodeFactory {
         return cpy;
     }
 
+    /**
+     * @brief Using this method should allow you to create any node surrounded by a label. The
+     * build() method support for this still causes infinite recursions so this feature is disabled
+     * for now.
+     *
+     * @param labelText
+     * @return CLNodeFactory
+     */
     INLINE CLNodeFactory withLabelText(const string labelText) const & {
         clog("withLabelText() method currently unimplemented and has no effect.");
         CLNodeFactory cpy(*this);
@@ -408,7 +416,7 @@ class CLNodeFactory {
         return cpy;
     }
 
-     INLINE CLNodeFactory withLabelText(const string labelText) && {
+    INLINE CLNodeFactory withLabelText(const string labelText) && {
         clog("withLabelText() method currently unimplemented and has no effect.");
         CLNodeFactory cpy(std::move(*this));
         cpy.labelText_ = labelText;
@@ -758,9 +766,10 @@ class CLNodeFactory {
      *
      * @return Nc*
      */
-    INLINE CanvasElement<V> *canvas() {
+    INLINE CanvasElement<V> *canvas(const string &drawFunctionName) {
         CanvasElement<V> *cel = static_cast<CanvasElement<V> *>(withTag("canvas").build());
         // cel->setDrawFuntionName("canvasTestPattern");
+        cel->setDrawFuntionName(drawFunctionName);
         cel->refreshView();
         return cel;
     }

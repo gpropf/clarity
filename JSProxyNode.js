@@ -418,6 +418,23 @@ class JSProxyNode {
     console.log(`CNN: FOR ID: ${this.id}, THIS VAL = ${this.domElement_.value}`);
   }  
 
+  canvasTestPattern() {
+    var domElement = this.domElement_;
+    if (domElement.getContext) {
+      domElement.style.display = 'none';
+      domElement.style.display = 'block';
+      let ctx = domElement.getContext('2d');
+      let [w, h, hw, hh] = [domElement.width, domElement.height, domElement.width / 2, domElement.height / 2];
+      let [qw, qh] = [w / 4, h / 4];
+      ctx.scale(1, 1);
+      ctx.fillStyle = 'green';
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = 'blue';
+      ctx.fillRect(qw, qh, hw, hh);
+      console.log("drawGreenTestPattern()");
+    }
+  }
+
   static setGridLocToCurrentVal(ev) {
     let domElement = ev.target;
     let domrect = domElement.getBoundingClientRect();
@@ -442,6 +459,8 @@ function myTimer() {
   // console.log(d.toLocaleTimeString())
   Module.ClarityNode.runCallbackById("tick")
 }
+
+
 
 window.JSProxyNode = JSProxyNode
 
@@ -523,22 +542,7 @@ window.JSProxyNode = JSProxyNode
   //   }
   // }
 
-  // canvasTestPattern() {
-  //   var domElement = this.domElement_;
-  //   if (domElement.getContext) {
-  //     domElement.style.display = 'none';
-  //     domElement.style.display = 'block';
-  //     let ctx = domElement.getContext('2d');
-  //     let [w, h, hw, hh] = [domElement.width, domElement.height, domElement.width / 2, domElement.height / 2];
-  //     let [qw, qh] = [w / 4, h / 4];
-  //     ctx.scale(1, 1);
-  //     ctx.fillStyle = 'green';
-  //     ctx.fillRect(0, 0, w, h);
-  //     ctx.fillStyle = 'blue';
-  //     ctx.fillRect(qw, qh, hw, hh);
-  //     console.log("drawGreenTestPattern()");
-  //   }
-  // }
+  
 
   // blackbody(temp) {
   //   var originalColor = { "r": 0, "g": 200, "b": 75 };

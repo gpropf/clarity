@@ -51,12 +51,22 @@ int *nSetGroups = new int(20);
 int *nTotalFields = new int(*nInputFields * *nFieldsets * *nSetGroups);
 
 template <template <typename V> class Nc, typename V, typename N>
-void makeTrs(CLNodeFactory<Nc, V, N> builder) {
+void makeTrs(CLNodeFactory<Nc, V, N> builder, ClarityNode * graphCanvas) {
+    val graphCanvasDomElement = graphCanvas->getDomElement();
+    val ctx = graphCanvasDomElement.call<val>("getContext",val("2d"));
+    ctx.set("strokeStyle","red");
+    // ctx.call<void>("moveTo", val(0), val(0));
+    // ctx.call<void>("lineTo", val(200), val(100));
+    // ctx.call<void>("stroke");
+// ctx.moveTo(0, 0);
+// ctx.lineTo(200, 100);
+// ctx.stroke();
     int totalFieldsToCreate = *nInputFields * *nFieldsets * *nSetGroups;
     cout << "We will be creating a total of " << totalFieldsToCreate << endl;
 
     // destroyFieldsImmediately_cb->refresh();
     int fieldCount = 0;
+    int rateCount = 0;
     time_t totalTime = 0;
     for (int k = 0; k < *nSetGroups; k++) {
         cout << "Setgroup: " << k << endl;
@@ -73,11 +83,16 @@ void makeTrs(CLNodeFactory<Nc, V, N> builder) {
                 ns.push_back(iptr);
                 clns.push_back(cln);
             }
+            rateCount++;
             time_t t2 = msecsTime();
             time_t delT = t2 - t1;
             double msPerField = double(delT) / double(*nInputFields);
             cout << "\tSet: " << j << ", ms/field: " << msPerField << endl;
             totalTime += delT;
+            double barHeight = msPerField * 50;
+            ctx.call<void>("moveTo", val(rateCount), val(150-barHeight));
+            ctx.call<void>("lineTo", val(rateCount), val(150));
+            ctx.call<void>("stroke");
             if (*destroyFieldsImmediately) destroyEverything(val::null());
         }
     }
@@ -171,6 +186,8 @@ int main() {
     auto *labelled_destroyFieldsImmediately_cb = childOfMaindivBuilder.label(
         destroyFieldsImmediately_cb, "Destroy fields as we go", true);
 
+    auto *graphCanvas = childOfMaindivBuilder.withName("graphCanvas").canvas("canvasTestPattern");
+
     // clarity::ClarityNode::callbackMap["destroyEverything"] = [=] { destroyEverything(); };
     updateTotalFields = [=] {
         *nTotalFields = *nInputFields * *nFieldsets * *nSetGroups;
@@ -183,7 +200,7 @@ int main() {
         destroyFieldsImmediately_cb->refresh();
     };
 
-    lbd = [=] { makeTrs(childOfMaindivBuilder_int); };
+    lbd = [=] { makeTrs(childOfMaindivBuilder_int, graphCanvas); };
 
     cout << "Setup complete!\n";
     return 0;
