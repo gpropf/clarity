@@ -47,7 +47,7 @@ class CanvasElement : public HybridNode<V> {
         //cout << "CanvasElement::finalize()\n";
         this->cle_.set("clarityNode", this);
         //val Selectables = val::global("Selectables");
-        val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators2"];
+        val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("CanvasElement"),
                                              this->cle_, listenerGenerators);
     }
@@ -133,7 +133,7 @@ class CanvasGrid : public CanvasElement<V> {
         //cout << "CanvasGrid::finalize()\n";
         this->cle_.set("clarityNode", this);
         //val Selectables = val::global("Selectables");
-        val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators2"];
+        val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("CanvasGrid"),
                                              this->cle_, listenerGenerators);
     }

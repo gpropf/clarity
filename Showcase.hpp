@@ -8,13 +8,28 @@
 
 using namespace clarity;
 
+EM_JS(void, call_alert, (), {
+    alert('hello world!');
+    throw 'all done';
+});
+
+EM_JS(val, elgs, (), {
+    // return function (jsProxyNode) {
+    //     return function (ev) { console.log("MOUSEOVER WORKS! for ID = " jsProxyNode.getId());};
+    // }; 
+});
+
 /**
  * @brief Used to test all the major types of web controls.
  *
  */
 struct Showcase : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
-        // val JSProxyNode = val::global("JSProxyNode");
+        
+        val elgInputAlltypesMousedown = ClarityNode::JSProxyNode_["elgInputAlltypesMousedown"];
+
+        ClarityNode::installListenerGenerators("JSProxyNode", "HybridNode", elgInputAlltypesMousedown, "input", "text", "mouseover");
+
         val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
 
         double *temp = new double(330);
@@ -90,10 +105,11 @@ struct Showcase : public PageContent {
                               .label(svgarea, *flexLabelText);
         childOfMaindivBuilder.br();
 
-        auto *inputFlexTextLabel = childOfMaindivBuilder_str.withName("inputFlexTextLabel")
-                                       .withPeer(flexLabel)
-                                       .withAttributes({{"title", val("YOU CAN CHANGE THE LABEL TEXT")}})
-                                       .textInput();
+        auto *inputFlexTextLabel =
+            childOfMaindivBuilder_str.withName("inputFlexTextLabel")
+                .withPeer(flexLabel)
+                .withAttributes({{"title", val("YOU CAN CHANGE THE LABEL TEXT")}})
+                .textInput();
         childOfMaindivBuilder.br();
 
         childOfMaindivBuilder.hr();
@@ -112,19 +128,22 @@ struct Showcase : public PageContent {
             daisies,
             "These three nodes are linked in a daisy chain to illustrate intragraph value "
             "transformations and the ability to have nodes that do not themselves contain a model "
-            "value. Only the leftmost has a cppVal_", true);
+            "value. Only the leftmost has a cppVal_",
+            true);
 
         childOfMaindivBuilder.br();
         childOfMaindivBuilder.br();
 
-        //string *clickme = new string("CLICK ME");
+        // string *clickme = new string("CLICK ME");
         string clickme2("CLICK ME TOO");
         // Demonstrates the withEventListenerGenerator method.
         auto *elgDemo_tinp =
-            CLNodeFactory<HybridNode, string, double>(childOfMaindivBuilder).withName("elgDemo_tinp")
+            CLNodeFactory<HybridNode, string, double>(childOfMaindivBuilder)
+                .withName("elgDemo_tinp")
                 //.withCppVal(canvas1->getPtr2CurrentCellVal())
                 .withAttributes({{"style", val("border: 3px solid #4055aa")}, {"size", val(15)}})
-                .withEventListenerGenerator("mousedown", ClarityNode::JSProxyNode_["elgInputAlltypesMousedown"])
+                .withEventListenerGenerator("mousedown",
+                                            ClarityNode::JSProxyNode_["elgInputAlltypesMousedown"])
                 .withInitVal(clickme2)
                 .textInput();
 
@@ -168,8 +187,6 @@ struct Showcase : public PageContent {
         Select<vector<pair<int, string>>> *carSelect =
             selectBuilder.withName("cars").withCppVal(carOptions).select();
 
-        
-
         CLNodeFactory<SimpleSelect, int, int> simpleSelectBuilder(childOfMaindivBuilder);
         vector<pair<int, string>> *carOptions2 = new vector<pair<int, string>>;
         carOptions2->push_back({0, "BMW"});
@@ -177,12 +194,12 @@ struct Showcase : public PageContent {
         carOptions2->push_back({2, "Lada"});
         carOptions2->push_back({3, "Ferrari"});
 
-        int * carSelection = new int(2);
+        int *carSelection = new int(2);
 
-        SimpleSelect<int> *carSelect_ss =
-            simpleSelectBuilder.withName("carSelect_ss").withCppVal(carSelection).withLabelText("Pick a better car").simpleSelect<string>(*carOptions2);
-
-        
+        SimpleSelect<int> *carSelect_ss = simpleSelectBuilder.withName("carSelect_ss")
+                                              .withCppVal(carSelection)
+                                              .withLabelText("Pick a better car")
+                                              .simpleSelect<string>(*carOptions2);
 
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
         // string * checkme = new string("checked");

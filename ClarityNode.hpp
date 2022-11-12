@@ -34,12 +34,9 @@ std::string clto_str(const T &v) {
  */
 class ClarityNode {
    public:
-
     static bool clogSilent;
 
-    static void setClogSilent(bool silent = true) {
-        clogSilent = silent;
-    }
+    static void setClogSilent(bool silent = true) { clogSilent = silent; }
 
     static map<string, std::function<void()>> callbackMap;
     static val JSProxyNode_;
@@ -116,26 +113,26 @@ class ClarityNode {
         }
     }
 
-    void nodelog(const string& msg, ClogType clt = ClogType::WARNING) const {
+    void nodelog(const string &msg, ClogType clt = ClogType::WARNING) const {
         if (ClarityNode::clogSilent) return;
-        string msgout("node " + clto_str(id_)+ ":" + msg);
+        string msgout("node " + clto_str(id_) + ":" + msg);
         clog(msgout, clt);
     }
 
-    static void nodelogStatic(const string& msg, ClogType clt = ClogType::WARNING) {
+    static void nodelogStatic(const string &msg, ClogType clt = ClogType::WARNING) {
         if (ClarityNode::clogSilent) return;
-        //string msgout("node " + clto_str(id_)+ ":" + msg);
+        // string msgout("node " + clto_str(id_)+ ":" + msg);
         clog(msg, clt);
     }
 
     static void addEventListenerGenerator(const string &nodeTypeCode, val handlerGenerator) {}
 
-    void addEventListener(std::function<void()> fn, const string &eventName) {        
-        domElement_.call<void>("addEventListener", eventName, val(fn));        
+    void addEventListener(std::function<void()> fn, const string &eventName) {
+        domElement_.call<void>("addEventListener", eventName, val(fn));
     }
 
-    void addEventListener(val elfn, const string &eventName) {        
-        domElement_.call<void>("addEventListener", eventName, elfn);        
+    void addEventListener(val elfn, const string &eventName) {
+        domElement_.call<void>("addEventListener", eventName, elfn);
     }
 
     INLINE string getTag() const { return tag_; }
@@ -190,7 +187,7 @@ class ClarityNode {
 
         domElement_ = cle_["domElement"];
         boundField_ = "value";
-        ClarityNode::switchboard[id_] = this;       
+        ClarityNode::switchboard[id_] = this;
     }
 
     INLINE ClarityNode *getParent() const { return this->parent_; }
@@ -220,7 +217,7 @@ class ClarityNode {
             domElement_.set(boundField_, inval);
             domElement_.call<void>("setAttribute", val(boundField_), inval);
         } else {
-            nodelog("Attempt to set DOM value of element with no bound field!");            
+            nodelog("Attempt to set DOM value of element with no bound field!");
         }
     }
 
@@ -240,8 +237,8 @@ class ClarityNode {
      * creation. I went with a short code instead of an enum to make expanding the types easier for
      * end users.
      *
-     * Update: using finalize() and JSProxyNode.installEventListeners probably makes this unnecessary
-     * except for debugging output.
+     * Update: using finalize() and JSProxyNode.installEventListeners probably makes this
+     * unnecessary except for debugging output.
      *
      * @return string
      */
@@ -305,8 +302,40 @@ class ClarityNode {
         ClarityNode::switchboard[id_] = this;
     }
 
-    static INLINE void installListenerGenerators(const string &nodeClassName, const string& tag, const string& tagType = NULL) {
-        val nodeClass = val::global(nodeClassName.c_str());
+    /**
+     * @brief
+     *
+     * @param nodeClassName
+     * @param newListenerGenerators
+     * @param tag
+     * @param tagType
+     * @param eventName
+     * @return void
+     */
+    static INLINE void installListenerGenerators(const string &jsModuleName,
+                                                 const string &nodeClassName,
+                                                 val newListenerGenerators, const string &tag = "",
+                                                 string tagType = string(""),
+                                                 const string &eventName = "") {
+        val lgmap;
+        assert(nodeClassName != "");
+        if (tag == "") {
+            val::global(jsModuleName.c_str()).set("listenerGenerators", newListenerGenerators);
+            return;
+        }
+        lgmap = val::global(jsModuleName.c_str())[nodeClassName.c_str()];
+        if (tagType == "") tagType = string("NOTYPE");
+        if (eventName == "") {
+            val::global(
+                jsModuleName.c_str())["listenerGenerators"][nodeClassName.c_str()][tag.c_str()]
+                .set(tagType.c_str(), newListenerGenerators);
+            //            lgmap[tag].set(tagType.c_str(), newListenerGenerators);
+        } else {
+            val::global(jsModuleName.c_str())["listenerGenerators"][nodeClassName.c_str()]
+                                             [tag.c_str()][tagType.c_str()]
+                                                 .set(eventName.c_str(), newListenerGenerators);
+        }
+        // if (tag == "")
     }
 
     /**
@@ -337,7 +366,6 @@ class ClarityNode {
                 auto [peer, xfmr] = dl->getOtherNode(this);
                 pushValToPeer(*dl);
                 peer->pushValToPeers(this);
-               
             }
         } else {
             for (auto dl : dlpeers_) {
@@ -345,7 +373,6 @@ class ClarityNode {
                 if (peer != excludedPeer) {
                     pushValToPeer(*dl);
                     peer->pushValToPeers(this);
-                    
                 }
             }
         }
@@ -473,19 +500,13 @@ class HybridNode : public ClarityNode {
              << endl;
     }
 
-    // inline virtual void finalize() {
-    //     this->cle_.set("clarityNode", this);
-    //     val listenerGenerators = JSProxyNode_["listenerGenerators"];
-    //     JSProxyNode_.call<void>("installEventListenersByTagAndType", cle_, listenerGenerators);
-    // }
-
     INLINE virtual void finalize() {
-        //cout << "HybridNode::finalize()\n";
+        // cout << "HybridNode::finalize()\n";
         this->cle_.set("clarityNode", this);
-        //val Selectables = val::global("Selectables");
-        val listenerGenerators = JSProxyNode_["listenerGenerators2"];
-        JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("HybridNode"),
-                                             this->cle_, listenerGenerators);
+        // val Selectables = val::global("Selectables");
+        val listenerGenerators = JSProxyNode_["listenerGenerators"];
+        JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("HybridNode"), this->cle_,
+                                listenerGenerators);
     }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }

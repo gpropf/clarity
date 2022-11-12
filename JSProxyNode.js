@@ -332,14 +332,14 @@ class JSProxyNode {
     this.domElement_.appendChild(opt);
   }
 
-  static getEventListenerGenerators(eventListenerGeneratorsByTagAndType, elementTag, elementType = null) {
-    var listenerGeneratorsForTag = eventListenerGeneratorsByTagAndType[elementTag];
-    if (listenerGeneratorsForTag == null) return null;
-    if (elementType == null) elementType = "NOTYPE";
-      return eventListenerGeneratorsByTagAndType[elementTag][elementType];
-  }
+  // static getEventListenerGenerators(eventListenerGeneratorsByTagAndType, elementTag, elementType = null) {
+  //   var listenerGeneratorsForTag = eventListenerGeneratorsByTagAndType[elementTag];
+  //   if (listenerGeneratorsForTag == null) return null;
+  //   if (elementType == null) elementType = "NOTYPE";
+  //     return eventListenerGeneratorsByTagAndType[elementTag][elementType];
+  // }
 
-  static listenerGenerators2 = {
+  static listenerGenerators = {
     "CanvasGrid": {
       "canvas": {
         "NOTYPE":
@@ -369,15 +369,15 @@ class JSProxyNode {
     }
   }  
 
-  static installEventListenersByTagAndType(cle,  listenerGeneratorMap) {      
-    if (cle.domElement == null) return;  
-    var eventListenerGenerators = JSProxyNode.getEventListenerGenerators(listenerGeneratorMap, cle.tag_, cle.domElement.getAttribute("type"));
-    if (eventListenerGenerators == null) return;    
-    var entries = Object.entries(eventListenerGenerators);
-    for (const [eventName, generatorFunction] of entries) {           
-      cle.domElement.addEventListener(eventName, generatorFunction(cle));
-    }         
-  }
+  // static installEventListenersByTagAndType(cle,  listenerGeneratorMap) {      
+  //   if (cle.domElement == null) return;  
+  //   var eventListenerGenerators = JSProxyNode.getEventListenerGenerators(listenerGeneratorMap, cle.tag_, cle.domElement.getAttribute("type"));
+  //   if (eventListenerGenerators == null) return;    
+  //   var entries = Object.entries(eventListenerGenerators);
+  //   for (const [eventName, generatorFunction] of entries) {           
+  //     cle.domElement.addEventListener(eventName, generatorFunction(cle));
+  //   }         
+  // }
 
   static getEventListenerGenerators2(eventListenerGeneratorsByTagAndType, clarityNodeClass, elementTag, elementType = null) {
     var listenerGeneratorsForTag = eventListenerGeneratorsByTagAndType[clarityNodeClass][elementTag];

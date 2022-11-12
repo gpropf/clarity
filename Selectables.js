@@ -37,7 +37,7 @@ class Selectables {
   //   }
   // }
 
-  static listenerGenerators2 = {
+  static listenerGenerators = {
     "Select": {
       "select": {
         "NOTYPE": {
