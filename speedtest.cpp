@@ -15,6 +15,7 @@ EMSCRIPTEN_BINDINGS(speedtest) {
         .class_function("destroyEverything_shell", &Speedtest::destroyEverything_shell,
                         allow_raw_pointers())
         .function("destroyEverything", &Speedtest::destroyEverything, allow_raw_pointers())
+       // .function("showname", &Speedtest::showname, allow_raw_pointers())
 
         .function("runLambda", &Speedtest::runLambda, allow_raw_pointers())
         .class_function("runUpdateTotalFields", &Speedtest::runUpdateTotalFields, allow_raw_pointers());
@@ -23,7 +24,7 @@ EMSCRIPTEN_BINDINGS(speedtest) {
 Speedtest *Speedtest::singleton = nullptr;
 
 int main() {
-    Speedtest speedtest;
+    Speedtest speedtest("FooTest");
     Speedtest::singleton = &speedtest;
     TestFramework testFramework;
     testFramework.content(speedtest.content());

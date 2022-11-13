@@ -22,13 +22,11 @@ using namespace clarity;
 std::function<void()> lbd;
 std::function<void()> updateTotalFields;
 
-
-
-
-
 struct Speedtest : public PageContent {
-
     static Speedtest *singleton;
+    string name_;
+
+    Speedtest(const string &name) { this->name_ = name; }
 
     vector<int *> ns;
     vector<HybridNode<int> *> clns;
@@ -71,7 +69,7 @@ struct Speedtest : public PageContent {
 
     static void destroyEverything_shell(val ev) {
         cout << "Speedtest::destroyEverything_shell()\n";
-        singleton->destroyEverything(ev);
+        // destroyEverything(ev);
     }
 
     int *nInputFields = new int(25);
@@ -132,24 +130,33 @@ struct Speedtest : public PageContent {
     }
 
     void runLambda(val ev) { lbd(); }
-    static void runUpdateTotalFields(val ev) {  updateTotalFields(); }
+    static void runUpdateTotalFields(val ev) { updateTotalFields(); }
+    void showname(val ev) { cout << this->name_ << endl; }
+
+    auto makeShowname() {
+         using namespace std::placeholders;
+        cout << "Speedtest::makeShowname()\n";
+        auto lbd = [this] (val ev) {this->showname(ev);};
+        return val(lbd);
+        //return val(std::bind(&Speedtest::showname, this));
+    }
 
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
         ClarityNode::setClogSilent();
 
-        
         val Module = val::global("Module");
         val Speedtest = Module["Speedtest"];
-        //Speedtest.call<void>("cppTestFn", val::null());
+        // Speedtest.call<void>("cppTestFn", val::null());
         val cppTestFn = Speedtest["cppTestFn"];
-        //val destroyEverything_this = Speedtest["destroyEverything_this"];
-        //val destroyEverything = Speedtest["destroyEverything"];
-        //val destroyEverything_el = destroyEverything_this(this);
+        // val destroyEverything_this = Speedtest["destroyEverything_this"];
+        // val destroyEverything = Speedtest["destroyEverything"];
+        // val destroyEverything_el = destroyEverything_this(this);
         val destroyEverything_shell = Speedtest["destroyEverything_shell"];
         val runLambda = Speedtest["runLambda"];
         val runUpdateTotalFields = Speedtest["runUpdateTotalFields"];
         val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
         val listNodes = ClarityNode::JSProxyNode_["listNodes_int"];
+        //val showname = makeShowname();
 
         CLNodeFactory<HybridNode, int, double> builder("div", "maindiv");
         auto *maindiv = builder.build();
@@ -158,8 +165,13 @@ struct Speedtest : public PageContent {
 
         CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
 
+        
+        CLNodeFactory<HybridNode, decltype(*this), int> childOfMaindivBuilder_speedtest(childOfMaindivBuilder);
+
+        auto *nameLabel = childOfMaindivBuilder_speedtest.withName("st").withTag("div").withCppVal(this).build();
+
         auto *nInputFields_inp = childOfMaindivBuilder_int.withName("nInputFields_inp")
-                                     .withCppVal(singleton->nInputFields)
+                                     .withCppVal(nInputFields)
                                      .textInput();
         auto *labelled_nInputFields_inp =
             childOfMaindivBuilder_int.labelGivenNode(nInputFields_inp, "Fields per set");
@@ -167,28 +179,32 @@ struct Speedtest : public PageContent {
         nInputFields_inp->addEventListener(runUpdateTotalFields, string("change"));
 
         auto *nFieldsets_inp =
-            childOfMaindivBuilder_int.withName("fieldsets_inp").withCppVal(singleton->nFieldsets).textInput();
+            childOfMaindivBuilder_int.withName("fieldsets_inp").withCppVal(nFieldsets).textInput();
         auto *labelled_fieldsets_inp =
             childOfMaindivBuilder_int.labelGivenNode(nFieldsets_inp, "Number of sets");
 
         nFieldsets_inp->addEventListener(runUpdateTotalFields, string("change"));
 
         auto *nSetGroups_inp =
-            childOfMaindivBuilder_int.withName("nSetGroups_inp").withCppVal(singleton->nSetGroups).textInput();
+            childOfMaindivBuilder_int.withName("nSetGroups_inp").withCppVal(nSetGroups).textInput();
         auto *labelled_nSetGroups_inp =
             childOfMaindivBuilder_int.labelGivenNode(nSetGroups_inp, "Number of set groups");
 
         nSetGroups_inp->addEventListener(runUpdateTotalFields, string("change"));
 
         auto *nTotalFields_inp = childOfMaindivBuilder_int.withName("nTotalFields_inp")
-                                     .withCppVal(singleton->nTotalFields)
+                                     .withCppVal(nTotalFields)
                                      .textInput();
         auto *labelled_nTotalFields_inp =
             childOfMaindivBuilder_int.labelGivenNode(nTotalFields_inp, "Total Fields");
 
         // auto *boomButton =
         //     childOfMaindivBuilder.button("boomButton", "BOOM!", destroy_everything_cpp);
-        auto *boomButton = childOfMaindivBuilder.button("boomButton", "BOOM!", destroyEverything_shell);
+
+        //auto *showname_btn = childOfMaindivBuilder.button("showname", "Show name", showname);
+
+        auto *boomButton =
+            childOfMaindivBuilder.button("boomButton", "BOOM!", destroyEverything_shell);
 
         // boomButton->addEventListener(destroyEverything, "click");
 
@@ -202,7 +218,7 @@ struct Speedtest : public PageContent {
 
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
 
-        auto *destroyFieldsImmediately_cb = checkboxBuilder.withCppVal(singleton->destroyFieldsImmediately)
+        auto *destroyFieldsImmediately_cb = checkboxBuilder.withCppVal(destroyFieldsImmediately)
                                                 .withName("destroyFieldsImmediately_cb")
                                                 .checkbox();
 
@@ -217,12 +233,12 @@ struct Speedtest : public PageContent {
 
         // clarity::ClarityNode::callbackMap["destroyEverything"] = [=] { destroyEverything(); };
         updateTotalFields = [&] {
-            *singleton->nTotalFields = *singleton->nInputFields * *singleton->nFieldsets * *singleton->nSetGroups;
-            if (*singleton->nTotalFields > 10000)
-                *singleton->destroyFieldsImmediately = true;
+            *nTotalFields = *nInputFields * *nFieldsets * *nSetGroups;
+            if (*nTotalFields > 10000)
+                *destroyFieldsImmediately = true;
             else
-                *singleton->destroyFieldsImmediately = false;
-            cout << "UPDATED TOTAL FIELDS: " << *singleton->nTotalFields << endl;
+                *destroyFieldsImmediately = false;
+            cout << "UPDATED TOTAL FIELDS: " << *nTotalFields << endl;
             nTotalFields_inp->refresh();
             destroyFieldsImmediately_cb->refresh();
         };
@@ -233,7 +249,5 @@ struct Speedtest : public PageContent {
         return maindiv;
     }
 };
-
-
 
 #endif
