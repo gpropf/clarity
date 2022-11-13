@@ -3,13 +3,16 @@
  * 
  */
 
-
-function loadBootScript(scriptName) {
+ function loadJSFile(scriptName, rootUrl = ".") {
   var el = document.createElement('script');
   el.async = false;
-  el.src = ClarityInstallURL + '/' + scriptName;
+  el.src = rootUrl + "/" + scriptName;
   el.type = 'text/javascript';  
   (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(el);
+}
+
+function loadBootScript(scriptName) {
+  loadJSFile(scriptName, ClarityInstallURL);
 }
 
 function loadAuxScript2(scriptName) {
@@ -20,9 +23,12 @@ function loadAuxScript2(scriptName) {
   (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(el);
 }
 
-//var auxScripts = ["auxExample1.js","auxExample2.js"];
-let bootScripts = [ "Selectables.js", "Util.js", "clarity_embind.js"];
+
+let bootScripts = [ "Selectables.js", "Util.js"];
 bootScripts.map(loadBootScript);
+// This call to loadJSFile is needed because user apps will usually
+// not have their compiled JS in the same directory as the boot scripts.
+loadJSFile("clarity_embind.js");
 
 class JSProxyNode {
 
