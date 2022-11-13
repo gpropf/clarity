@@ -17,7 +17,7 @@ EMSCRIPTEN_BINDINGS(speedtest) {
         .function("destroyEverything", &Speedtest::destroyEverything, allow_raw_pointers())
 
         .function("runLambda", &Speedtest::runLambda, allow_raw_pointers())
-        .function("runUpdateTotalFields", &Speedtest::runUpdateTotalFields, allow_raw_pointers());
+        .class_function("runUpdateTotalFields", &Speedtest::runUpdateTotalFields, allow_raw_pointers());
 }
 
 Speedtest *Speedtest::singleton = nullptr;
