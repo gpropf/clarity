@@ -15,6 +15,9 @@ using namespace clarity;
 struct Showcase : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
 
+        ClarityNode::addJSAuxScript("showcaseAux.js");
+        ClarityNode::runJSAuxScripts();
+
         val elgInputAlltypesMouseover = ClarityNode::JSProxyNode_["elgInputAlltypesMouseover"];
 
         ClarityNode::installListenerGenerators(

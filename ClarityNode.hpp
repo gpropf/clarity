@@ -34,6 +34,21 @@ std::string clto_str(const T &v) {
  */
 class ClarityNode {
    public:
+    static vector<string> jsAuxScripts__; 
+
+    static void addJSAuxScript(const string &jsFilename) {
+        jsAuxScripts__.push_back(jsFilename);
+    }
+
+    static void runJSAuxScripts() {
+
+        val loadAuxScript = val::global("loadAuxScript2");
+        for (string scriptName : jsAuxScripts__) {
+            loadAuxScript(scriptName);
+            //resultString = emscripten_run_script_string(scriptName.c_str());
+        }
+    }
+
     static bool clogSilent;
 
     static void setClogSilent(bool silent = true) { clogSilent = silent; }
@@ -152,6 +167,12 @@ class ClarityNode {
     inline int getId() const { return id_; }
     inline void setCLE(val cle) { cle_ = cle; }
 
+    /**
+     * @brief An early hack to allow users to attach their C++ code to buttons and things. Not sure
+     * this actually saves work over just using embindings in your program.
+     *
+     * @param id
+     */
     inline static void runCallbackById(const string &id) { callbackMap[id](); }
 
     // void EMSCRIPTEN_KEEPALIVE init();

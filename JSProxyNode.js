@@ -4,16 +4,24 @@
  */
 
 
-function loadAuxScript(scriptName) {
+// function loadAuxScript(scriptName) {
+//   var el = document.createElement('script');
+//   el.async = false;
+//   el.src = ClarityInstallURL + '/js.d/' + scriptName;
+//   el.type = 'text/javascript';  
+//   (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(el);
+// }
+
+function loadAuxScript2(scriptName) {
   var el = document.createElement('script');
   el.async = false;
-  el.src = ClarityInstallURL + '/js.d/' + scriptName;
+  el.src = JSAuxURL + '/' + scriptName;
   el.type = 'text/javascript';  
   (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(el);
 }
 
-var auxScripts = ["auxExample1.js","auxExample2.js"];
-auxScripts.map(loadAuxScript);
+//var auxScripts = ["auxExample1.js","auxExample2.js"];
+//auxScripts.map(loadAuxScript);
 
 class JSProxyNode {
 

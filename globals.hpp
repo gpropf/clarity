@@ -17,7 +17,9 @@
 #include "ClarityNode.hpp"
 
 bool ClarityNode::clogSilent = false;
+
 map<const int, ClarityNode *> ClarityNode::switchboard;
+vector<string> ClarityNode::jsAuxScripts__;
 map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm;
 val ClarityNode::JSProxyNode_ = val::global("JSProxyNode");
