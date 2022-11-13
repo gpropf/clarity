@@ -167,8 +167,8 @@ The 4 letters at the end of the type actually tell you exactly what's missing. I
 
 #### Important Constants and Definitions ####
 
-`ClarityInstallURL`: global JS value that tells the system where to look for resources. In the examples I set this inside a `<script>` tag in the HTML template file.
-
+`ClarityInstallUrl`: global JS value that tells the system where to look for content including its own boot scripts. In the examples I set this inside a `<script>` tag in the HTML template file.
+`JSAuxUrl`: global JS value that tells the system where to look for auxilliary scripts such as user-defined JS modules containing custom listener generators, etc...
 
 #### Known Bugs
 
