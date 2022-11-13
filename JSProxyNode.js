@@ -3,7 +3,7 @@
  * 
  */
 
- function loadJSFile(scriptName, rootUrl = ".") {
+function loadJSFile(scriptName, rootUrl = ".") {
   var el = document.createElement('script');
   el.async = false;
   el.src = rootUrl + "/" + scriptName;
@@ -12,15 +12,11 @@
 }
 
 function loadBootScript(scriptName) {
-  loadJSFile(scriptName, ClarityInstallURL);
+  loadJSFile(scriptName, ClarityInstallUrl);
 }
 
-function loadAuxScript2(scriptName) {
-  var el = document.createElement('script');
-  el.async = false;
-  el.src = JSAuxURL + '/' + scriptName;
-  el.type = 'text/javascript';  
-  (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(el);
+function loadAuxScript(scriptName) {
+  loadJSFile(scriptName, JSAuxUrl);
 }
 
 

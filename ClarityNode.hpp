@@ -42,7 +42,7 @@ class ClarityNode {
 
     static void runJSAuxScripts() {
 
-        val loadAuxScript = val::global("loadAuxScript2");
+        val loadAuxScript = val::global("loadAuxScript");
         for (string scriptName : jsAuxScripts__) {
             loadAuxScript(scriptName);
             //resultString = emscripten_run_script_string(scriptName.c_str());
