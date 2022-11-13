@@ -374,17 +374,7 @@ class JSProxyNode {
         }
       }
     }
-  }  
-
-  // static installEventListenersByTagAndType(cle,  listenerGeneratorMap) {      
-  //   if (cle.domElement == null) return;  
-  //   var eventListenerGenerators = JSProxyNode.getEventListenerGenerators(listenerGeneratorMap, cle.tag_, cle.domElement.getAttribute("type"));
-  //   if (eventListenerGenerators == null) return;    
-  //   var entries = Object.entries(eventListenerGenerators);
-  //   for (const [eventName, generatorFunction] of entries) {           
-  //     cle.domElement.addEventListener(eventName, generatorFunction(cle));
-  //   }         
-  // }
+  }    
 
   static getEventListenerGenerators2(eventListenerGeneratorsByTagAndType, clarityNodeClass, elementTag, elementType = null) {
     var listenerGeneratorsForTag = eventListenerGeneratorsByTagAndType[clarityNodeClass][elementTag];

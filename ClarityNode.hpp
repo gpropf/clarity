@@ -127,22 +127,35 @@ class ClarityNode {
 
     static void addEventListenerGenerator(const string &nodeTypeCode, val handlerGenerator) {}
 
+    /**
+     * @brief Adds a special EL to this node. I don't think this form is actually in use.
+     *
+     * @param fn
+     * @param eventName
+     */
     void addEventListener(std::function<void()> fn, const string &eventName) {
         domElement_.call<void>("addEventListener", eventName, val(fn));
     }
 
+    /**
+     * @brief Adds a special EL to this node. Used in CLNF in particular to attach the click EL to
+     * the buttons.
+     *
+     * @param elfn
+     * @param eventName
+     */
     void addEventListener(val elfn, const string &eventName) {
         domElement_.call<void>("addEventListener", eventName, elfn);
     }
 
-    INLINE string getTag() const { return tag_; }
-    INLINE int getId() const { return id_; }
-    INLINE void setCLE(val cle) { cle_ = cle; }
+    inline string getTag() const { return tag_; }
+    inline int getId() const { return id_; }
+    inline void setCLE(val cle) { cle_ = cle; }
 
-    INLINE static void runCallbackById(const string &id) { callbackMap[id](); }
+    inline static void runCallbackById(const string &id) { callbackMap[id](); }
 
     // void EMSCRIPTEN_KEEPALIVE init();
-    INLINE ClarityNode() { init(); }
+    inline ClarityNode() { init(); }
 
     virtual ~ClarityNode() {
         // cout << "DESTROYING ClarityNode " << id_ << "\n";
@@ -411,14 +424,6 @@ class ClarityNode {
             setAttribute(attrName, value);
         }
     }
-
-    // INLINE void addEventListenerByName(const string &eventName, const string &callbackName) {
-    //     cle_.call<void>("addEventListenerById", eventName, callbackName);
-    // }
-
-    // INLINE void addJSEventListener(const string &eventName, val eventCallback) {
-    //     cle_.call<void>("addEventListener", eventName, eventCallback);
-    // }
 
    protected:
     string tag_;

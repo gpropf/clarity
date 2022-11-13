@@ -152,8 +152,6 @@ class CanvasGrid : public CanvasElement<V> {
             // cout << "\n";
             cellCount++;
         }
-        // this->domElement_.template call<void>("addEventListener", val("click"),
-        //                                       ClarityNode::JSProxyNode_["setGridLocToCurrentVal"]);
         drawGrid();
     }
 
