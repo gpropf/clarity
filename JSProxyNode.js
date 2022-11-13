@@ -4,13 +4,13 @@
  */
 
 
-// function loadAuxScript(scriptName) {
-//   var el = document.createElement('script');
-//   el.async = false;
-//   el.src = ClarityInstallURL + '/js.d/' + scriptName;
-//   el.type = 'text/javascript';  
-//   (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(el);
-// }
+function loadBootScript(scriptName) {
+  var el = document.createElement('script');
+  el.async = false;
+  el.src = ClarityInstallURL + '/' + scriptName;
+  el.type = 'text/javascript';  
+  (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(el);
+}
 
 function loadAuxScript2(scriptName) {
   var el = document.createElement('script');
@@ -21,7 +21,8 @@ function loadAuxScript2(scriptName) {
 }
 
 //var auxScripts = ["auxExample1.js","auxExample2.js"];
-//auxScripts.map(loadAuxScript);
+let bootScripts = [ "Selectables.js", "Util.js", "clarity_embind.js"];
+bootScripts.map(loadBootScript);
 
 class JSProxyNode {
 
