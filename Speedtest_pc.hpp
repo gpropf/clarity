@@ -1,5 +1,5 @@
-#ifndef speedtest_hpp
-#define speedtest_hpp
+#ifndef Speedtest_pc_hpp
+#define Speedtest_pc_hpp
 
 #include <sys/time.h>
 #include <unistd.h>
