@@ -77,7 +77,7 @@ When you create a node the system will install a set of event listeners that are
 
 1. ~~Event API~~. I now have the ClarityNode::installListenerGenerators() static method to allow the user to replace or augment the standard event listeners in their programs.
 
-2. Speedtest needs to be put in the standard format used in Showcase.
+2. ~~Speedtest needs to be put in the standard format used in Showcase.~~
 
 3. Web workers, pthreads, or both. Obviously we need a way for users to easily install repeating fuctions to make simulations and games easy. As a last resort, the old `setTimeout` and `setInterval` JS calls can be used.
 
