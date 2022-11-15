@@ -19,6 +19,8 @@
 
 // Speedtest *Speedtest::singleton = nullptr;
 
+std::function<void(val ev)> Speedtest::updateState_st = nullptr;
+
 int main() {
     Speedtest speedtest;
     // Speedtest::singleton = &speedtest;
