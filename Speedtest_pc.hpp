@@ -33,10 +33,16 @@ class MyClass {
 
     static std::string getStringFromInstance(const MyClass &instance) { return instance.y; }
 
-    static std::function<void()> getCallback(const MyClass &instance) {
-        std::function<void()> lbd = []() { cout << "CALLBACK!" << endl;};
-        //return string("FOO");
-        return lbd;
+    // static std::function<void()> getCallback(const MyClass &instance) {
+    //     std::function<void()> lbd = []() { cout << "CALLBACK!" << endl;};
+    //     //return string("FOO");
+    //     return lbd;
+    // }
+
+    static val getCallback(const MyClass &instance) {
+        std::function<void()> lbd = []() { cout << "CALLBACK!" << endl; };
+        // return string("FOO");
+        return val(10);
     }
 
    private:
@@ -50,9 +56,13 @@ struct Speedtester {
     int *nSetGroups;
     int *nTotalFields;
 
+    static Speedtester *staticTester;
+
     vector<int *> ns;
     vector<HybridNode<int> *> clns;
     bool *destroyFieldsImmediately = new bool(false);
+
+    // void makeFields() {}
 
     Speedtester() {
         nInputFields = new int(21);
@@ -66,9 +76,9 @@ struct Speedtester {
     }
 
     static auto getCallback(const Speedtester &instance) {
-        auto lbd = []() { cout << "CALLBACK!" << endl;};
+        auto lbd = []() { cout << "CALLBACK!" << endl; };
         return string("FOO");
-        //return lbd;
+        // return lbd;
     }
 
     static void cppTestFn(val ev) {
@@ -99,6 +109,19 @@ struct Speedtester {
         clns.clear();
         ns.clear();
     }
+
+    void updateState() {
+        *nTotalFields = *nInputFields * *nFieldsets * *nSetGroups;
+        if (*nTotalFields > 10000)
+            *destroyFieldsImmediately = true;
+        else
+            *destroyFieldsImmediately = false;
+        cout << "UPDATED TOTAL FIELDS: " << *nTotalFields << endl;
+    }
+
+    static void updateStateSt(Speedtester *tester) { tester->updateState(); }
+
+    static void updateStateEL(val ev) { staticTester->updateState(); }
 
     void printState() {
         cout << "nInputFields: " << *nInputFields << endl;
@@ -195,11 +218,14 @@ EMSCRIPTEN_BINDINGS(speedtester) {
         // .constructor<string>(allow_raw_pointers())
         //.constructor<>(allow_raw_pointers())
         .class_function("getStringFromInstance", &Speedtester::getStringFromInstance)
+
         .class_function("getCallback", &Speedtester::getCallback)
         .class_function("cppTestFn", &Speedtester::cppTestFn)
-        .class_function("makeTestEL_static", &Speedtester::makeTestEL_static, allow_raw_pointers())
-        .class_function("makeTestEL_static_i", &Speedtester::makeTestEL_static_i,
-                        allow_raw_pointers())
+        // .class_function("makeTestEL_static", &Speedtester::makeTestEL_static, allow_raw_pointers())
+        // .class_function("makeTestEL_static_i", &Speedtester::makeTestEL_static_i,
+        //                 allow_raw_pointers())
+        .class_function("updateStateSt", &Speedtester::updateStateSt, allow_raw_pointers())
+        .class_function("updateStateEL", &Speedtester::updateStateEL, allow_raw_pointers())
         // .class_function("destroyEverything_this", &Speedtest::destroyEverything_this,
         //                 allow_raw_pointers())
         // .class_function("destroyEverything_shell", &Speedtester::destroyEverything_shell,
@@ -207,10 +233,13 @@ EMSCRIPTEN_BINDINGS(speedtester) {
         .function("destroyEverything", &Speedtester::destroyEverything, allow_raw_pointers());
 }
 
+Speedtester *Speedtester::staticTester = nullptr;
+
 struct Speedtest : public PageContent {
     std::function<void(val ev)> updateTotalFields_st;
 
-    Speedtester *st = new Speedtester();
+    
+    
 
     // Speedtest(const string &name) { this->name_ = name; }
 
@@ -220,20 +249,33 @@ struct Speedtest : public PageContent {
     //     return val(std::bind(&Speedtest::destroyEverything, speedtest, _1));
     // }
 
-    //     void runLambda(val ev) { lbd(); }
+    std::function<void()> lbd;
+    std::function<void()> updateTotalFields;
+    void runLambda(val ev) { lbd(); }
     // static void runUpdateTotalFields(val ev) { updateTotalFields(ev); }
     // void runUpdateTotalFields_st(val ev) { updateTotalFields_st(ev); }
-    // void showname(val ev) { cout << this->name_ << endl; }
 
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
         ClarityNode::setClogSilent();
+
+        Speedtester *st = new Speedtester();
+        Speedtester::staticTester = st;
+
+        ClarityNode::addJSAuxScript("speedtest.js");
+        ClarityNode::runJSAuxScripts();
 
         val Module = val::global("Module");
         val MyClassJS = Module["MyClass"];
         val Speedtest = Module["Speedtest"];
         val Speedtester = Module["Speedtester"];
+
+        val updateStateEL = Speedtester["updateStateEL"];
+
+
         val makeTestEL_static_fn = Speedtester["makeTestEL_static"];
         val makeTestEL_static_i_fn = Speedtester["makeTestEL_static_i"];
+
+        val makeFields = Speedtester["makeFields"];
 
         val mycfn = MyClassJS["getCallback"];
         val stfn = Speedtester["getCallback"];
@@ -244,7 +286,7 @@ struct Speedtest : public PageContent {
         // val destroyEverything_el = destroyEverything_this(this);
         val destroyEverything_shell = Speedtester["destroyEverything_shell"];
         // val runLambda = Speedtest["runLambda"];
-        // val runUpdateTotalFields = Speedtest["runUpdateTotalFields"];
+        //  val runUpdateTotalFields = Speedtest["runUpdateTotalFields"];
         val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
         val listNodes = ClarityNode::JSProxyNode_["listNodes_int"];
 
@@ -290,13 +332,12 @@ struct Speedtest : public PageContent {
         // val eltest = val(makeTestEL(this));
         int *iptr = new int(88);
         MyClass foo(3, "threefoo");
-        auto r = stfn(*st);
-
+        // auto r = stfn(*st);
 
         auto mycr = mycfn(foo);
-        //cout << "FOO: " << s.as<string>() << endl;
-        // auto eltest = makeTestEL_static_i_fn();
-        //  val stPrintState = val(st->makeTestEL());
+        // cout << "FOO: " << s.as<string>() << endl;
+        //  auto eltest = makeTestEL_static_i_fn();
+        //   val stPrintState = val(st->makeTestEL());
 
         // auto stPrintState = Speedtester::makeTestEL_static(st);
         // nSetGroups_inp->addEventListener(val(stPrintState), string("change"));
@@ -321,8 +362,11 @@ struct Speedtest : public PageContent {
         // auto *makeTrsButton =
         //     childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", make_trs_ints);
 
-        // auto *makeTrsButton =
-        //     childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", runLambda);
+        auto *makeTrsButton =
+            childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", makeFields);
+
+            auto *updateState_btn =
+            childOfMaindivBuilder.button("updateState_btn", "Update State!", updateStateEL);
 
         auto *listNodes_btn =
             childOfMaindivBuilder.button("listNodes_btn", "List Nodes", listNodes);
