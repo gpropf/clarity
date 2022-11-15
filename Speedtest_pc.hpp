@@ -64,10 +64,12 @@ struct Speedtester {
 
     // void makeFields() {}
 
+    static std::function<void()> makeFieldsLbd;
+
     Speedtester() {
-        nInputFields = new int(21);
-        nFieldsets = new int(11);
-        nSetGroups = new int(17);
+        nInputFields = new int(10);
+        nFieldsets = new int(3);
+        nSetGroups = new int(2);
         nTotalFields = new int(*nInputFields * *nFieldsets * *nSetGroups);
     }
 
@@ -85,6 +87,8 @@ struct Speedtester {
         cout << "I'm a C++ function called from JS.\n"
              << "Event: " << ev["type"].as<string>() << endl;
     }
+
+    static void makeFieldsEL(val ev) { makeFieldsLbd(); }
 
     time_t msecsTime() {
         struct timeval timeNow {};
@@ -221,11 +225,10 @@ EMSCRIPTEN_BINDINGS(speedtester) {
 
         .class_function("getCallback", &Speedtester::getCallback)
         .class_function("cppTestFn", &Speedtester::cppTestFn)
-        // .class_function("makeTestEL_static", &Speedtester::makeTestEL_static, allow_raw_pointers())
-        // .class_function("makeTestEL_static_i", &Speedtester::makeTestEL_static_i,
-        //                 allow_raw_pointers())
+        
         .class_function("updateStateSt", &Speedtester::updateStateSt, allow_raw_pointers())
         .class_function("updateStateEL", &Speedtester::updateStateEL, allow_raw_pointers())
+         .class_function("makeFieldsEL", &Speedtester::makeFieldsEL, allow_raw_pointers())
         // .class_function("destroyEverything_this", &Speedtest::destroyEverything_this,
         //                 allow_raw_pointers())
         // .class_function("destroyEverything_shell", &Speedtester::destroyEverything_shell,
@@ -234,12 +237,10 @@ EMSCRIPTEN_BINDINGS(speedtester) {
 }
 
 Speedtester *Speedtester::staticTester = nullptr;
+std::function<void()> Speedtester::makeFieldsLbd = nullptr;
 
 struct Speedtest : public PageContent {
     std::function<void(val ev)> updateTotalFields_st;
-
-    
-    
 
     // Speedtest(const string &name) { this->name_ = name; }
 
@@ -252,6 +253,8 @@ struct Speedtest : public PageContent {
     std::function<void()> lbd;
     std::function<void()> updateTotalFields;
     void runLambda(val ev) { lbd(); }
+
+    
     // static void runUpdateTotalFields(val ev) { updateTotalFields(ev); }
     // void runUpdateTotalFields_st(val ev) { updateTotalFields_st(ev); }
 
@@ -271,7 +274,6 @@ struct Speedtest : public PageContent {
 
         val updateStateEL = Speedtester["updateStateEL"];
 
-
         val makeTestEL_static_fn = Speedtester["makeTestEL_static"];
         val makeTestEL_static_i_fn = Speedtester["makeTestEL_static_i"];
 
@@ -285,7 +287,9 @@ struct Speedtest : public PageContent {
         // val destroyEverything = Speedtest["destroyEverything"];
         // val destroyEverything_el = destroyEverything_this(this);
         val destroyEverything_shell = Speedtester["destroyEverything_shell"];
-        // val runLambda = Speedtest["runLambda"];
+
+        val makeFieldsEL = Speedtester["makeFieldsEL"];
+       //  val runLambda = Speedtest["runLambda"];
         //  val runUpdateTotalFields = Speedtest["runUpdateTotalFields"];
         val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
         val listNodes = ClarityNode::JSProxyNode_["listNodes_int"];
@@ -321,7 +325,7 @@ struct Speedtest : public PageContent {
         auto *labelled_fieldsets_inp =
             childOfMaindivBuilder_int.labelGivenNode(nFieldsets_inp, "Number of sets");
 
-        // nFieldsets_inp->addEventListener(runUpdateTotalFields, string("change"));
+        nFieldsets_inp->addEventListener(updateStateEL, string("change"));
 
         auto *nSetGroups_inp = childOfMaindivBuilder_int.withName("nSetGroups_inp")
                                    .withCppVal(st->nSetGroups)
@@ -335,11 +339,7 @@ struct Speedtest : public PageContent {
         // auto r = stfn(*st);
 
         auto mycr = mycfn(foo);
-        // cout << "FOO: " << s.as<string>() << endl;
-        //  auto eltest = makeTestEL_static_i_fn();
-        //   val stPrintState = val(st->makeTestEL());
-
-        // auto stPrintState = Speedtester::makeTestEL_static(st);
+       
         // nSetGroups_inp->addEventListener(val(stPrintState), string("change"));
 
         auto *nTotalFields_inp = childOfMaindivBuilder_int.withName("nTotalFields_inp")
@@ -363,9 +363,9 @@ struct Speedtest : public PageContent {
         //     childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", make_trs_ints);
 
         auto *makeTrsButton =
-            childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", makeFields);
+            childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", makeFieldsEL);
 
-            auto *updateState_btn =
+        auto *updateState_btn =
             childOfMaindivBuilder.button("updateState_btn", "Update State!", updateStateEL);
 
         auto *listNodes_btn =
@@ -380,8 +380,8 @@ struct Speedtest : public PageContent {
         auto *labelled_destroyFieldsImmediately_cb = childOfMaindivBuilder.label(
             destroyFieldsImmediately_cb, "Destroy fields as we go", true);
 
-        // auto *graphCanvas =
-        //     childOfMaindivBuilder.withName("graphCanvas").canvas("canvasTestPattern");
+        auto *graphCanvas =
+            childOfMaindivBuilder.withName("graphCanvas").canvas("canvasTestPattern");
 
         // auto *labelled_destroyFieldsImmediately_cb = childOfMaindivBuilder.labelGivenNode(
         //     destroyFieldsImmediately_cb, "Destroy fields as we go");
@@ -402,6 +402,8 @@ struct Speedtest : public PageContent {
         //     nTotalFields_inp->refresh();
         //     destroyFieldsImmediately_cb->refresh();
         // };
+
+        Speedtester::makeFieldsLbd = [=] { st->makeTrs(childOfMaindivBuilder_int, graphCanvas); };
 
         // lbd = [=] { makeTrs(childOfMaindivBuilder_int, graphCanvas); };
 
