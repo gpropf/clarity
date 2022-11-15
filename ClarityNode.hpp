@@ -34,18 +34,15 @@ std::string clto_str(const T &v) {
  */
 class ClarityNode {
    public:
-    static vector<string> jsAuxScripts__; 
+    static vector<string> jsAuxScripts__;
 
-    static void addJSAuxScript(const string &jsFilename) {
-        jsAuxScripts__.push_back(jsFilename);
-    }
+    static void addJSAuxScript(const string &jsFilename) { jsAuxScripts__.push_back(jsFilename); }
 
     static void runJSAuxScripts() {
-
         val loadAuxScript = val::global("loadAuxScript");
         for (string scriptName : jsAuxScripts__) {
             loadAuxScript(scriptName);
-            //resultString = emscripten_run_script_string(scriptName.c_str());
+            // resultString = emscripten_run_script_string(scriptName.c_str());
         }
     }
 
@@ -292,6 +289,12 @@ class ClarityNode {
         return val(*reinterpret_cast<T *>(valptr));
     }
 
+    void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr) {
+        auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);
+        dlpeers_.push_back(dl);
+        peer->appendDualLink(dl);
+    }
+
     template <typename T>
     void addPeer(ClarityNode *peer, const T linkMultiplierConstant = 1) {
         auto dl = make_shared<DualLink>(this, peer, linkMultiplierConstant);
@@ -429,12 +432,6 @@ class ClarityNode {
     }
 
     virtual void refreshDOMValueFromModel() = 0;
-
-    void addPeer(ClarityNode *peer, val a2b_xfmr, val b2a_xfmr) {
-        auto dl = make_shared<DualLink>(this, peer, a2b_xfmr, b2a_xfmr);
-        dlpeers_.push_back(dl);
-        peer->appendDualLink(dl);
-    }
 
     INLINE void setAttribute(const string &attr, const val &value) {
         domElement_.call<void>("setAttribute", attr, value);
