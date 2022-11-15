@@ -57,6 +57,8 @@ class CLNodeFactory {
     N linkMultiplierConstant_ = 1;  //!< By default we just transfer numeric
                                     //!< values from node to node unchanged.
 
+    N *linkMultiplierVariable_ = nullptr;
+
     val a2b_xfmr_ = val(NULL);  //!< JS value transformer when moving data from node a-->b.
     val b2a_xfmr_ = val(NULL);  //!< JS value transformer when moving data from node b-->a.
 
@@ -520,6 +522,20 @@ class CLNodeFactory {
         assert(linkMultiplierConstant != 0);
         CLNodeFactory cpy(std::move(*this));
         cpy.linkMultiplierConstant_ = linkMultiplierConstant;
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withLinkMultiplierVariable(N *linkMultiplierVariable) const & {
+        assert(*linkMultiplierVariable != 0);
+        CLNodeFactory cpy(*this);
+        cpy.linkMultiplierVariable_ = linkMultiplierVariable;
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withLinkMultiplierVariable(N *linkMultiplierVariable) && {
+        assert(*linkMultiplierVariable != 0);
+        CLNodeFactory cpy(std::move(*this));
+        cpy.linkMultiplierVariable_ = linkMultiplierVariable;
         return cpy;
     }
 

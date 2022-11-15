@@ -113,6 +113,17 @@ class ClarityNode {
         }
     };
 
+    template <typename T>
+    class MultiplierLink : public DualLink {
+        T *multiplier_;
+
+       public:
+        MultiplierLink(ClarityNode *nodeA, ClarityNode *nodeB, T * multiplier)
+            : DualLink(nodeA, nodeB, multiplier) {
+            multiplier_ = multiplier;
+        }
+    };
+
     virtual string cppValToString() const = 0;  //{ return "CN::cppValToString()"; }
 
     static void listNodes() {
@@ -298,6 +309,13 @@ class ClarityNode {
     template <typename T>
     void addPeer(ClarityNode *peer, const T linkMultiplierConstant = 1) {
         auto dl = make_shared<DualLink>(this, peer, linkMultiplierConstant);
+        dlpeers_.push_back(dl);
+        peer->appendDualLink(dl);
+    }
+
+    template <typename T>
+    void addPeer(ClarityNode *peer, T * linkMultiplierConstant) {
+        auto dl = make_shared<MultiplierLink<T>>(this, peer, linkMultiplierConstant);
         dlpeers_.push_back(dl);
         peer->appendDualLink(dl);
     }

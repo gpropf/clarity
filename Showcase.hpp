@@ -127,6 +127,26 @@ struct Showcase : public PageContent {
         childOfMaindivBuilder.br();
         childOfMaindivBuilder.br();
 
+        double *d2 = new double(5.3);
+        double *lrConstant = new double(11.1);
+        auto *daisyChain4_trinp = childOfMaindivBuilder.withCppVal(d2).textInput();
+        auto *daisyChain5_trinp = childOfMaindivBuilder.withCppVal(lrConstant)
+                                      //.withLinkMultiplierConstant(0.1)
+                                      .textInput();
+        auto *daisyChain6_trinp = childOfMaindivBuilder.withPeer(daisyChain2_trinp)
+                                      .withLinkMultiplierVariable(lrConstant)
+                                      .textInput();
+
+        auto *daisies2 =
+            childOfMaindivBuilder.group({daisyChain4_trinp, daisyChain5_trinp, daisyChain6_trinp});
+        auto *daisies2_lbl = childOfMaindivBuilder.label(
+            daisies2,
+            "These nodes are similar to the ones above except that the middle value is the multiplier used to determine the right side value from the left side one.",
+            true);
+
+        childOfMaindivBuilder.br();
+        childOfMaindivBuilder.br();
+
         // string *clickme = new string("CLICK ME");
         string clickme2("CLICK ME TOO");
         // Demonstrates the withEventListenerGenerator method.
