@@ -148,7 +148,7 @@ class ClarityNode {
      * @param fn
      * @param eventName
      */
-    void addEventListener(std::function<void()> fn, const string &eventName) {
+    void addEventListener(std::function<void(val ev)> fn, const string &eventName) {
         domElement_.call<void>("addEventListener", eventName, val(fn));
     }
 
