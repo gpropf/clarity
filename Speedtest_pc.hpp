@@ -65,6 +65,7 @@ struct Speedtester {
     // void makeFields() {}
 
     static std::function<void()> makeFieldsLbd;
+    static std::function<void()> destroyEverythingLbd;
 
     Speedtester() {
         nInputFields = new int(10);
@@ -89,6 +90,7 @@ struct Speedtester {
     }
 
     static void makeFieldsEL(val ev) { makeFieldsLbd(); }
+    static void destroyEverythingEL(val ev) { destroyEverythingLbd(); }
 
     time_t msecsTime() {
         struct timeval timeNow {};
@@ -101,7 +103,7 @@ struct Speedtester {
         return msecsTime;
     }
 
-    void destroyEverything(val ev) {
+    void destroyEverything() {
         // cout << "Destroying " << clns.size() << " nodes.\n";
         ClarityNode::nodelogStatic("Destroying " + clto_str(clns.size()) + " nodes.\n");
         for (auto cln : clns) {
@@ -177,7 +179,7 @@ struct Speedtester {
                 ctx.call<void>("moveTo", val(rateCount), val(150 - barHeight));
                 ctx.call<void>("lineTo", val(rateCount), val(150));
                 ctx.call<void>("stroke");
-                if (*destroyFieldsImmediately) destroyEverything(val::null());
+                if (*destroyFieldsImmediately) destroyEverything();
             }
         }
         cout << "Total elapsed time: " << totalTime << " (ms)\n";
@@ -225,19 +227,20 @@ EMSCRIPTEN_BINDINGS(speedtester) {
 
         .class_function("getCallback", &Speedtester::getCallback)
         .class_function("cppTestFn", &Speedtester::cppTestFn)
-        
+
         .class_function("updateStateSt", &Speedtester::updateStateSt, allow_raw_pointers())
         .class_function("updateStateEL", &Speedtester::updateStateEL, allow_raw_pointers())
-         .class_function("makeFieldsEL", &Speedtester::makeFieldsEL, allow_raw_pointers())
+        .class_function("makeFieldsEL", &Speedtester::makeFieldsEL, allow_raw_pointers())
         // .class_function("destroyEverything_this", &Speedtest::destroyEverything_this,
         //                 allow_raw_pointers())
-        // .class_function("destroyEverything_shell", &Speedtester::destroyEverything_shell,
-        //                 allow_raw_pointers())
+        .class_function("destroyEverythingEL", &Speedtester::destroyEverythingEL,
+                        allow_raw_pointers())
         .function("destroyEverything", &Speedtester::destroyEverything, allow_raw_pointers());
 }
 
 Speedtester *Speedtester::staticTester = nullptr;
 std::function<void()> Speedtester::makeFieldsLbd = nullptr;
+std::function<void()> Speedtester::destroyEverythingLbd = nullptr;
 
 struct Speedtest : public PageContent {
     std::function<void(val ev)> updateTotalFields_st;
@@ -254,7 +257,6 @@ struct Speedtest : public PageContent {
     std::function<void()> updateTotalFields;
     void runLambda(val ev) { lbd(); }
 
-    
     // static void runUpdateTotalFields(val ev) { updateTotalFields(ev); }
     // void runUpdateTotalFields_st(val ev) { updateTotalFields_st(ev); }
 
@@ -286,10 +288,10 @@ struct Speedtest : public PageContent {
         // val destroyEverything_this = Speedtest["destroyEverything_this"];
         // val destroyEverything = Speedtest["destroyEverything"];
         // val destroyEverything_el = destroyEverything_this(this);
-        val destroyEverything_shell = Speedtester["destroyEverything_shell"];
+        val destroyEverythingEL = Speedtester["destroyEverythingEL"];
 
         val makeFieldsEL = Speedtester["makeFieldsEL"];
-       //  val runLambda = Speedtest["runLambda"];
+        //  val runLambda = Speedtest["runLambda"];
         //  val runUpdateTotalFields = Speedtest["runUpdateTotalFields"];
         val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
         val listNodes = ClarityNode::JSProxyNode_["listNodes_int"];
@@ -339,7 +341,7 @@ struct Speedtest : public PageContent {
         // auto r = stfn(*st);
 
         auto mycr = mycfn(foo);
-       
+
         // nSetGroups_inp->addEventListener(val(stPrintState), string("change"));
 
         auto *nTotalFields_inp = childOfMaindivBuilder_int.withName("nTotalFields_inp")
@@ -348,13 +350,12 @@ struct Speedtest : public PageContent {
         auto *labelled_nTotalFields_inp =
             childOfMaindivBuilder_int.labelGivenNode(nTotalFields_inp, "Total Fields");
 
-        // auto *boomButton =
-        //     childOfMaindivBuilder.button("boomButton", "BOOM!", destroy_everything_cpp);
+    
 
         // auto *showname_btn = childOfMaindivBuilder.button("showname", "Show name", showname);
 
         auto *boomButton =
-            childOfMaindivBuilder.button("boomButton", "BOOM!", destroyEverything_shell);
+            childOfMaindivBuilder.button("boomButton", "BOOM!", destroyEverythingEL);
 
         // boomButton->addEventListener(destroyEverything, "click");
 
@@ -404,6 +405,7 @@ struct Speedtest : public PageContent {
         // };
 
         Speedtester::makeFieldsLbd = [=] { st->makeTrs(childOfMaindivBuilder_int, graphCanvas); };
+        Speedtester::destroyEverythingLbd = [=] { st->destroyEverything(); };
 
         // lbd = [=] { makeTrs(childOfMaindivBuilder_int, graphCanvas); };
 
