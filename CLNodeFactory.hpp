@@ -214,7 +214,11 @@ class CLNodeFactory {
             if (a2b_xfmr_ != val(NULL)) {
                 peer_->addPeer(newNode, a2b_xfmr_, b2a_xfmr_);
             } else {
-                peer_->addPeer(newNode, linkMultiplierConstant_);
+                if (linkMultiplierVariable_ != nullptr) {
+                    peer_->template addPeer<N>(newNode, linkMultiplierVariable_);
+                } else {
+                    peer_->template addPeer<N>(newNode, linkMultiplierConstant_);
+                }
             }
             if (!useExistingDOMElement_) peer_->pushValToPeers(peer_);
         }
@@ -525,6 +529,14 @@ class CLNodeFactory {
         return cpy;
     }
 
+    /**
+     * @brief Links two nodes together using a multiplier value determined by the number pointed to
+     * by the provided pointer. Behavior is almost the same as that of withLinkMultiplierConstant.
+     * Note that this and withLinkMultiplierConstant are incompatible, however.
+     *
+     * @param linkMultiplierVariable
+     * @return CLNodeFactory
+     */
     INLINE CLNodeFactory withLinkMultiplierVariable(N *linkMultiplierVariable) const & {
         assert(*linkMultiplierVariable != 0);
         CLNodeFactory cpy(*this);

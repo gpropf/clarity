@@ -69,6 +69,9 @@ class ClarityNode {
      */
     class DualLink {
        public:
+        enum class Directionality : char { L2R = 0, R2L = 1, UNIDIR = 2 };
+
+        Directionality directionality_;
         ClarityNode *nodeA_;
         ClarityNode *nodeB_;
         // int intMultiplier = 1;
@@ -83,14 +86,20 @@ class ClarityNode {
         void set_b2a_xfmr(val xfmr);
 
         template <typename T>
-        DualLink(ClarityNode *nodeA, ClarityNode *nodeB, const T multiplier = 1)
-            : nodeA_(nodeA), nodeB_(nodeB) {
+        DualLink(ClarityNode *nodeA, ClarityNode *nodeB, const T multiplier = 1,
+                 Directionality directionality = Directionality::UNIDIR)
+            : nodeA_(nodeA), nodeB_(nodeB), directionality_(directionality) {
             a2b_xfmr_ = JSProxyNode_.call<val>("generateTransformFn", multiplier);
             b2a_xfmr_ = JSProxyNode_.call<val>("generateTransformFn", 1 / multiplier);
         };
 
-        DualLink(ClarityNode *nodeA, ClarityNode *nodeB, val a2b_xfmr, val b2a_xfmr = val(NULL))
-            : nodeA_(nodeA), nodeB_(nodeB), a2b_xfmr_(a2b_xfmr), b2a_xfmr_(b2a_xfmr) {}
+        DualLink(ClarityNode *nodeA, ClarityNode *nodeB, val a2b_xfmr, val b2a_xfmr = val(NULL),
+                 Directionality directionality = Directionality::UNIDIR)
+            : nodeA_(nodeA),
+              nodeB_(nodeB),
+              a2b_xfmr_(a2b_xfmr),
+              b2a_xfmr_(b2a_xfmr),
+              directionality_(directionality) {}
 
         INLINE void printDL() {
             cout << "DL peer IDs: A = " << nodeA_->getId() << ", B = " << nodeB_->getId() << "\n";
@@ -118,8 +127,10 @@ class ClarityNode {
         T *multiplier_;
 
        public:
-        MultiplierLink(ClarityNode *nodeA, ClarityNode *nodeB, T * multiplier)
-            : DualLink(nodeA, nodeB, multiplier) {
+        MultiplierLink(ClarityNode *nodeA, ClarityNode *nodeB, T *multiplier,
+                       Directionality directionality = Directionality::UNIDIR)
+            : DualLink(nodeA, nodeB, *
+            multiplier, directionality) {
             multiplier_ = multiplier;
         }
     };
@@ -314,8 +325,8 @@ class ClarityNode {
     }
 
     template <typename T>
-    void addPeer(ClarityNode *peer, T * linkMultiplierConstant) {
-        auto dl = make_shared<MultiplierLink<T>>(this, peer, linkMultiplierConstant);
+    void addPeer(ClarityNode *peer, T *linkMultiplierVariable) {
+        auto dl = make_shared<MultiplierLink<T>>(this, peer, linkMultiplierVariable);
         dlpeers_.push_back(dl);
         peer->appendDualLink(dl);
     }

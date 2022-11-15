@@ -14,7 +14,6 @@ using namespace clarity;
  */
 struct Showcase : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
-
         ClarityNode::addJSAuxScript("showcaseAux.js");
         ClarityNode::runJSAuxScripts();
 
@@ -130,10 +129,11 @@ struct Showcase : public PageContent {
         double *d2 = new double(5.3);
         double *lrConstant = new double(11.1);
         auto *daisyChain4_trinp = childOfMaindivBuilder.withCppVal(d2).textInput();
-        auto *daisyChain5_trinp = childOfMaindivBuilder.withCppVal(lrConstant)
+        auto *daisyChain5_trinp = childOfMaindivBuilder
+                                      .withCppVal(lrConstant)
                                       //.withLinkMultiplierConstant(0.1)
                                       .textInput();
-        auto *daisyChain6_trinp = childOfMaindivBuilder.withPeer(daisyChain2_trinp)
+        auto *daisyChain6_trinp = childOfMaindivBuilder.withPeer(daisyChain4_trinp)
                                       .withLinkMultiplierVariable(lrConstant)
                                       .textInput();
 
@@ -141,7 +141,9 @@ struct Showcase : public PageContent {
             childOfMaindivBuilder.group({daisyChain4_trinp, daisyChain5_trinp, daisyChain6_trinp});
         auto *daisies2_lbl = childOfMaindivBuilder.label(
             daisies2,
-            "These nodes are similar to the ones above except that the middle value is the multiplier used to determine the right side value from the left side one.",
+            "These nodes are similar to the ones above except that the middle value is the "
+            "multiplier used to determine the right side value from the left side one. This "
+            "feature is not fully implemented yet.",
             true);
 
         childOfMaindivBuilder.br();
