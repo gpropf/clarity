@@ -33,6 +33,12 @@ class MyClass {
 
     static std::string getStringFromInstance(const MyClass &instance) { return instance.y; }
 
+    static std::function<void()> getCallback(const MyClass &instance) {
+        std::function<void()> lbd = []() { cout << "CALLBACK!" << endl;};
+        //return string("FOO");
+        return lbd;
+    }
+
    private:
     int x;
     std::string y;
@@ -60,8 +66,9 @@ struct Speedtester {
     }
 
     static auto getCallback(const Speedtester &instance) {
-        auto lbd = [=] { cout << "CALLBACK!" << endl;};
+        auto lbd = []() { cout << "CALLBACK!" << endl;};
         return string("FOO");
+        //return lbd;
     }
 
     static void cppTestFn(val ev) {
@@ -179,6 +186,7 @@ EMSCRIPTEN_BINDINGS(my_class_example) {
         .constructor<int, std::string>()
         .function("incrementX", &MyClass::incrementX)
         .property("x", &MyClass::getX, &MyClass::setX)
+        .class_function("getCallback", &MyClass::getCallback)
         .class_function("getStringFromInstance", &MyClass::getStringFromInstance);
 }
 
@@ -227,7 +235,7 @@ struct Speedtest : public PageContent {
         val makeTestEL_static_fn = Speedtester["makeTestEL_static"];
         val makeTestEL_static_i_fn = Speedtester["makeTestEL_static_i"];
 
-        val mycfn = MyClassJS["getStringFromInstance"];
+        val mycfn = MyClassJS["getCallback"];
         val stfn = Speedtester["getCallback"];
         // Speedtest.call<void>("cppTestFn", val::null());
         val cppTestFn = Speedtester["cppTestFn"];
@@ -283,6 +291,9 @@ struct Speedtest : public PageContent {
         int *iptr = new int(88);
         MyClass foo(3, "threefoo");
         auto r = stfn(*st);
+
+
+        auto mycr = mycfn(foo);
         //cout << "FOO: " << s.as<string>() << endl;
         // auto eltest = makeTestEL_static_i_fn();
         //  val stPrintState = val(st->makeTestEL());
