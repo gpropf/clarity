@@ -101,6 +101,11 @@ When you create a node the system will install a set of event listeners that are
 
 ### Future Directions ###
 
+#### Cloud Filesystem Hooks ####
+
+I'd like to provide a way for people to save things they create using Clarity apps to the cloud.
+
+
 #### Interface Builder ####
 
 The `TestFramework` class could become a full blown interface builder. The idea is to use SVG to create a graphical representations of the nodes and have click and drag capability allowing you to create and destroy data links. An "emit source" button would allow you to produce compile-able C++ code once you get things working. While thinking about representing each node as a little circle or something in SVG I realized that we would need to solve a more general problem which is how to maintain "node mappings" of collections of things to collections of nodes. Things like the select boxes with each option being an actual Option node are an obvious application. Basically there needs to be a sort of Clarity event system with events like "nodeCreated" and "nodeDestroyed" that would fire when things changed in the data. Keeping the factories around and allowing them to respond to and generate these events might be necessary.
@@ -112,6 +117,11 @@ The "switchboard" static map in `ClarityNode` was an early hack that I came up w
 #### Dynamic CSS
 
 Basically something like a CSS node type so we can have styling information built into the page.
+
+#### Automated Testing ####
+
+This is something that would help immensely but isn't straightforward to do. What I want is the ability to press a button and have a set of mouse clicks and other events generated that would produce a reposnse from Clarity that could be evaluated and then a pass/fail could be assigned. Currently, I waste countless hours (about 20 seconds at a time) going through and clicking on the controls in the Showcase page every time I make any change that can affect the whole library. I know there are off the shelf solutions to this but we need to learn them and start using them at least to a small degree.
+
 
 #### Web Templates? ####
 
