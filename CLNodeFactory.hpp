@@ -357,14 +357,14 @@ class CLNodeFactory {
      * @param parent
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory withChildrenOf(Nc<V> *parent) const & {
+    INLINE CLNodeFactory withChildrenOf(ClarityNode *parent) const & {
         assert(parent != nullptr);
         CLNodeFactory cpy(*this);
         cpy.parent_ = parent;
         return cpy;
     }
 
-    INLINE CLNodeFactory withChildrenOf(Nc<V> *parent) && {
+    INLINE CLNodeFactory withChildrenOf(ClarityNode *parent) && {
         assert(parent != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.parent_ = parent;
