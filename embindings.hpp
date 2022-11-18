@@ -1,3 +1,5 @@
+#include "ClarityNode.hpp"
+
 using clarity::ClarityNode;
 
 using std::string;
@@ -39,23 +41,31 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .function("doNothing", &CanvasGrid<unsigned char>::doNothing, allow_raw_pointers());
 
     class_<HybridNode<int>>("HybridNode_i")
-        .class_function("listNodes_int", &HybridNode<int>::listNodes, allow_raw_pointers());
+        .class_function("listNodes_int", &HybridNode<int>::listNodes, allow_raw_pointers())
+        .function("updateNodeFromDom", &HybridNode<int>::updateNodeFromDom, allow_raw_pointers());
 
     //.class_function("listNodes_double", &HybridNode<double>::listNodes, allow_raw_pointers());
 
     class_<HybridNode<double>>("HybridNode_d")
         //.class_function("listNodes_int2", &HybridNode<int>::listNodes, allow_raw_pointers())
+        .function("updateNodeFromDom", &HybridNode<double>::updateNodeFromDom, allow_raw_pointers())
         .class_function("listNodes_double", &HybridNode<double>::listNodes, allow_raw_pointers());
 
     class_<HybridNode<string>>("HybridNode_str")
-    // The type code that comes back from typeid.name() is literally 'NSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE'
-    // so we're just going to use _str as the suffix for this one.
-        .function("doNothing", &HybridNode<string>::doNothing, allow_raw_pointers());
+        // The type code that comes back from typeid.name() is literally
+        // 'NSt3__212basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE' so we're just going to
+        // use _str as the suffix for this one.
+        .function("doNothing", &HybridNode<string>::doNothing, allow_raw_pointers())
+        .function("updateNodeFromDom", &HybridNode<string>::updateNodeFromDom,
+                  allow_raw_pointers());
     // .class_function("listNodes_int3", &HybridNode<int>::listNodes, allow_raw_pointers())
-    // .class_function("listNodes_double3", &HybridNode<double>::listNodes, allow_raw_pointers());
+    // .class_function("listNodes_double3", &HybridNode<double>::listNodes,
+    // allow_raw_pointers());
 
     class_<HybridNode<unsigned char>>("HybridNode_h")
-         .function("doNothing", &HybridNode<unsigned char>::doNothing, allow_raw_pointers());
+        .function("updateNodeFromDom", &HybridNode<unsigned char>::updateNodeFromDom,
+                  allow_raw_pointers())
+        .function("doNothing", &HybridNode<unsigned char>::doNothing, allow_raw_pointers());
 
     class_<SimpleSelect<int>>("SimpleSelect")
         .function("getSelectedLabel", &SimpleSelect<int>::getSelectedLabel, allow_raw_pointers())

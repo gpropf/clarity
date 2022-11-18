@@ -358,7 +358,7 @@ class ClarityNode {
     static INLINE void updateNodeFromDomById(int id) {
         ClarityNode *cnn = getClarityNodeById(id);
         cnn->updateNodeFromDom();
-        cnn->pushValToPeers(cnn);
+        //cnn->pushValToPeers(cnn);
     }
 
     INLINE void updateNodeFromModel() {}
@@ -655,6 +655,7 @@ class HybridNode : public ClarityNode {
             cout << "cppVal_ exists!\n";
             *cppVal_ = jsval.as<V>();
         }
+        pushValToPeers(this);
     }
 
     ~HybridNode() {  // cout << "DESTROYING HybridNode with id: " << id_ << "\n";

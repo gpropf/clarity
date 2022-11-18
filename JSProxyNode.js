@@ -126,7 +126,8 @@ class JSProxyNode {
 
   static elgInputAlltypesChange (jsProxyNode) {
     return function (e) {
-      Module.ClarityNode.updateNodeFromDomById(jsProxyNode.id)
+      jsProxyNode.clarityNode.updateNodeFromDom();
+      //Module.ClarityNode.updateNodeFromDomById(jsProxyNode.id)
       console.log(jsProxyNode.clarityNode)
       if (jsProxyNode.boundField != undefined)
         console.log("CN, For ID: " + jsProxyNode.id + " Value changed to: " + jsProxyNode.domElement[jsProxyNode.boundField]);
@@ -138,7 +139,8 @@ class JSProxyNode {
   static elgTextareaAlltypesChange (jsProxyNode) {
     return function (e) {
       console.log("textarea lost focus!");
-      Module.ClarityNode.updateNodeFromDomById(jsProxyNode.id)
+      jsProxyNode.clarityNode.updateNodeFromDom();
+      //Module.ClarityNode.updateNodeFromDomById(jsProxyNode.id)
       if (jsProxyNode.boundField != undefined)
         console.log("CN textarea, For ID: " + jsProxyNode.id + " Value changed to: " + jsProxyNode.domElement[jsProxyNode.boundField]);
       else
