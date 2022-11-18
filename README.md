@@ -20,19 +20,25 @@ Or some such question. Well, I don't know what exactly you want to model here bu
 2. Figure out what you plan to expose to the user and create Clarity nodes of whatever type is appropriate to manipulating that part of the data model. When creating these controls you will invoke the `withCppVal()` method of the `CLNodeFactory` class. The argument to this method will be a pointer to whatever data you want to make accessible to the user. When the user changes a value in the web control the actual value in your model should change as well. 
 3. To "close the loop" and have the model update the interface you will call the `refresh()` method of the relevant nodes when your model updates itself. The usual method for this is still to use JavaScript's setInterval and setTimeout methods to periodically iterate your model and refresh the relevant Clarity nodes. I'd like to make use of web workers or Emscripten's thread capability for this eventually.
 
+### Complex Controls for Complex Objects ###
+
+From the beginning I intended for it to be possible to build complex UI components for complex model sub-components. Let's say your model nuclear plant has a C++ class called `Reactor`. This represents a single complete reactor with associated dials, buttons, and internal states. Perhaps you want to be able to have multiple reactors though with each one having its own GUI module on the screen to control it. In this case you would figure out how to set up the control elements for a single reactor as a web app. Once you have that working, you create a subclass of `HybridNode` with an underlying model element of type `Reactor`, so --> `ReactorNode<Reactor>`. You can see this exact pattern in use in the Clarity Demo Apps repo discussed below.
+
+### Clarity Demo Apps ###
+
+I've also created a completely separate repo called [clarity-apps](https://github.com/gpropf/clarity-apps) that contains some Clarity demo apps. Actually, there's not much there yet so right now this is just intended as a sanity check to make sure that people can actually create apps **outside** this repository. We want it to be straightforward to make a Clarity app without getting a console window full of angry red 404 messages, compilation errors, and runtime exceptions caused by hidden assumptions about file paths and other Clarity internals. This repo is a good place to start making your own Clarity app by just copying and then gutting one of the demo apps and putting your own content in. It also already contains an example of a complex control in the form of `BeakerNode`, which will be the central control in the _Pixel Reactor_ demo.
+
 ## Design ##
 
 Setting up responsive web components that allow an end user to interact smoothly with a data model while presenting the api user with an easy to use programming toolkit is a hugely complex task. Taking into account the fact that C++ is a strongly typed language multiplies the potential number of controls still further. The interactions with JavaScript's different and much weaker type system adds another dimension of complexity. 
 
 The current system is the result of several complete refactorings over the Summer of 2022 that I undertook as I realized the shortcomings of each successive approach. The current system basically uses several approaches rather than a single programming paradigm. We do not try to extract all the needed functionality from either an object hierarchy or a system of template functions. Thus, there are OO elements such as the fact that I implement some of the more complex controls (like the CanvasGrid) as child classes of more generalized ones. However, I also use templates extensively to allow C++ types to be used directly in web controls. Finally, some of the variations in functionality and implementations that I originally thought would go into classes are instead implemented as methods in the factory class. The `<label>` and `<button>` tags, for instance, are implemented as factory methods rather than as descendant classes of HybridNode. The use of the various "with" methods makes it possible for the factory to implement many tag-specialized behaviors and parameters that would otherwise require properties in a descendant class. Thus there is no "Button" or "Label" class.
 
-### The Object Hierarchy ###
-
 __JavaScript__
 
-There is one main JavaScript file called `Clarity.js`. It contains a class called `JSProxyNode` that acts as a kind of "mirror image" of `ClarityNode` in the JS world. A better name might have been JSProxy since that's what it really is and does. It exists to carry out the system's tasks for a given node on the JS side. There's also `Selectables.js` which performs similar tasks for the C++ classes in `Selectables.cpp`. These files might end up getting merged. There's also `Util.js` which does what the name suggests it might.
+I've tried to keep most of the functionality in the C++ code but when dealing with things like event listeners, some JavaScript is unavoidable. There is one main JavaScript file called `Clarity.js`. It contains a class called `JSProxyNode` that acts as a kind of "mirror image" of `ClarityNode` in the JS world. It exists to carry out the system's tasks for a given node on the JS side. There's also `Selectables.js` which performs similar tasks for the C++ classes in `Selectables.cpp`. These files might end up getting merged. There's also `Util.js` which does what the name suggests it might. 
 
-__C++__
+### The C++ Object Hierarchy ###
 
 **`ClarityNode`**: Base class for all nodes. Implements most of the system's basic behavior. Does *not* contain a model pointer, and cannot be instantiated due to its pure virtual methods.
 
@@ -74,6 +80,8 @@ Nodes can be connected together using data links and updating one node can trigg
 When you create a node the system will install a set of event listeners that are designed to implement the movement of data from the model to and from the GUI. We also need a way for api users to add their own event listeners. Preferably, this mechanism would be agnostic as to whether a listener is written in C++ or JS. It should also be possible to set it up so that such a listener is automatically attached to all nodes of a given type or just a particular one or group.
 
 ### Todo ###
+
+1. Reorganizing and cleaning up this README!
 
 1. ~~Event API~~. I now have the ClarityNode::installListenerGenerators() static method to allow the user to replace or augment the standard event listeners in their programs.
 
@@ -137,7 +145,7 @@ There is of course the possibility of developing something akin to React's JSX p
 * Brackets: the first bracket is on the same line as the method name.
 * Member variables: member vars end with an underscore in both C++ and JS code.
   
-##### Source Code Files #####
+#### Source Code Files ####
 
 My initial plan was to try to avoid the "header-only library" style that has become popular today and is exemplified by Boost and other popular libraries. I started to realize that using a lot of template metaprogramming made this almost impossible and led to constant struggles with the linker. So basically I now have almost all the code in hpp files. The cpp files are basically where template specializations live. A great deal of the behavior of the library is due to these specializations though and in particular, this is how nodes "know" what type they are even if they have a null in `cppVal_`.
 
@@ -182,5 +190,5 @@ The 4 letters at the end of the type actually tell you exactly what's missing. I
 
 #### Known Bugs
 
-* Setting `engulfForNode` to true when using a label causes problems when the thing being engulfed is an SVG area or attributeNode. Probabaly because the label "yanks away" the SVG components form their rightful parent nodes. Seems to work fine for other controls.
+* Setting `engulfForNode` to true when using a label causes problems when the thing being engulfed is an SVG area or attributeNode. Probabaly because the label "yanks away" the SVG components from their rightful parent nodes. Seems to work fine for other controls.
 * CanvasGrid uses an int for the cell width and height but this is derived by dividing the CG width in pixels by its width in cells. So if you have a canvas that is 210 pixels wide but 20 cells wide, the cells get rounded to 10px and then don't fill the whole width of the allocated canvas.
