@@ -11,12 +11,24 @@ function loadJSFile(scriptName, rootUrl = ".") {
   (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(el);
 }
 
+function preloadJSFile(scriptName, rootUrl = ".") {
+  writeStr = `<script type="text/javascript" src="${rootUrl}/${scriptName}"></script>`;
+  document.write(writeStr);
+  
+}
+
+//document.write('<script type="text/javascript" src="jsaux/clapps-aux.js"></script>');
+
 function loadBootScript(scriptName) {
   loadJSFile(scriptName, ClarityInstallUrl);
 }
 
 function loadAuxScript(scriptName) {
   loadJSFile(scriptName, JSAuxUrl);
+}
+
+function preloadAuxScript(scriptName) {
+  preloadJSFile(scriptName, JSAuxUrl);
 }
 
 

@@ -35,6 +35,7 @@ std::string clto_str(const T &v) {
 class ClarityNode {
    public:
     static vector<string> jsAuxScripts__;
+    static vector<string> preloadJsAuxScripts__;
 
     static void addJSAuxScript(const string &jsFilename) { jsAuxScripts__.push_back(jsFilename); }
 
@@ -42,6 +43,18 @@ class ClarityNode {
         val loadAuxScript = val::global("loadAuxScript");
         for (string scriptName : jsAuxScripts__) {
             loadAuxScript(scriptName);
+            // resultString = emscripten_run_script_string(scriptName.c_str());
+        }
+    }
+
+    static void addPreloadJSAuxScript(const string &jsFilename) {
+        jsAuxScripts__.push_back(jsFilename);
+    }
+
+    static void runPreloadJSAuxScripts() {
+        val preloadAuxScript = val::global("preloadAuxScript");
+        for (string scriptName : jsAuxScripts__) {
+            preloadAuxScript(scriptName);
             // resultString = emscripten_run_script_string(scriptName.c_str());
         }
     }
@@ -129,8 +142,7 @@ class ClarityNode {
        public:
         MultiplierLink(ClarityNode *nodeA, ClarityNode *nodeB, T *multiplier,
                        Directionality directionality = Directionality::UNIDIR)
-            : DualLink(nodeA, nodeB, *
-            multiplier, directionality) {
+            : DualLink(nodeA, nodeB, *multiplier, directionality) {
             multiplier_ = multiplier;
         }
     };
@@ -358,7 +370,7 @@ class ClarityNode {
     static INLINE void updateNodeFromDomById(int id) {
         ClarityNode *cnn = getClarityNodeById(id);
         cnn->updateNodeFromDom();
-        //cnn->pushValToPeers(cnn);
+        // cnn->pushValToPeers(cnn);
     }
 
     INLINE void updateNodeFromModel() {}
