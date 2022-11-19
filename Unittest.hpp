@@ -33,7 +33,8 @@ struct Unittest : public PageContent {
         bool succeeded = tidbl.evaluate();
         // auto *doubleTextinputTest =
         //     childOfMaindivBuilder.withName("doubleTextinputTest").withCppVal(dptr).textInput();
-        tidbl.cleanup({ptr,node});
+        
+        //tidbl.cleanup({ptr,node});
 
         cout << "Setup complete!" << endl;
         return maindiv;
