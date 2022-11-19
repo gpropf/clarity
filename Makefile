@@ -27,6 +27,9 @@ speedtest_pc: speedtest_pc.o ClarityNode.o Selectables.o clarity.o
 showcase: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
+unittest: unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
+	$(CC) -lembind unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+
 docs: clarity.doxyconfig
 	doxygen clarity.doxyconfig
 

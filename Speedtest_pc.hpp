@@ -250,8 +250,8 @@ struct Speedtest : public PageContent {
         auto *updateState_btn =
             childOfMaindivBuilder.button("updateState_btn", "Update State!", updateStateEL);
 
-        auto *listNodes_btn =
-            childOfMaindivBuilder.button("listNodes_btn", "List Nodes", listNodes);
+        // auto *listNodes_btn =
+        //     childOfMaindivBuilder.button("listNodes_btn", "List Nodes", listNodes);
 
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
 
