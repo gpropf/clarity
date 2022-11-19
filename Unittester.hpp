@@ -30,15 +30,26 @@ class TextinputDoubleUT : public Unittester<Nc, V, N> {
 
     virtual pair<double *, HybridNode<double> *> setup() {
         this->modelPtr_ = new double(1.2);
-        this->node_ = this->builder_->withName("doubleTextinputTest").withCppVal(this->modelPtr_).textInput();
+        this->node_ =
+            this->builder_->withName("doubleTextinputTest").withCppVal(this->modelPtr_).textInput();
 
         return pair(this->modelPtr_, this->node_);
     }
+    
     virtual void runEvent() {
         val makeEvent = val::global("makeEvent");
         val ev = makeEvent(val(string("change")));
         val domEl = this->node_->getDomElement();
+        domEl.set(this->node_->getBoundField(), "2.0");
         domEl.call<void>("dispatchEvent", ev);
-    };
-    virtual bool evaluate() { return true; }
+    }
+
+    virtual bool evaluate() {
+        cout << "Model val: " << *this->modelPtr_ - 2.0 << endl;
+        if (*this->modelPtr_ == 2.0) return true;
+        return false;
+    }
 };
+
+
+

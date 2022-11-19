@@ -31,6 +31,8 @@ struct Unittest : public PageContent {
         auto [ptr, node] = tidbl.setup();
         tidbl.runEvent();
         bool succeeded = tidbl.evaluate();
+
+        if (succeeded) tidbl.cleanup({ptr,node});
         // auto *doubleTextinputTest =
         //     childOfMaindivBuilder.withName("doubleTextinputTest").withCppVal(dptr).textInput();
         
