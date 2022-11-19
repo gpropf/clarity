@@ -9,7 +9,7 @@ class Unittester {
     V *modelPtr_;
 
    public:
-    Unittester(CLNodeFactory<Nc, V, N> *builder) { builder_ = CLNodeFactory<Nc, V, N>(builder); }
+    Unittester(CLNodeFactory<Nc, V, N> *builder) { builder_ = new CLNodeFactory<Nc, V, N>(*builder); }
 
     // virtual void setup() = 0;
     virtual pair<V *, Nc<V> *> setup() = 0;
