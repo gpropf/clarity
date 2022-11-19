@@ -9,7 +9,7 @@ class Unittester {
     V *modelPtr_;
 
    public:
-    Unittester(CLNodeFactory<Nc, V, N> *builder) { builder_ = builder; }
+    Unittester(CLNodeFactory<Nc, V, N> *builder) { builder_ = CLNodeFactory<Nc, V, N>(builder); }
 
     // virtual void setup() = 0;
     virtual pair<V *, Nc<V> *> setup() = 0;
@@ -35,7 +35,7 @@ class TextinputDoubleUT : public Unittester<Nc, V, N> {
 
         return pair(this->modelPtr_, this->node_);
     }
-    
+
     virtual void runEvent() {
         val makeEvent = val::global("makeEvent");
         val ev = makeEvent(val(string("change")));
@@ -50,6 +50,3 @@ class TextinputDoubleUT : public Unittester<Nc, V, N> {
         return false;
     }
 };
-
-
-
