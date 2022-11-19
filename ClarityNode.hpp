@@ -48,7 +48,7 @@ class ClarityNode {
     }
 
     static void addPreloadJSAuxScript(const string &jsFilename) {
-        jsAuxScripts__.push_back(jsFilename);
+        preloadJsAuxScripts__.push_back(jsFilename);
     }
 
     static void runPreloadJSAuxScripts() {
