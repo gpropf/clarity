@@ -13,7 +13,12 @@ class Unittester {
     virtual pair<V*,Nc<V>*> setup() = 0;
     virtual void runEvent() = 0;
     virtual bool evaluate() = 0;
-    virtual void cleanup(pair<V*,Nc<V>*>) = 0;
+    //virtual void cleanup(pair<V*,Nc<V>*>) = 0;
+    virtual void cleanup(pair<V*,Nc<V>*> p) {
+        delete p.first;
+        delete p.second;
+
+    }
 };
 
 template <template <typename V> class Nc, typename V, typename N>
@@ -29,9 +34,5 @@ class TextinputDoubleUT : public Unittester<Nc, V, N> {
     }
     virtual void runEvent(){};
     virtual bool evaluate() { return true; }
-    virtual void cleanup(pair<double*, HybridNode<double>*> p) {
-        delete p.first;
-        delete p.second;
-
-    }
+    
 };
