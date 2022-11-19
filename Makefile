@@ -28,7 +28,7 @@ showcase: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 unittest: unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(CC) -lembind unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(CC) -lembind --pre-js Unittest.js unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 docs: clarity.doxyconfig
 	doxygen clarity.doxyconfig
