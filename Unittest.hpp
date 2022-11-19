@@ -19,24 +19,26 @@ struct Unittest : public PageContent {
         CLNodeFactory<HybridNode, double, double> builder("div", "test_root");
         auto *maindiv = builder.build();
 
-        CLNodeFactory<HybridNode, double, double> testBuilder =
-            builder.withChildrenOf(maindiv);
+        CLNodeFactory<HybridNode, double, double> testBuilder = builder.withChildrenOf(maindiv);
 
-        
+        bool succeeded;
 
-        TextinputDoubleUT<HybridNode, double, double> tidbl(&testBuilder);
-
-        
-
-        auto [ptr, node] = tidbl.setup();
+        TextinputUT<HybridNode, double, double> tidbl(&testBuilder);
+        tidbl.setup();
         tidbl.runEvent();
-        bool succeeded = tidbl.evaluate();
+        succeeded = tidbl.evaluate();
+        //if (succeeded) tidbl.cleanup();
 
-        if (succeeded) tidbl.cleanup({ptr,node});
+        TextinputUT<HybridNode, int, int> tiint(&testBuilder);
+        tiint.setup();
+        tiint.runEvent();
+        tiint.evaluate();
+        //if (succeeded) tiint.cleanup();
+
         // auto *doubleTextinputTest =
         //     childOfMaindivBuilder.withName("doubleTextinputTest").withCppVal(dptr).textInput();
-        
-        //tidbl.cleanup({ptr,node});
+
+        // tidbl.cleanup({ptr,node});
 
         cout << "Setup complete!" << endl;
         return maindiv;
