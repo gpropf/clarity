@@ -11,11 +11,10 @@ function loadJSFile(scriptName, rootUrl = ".") {
   (document.getElementsByTagName('HEAD')[0] || document.body).appendChild(el);
 }
 
-function preloadJSFile(scriptName, rootUrl = ".") {
-  writeStr = `<script type="text/javascript" src="${rootUrl}/${scriptName}"></script>`;
-  document.write(writeStr);
-  
-}
+// function preloadJSFile(scriptName, rootUrl = ".") {
+//   writeStr = `<script type="text/javascript" src="${rootUrl}/${scriptName}"></script>`;
+//   document.write(writeStr);  
+// }
 
 //document.write('<script type="text/javascript" src="jsaux/clapps-aux.js"></script>');
 
@@ -27,9 +26,9 @@ function loadAuxScript(scriptName) {
   loadJSFile(scriptName, JSAuxUrl);
 }
 
-function preloadAuxScript(scriptName) {
-  preloadJSFile(scriptName, JSAuxUrl);
-}
+// function preloadAuxScript(scriptName) {
+//   preloadJSFile(scriptName, JSAuxUrl);
+// }
 
 
 let bootScripts = [ "Selectables.js", "Util.js"];

@@ -35,7 +35,7 @@ std::string clto_str(const T &v) {
 class ClarityNode {
    public:
     static vector<string> jsAuxScripts__;
-    static vector<string> preloadJsAuxScripts__;
+    //static vector<string> preloadJsAuxScripts__;
 
     static void addJSAuxScript(const string &jsFilename) { jsAuxScripts__.push_back(jsFilename); }
 
@@ -47,17 +47,17 @@ class ClarityNode {
         }
     }
 
-    static void addPreloadJSAuxScript(const string &jsFilename) {
-        preloadJsAuxScripts__.push_back(jsFilename);
-    }
+    // static void addPreloadJSAuxScript(const string &jsFilename) {
+    //     preloadJsAuxScripts__.push_back(jsFilename);
+    // }
 
-    static void runPreloadJSAuxScripts() {
-        val preloadAuxScript = val::global("preloadAuxScript");
-        for (string scriptName : jsAuxScripts__) {
-            preloadAuxScript(scriptName);
-            // resultString = emscripten_run_script_string(scriptName.c_str());
-        }
-    }
+    // static void runPreloadJSAuxScripts() {
+    //     val preloadAuxScript = val::global("preloadAuxScript");
+    //     for (string scriptName : jsAuxScripts__) {
+    //         preloadAuxScript(scriptName);
+    //         // resultString = emscripten_run_script_string(scriptName.c_str());
+    //     }
+    // }
 
     static bool clogSilent;
 
