@@ -5,6 +5,7 @@
 #include "CanvasElement.hpp"
 #include "ClarityNode.hpp"
 #include "PageContent.hpp"
+#include "Unittester.hpp"
 #include "clarity.hpp"
 
 using namespace clarity;
@@ -18,12 +19,21 @@ struct Unittest : public PageContent {
         CLNodeFactory<HybridNode, double, double> builder("div", "test_root");
         auto *maindiv = builder.build();
 
-        CLNodeFactory<HybridNode, double, double> childOfMaindivBuilder =
+        CLNodeFactory<HybridNode, double, double> testBuilder =
             builder.withChildrenOf(maindiv);
 
-        double *dptr = new double(1.2);
-        auto *doubleTextinputTest =
-            childOfMaindivBuilder.withName("doubleTextinputTest").withCppVal(dptr).textInput();
+        
+
+        TextinputDoubleUT<HybridNode, double, double> tidbl(&testBuilder);
+
+        
+
+        auto [ptr, node] = tidbl.setup();
+        tidbl.runEvent();
+        bool succeeded = tidbl.evaluate();
+        // auto *doubleTextinputTest =
+        //     childOfMaindivBuilder.withName("doubleTextinputTest").withCppVal(dptr).textInput();
+        tidbl.cleanup({ptr,node});
 
         cout << "Setup complete!" << endl;
         return maindiv;

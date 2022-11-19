@@ -7,6 +7,8 @@
 
 namespace clarity {
 
+// class CLNodeFactoryBase {};
+
 /**
  * @brief This class offers a set of pure functions that can be chained to
  * create complex web controls. Essentially, instead of being a typical
@@ -25,6 +27,7 @@ namespace clarity {
  */
 template <template <typename V> class Nc, typename V, typename N>
 // template <class Nc, typename V, typename N>
+// class CLNodeFactory : public CLNodeFactoryBase {
 class CLNodeFactory {
    public:
     string tag_;                      //!< Tag to be used with elements this factory builds.
