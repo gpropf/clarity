@@ -20,6 +20,7 @@ bool ClarityNode::clogSilent = false;
 
 map<const int, ClarityNode *> ClarityNode::switchboard;
 vector<string> ClarityNode::jsAuxScripts__;
+vector<string> ClarityNode::preloadJsAuxScripts__;
 map<string, std::function<void()>> ClarityNode::callbackMap;
 TicketMachine ClarityNode::tm;
 val ClarityNode::JSProxyNode_ = val::global("JSProxyNode");
