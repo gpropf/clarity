@@ -48,7 +48,7 @@ template <template <typename V> class Nc, typename V, typename N>
 class TextinputUT : public Unittester<Nc, V, N> {
     const char *v1str = "67";
     const char *v2str = "37";
-    V *v1 = new V(73);
+    V *v1 = new V(*v1str);
     V *v2 = new V(84);
 
    public:
