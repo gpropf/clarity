@@ -28,13 +28,24 @@ struct Unittest : public PageContent {
         tidbl.runEvent();
         succeeded = tidbl.evaluate();
         tidbl.notify(succeeded);
-        //if (succeeded) tidbl.cleanup();
+        // if (succeeded) tidbl.cleanup();
 
         TextinputUT<HybridNode, int, int> tiint(&testBuilder);
         tiint.setup();
         tiint.runEvent();
         tiint.notify(tiint.evaluate());
-        //if (succeeded) tiint.cleanup();
+
+        TextinputUT<HybridNode, unsigned char, int> tiuch(&testBuilder);
+        tiuch.setup();
+        tiuch.runEvent();
+        tiuch.notify(tiuch.evaluate());
+
+        TextinputUT<HybridNode, float, int> tiflt(&testBuilder);
+        tiflt.setup();
+        tiflt.runEvent();
+        tiflt.notify(tiflt.evaluate());
+
+        // if (succeeded) tiint.cleanup();
 
         // auto *doubleTextinputTest =
         //     childOfMaindivBuilder.withName("doubleTextinputTest").withCppVal(dptr).textInput();

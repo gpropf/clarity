@@ -27,66 +27,6 @@ using namespace emscripten;
 
 namespace clarity {
 
-// Type to string code taken from - https://stackoverflow.com/questions/4484982/how-to-convert-typename-t-to-string-in-c
-template <typename T>
-struct TypeName
-{
-    static const char* Get()
-    {
-        return typeid(T).name();
-    }
-};
-
-// a specialization for each type of those you want to support
-// and don't like the string returned by typeid
-template <>
-struct TypeName<int>
-{
-    static const char* Get()
-    {
-        return "int";
-    }
-};
-
-template <>
-struct TypeName<double>
-{
-    static const char* Get()
-    {
-        return "double";
-    }
-};
-
-template <>
-struct TypeName<float>
-{
-    static const char* Get()
-    {
-        return "float";
-    }
-};
-
-// usage:
-// const char* name = TypeName<MyType>::Get();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * @brief Given a string with something like '<T>' in the middle of it, this will use the typeid
@@ -98,7 +38,7 @@ struct TypeName<float>
  * @return string
  */
 template <typename T>
-string interpolateTypeIntoString(string &inStr) {
+string interpolateTypeIntoString(string& inStr) {
     string tid = typeid(T).name();
     string beforeAngleBracket;
     string afterAngleBracket;
@@ -113,8 +53,7 @@ string interpolateTypeIntoString(string &inStr) {
 }
 
 enum class ClogType : unsigned char { WARNING = 0, ERROR = 1 };
-void clog(const string &msg, ClogType clt = ClogType::WARNING);
-
+void clog(const string& msg, ClogType clt = ClogType::WARNING);
 
 /**
  * @brief Hands out (presumably) unique int ids with a simply incrementing

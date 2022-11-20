@@ -67,6 +67,10 @@ EMSCRIPTEN_BINDINGS(clarity) {
                   allow_raw_pointers())
         .function("doNothing", &HybridNode<unsigned char>::doNothing, allow_raw_pointers());
 
+    class_<HybridNode<float>>("HybridNode_f")
+        //.class_function("listNodes_int2", &HybridNode<int>::listNodes, allow_raw_pointers())
+        .function("updateNodeFromDom", &HybridNode<float>::updateNodeFromDom, allow_raw_pointers());
+
     class_<SimpleSelect<int>>("SimpleSelect")
         .function("getSelectedLabel", &SimpleSelect<int>::getSelectedLabel, allow_raw_pointers())
         .function("doNothing", &Checkbox<void>::doNothing, allow_raw_pointers());

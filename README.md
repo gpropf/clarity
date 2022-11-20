@@ -89,7 +89,7 @@ When you create a node the system will install a set of event listeners that are
 
 3. Web workers, pthreads, or both. Obviously we need a way for users to easily install repeating fuctions to make simulations and games easy. As a last resort, the old `setTimeout` and `setInterval` JS calls can be used.
 
-4. The template parameterized multiplier value in DualLink should be stored so it can be the target of user interaction. Basically, you could edit the conversion factor for some peer value.
+4. ~~The template parameterized multiplier value in DualLink should be stored so it can be the target of user interaction. Basically, you could edit the conversion factor for some peer value.~~ This is partially implemented but should not currently be relied upon.
    
 5. Radio buttons.
    
@@ -111,7 +111,7 @@ When you create a node the system will install a set of event listeners that are
 
 #### Cloud Filesystem Hooks ####
 
-I'd like to provide a way for people to save things they create using Clarity apps to the cloud.
+I'd like to provide a way for people to save things they create using Clarity apps to the cloud. My plan is to start with [NextCloud](https://nextcloud.com/).
 
 
 #### Interface Builder ####
@@ -128,7 +128,7 @@ Basically something like a CSS node type so we can have styling information buil
 
 #### Automated Testing ####
 
-This is something that would help immensely but isn't straightforward to do. What I want is the ability to press a button and have a set of mouse clicks and other events generated that would produce a reposnse from Clarity that could be evaluated and then a pass/fail could be assigned. Currently, I waste countless hours (about 20 seconds at a time) going through and clicking on the controls in the Showcase page every time I make any change that can affect the whole library. I know there are off the shelf solutions to this but we need to learn them and start using them at least to a small degree.
+There is now a set of classes that do basic testing on a few of the most common types of controls. To run the tests just build the `unittest` make target and look at the page it produces. Fields that pass their tests are in green, the ones that fail turn red. The relevant files here are `Unittest.hpp`, `Unittester.hpp`, `Unittest.js`, and `unittest.cpp`.
 
 
 #### Web Templates? ####
