@@ -27,12 +27,13 @@ struct Unittest : public PageContent {
         tidbl.setup();
         tidbl.runEvent();
         succeeded = tidbl.evaluate();
+        tidbl.notify(succeeded);
         //if (succeeded) tidbl.cleanup();
 
         TextinputUT<HybridNode, int, int> tiint(&testBuilder);
         tiint.setup();
         tiint.runEvent();
-        tiint.evaluate();
+        tiint.notify(tiint.evaluate());
         //if (succeeded) tiint.cleanup();
 
         // auto *doubleTextinputTest =
