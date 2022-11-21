@@ -22,6 +22,10 @@ using namespace clarity;
 std::function<void()> lbd;
 std::function<void(val ev)> updateTotalFields;
 
+/**
+ * @brief The actual "testing machine" that creates and destroys node while timing the process.
+ * 
+ */
 struct Speedtester {
     int *nInputFields;
     int *nFieldsets;
@@ -161,6 +165,10 @@ Speedtester *Speedtester::staticTester = nullptr;
 std::function<void()> Speedtester::makeFieldsLbd = nullptr;
 std::function<void()> Speedtester::destroyEverythingLbd = nullptr;
 
+/**
+ * @brief Contains controls to allow testing speed of creating/destroying nodes.
+ * 
+ */
 struct Speedtest : public PageContent {
     std::function<void(val ev)> updateTotalFields_st;
     std::function<void()> lbd;

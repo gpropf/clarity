@@ -29,8 +29,8 @@ namespace clarity {
 // };
 
 /**
- * @brief Like SimpleSelect, represents a selection box. This variant expects the options to
- * actually be the cppVal_ however.
+ * @brief Like SimpleSelect, represents a selection box. This variant expects the stored value to
+ * represent the options as a vector of pairs.
  *
  * @tparam V
  */
@@ -58,7 +58,7 @@ class Select : public HybridNode<V> {
         for (auto opt : *this->cppVal_) {
             auto [optFirst, optSecond] = opt;
             this->cle_.template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
-                                               val(optSecond));
+                                           val(optSecond));
         }
     }
 
@@ -79,7 +79,7 @@ class Select : public HybridNode<V> {
 };
 
 /**
- * @brief Basic select box control.
+ * @brief Basic select box control. The cppVal_ is the current selection, typically a small integer.
  *
  * @tparam V
  */
@@ -128,7 +128,7 @@ class SimpleSelect : public HybridNode<V> {
         for (auto opt : options_) {
             auto [optFirst, optSecond] = opt;
             this->cle_.template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
-                                               val(optSecond), val(optFirst == *this->cppVal_));
+                                           val(optSecond), val(optFirst == *this->cppVal_));
         }
     }
 
@@ -159,8 +159,8 @@ class SimpleSelect : public HybridNode<V> {
 
 /**
  * @brief Basic checkbox control.
- * 
- * @tparam V 
+ *
+ * @tparam V
  */
 template <typename V>
 class Checkbox : public HybridNode<V> {

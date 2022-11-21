@@ -1,12 +1,12 @@
 
 #include "CLNodeFactory.hpp"
- 
 
 /**
- * @brief Adapted from https://stackoverflow.com/questions/4484982/how-to-convert-typename-t-to-string-in-c
- * This class is basically designed to handle anything pertainting to types for our unit testing efforts.
- * 
- * @tparam T 
+ * @brief Adapted from
+ * https://stackoverflow.com/questions/4484982/how-to-convert-typename-t-to-string-in-c This class
+ * is basically designed to handle anything pertainting to types for our unit testing efforts.
+ *
+ * @tparam T
  */
 template <typename T>
 struct TypeWrangler {
@@ -22,8 +22,8 @@ struct TypeWrangler {
     static T typicalFirstValue() { assert(false); }
     /**
      * @brief Can return anything as long as it's not the same as the first value.
-     * 
-     * @return T 
+     *
+     * @return T
      */
     static T typicalSecondValue() { assert(false); }
 };
@@ -60,10 +60,8 @@ struct TypeWrangler<unsigned char> {
 
 template <>
 template <typename V>
-struct TypeWrangler<HybridNode<V>>
-{
-    static const string getCanonicalName()
-    {
+struct TypeWrangler<HybridNode<V>> {
+    static const string getCanonicalName() {
         return string("HybridNode &lt;") + TypeWrangler<V>::getCanonicalName() + string("&gt;");
     }
 };
@@ -71,8 +69,14 @@ struct TypeWrangler<HybridNode<V>>
 // usage:
 // const string name = TypeName<MyType>::Get();
 
-
-
+/**
+ * @brief Uses a CLNodeFactory to create nodes of various types and provides a set of basic methods
+ * to facilitate testing.
+ *
+ * @tparam Nc
+ * @tparam V
+ * @tparam N
+ */
 template <template <typename V> class Nc, typename V, typename N>
 class Unittester {
    protected:
@@ -117,9 +121,16 @@ class Unittester {
     }
 };
 
+/**
+ * @brief Testing class for Textinput fields.
+ * 
+ * @tparam Nc 
+ * @tparam V 
+ * @tparam N 
+ */
 template <template <typename V> class Nc, typename V, typename N>
 class TextinputUT : public Unittester<Nc, V, N> {
-   // const string v1str = "17.4";    
+    // const string v1str = "17.4";
     V v1 = TypeWrangler<V>::typicalFirstValue();
     V v2 = TypeWrangler<V>::typicalSecondValue();
     const string v2str = clto_str<V>(v2);
@@ -133,7 +144,8 @@ class TextinputUT : public Unittester<Nc, V, N> {
         cout << "Starting value is " << *this->modelPtr_ << endl;
         this->node_ =
             this->builder_->withName("textInputTest").withCppVal(this->modelPtr_).textInput();
-        this->label_ = this->builder_->withName("textInputTest_lbl").label(this->node_, this->completeType_, true);
+        this->label_ = this->builder_->withName("textInputTest_lbl")
+                           .label(this->node_, this->completeType_, true);
         this->br_ = this->builder_->br();
     }
 
@@ -146,7 +158,8 @@ class TextinputUT : public Unittester<Nc, V, N> {
     }
 
     virtual bool evaluate() {
-        cout << "Model Val: " << *this->modelPtr_ << ", text entered into field: " << v2str << ", target numeric value: " << v2 << endl;
+        cout << "Model Val: " << *this->modelPtr_ << ", text entered into field: " << v2str
+             << ", target numeric value: " << v2 << endl;
         cout << "Model delta: " << *this->modelPtr_ - v2 << endl;
         delete this->builder_;
         if (*this->modelPtr_ == v2) {
