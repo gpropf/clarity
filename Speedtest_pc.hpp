@@ -74,7 +74,7 @@ struct Speedtester {
 
     void destroyEverything() {
         // cout << "Destroying " << clns.size() << " nodes.\n";
-        ClarityNode::nodelogStatic("Destroying " + clto_str(clns.size()) + " nodes.\n");
+        ClarityNode::nodelogStatic("Destroying " + clto_str(clns.size()) + " nodes.\n", ClogType::INFO);
         for (auto cln : clns) {
             delete cln;
         }

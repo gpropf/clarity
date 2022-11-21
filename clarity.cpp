@@ -2,9 +2,9 @@
 
 /**
  * @brief Very simple logging function.
- * 
- * @param msg 
- * @param clt 
+ *
+ * @param msg
+ * @param clt
  */
 void clarity::clog(const string &msg, ClogType clt) {
     switch (clt) {
@@ -14,6 +14,9 @@ void clarity::clog(const string &msg, ClogType clt) {
         case ClogType::ERROR:
             cout << "ERROR! " << msg << endl;
             break;
-        //default:
+        case ClogType::INFO:
+            cout << "INFO: " << msg << endl;
+            break;
+            // default:
     }
 }

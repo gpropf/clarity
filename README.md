@@ -162,7 +162,7 @@ _These are the current methods that move data around in the system. They went th
 
 `void HybridNode<V>::setCppValFromJSVal(const val &jsval)`: Writes the provided val object into the cppVal_ according to the template type using the emscripten as() method. At the end it calls pushValToPeers().
 
-`virtual void HybridNode<V>::updateNodeFromDom()`: The main driver of the data flow. When the user uses a control, the method `static INLINE void ClarityNode::updateNodeFromDomById(int id)` gets called and starts the update process moving data "down" from the DOM into the modelVal and possibly also "sideways" to the node's peers (if any).
+`virtual void HybridNode<V>::updateNodeFromDom()`: The main driver of the data flow. When the user uses a control, the method `static INLINE void ClarityNode::updateNodeFromDomById(int id)` gets called and starts the update process moving data "down" from the DOM into the modelVal and possibly also "sideways" to the node's peers (if any). Actually, now that I've solved the problem with storing a pointer to a subclass of ClarityNode in JSProxyNode, we just call the updateNodeFromDom() method of each node directly from the JavaScript event listener. Eventually the static method that uses the node id will be phased out.
 
 
 #### Troubleshooting Common Problems

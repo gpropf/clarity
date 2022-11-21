@@ -52,8 +52,8 @@ string interpolateTypeIntoString(string& inStr) {
     return string(beforeAngleBracket + "<" + tid + ">" + afterAngleBracket);
 }
 
-enum class ClogType : unsigned char { WARNING = 0, ERROR = 1 };
-void clog(const string& msg, ClogType clt = ClogType::WARNING);
+enum class ClogType : unsigned char { WARNING = 0, ERROR = 1, INFO = 2 };
+void clog(const string& msg, ClogType clt = ClogType::INFO);
 
 /**
  * @brief Hands out (presumably) unique int ids with a simply incrementing

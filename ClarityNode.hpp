@@ -165,13 +165,13 @@ class ClarityNode {
         }
     }
 
-    void nodelog(const string &msg, ClogType clt = ClogType::WARNING) const {
+    void nodelog(const string &msg, ClogType clt = ClogType::INFO) const {
         if (ClarityNode::clogSilent) return;
         string msgout("node " + clto_str(id_) + ": " + msg);
         clog(msgout, clt);
     }
 
-    static void nodelogStatic(const string &msg, ClogType clt = ClogType::WARNING) {
+    static void nodelogStatic(const string &msg, ClogType clt = ClogType::INFO) {
         if (ClarityNode::clogSilent) return;
         // string msgout("node " + clto_str(id_)+ ":" + msg);
         clog(msg, clt);
@@ -288,7 +288,7 @@ class ClarityNode {
             domElement_.set(boundField_, inval);
             domElement_.call<void>("setAttribute", val(boundField_), inval);
         } else {
-            nodelog("Attempt to set DOM value of element with no bound field!");
+            nodelog("Attempt to set DOM value of element with no bound field!", ClogType::WARNING);
         }
     }
 
@@ -381,6 +381,14 @@ class ClarityNode {
         cnn->pushValToPeers(cnn);
     }
 
+    /**
+     * @brief Very central method in the data flow. When a user changes a GUI element, the
+     * JavaScript listeners call this method on the node. The specific behavior depends on the
+     * subclass of ClarityNode we are dealing with but the central feature of all overloads of this
+     * method must be that the underlying C++ value is updated and the peers of the node receive the
+     * updated value as well.
+     *
+     */
     virtual void updateNodeFromDom() = 0;
 
     static INLINE void updateNodeFromDomById(int id) {
@@ -683,6 +691,7 @@ class HybridNode : public ClarityNode {
     virtual void updateNodeFromDom() {
         string methodStr = "HybridNode<V>::updateNodeFromDom()\n";
         methodStr = clarity::interpolateTypeIntoString<V>(methodStr);
+        nodelog(methodStr);
         cout << methodStr << endl;
         val jsval = getVal();
         if (cppVal_ != nullptr) {

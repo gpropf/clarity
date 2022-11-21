@@ -141,9 +141,9 @@ class JSProxyNode {
       //Module.ClarityNode.updateNodeFromDomById(jsProxyNode.id)
       console.log(jsProxyNode.clarityNode)
       if (jsProxyNode.boundField != undefined)
-        console.log("CN, For ID: " + jsProxyNode.id + " Value changed to: " + jsProxyNode.domElement[jsProxyNode.boundField]);
+        jsProxyNode.nodelog("Value changed to: " + jsProxyNode.domElement[jsProxyNode.boundField]);
       else
-        console.log("CN, For ID: " + jsProxyNode.id + " Value changed");
+        jsProxyNode.nodelog("Value changed but boundField is not set so we cannot determine what the new value is.");
     }
   }
 
@@ -208,15 +208,9 @@ class JSProxyNode {
     Module.HybridNode_d.listNodes_double();
   }
 
-  // static destroy_everything() {
-  //   console.log("destroy_everything():BOOM!");
-  //   Module.ClarityNode.runCallbackById("destroy_everything")
-  // }
-
-  // static make_trs_ints() {
-  //   //console.log("JS:make_trs_ints()");
-  //   Module.ClarityNode.runCallbackById("make_trs_ints");
-  // }
+  nodelog(msg, loglevel = Module.ClogType.INFO) {
+    this.clarityNode_.nodelog("[JS]: " + msg, loglevel);
+  }
 
   printVal(v) {
     console.log("printval(v):" + "id: " + this.id + ". JSVAL = " + v);

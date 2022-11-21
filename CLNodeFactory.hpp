@@ -419,14 +419,14 @@ class CLNodeFactory {
      * @return CLNodeFactory
      */
     INLINE CLNodeFactory withLabelText(const string labelText) const & {
-        clog("withLabelText() method currently unimplemented and has no effect.");
+        clog("withLabelText() method currently unimplemented and has no effect.", ClogType::WARNING);
         CLNodeFactory cpy(*this);
         cpy.labelText_ = labelText;
         return cpy;
     }
 
     INLINE CLNodeFactory withLabelText(const string labelText) && {
-        clog("withLabelText() method currently unimplemented and has no effect.");
+        clog("withLabelText() method currently unimplemented and has no effect.", ClogType::WARNING);
         CLNodeFactory cpy(std::move(*this));
         cpy.labelText_ = labelText;
         return cpy;

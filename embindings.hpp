@@ -16,6 +16,9 @@ EMSCRIPTEN_BINDINGS(clarity) {
                         allow_raw_pointers())
         // .function("pullValFromPeers", &ClarityNode::pullValFromPeers,
         //           allow_raw_pointers())
+        .function("nodelog", &ClarityNode::nodelog, allow_raw_pointers())
+        .class_function("nodelogStatic", &ClarityNode::nodelogStatic,
+                        allow_raw_pointers())
 
         .function("getId", &ClarityNode::getId, allow_raw_pointers())
         .function("getName", &ClarityNode::getName, allow_raw_pointers())
@@ -89,4 +92,9 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .value("REPLACE_NAME", ClarityNode::AttachmentMode::REPLACE_NAME)
         .value("ATTACH_ID", ClarityNode::AttachmentMode::ATTACH_ID)
         .value("ATTACH_NAME", ClarityNode::AttachmentMode::ATTACH_NAME);
+
+    enum_<clarity::ClogType>("ClogType")
+        .value("WARNING", clarity::ClogType::WARNING)
+        .value("ERROR", clarity::ClogType::ERROR)
+        .value("INFO", clarity::ClogType::INFO);
 }
