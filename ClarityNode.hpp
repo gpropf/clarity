@@ -135,6 +135,12 @@ class ClarityNode {
         }
     };
 
+    /**
+     * @brief Version of DualLink that stores the multiplier in case intend to make the multiplier
+     * itself a value that can be controlled in the page.
+     *
+     * @tparam T
+     */
     template <typename T>
     class MultiplierLink : public DualLink {
         T *multiplier_;
@@ -291,8 +297,9 @@ class ClarityNode {
      * where complex controls will create sub-nodes and carry out other initialization tasks. We
      * also use this method to install specialized event listener generators for certain classes. An
      * example of this use would be the SimpleSelect class. This is also where we install the
-     * `clarityNode` member of the `JSProxyNode` contained in each node. It is this JavaScript member
-     * that allows the JS code in the event listeners to "see" the C++ node and manipulate it.
+     * `clarityNode` member of the `JSProxyNode` contained in each node. It is this JavaScript
+     * member that allows the JS code in the event listeners to "see" the C++ node and manipulate
+     * it.
      *
      */
     inline virtual void finalize() = 0;
@@ -575,6 +582,12 @@ class ClarityNode {
     */
 };
 
+/**
+ * @brief Most nodes in the system are of this type. Pretty much any simple input control can be
+ * created with this class and the various 'with' methods in CLNodeFactory.
+ *
+ * @tparam V
+ */
 template <typename V>
 class HybridNode : public ClarityNode {
    public:

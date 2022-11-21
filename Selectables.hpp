@@ -28,6 +28,12 @@ namespace clarity {
 //     CollectionType<ItemType, Allocator> m_collection;
 // };
 
+/**
+ * @brief Like SimpleSelect, represents a selection box. This variant expects the options to
+ * actually be the cppVal_ however.
+ *
+ * @tparam V
+ */
 template <typename V>
 class Select : public HybridNode<V> {
    public:
@@ -38,7 +44,7 @@ class Select : public HybridNode<V> {
     ~Select() { cout << "DESTROYING Select with id: " << this->id_ << "\n"; }
 
     INLINE virtual void finalize() {
-        //cout << "Select::finalize()\n";
+        // cout << "Select::finalize()\n";
         this->cle_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
@@ -51,7 +57,7 @@ class Select : public HybridNode<V> {
     void populateOptions() {
         for (auto opt : *this->cppVal_) {
             auto [optFirst, optSecond] = opt;
-            this->getCLE().template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
+            this->cle_.template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
                                                val(optSecond));
         }
     }
@@ -72,6 +78,11 @@ class Select : public HybridNode<V> {
    protected:
 };
 
+/**
+ * @brief Basic select box control.
+ *
+ * @tparam V
+ */
 template <typename V>
 class SimpleSelect : public HybridNode<V> {
    public:
@@ -98,7 +109,7 @@ class SimpleSelect : public HybridNode<V> {
     // }
 
     INLINE virtual void finalize() {
-        //cout << "SimpleSelect::finalize()\n";
+        // cout << "SimpleSelect::finalize()\n";
         this->cle_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
@@ -116,7 +127,7 @@ class SimpleSelect : public HybridNode<V> {
     void populateOptions() {
         for (auto opt : options_) {
             auto [optFirst, optSecond] = opt;
-            this->getCLE().template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
+            this->cle_.template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
                                                val(optSecond), val(optFirst == *this->cppVal_));
         }
     }
@@ -131,6 +142,11 @@ class SimpleSelect : public HybridNode<V> {
 
     INLINE virtual string getNodeTypeCode() { return string("SS"); }
 
+    /**
+     * @brief Get the label corresponding to the current selection.
+     *
+     * @return string
+     */
     inline string getSelectedLabel() { return this->options_[*this->cppVal_].second; }
 
     inline void setOptions(vector<pair<V, string>> &options) { options_ = options; }
@@ -138,9 +154,14 @@ class SimpleSelect : public HybridNode<V> {
     virtual void setDOMVal(const val &inval);
 
    protected:
-    vector<pair<V, string>> options_;
+    vector<pair<V, string>> options_;  //!< vector of options for the selector element.
 };
 
+/**
+ * @brief Basic checkbox control.
+ * 
+ * @tparam V 
+ */
 template <typename V>
 class Checkbox : public HybridNode<V> {
    public:
@@ -158,7 +179,7 @@ class Checkbox : public HybridNode<V> {
     // }
 
     INLINE virtual void finalize() {
-        //cout << "Checkbox::finalize()\n";
+        // cout << "Checkbox::finalize()\n";
         this->cle_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
