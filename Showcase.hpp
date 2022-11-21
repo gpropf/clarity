@@ -184,7 +184,8 @@ struct Showcase : public PageContent {
         auto *canvas1CurrentCellColor_tinp =
             canvasBuilder.withName("currentCellColor_tinp")
                 .withCppVal(canvas1->getPtr2CurrentCellVal())
-                .withAttributes({{"style", val("border: 3px dashed purple")}, {"size", val(2)}})
+                //.withAttributes({{"style", val("border: 3px dashed purple")}, {"size", val(2)}})
+                .withAttributes({{"class", val("small_width")}})
                 .textInput();
 
         maindiv->appendChild(canvas1);

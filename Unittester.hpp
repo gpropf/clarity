@@ -1,5 +1,8 @@
 
 #include "CLNodeFactory.hpp"
+#include "CanvasElement.hpp"
+#include "ClarityNode.hpp"
+#include "clarity.hpp"
 
 /**
  * @brief Adapted from
@@ -58,7 +61,6 @@ struct TypeWrangler<unsigned char> {
     static unsigned char typicalSecondValue() { return '2'; }
 };
 
-template <>
 template <typename V>
 struct TypeWrangler<HybridNode<V>> {
     static const string getCanonicalName() {
@@ -98,7 +100,7 @@ class Unittester {
 
     // virtual void setup() = 0;
     virtual void setup() = 0;
-    virtual void runEvent() = 0;
+    virtual void runEvents() = 0;
     virtual bool evaluate() = 0;
 
     virtual void notify(bool pass) {
@@ -123,10 +125,10 @@ class Unittester {
 
 /**
  * @brief Testing class for Textinput fields.
- * 
- * @tparam Nc 
- * @tparam V 
- * @tparam N 
+ *
+ * @tparam Nc
+ * @tparam V
+ * @tparam N
  */
 template <template <typename V> class Nc, typename V, typename N>
 class TextinputUT : public Unittester<Nc, V, N> {
@@ -142,14 +144,16 @@ class TextinputUT : public Unittester<Nc, V, N> {
     virtual void setup() {
         this->modelPtr_ = new V(v1);
         cout << "Starting value is " << *this->modelPtr_ << endl;
-        this->node_ =
-            this->builder_->withName("textInputTest").withCppVal(this->modelPtr_).textInput();
+        this->node_ = this->builder_->withName("textInputTest")
+                          .withCppVal(this->modelPtr_)
+                          .withAttributes({{"class", val("small_width")}})
+                          .textInput();
         this->label_ = this->builder_->withName("textInputTest_lbl")
                            .label(this->node_, this->completeType_, true);
         this->br_ = this->builder_->br();
     }
 
-    virtual void runEvent() {
+    virtual void runEvents() {
         val makeEvent = val::global("makeEvent");
         val ev = makeEvent(val(string("change")));
         val domEl = this->node_->getDomElement();
@@ -161,6 +165,64 @@ class TextinputUT : public Unittester<Nc, V, N> {
         cout << "Model Val: " << *this->modelPtr_ << ", text entered into field: " << v2str
              << ", target numeric value: " << v2 << endl;
         cout << "Model delta: " << *this->modelPtr_ - v2 << endl;
+        delete this->builder_;
+        if (*this->modelPtr_ == v2) {
+            //  this->node_->getDomElement().template call<void>("setAttribute", val("style"),
+            // val("background-color: lightgreen;"));
+            return true;
+        }
+        cout << "TEST FAILED!" << endl;
+        // this->node_->getDomElement().template call<void>("setAttribute", val("style"),
+        //                                                  val("background-color: red;"));
+        return false;
+    }
+};
+
+template <template <typename V> class Nc, typename V, typename N>
+class SimpleSelectUT : public Unittester<Nc, V, N> {
+    // const string v1str = "17.4";
+    V v1 = TypeWrangler<V>::typicalFirstValue();
+    V v2 = TypeWrangler<V>::typicalSecondValue();
+    const string v2str = clto_str<V>(v2);
+
+    vector<pair<int, string>> *options_ = new vector<pair<int, string>>;
+
+   public:
+    template <template <typename Vi> class Nci, typename Vi, typename Ni>
+    SimpleSelectUT(CLNodeFactory<Nci, Vi, Ni> *builder) : Unittester<Nc, V, N>(builder) {
+        options_->push_back({0, "BMW"});
+        options_->push_back({1, "Lambo"});
+        options_->push_back({2, "Lada"});
+        options_->push_back({3, "Ferrari"});
+    }
+
+    virtual void setup() {
+        CLNodeFactory<HybridNode, string, int> labelBuilder(*this->builder_);
+        this->modelPtr_ = new V(v1);
+        cout << "Starting value is " << *this->modelPtr_ << endl;
+        this->node_ = this->builder_->withName("SimpleSelectTest")
+                          .withCppVal(this->modelPtr_)
+                          .withAttributes({{"class", val("medium_width")}})
+                          .template simpleSelect<string>(*options_);
+        this->label_ =
+            dynamic_cast<SimpleSelect<int> *>(labelBuilder.withName("SimpleSelectTest_lbl")
+                                                  .label(this->node_, this->completeType_, true));
+        // cout << "setup(): this->completeType_ = " << this->completeType_ <<endl;
+        this->br_ = this->builder_->br();
+    }
+
+    virtual void runEvents() {
+        val makeEvent = val::global("makeEvent");
+        val ev = makeEvent(val(string("click")));
+        val domEl = this->node_->getDomElement();
+        // domEl.set(this->node_->getBoundField(), v2str);
+        domEl.call<void>("dispatchEvent", ev);
+    }
+
+    virtual bool evaluate() {
+        // cout << "Initial Val: " << *this->modelPtr_ << ", text entered into field: " << v2str
+        //      << ", target numeric value: " << v2 << endl;
+        // cout << "Model delta: " << *this->modelPtr_ - v2 << endl;
         delete this->builder_;
         if (*this->modelPtr_ == v2) {
             //  this->node_->getDomElement().template call<void>("setAttribute", val("style"),

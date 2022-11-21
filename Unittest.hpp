@@ -25,25 +25,31 @@ struct Unittest : public PageContent {
 
         TextinputUT<HybridNode, double, double> tidbl(&testBuilder);
         tidbl.setup();
-        tidbl.runEvent();
+        tidbl.runEvents();
         succeeded = tidbl.evaluate();
         tidbl.notify(succeeded);
         // if (succeeded) tidbl.cleanup();
 
         TextinputUT<HybridNode, int, int> tiint(&testBuilder);
         tiint.setup();
-        tiint.runEvent();
+        tiint.runEvents();
         tiint.notify(tiint.evaluate());
 
         TextinputUT<HybridNode, unsigned char, int> tiuch(&testBuilder);
         tiuch.setup();
-        tiuch.runEvent();
+        tiuch.runEvents();
         tiuch.notify(tiuch.evaluate());
 
         TextinputUT<HybridNode, float, int> tiflt(&testBuilder);
         tiflt.setup();
-        tiflt.runEvent();
+        tiflt.runEvents();
         tiflt.notify(tiflt.evaluate());
+
+        SimpleSelectUT<SimpleSelect, int, int> ssint(&testBuilder);
+        ssint.setup();
+        ssint.runEvents();
+        ssint.notify(ssint.evaluate());
+
 
         // if (succeeded) tiint.cleanup();
 
