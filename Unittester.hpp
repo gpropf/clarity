@@ -1,11 +1,16 @@
 
 #include "CLNodeFactory.hpp"
+ 
 
-// Adapted from -
-// https://stackoverflow.com/questions/4484982/how-to-convert-typename-t-to-string-in-c
+/**
+ * @brief Adapted from https://stackoverflow.com/questions/4484982/how-to-convert-typename-t-to-string-in-c
+ * This class is basically designed to handle anything pertainting to types for our unit testing efforts.
+ * 
+ * @tparam T 
+ */
 template <typename T>
 struct TypeWrangler {
-    static const char* getCanonicalName() { return typeid(T).name(); }
+    static const string getCanonicalName() { return typeid(T).name(); }
     /**
      * @brief Intended for unit testing, return a typical value which will then
      * change. The only important things about these value is that they differ. The basic template
@@ -27,44 +32,44 @@ struct TypeWrangler {
 // and don't like the string returned by typeid
 template <>
 struct TypeWrangler<int> {
-    static const char* getCanonicalName() { return "int"; }
+    static const string getCanonicalName() { return "int"; }
     static int typicalFirstValue() { return -5; }
     static int typicalSecondValue() { return -19; }
 };
 
 template <>
 struct TypeWrangler<double> {
-    static const char* getCanonicalName() { return "double"; }
+    static const string getCanonicalName() { return "double"; }
     static double typicalFirstValue() { return -5.3; }
     static double typicalSecondValue() { return -19.6; }
 };
 
 template <>
 struct TypeWrangler<float> {
-    static const char* getCanonicalName() { return "float"; }
+    static const string getCanonicalName() { return "float"; }
     static float typicalFirstValue() { return -5.3; }
     static float typicalSecondValue() { return -19.6; }
 };
 
 template <>
 struct TypeWrangler<unsigned char> {
-    static const char* getCanonicalName() { return "unsigned char"; }
+    static const string getCanonicalName() { return "unsigned char"; }
     static unsigned char typicalFirstValue() { return '1'; }
     static unsigned char typicalSecondValue() { return '2'; }
 };
 
-// template <>
-// template <typename V>
-// struct TypeWrangler<HybridNode<V>>
-// {
-//     static const char* getCanonicalName()
-//     {
-//         return "HybridNode";
-//     }
-// };
+template <>
+template <typename V>
+struct TypeWrangler<HybridNode<V>>
+{
+    static const string getCanonicalName()
+    {
+        return string("HybridNode &lt;") + TypeWrangler<V>::getCanonicalName() + string("&gt;");
+    }
+};
 
 // usage:
-// const char* name = TypeName<MyType>::Get();
+// const string name = TypeName<MyType>::Get();
 
 
 
@@ -79,7 +84,7 @@ class Unittester {
     const string valueType_ = TypeWrangler<V>::getCanonicalName();
     const string linkMultiplierType_ = TypeWrangler<N>::getCanonicalName();
     const string completeType_ =
-        nodeType_ + " [[" + valueType_ + "]]" + ", linkMul type=" + linkMultiplierType_;
+        nodeType_ + ", value type=[" + valueType_ + "], linkMul type=[" + linkMultiplierType_ + "]";
 
    public:
     template <template <typename Vi> class Nci, typename Vi, typename Ni>

@@ -35,7 +35,7 @@ std::string clto_str(const T &v) {
 class ClarityNode {
    public:
     static vector<string> jsAuxScripts__;
-    //static vector<string> preloadJsAuxScripts__;
+    // static vector<string> preloadJsAuxScripts__;
 
     static void addJSAuxScript(const string &jsFilename) { jsAuxScripts__.push_back(jsFilename); }
 
@@ -286,6 +286,15 @@ class ClarityNode {
         }
     }
 
+    /**
+     * @brief This method is called by the factory to complete the construction of a node. This is
+     * where complex controls will create sub-nodes and carry out other initialization tasks. We
+     * also use this method to install specialized event listener generators for certain classes. An
+     * example of this use would be the SimpleSelect class. This is also where we install the
+     * `clarityNode` member of the `JSProxyNode` contained in each node. It is this JavaScript member
+     * that allows the JS code in the event listeners to "see" the C++ node and manipulate it.
+     *
+     */
     inline virtual void finalize() = 0;
 
     virtual void doNothing() = 0;

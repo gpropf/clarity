@@ -11,7 +11,7 @@
 using namespace clarity;
 
 /**
- * @brief Unit
+ * @brief Unit tests. Eventually this will contain instances of each type of control and will run a few tests on it.
  *
  */
 struct Unittest : public PageContent {
