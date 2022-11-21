@@ -161,19 +161,23 @@ class JSProxyNode {
 
   static elgTextareaAlltypesInput (jsProxyNode) {
     return function (e) {      
-        console.log("KEYPRESSED!");      
+      jsProxyNode.nodelog("KEYPRESSED!");      
     }
   }
 
   static elgInputAlltypesMousedown (jsProxyNode) {
-    return function (e) {      
-      console.log("Mouse down!");
+    return function (e) {
+      let msg = "Mouse button down!";  
+      if (jsProxyNode.nodelog == undefined)
+        Module.ClarityNode.nodelogStatic(msg, Module.ClogType.INFO);
+      else
+        jsProxyNode.nodelog(msg);
     }
   }
 
   static elgInputAlltypesMouseover (jsProxyNode) {
     return function (e) {      
-      console.log("Mouse Hover!");
+      jsProxyNode.nodelog("Mouse Hover!");
     }
   }
 
@@ -192,12 +196,12 @@ class JSProxyNode {
       var locIn = { x: Math.floor(loc.x / cw), y: Math.floor(loc.y / ch) };    
       var locOut = Util.capCoords(locIn, gridDimensions);
       jsProxyNode.clarityNode.setValXY(locOut.x, locOut.y);
-      console.log(locOut);
+      jsProxyNode.nodelog(locOut);
     }
   }
 
   static doNothing() {
-    console.log("doNothing(): a function that proudly does nothing...");
+    Module.ClarityNode.nodelogStatic("doNothing(): a function that proudly does nothing...");
   }
 
   static listNodes_int() {
