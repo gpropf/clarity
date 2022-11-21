@@ -33,10 +33,13 @@ unittest: unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 docs: clarity.doxyconfig
 	doxygen clarity.doxyconfig
 
+docsclean:
+	rm -rf html latex
+
 clean:
 	rm -f *.o 
 
-realclean: clean
+realclean: clean docsclean
 	rm -f *.wasm *.wasm.map *.a $(JSOUT)
 
 all: showcase speedtest docs
