@@ -642,7 +642,7 @@ class HybridNode : public ClarityNode {
      *
      */
     virtual void refresh() {
-        nodelog("refresh()");
+        //nodelog("refresh()");
         for (auto child : children_) {
             child->refresh();
         }
