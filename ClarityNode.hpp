@@ -640,7 +640,7 @@ class HybridNode : public ClarityNode {
      * with data from the model when they first appear.
      *
      */
-    void refresh() {
+    virtual void refresh() {
         refreshDOMValueFromModel();
         pushValToPeers(this);
     }
