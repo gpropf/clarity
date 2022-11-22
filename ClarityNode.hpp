@@ -496,6 +496,7 @@ class ClarityNode {
         clean_ = false;
     }
 
+    virtual void refresh() = 0;
     virtual void refreshDOMValueFromModel() = 0;
 
     INLINE void setAttribute(const string &attr, const val &value) {
