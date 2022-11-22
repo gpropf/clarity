@@ -26,7 +26,9 @@ From the beginning I intended for it to be possible to build complex UI componen
 
 ### Clarity Demo Apps ###
 
-I've also created a completely separate repo called [clarity-apps](https://github.com/gpropf/clarity-apps) that contains some Clarity demo apps. Actually, there's not much there yet so right now this is just intended as a sanity check to make sure that people can actually create apps **outside** this repository. We want it to be straightforward to make a Clarity app without getting a console window full of angry red 404 messages, compilation errors, and runtime exceptions caused by hidden assumptions about file paths and other Clarity internals. This repo is a good place to start making your own Clarity app by just copying and then gutting one of the demo apps and putting your own content in. It also already contains an example of a complex control in the form of `BeakerNode`, which will be the central control in the _Pixel Reactor_ demo.
+I've also created a completely separate repo called [clarity-apps](https://github.com/gpropf/clarity-apps) that contains some Clarity demo apps. Actually, there's not much there yet so right now this is just intended as a sanity check to make sure that people can actually create apps **outside** this repository. We want it to be straightforward to make a Clarity app without getting a console window full of angry red 404 messages, compilation errors, and runtime exceptions caused by hidden assumptions about file paths and other Clarity internals. 
+
+This repo should be a good place to start making your own Clarity app by just copying and then gutting one of the demo apps and putting your own content in. It also already contains an example of a complex control in the form of `BeakerNode` in the _Pixel Reactor_ demo. As of right now (11-22-2022) The `BeakerNode` control is not working due to some issues connecting the `Beaker` class and the associated `BeakerNode` class.
 
 ## Design ##
 
