@@ -642,6 +642,9 @@ class HybridNode : public ClarityNode {
      *
      */
     virtual void refresh() {
+        for (auto child : children_) {
+            child->refresh();
+        }
         refreshDOMValueFromModel();
         pushValToPeers(this);
     }
