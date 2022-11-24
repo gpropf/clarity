@@ -202,7 +202,7 @@ class ClarityNode {
 
     inline string getTag() const { return tag_; }
     inline int getId() const { return id_; }
-    inline void setCLE(val cle) { cle_ = cle; }
+    inline void setCLE(val cle) { jsProxyNode_ = cle; }
 
     /**
      * @brief An early hack to allow users to attach their C++ code to buttons and things. Not sure
@@ -233,11 +233,11 @@ class ClarityNode {
     // INLINE ClarityNode(const CppType storedValueType)
     //     : storedValueType_(storedValueType) {
     //     init();
-    //     cle_.set("cpptype", val(storedValueType));
+    //     jsProxyNode_.set("cpptype", val(storedValueType));
     // }
     INLINE ClarityNode(const string &name) : name_(name) {
         init();
-        // cle_.set("cpptype", val(storedValueType));
+        // jsProxyNode_.set("cpptype", val(storedValueType));
     }
 
     /**
@@ -254,9 +254,9 @@ class ClarityNode {
         init();
 
         if (!useExistingDOMElement)
-            cle_.call<void>("createDOMElement", id_, attachmentMode, attachmentId);
+            jsProxyNode_.call<void>("createDOMElement", id_, attachmentMode, attachmentId);
 
-        domElement_ = cle_["domElement"];
+        domElement_ = jsProxyNode_["domElement"];
         boundField_ = "value";
         ClarityNode::switchboard[id_] = this;
     }
@@ -310,7 +310,7 @@ class ClarityNode {
 
     INLINE void setBoundField(const string &boundField) {
         boundField_ = boundField;
-        cle_.set("boundField_", boundField);
+        jsProxyNode_.set("boundField_", boundField);
     }
 
     /**
@@ -325,11 +325,11 @@ class ClarityNode {
      */
     virtual string getNodeTypeCode() { return string("--"); };
 
-    INLINE val getCLE() const { return cle_; }
+    INLINE val getCLE() const { return jsProxyNode_; }
     INLINE val getDomElement() { return domElement_; }
     INLINE void setDomElement(val domElement) { domElement_ = domElement; }
     INLINE string getName() const { return name_; }
-    INLINE virtual void printState() const { cle_.call<void>("printState"); }
+    INLINE virtual void printState() const { jsProxyNode_.call<void>("printState"); }
     INLINE static ClarityNode *getClarityNodeById(const int id) { return switchboard[id]; }
     // INLINE static void markNodeDirtyById(int id) { switchboard[id]->clean_ = false; }
     INLINE void toggleClean() { clean_ = !clean_; }
@@ -365,7 +365,7 @@ class ClarityNode {
     bool appendChild(ClarityNode *child) {
         children_.push_back(child);
         child->setParent(this);
-        cle_.call<void>("appendChild", child->getCLE());
+        jsProxyNode_.call<void>("appendChild", child->getCLE());
         return true;  // FIXME: need to check for duplicate ids.
     }
 
@@ -529,7 +529,7 @@ class ClarityNode {
 
     /** \brief Instance of the JSProxyNode class that acts as a "proxy" in JS
      * space. */
-    val cle_ = val::global("JSProxyNode").new_();
+    val jsProxyNode_ = val::global("JSProxyNode").new_();
 
     val domElement_;  //!< This will be initialized if the node has its own DOM
                       //!< element.
@@ -612,10 +612,10 @@ class HybridNode : public ClarityNode {
 
     INLINE virtual void finalize() {
         // cout << "HybridNode::finalize()\n";
-        this->cle_.set("clarityNode", this);
+        this->jsProxyNode_.set("clarityNode", this);
         // val Selectables = val::global("Selectables");
         val listenerGenerators = JSProxyNode_["listenerGenerators"];
-        JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("HybridNode"), this->cle_,
+        JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("HybridNode"), this->jsProxyNode_,
                                 listenerGenerators);
     }
 

@@ -43,19 +43,19 @@ class CanvasElement : public HybridNode<V> {
 
     // inline virtual void finalize() {
     //     cout << "CanvasElement::finalize()\n";
-    //     this->cle_.set("clarityNode", this);
+    //     this->jsProxyNode_.set("clarityNode", this);
     //     val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
-    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
+    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->jsProxyNode_,
     //                                          listenerGenerators);
     // }
 
     INLINE virtual void finalize() {
         // cout << "CanvasElement::finalize()\n";
-        this->cle_.set("clarityNode", this);
+        this->jsProxyNode_.set("clarityNode", this);
         // val Selectables = val::global("Selectables");
         val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2",
-                                             val("CanvasElement"), this->cle_, listenerGenerators);
+                                             val("CanvasElement"), this->jsProxyNode_, listenerGenerators);
     }
 
     virtual void refreshDOMValueFromModel(){};  // FIXME: should probably move the initcg or
@@ -65,7 +65,7 @@ class CanvasElement : public HybridNode<V> {
         drawFuntionName_ = drawFuntionName;
     }
 
-    inline void refreshView() { this->cle_.template call<void>(drawFuntionName_.c_str()); }
+    inline void refreshView() { this->jsProxyNode_.template call<void>(drawFuntionName_.c_str()); }
 
    protected:
     int width_, height_;
@@ -116,7 +116,7 @@ class CanvasGrid : public CanvasElement<V> {
                                                 // testfunction code in here.
 
     val getVal() const {
-        val domElement = this->cle_["domElement"];
+        val domElement = this->jsProxyNode_["domElement"];
 
         // Needs to read the internal state of the CG object and transfer it
         // back to the array.
@@ -130,19 +130,19 @@ class CanvasGrid : public CanvasElement<V> {
 
     // inline virtual void finalize() {
     //     cout << "CanvasGrid::finalize()\n";
-    //     this->cle_.set("clarityNode", this);
+    //     this->jsProxyNode_.set("clarityNode", this);
     //     val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
-    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
+    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->jsProxyNode_,
     //                                          listenerGenerators);
     // }
 
     INLINE virtual void finalize() {
         // cout << "CanvasGrid::finalize()\n";
-        this->cle_.set("clarityNode", this);
+        this->jsProxyNode_.set("clarityNode", this);
         // val Selectables = val::global("Selectables");
         val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2",
-                                             val("CanvasGrid"), this->cle_, listenerGenerators);
+                                             val("CanvasGrid"), this->jsProxyNode_, listenerGenerators);
     }
 
     INLINE virtual string getNodeTypeCode() { return string("CG"); }
@@ -171,7 +171,7 @@ class CanvasGrid : public CanvasElement<V> {
 
     void drawGrid() const {
         val ctx = this->domElement_.template call<val>("getContext", val("2d"));
-        val domElement = this->cle_["domElement"];
+        val domElement = this->jsProxyNode_["domElement"];
         domElement.set(
             "gridRef",
             const_cast<CanvasGrid *>(this));  // Very bizarre errors when trying to use domElement_.

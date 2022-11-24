@@ -45,11 +45,11 @@ class Select : public HybridNode<V> {
 
     INLINE virtual void finalize() {
         // cout << "Select::finalize()\n";
-        this->cle_.set("clarityNode", this);
+        this->jsProxyNode_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("Select"),
-                                             this->cle_, listenerGenerators);
+                                             this->jsProxyNode_, listenerGenerators);
     }
 
     virtual string cppValToString() const;
@@ -57,7 +57,7 @@ class Select : public HybridNode<V> {
     void populateOptions() {
         for (auto opt : *this->cppVal_) {
             auto [optFirst, optSecond] = opt;
-            this->cle_.template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
+            this->jsProxyNode_.template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
                                            val(optSecond));
         }
     }
@@ -100,21 +100,21 @@ class SimpleSelect : public HybridNode<V> {
     }
 
     // INLINE virtual void finalize() {
-    //     this->cle_.set("clarityNode", this);
+    //     this->jsProxyNode_.set("clarityNode", this);
     //     cout << "SimpleSelect::finalize()\n";
     //     val Selectables = val::global("Selectables");
     //     val simpleSelectGens = Selectables["simpleSelectGens"];
-    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
+    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->jsProxyNode_,
     //                                          simpleSelectGens);
     // }
 
     INLINE virtual void finalize() {
         // cout << "SimpleSelect::finalize()\n";
-        this->cle_.set("clarityNode", this);
+        this->jsProxyNode_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2",
-                                             val("SimpleSelect"), this->cle_, listenerGenerators);
+                                             val("SimpleSelect"), this->jsProxyNode_, listenerGenerators);
     }
 
     virtual string cppValToString() const;
@@ -127,7 +127,7 @@ class SimpleSelect : public HybridNode<V> {
     void populateOptions() {
         for (auto opt : options_) {
             auto [optFirst, optSecond] = opt;
-            this->cle_.template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
+            this->jsProxyNode_.template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
                                            val(optSecond), val(optFirst == *this->cppVal_));
         }
     }
@@ -135,7 +135,7 @@ class SimpleSelect : public HybridNode<V> {
     inline virtual void refreshDOMValueFromModel() { populateOptions(); };
 
     virtual void updateNodeFromDom() {
-        int currentSelection = this->cle_["currentSelection"].template as<int>();
+        int currentSelection = this->jsProxyNode_["currentSelection"].template as<int>();
         cout << "SimpleSelect::updateNodeFromDom() currentSelection = " << currentSelection << endl;
         *this->cppVal_ = currentSelection;
     }
@@ -171,20 +171,20 @@ class Checkbox : public HybridNode<V> {
 
     // inline virtual void finalize() {
     //     cout << "Checkbox::finalize()\n";
-    //     this->cle_.set("clarityNode", this);
+    //     this->jsProxyNode_.set("clarityNode", this);
     //     val Selectables = val::global("Selectables");
     //     val listenerGenerators = Selectables["listenerGenerators"];
-    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->cle_,
+    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->jsProxyNode_,
     //                                          listenerGenerators);
     // }
 
     INLINE virtual void finalize() {
         // cout << "Checkbox::finalize()\n";
-        this->cle_.set("clarityNode", this);
+        this->jsProxyNode_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("Checkbox"),
-                                             this->cle_, listenerGenerators);
+                                             this->jsProxyNode_, listenerGenerators);
     }
 
     ~Checkbox() { cout << "DESTROYING Checkbox with id: " << this->id_ << "\n"; }
