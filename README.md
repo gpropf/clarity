@@ -84,22 +84,24 @@ When you create a node the system will install a set of event listeners that are
 ### Todo ###
 
 1. Reorganizing and cleaning up this README!
-
-1. ~~Event API~~. I now have the ClarityNode::installListenerGenerators() static method to allow the user to replace or augment the standard event listeners in their programs.
-
-2. ~~Speedtest needs to be put in the standard format used in Showcase.~~
-
-3. Web workers, pthreads, or both. Obviously we need a way for users to easily install repeating fuctions to make simulations and games easy. As a last resort, the old `setTimeout` and `setInterval` JS calls can be used.
-
-4. ~~The template parameterized multiplier value in DualLink should be stored so it can be the target of user interaction. Basically, you could edit the conversion factor for some peer value.~~ This is partially implemented but should not currently be relied upon.
    
-5. Radio buttons.
-   
-6. ~~Checkboxes~~: We have a Checkbox class in Selectables now.
+2. We need some way to register getter and setter methods for model data that is inside classes and has non-public access.
 
-7. Selectables could use a common base class?
+3. ~~Event API~~. I now have the ClarityNode::installListenerGenerators() static method to allow the user to replace or augment the standard event listeners in their programs.
+
+4. ~~Speedtest needs to be put in the standard format used in Showcase.~~
+
+5. Web workers, pthreads, or both. Obviously we need a way for users to easily install repeating fuctions to make simulations and games easy. As a last resort, the old `setTimeout` and `setInterval` JS calls can be used.
+
+6. ~~The template parameterized multiplier value in DualLink should be stored so it can be the target of user interaction. Basically, you could edit the conversion factor for some peer value.~~ This is partially implemented but should not currently be relied upon.
    
-8. Select boxes: SimpleSelect class now uses a single value to represent the current selection and has eventListeners and other constructs to update that value as the user changes their selection.
+7. Radio buttons.
+   
+8. ~~Checkboxes~~: We have a Checkbox class in Selectables now.
+
+9.  Selectables could use a common base class?
+   
+10. Select boxes: SimpleSelect class now uses a single value to represent the current selection and has eventListeners and other constructs to update that value as the user changes their selection.
 
 ### Todo (cleanups and "doing things right" fixes - somewhat lower priority) ###
 
