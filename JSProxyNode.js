@@ -196,7 +196,7 @@ class JSProxyNode {
       var locIn = { x: Math.floor(loc.x / cw), y: Math.floor(loc.y / ch) };    
       var locOut = Util.capCoords(locIn, gridDimensions);
       jsProxyNode.clarityNode.setValXY(locOut.x, locOut.y);
-      jsProxyNode.nodelog(locOut);
+      jsProxyNode.nodelog("x: " + locOut.x + ", y: " + locOut.y);
     }
   }
 
