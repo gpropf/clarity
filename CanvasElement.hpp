@@ -154,29 +154,38 @@ class CanvasGrid : public CanvasElement<V> {
     void initcg() {
         cout << "CG init called.\n";
         HybridNode<V>::cppVal_ = new V[gridWidth_ * gridHeight_];
-        int cellCount = 0;
+        // int cellCount = 0;
         for (int i = 0; i < gridWidth_; i++) {
             for (int j = 0; j < gridHeight_; j++) {
-                int addr = gridWidth_ * j + i;
-                *(HybridNode<V>::cppVal_ + addr) = currentCellVal_;
+                // int addr = gridWidth_ * j + i;
+                // *(HybridNode<V>::cppVal_ + addr) = currentCellVal_;
+                setValXYNoDraw(i, j, currentCellVal_);
             }
             // cout << "\n";
-            cellCount++;
+            // cellCount++;
         }
         drawGrid();
     }
 
-    int setValXY(int x, int y) {
+    inline void setValXYNoDraw(int x, int y, V cellVal) {
         int addr = (y * gridWidth_ + x) * sizeof(V);
-        *(this->cppVal_ + addr) = currentCellVal_;
+        *(this->cppVal_ + addr) = cellVal;
+    }
+
+    void setValXY(int x, int y) {
+        setValXYNoDraw(x,y,currentCellVal_);
+        
         drawGrid();
-        return addr;
+        V checkVal = getValXY(x, y);
+        this->nodelog("Value at " + clto_str(x) + "," + clto_str(y) + " is " +
+                      clto_str(int(checkVal)));
+        //return addr;
     }
 
     V getValXY(int x, int y) {
         int addr = (y * gridWidth_ + x) * sizeof(V);
         V xyVal = *(this->cppVal_ + addr);
-        //nodelog("Value at " + clto_str(x) + ", " + clto_str(y) + " is " + clto_str(xyVal));
+        // nodelog("Value at " + clto_str(x) + ", " + clto_str(y) + " is " + clto_str(xyVal));
         return xyVal;
     }
 
