@@ -45,7 +45,8 @@ class CanvasElement : public HybridNode<V> {
     //     cout << "CanvasElement::finalize()\n";
     //     this->jsProxyNode_.set("clarityNode", this);
     //     val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
-    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->jsProxyNode_,
+    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType",
+    //     this->jsProxyNode_,
     //                                          listenerGenerators);
     // }
 
@@ -55,7 +56,8 @@ class CanvasElement : public HybridNode<V> {
         // val Selectables = val::global("Selectables");
         val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2",
-                                             val("CanvasElement"), this->jsProxyNode_, listenerGenerators);
+                                             val("CanvasElement"), this->jsProxyNode_,
+                                             listenerGenerators);
     }
 
     virtual void refreshDOMValueFromModel(){};  // FIXME: should probably move the initcg or
@@ -89,8 +91,8 @@ class CanvasGrid : public CanvasElement<V> {
 
     V currentCellVal_ = 0;
 
-    static const array<string, 8> colors;  //!< some basic HTML RGB color strings. These are
-                                           //!< referred to by index in the grid array.
+    static const array<string, 8>
+        colors;  //!< FIXME: We should not have the colors hardcoded here but this will do for now.
 
    public:
     inline void setCurrentCellVal(int v) { currentCellVal_ = v; }
@@ -132,7 +134,8 @@ class CanvasGrid : public CanvasElement<V> {
     //     cout << "CanvasGrid::finalize()\n";
     //     this->jsProxyNode_.set("clarityNode", this);
     //     val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
-    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->jsProxyNode_,
+    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType",
+    //     this->jsProxyNode_,
     //                                          listenerGenerators);
     // }
 
@@ -142,7 +145,8 @@ class CanvasGrid : public CanvasElement<V> {
         // val Selectables = val::global("Selectables");
         val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2",
-                                             val("CanvasGrid"), this->jsProxyNode_, listenerGenerators);
+                                             val("CanvasGrid"), this->jsProxyNode_,
+                                             listenerGenerators);
     }
 
     INLINE virtual string getNodeTypeCode() { return string("CG"); }

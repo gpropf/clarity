@@ -447,22 +447,22 @@ class JSProxyNode {
     }
   }
 
-  static setGridLocToCurrentVal(ev) {
-    let domElement = ev.target;
-    let domrect = domElement.getBoundingClientRect();
+  // static setGridLocToCurrentVal(ev) {
+  //   let domElement = ev.target;
+  //   let domrect = domElement.getBoundingClientRect();
 
-    let gw = domElement.gw;
-    let cw = domElement.cw;
-    let gh = domElement.gh;
-    let ch = domElement.ch;
+  //   let gw = domElement.gw;
+  //   let cw = domElement.cw;
+  //   let gh = domElement.gh;
+  //   let ch = domElement.ch;
     
-    var gridDimensions = { w: gw, h: gh };
-    let loc = { x: (ev.x - domrect.x), y: (ev.y - domrect.y) };
-    var locIn = { x: Math.floor(loc.x / cw), y: Math.floor(loc.y / ch) };    
-    var locOut = Util.capCoords(locIn, gridDimensions);
-    domElement.gridRef.setValXY(locOut.x, locOut.y);
-    console.log(locOut);
-  }
+  //   var gridDimensions = { w: gw, h: gh };
+  //   let loc = { x: (ev.x - domrect.x), y: (ev.y - domrect.y) };
+  //   var locIn = { x: Math.floor(loc.x / cw), y: Math.floor(loc.y / ch) };    
+  //   var locOut = Util.capCoords(locIn, gridDimensions);
+  //   domElement.gridRef.setValXY(locOut.x, locOut.y);
+  //   console.log(locOut);
+  // }
 }
 
 //let myVar = setInterval(myTimer, 300);

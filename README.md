@@ -87,6 +87,8 @@ When you create a node the system will install a set of event listeners that are
    
 2. We need some way to register getter and setter methods for model data that is inside classes and has non-public access.
 
+3. `CanvasGrid` needs to have a more generic type for its color selection. Right now I have the 8 colors for the `PixelReactor` app in clarity-apps hardcoded in as the color choices for all CanvasGrids. This violates the principle of separating framework and app logic.
+
 3. ~~Event API~~. I now have the ClarityNode::installListenerGenerators() static method to allow the user to replace or augment the standard event listeners in their programs.
 
 4. ~~Speedtest needs to be put in the standard format used in Showcase.~~
