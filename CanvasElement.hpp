@@ -176,7 +176,7 @@ class CanvasGrid : public CanvasElement<V> {
     V getValXY(int x, int y) {
         int addr = (y * gridWidth_ + x) * sizeof(V);
         V xyVal = *(this->cppVal_ + addr);
-        nodelog("Value at " + clto_str(x) + ", " + clto_str(y) + " is " + clto_str(xyVal));
+        //nodelog("Value at " + clto_str(x) + ", " + clto_str(y) + " is " + clto_str(xyVal));
         return xyVal;
     }
 
