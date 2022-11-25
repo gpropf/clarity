@@ -1,4 +1,6 @@
 #include "ClarityNode.hpp"
+#include "CanvasElement.hpp"
+#include "Selectables.hpp"
 
 using clarity::ClarityNode;
 

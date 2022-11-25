@@ -173,6 +173,13 @@ class CanvasGrid : public CanvasElement<V> {
         return addr;
     }
 
+    V getValXY(int x, int y) {
+        int addr = (y * gridWidth_ + x) * sizeof(V);
+        V xyVal = *(this->cppVal_ + addr);
+        nodelog("Value at " + clto_str(x) + ", " + clto_str(y) + " is " + clto_str(xyVal));
+        return xyVal;
+    }
+
     void drawGrid() const {
         val ctx = this->domElement_.template call<val>("getContext", val("2d"));
         val domElement = this->jsProxyNode_["domElement"];
