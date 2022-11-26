@@ -160,6 +160,8 @@ My initial plan was to try to avoid the "header-only library" style that has bec
 _These are the current methods that move data around in the system. They went through several reworkings as I refactored the system. I'm documenting them here mostly for my own benefit so that I can think about a better nomenclature and simpler structure for them._
 
 
+`HybridNode<V>::refresh()`: Should be called whenever a node is updated, either by the user or through automated state changes in the data it represents. Propagates changes to both peers and children.
+
 `HybridNode<V>::refreshDOMValueFromModel()`: Called by refresh() at beginning of GUI construction. Main purpose is to initialize the DOM value with the model val. Calls..
 
 `virtual void HybridNode<V>::setDOMVal(const val &inval)`: Calls `ClarityNode::setDOMVal` but also dispatches value to peers.

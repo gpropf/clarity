@@ -173,13 +173,13 @@ class CanvasGrid : public CanvasElement<V> {
     }
 
     void setValXY(int x, int y) {
-        setValXYNoDraw(x,y,currentCellVal_);
-        
+        setValXYNoDraw(x, y, currentCellVal_);
+
         drawGrid();
         V checkVal = getValXY(x, y);
         this->nodelog("Value at " + clto_str(x) + "," + clto_str(y) + " is " +
                       clto_str(int(checkVal)));
-        //return addr;
+        // return addr;
     }
 
     V getValXY(int x, int y) {
@@ -187,6 +187,17 @@ class CanvasGrid : public CanvasElement<V> {
         V xyVal = *(this->cppVal_ + addr);
         // nodelog("Value at " + clto_str(x) + ", " + clto_str(y) + " is " + clto_str(xyVal));
         return xyVal;
+    }
+
+    /**
+     * @brief Wrap x,y coordinates in case they go outside the grid. Values are modified in place.
+     *
+     * @param x
+     * @param y
+     */
+    void wrapCoordiates(int &x, int &y) {
+        x = x % this->gridWidth_;
+        y = y % this->gridHeight_;
     }
 
     void drawGrid() const {
