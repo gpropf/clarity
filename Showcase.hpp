@@ -5,6 +5,7 @@
 #include "CanvasElement.hpp"
 #include "ClarityNode.hpp"
 #include "clarity.hpp"
+#include "PageContent.hpp"
 
 using namespace clarity;
 
