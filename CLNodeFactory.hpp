@@ -90,8 +90,11 @@ class CLNodeFactory {
 
     /**
      * @brief Construct a new CLNodeFactory object from another of possibly different template
-     * parameters. We cannot rely on the implicit copy constructor if we want to build a new CLNF
-     * from one that may have different tparams.
+     * parameters. It seems that we cannot rely on the implicit copy constructor if we want to build
+     * a new CLNF from one that may have different tparams. This is a bit clunky as we need to make
+     * sure any new field we add to CLNodeFactory is accounted for here. When we move to C++ 20 or
+     * later the introspection features of the language should allow this stuff to be more
+     * automated.
      *
      * @tparam Nc_from
      * @tparam V_from
@@ -100,6 +103,9 @@ class CLNodeFactory {
      */
     template <template <typename V_from> class Nc_from, typename V_from, typename N_from>
     CLNodeFactory(const CLNodeFactory<Nc_from, V_from, N_from> &clnf_from) {
+        attachmentId_ = clnf_from.attachmentId_;
+        attachmentMode_ = clnf_from.attachmentMode_;
+        labelText_ = clnf_from.labelText_;
         tag_ = clnf_from.tag_;
         name_ = clnf_from.name_;
         nameIsForSingleUse_ = clnf_from.nameIsForSingleUse_;
@@ -113,9 +119,11 @@ class CLNodeFactory {
         attrs_ = clnf_from.attrs_;
         eventListenerGenerator_ = clnf_from.eventListenerGenerator_;
 
+        // These things below should probably never survive a change of tparams.
         peer_ = nullptr;
         cppVal_ = nullptr;
         initVal_ = nullptr;
+        linkMultiplierVariable_ = nullptr;
     }
 
     /**
@@ -270,7 +278,8 @@ class CLNodeFactory {
      */
     INLINE void warnNoName(ClarityNode *node, const string &nodeType) {
         if (tag_ == "br" || tag_ == "hr") return;
-        if (node->getName() == "") node->nodelog("<" + nodeType + "> tag created without a name!", ClogType::WARNING);
+        if (node->getName() == "")
+            node->nodelog("<" + nodeType + "> tag created without a name!", ClogType::WARNING);
     }
 
     /**
@@ -419,14 +428,16 @@ class CLNodeFactory {
      * @return CLNodeFactory
      */
     INLINE CLNodeFactory withLabelText(const string labelText) const & {
-        clog("withLabelText() method currently unimplemented and has no effect.", ClogType::WARNING);
+        clog("withLabelText() method currently unimplemented and has no effect.",
+             ClogType::WARNING);
         CLNodeFactory cpy(*this);
         cpy.labelText_ = labelText;
         return cpy;
     }
 
     INLINE CLNodeFactory withLabelText(const string labelText) && {
-        clog("withLabelText() method currently unimplemented and has no effect.", ClogType::WARNING);
+        clog("withLabelText() method currently unimplemented and has no effect.",
+             ClogType::WARNING);
         CLNodeFactory cpy(std::move(*this));
         cpy.labelText_ = labelText;
         return cpy;

@@ -496,6 +496,12 @@ class ClarityNode {
         clean_ = false;
     }
 
+    /**
+     * @brief Call this to insure that changes are propagated fully after a given node is changed.
+     * This will cause values to be propagated both to children and peers of the node. Currently,
+     * does not cause a node's parent to update.
+     *
+     */
     virtual void refresh() = 0;
     virtual void refreshDOMValueFromModel() = 0;
 
@@ -615,8 +621,8 @@ class HybridNode : public ClarityNode {
         this->jsProxyNode_.set("clarityNode", this);
         // val Selectables = val::global("Selectables");
         val listenerGenerators = JSProxyNode_["listenerGenerators"];
-        JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("HybridNode"), this->jsProxyNode_,
-                                listenerGenerators);
+        JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("HybridNode"),
+                                this->jsProxyNode_, listenerGenerators);
     }
 
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
@@ -638,11 +644,12 @@ class HybridNode : public ClarityNode {
     /**
      * @brief Runs refreshDOMValueFromModel() and then syncs the peers with the updated value.
      * Called by CLNF as the final step in creating many of the nodes so that they are initialized
-     * with data from the model when they first appear.
+     * with data from the model when they first appear. Most specialized and complex nodes are going
+     * to want to call this particular overload so that both peers and children get updated.
      *
      */
     virtual void refresh() {
-        //nodelog("refresh()");
+        // nodelog("refresh()");
         for (auto child : children_) {
             child->refresh();
         }
