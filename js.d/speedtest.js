@@ -1,20 +1,39 @@
 
 
+function elgDestroyFields(speedtester) {
+    return function (e) {
+        console.log("Simplified EL style...");
+        console.log(speedtester);
+        speedtester.destroyEverything();
+    }
+}
 
+function elgMakeFields(speedtester) {
+    return function (e) {
+        console.log("Simplified EL style...");
+        console.log(speedtester);
+        speedtester.makeTrsNoGraph();
+    }
+}
 
+function doNothingEL(ev) {
+    console.log("CLICK: " + ev);
+}
 
 class Speedtester {
 
-staticSpeedtester = null;
+    staticSpeedtester = null;
 
-makeFields() {
-    console.log(this);
-}
+    makeFields() {
+        console.log(this);
+    }
 
-static makeFields(tester) {
+    static makeFields(tester) {
 
-}
-    
+    }
+
+
+
 
 
 

@@ -22,7 +22,7 @@ speedtest: speedtest.o ClarityNode.o Selectables.o clarity.o
 	$(CC) -lembind speedtest.o ClarityNode.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 speedtest_pc: speedtest_pc.o ClarityNode.o Selectables.o clarity.o
-	$(CC) -lembind speedtest_pc.o ClarityNode.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(CC) -lembind --pre-js js.d/speedtest.js speedtest_pc.o ClarityNode.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 showcase: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
