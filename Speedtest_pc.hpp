@@ -254,8 +254,8 @@ struct Speedtest : public PageContent {
 
         // CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
 
-        CLNodeFactory<HybridNode, struct Speedtest, int> childOfMaindivBuilder_speedtest(
-            childOfMaindivBuilder);
+        // CLNodeFactory<HybridNode, struct Speedtest, int> childOfMaindivBuilder_speedtest(
+        //     childOfMaindivBuilder);
 
         auto *nInputFields_inp =
             Speedtester::staticTester->fieldBuilder_->withName("nInputFields_inp")
@@ -291,7 +291,10 @@ struct Speedtest : public PageContent {
 
         auto *boomButton = childOfMaindivBuilder.button("boomButton", "BOOM!", destroyEverythingEL);
 
-        auto *helloButton = childOfMaindivBuilder.button("helloButton", "Say Hello!", doNothingEL);
+        //auto *foobtn = childOfMaindivBuilder.button("foobtn", "Say Hello!", doNothingEL);
+
+        //auto *foobr = 
+        childOfMaindivBuilder.br();
 
         auto *makeTrsButton =
             childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", makeFieldsEL);
