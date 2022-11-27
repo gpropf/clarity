@@ -18,8 +18,8 @@ FRAMEWORK_DEPS = JSProxyNode.js Util.js showcase.html Makefile
 %.o : %.cpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
 
-speedtest: speedtest.o ClarityNode.o Selectables.o clarity.o
-	$(CC) -lembind speedtest.o ClarityNode.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+# speedtest: speedtest.o ClarityNode.o Selectables.o clarity.o
+# 	$(CC) -lembind speedtest.o ClarityNode.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 speedtest_pc: speedtest_pc.o ClarityNode.o Selectables.o clarity.o
 	$(CC) -lembind --pre-js js.d/speedtest.js speedtest_pc.o ClarityNode.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
