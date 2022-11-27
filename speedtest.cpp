@@ -1,6 +1,6 @@
 
 
-#include "Speedtest_pc.hpp"
+#include "Speedtest.hpp"
 
 #include "CLNodeFactory.hpp"
 #include "clarity.hpp"
