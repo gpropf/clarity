@@ -37,8 +37,6 @@ struct Speedtester {
     vector<int *> ns;
     vector<HybridNode<int> *> clns;
     bool *destroyFieldsImmediately = new bool(false);
-    // static std::function<void()> makeFieldsLbd;
-    // static std::function<void()> destroyEverythingLbd;
 
     Speedtester() {
         nInputFields = new int(10);
@@ -51,12 +49,7 @@ struct Speedtester {
 
     static std::string getStringFromInstance(const Speedtester &instance) {
         return clto_str(*instance.nFieldsets);
-    }
-
-    // static void cppTestFn(val ev) {
-    //     cout << "I'm a C++ function called from JS.\n"
-    //          << "Event: " << ev["type"].as<string>() << endl;
-    // }
+    }   
 
     time_t msecsTime() {
         struct timeval timeNow {};
@@ -184,7 +177,7 @@ struct Speedtester {
 
 EMSCRIPTEN_BINDINGS(speedtester) {
     class_<Speedtester>("Speedtester")
-       // .class_function("cppTestFn", &Speedtester::cppTestFn)
+     
         //.class_function("makeFieldsEL", &Speedtester::makeFieldsEL, allow_raw_pointers())
         // .class_function("destroyEverythingEL", &Speedtester::destroyEverythingEL,
         //                 allow_raw_pointers())
@@ -221,28 +214,13 @@ struct Speedtest : public PageContent {
         ClarityNode::runJSAuxScripts();
 
         val Module = val::global("Module");
-        //val MyClassJS = Module["MyClass"];
         val Speedtest = Module["Speedtest"];
         val Speedtester = Module["Speedtester"];
 
         val updateStateEL = Speedtest["updateStateEL"];
-        //val updateStateEL = val::global("elgUpdateState")(Speedtester::staticTester);
-
-        // val makeFields = Speedtester["makeFields"];
-        // val stfn = Speedtester["getCallback"];
-        // val cppTestFn = Speedtester["cppTestFn"];
-        //val cppTestFn = val::global("fooboo");
-
         val destroyEverythingEL = val::global("elgDestroyFields")(Speedtester::staticTester);
-
         val makeFieldsEL = val::global("elgMakeFields")(Speedtester::staticTester);
-
         val doNothingEL = val::global("doNothingEL");
-
-
-
-        // val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
-        // val listNodes = ClarityNode::JSProxyNode_["listNodes_int"];
 
         CLNodeFactory<HybridNode, int, double> builder("div", "maindiv");
         auto *maindiv = builder.build();
@@ -251,11 +229,6 @@ struct Speedtest : public PageContent {
 
         Speedtester::staticTester->fieldBuilder_ =
             new CLNodeFactory<HybridNode, int, int>(childOfMaindivBuilder);
-
-        // CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
-
-        // CLNodeFactory<HybridNode, struct Speedtest, int> childOfMaindivBuilder_speedtest(
-        //     childOfMaindivBuilder);
 
         auto *nInputFields_inp =
             Speedtester::staticTester->fieldBuilder_->withName("nInputFields_inp")
@@ -291,11 +264,7 @@ struct Speedtest : public PageContent {
 
         auto *boomButton = childOfMaindivBuilder.button("boomButton", "BOOM!", destroyEverythingEL);
 
-        //auto *foobtn = childOfMaindivBuilder.button("foobtn", "Say Hello!", doNothingEL);
-
-        //auto *foobr = 
-        childOfMaindivBuilder.br();
-        //childOfMaindivBuilder.br();
+        childOfMaindivBuilder.br(); // Taking this *OUT* causes a memory access out of bounds error at runtime!
 
         auto *makeTrsButton =
             childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", makeFieldsEL);
