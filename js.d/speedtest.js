@@ -16,6 +16,15 @@ function elgMakeFields(speedtester) {
     }
 }
 
+
+function elgUpdateState(speedtester) {
+    return function (e) {
+        console.log("Simplified EL style...");
+        console.log(speedtester);
+        speedtester.updateState();
+    }
+}
+
 function doNothingEL(ev) {
     console.log("CLICK: " + ev);
 }

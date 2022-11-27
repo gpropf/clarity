@@ -49,23 +49,14 @@ struct Speedtester {
 
     CLNodeFactory<HybridNode, int, int> *fieldBuilder_;
 
-    // static void runUpdateStateEL(val ev) {
-    //     cout << "Got this far!\n";
-
-    //     updateState_st(ev);
-    // }
-
     static std::string getStringFromInstance(const Speedtester &instance) {
         return clto_str(*instance.nFieldsets);
     }
 
-    static void cppTestFn(val ev) {
-        cout << "I'm a C++ function called from JS.\n"
-             << "Event: " << ev["type"].as<string>() << endl;
-    }
-
-    // static void makeFieldsEL(val ev) { makeFieldsLbd(); }
-    // static void destroyEverythingEL(val ev) { destroyEverythingLbd(); }
+    // static void cppTestFn(val ev) {
+    //     cout << "I'm a C++ function called from JS.\n"
+    //          << "Event: " << ev["type"].as<string>() << endl;
+    // }
 
     time_t msecsTime() {
         struct timeval timeNow {};
@@ -107,14 +98,9 @@ struct Speedtester {
     }
 
     void makeTrsNoGraph() {
-        // val graphCanvasDomElement = graphCanvas->getDomElement();
-        // val ctx = graphCanvasDomElement.call<val>("getContext", val("2d"));
-        // ctx.set("strokeStyle", "red");
-
         int totalFieldsToCreate = *nInputFields * *nFieldsets * *nSetGroups;
         cout << "We will be creating a total of " << totalFieldsToCreate << endl;
 
-        // destroyFieldsImmediately_cb->refresh();
         int fieldCount = 0;
         int rateCount = 0;
         time_t totalTime = 0;
@@ -140,9 +126,6 @@ struct Speedtester {
                 cout << "\tSet: " << j << ", ms/field: " << msPerField << endl;
                 totalTime += delT;
                 double barHeight = msPerField * 50;
-                // ctx.call<void>("moveTo", val(rateCount), val(150 - barHeight));
-                // ctx.call<void>("lineTo", val(rateCount), val(150));
-                // ctx.call<void>("stroke");
                 if (*destroyFieldsImmediately) destroyEverything();
             }
         }
@@ -161,7 +144,6 @@ struct Speedtester {
         int totalFieldsToCreate = *nInputFields * *nFieldsets * *nSetGroups;
         cout << "We will be creating a total of " << totalFieldsToCreate << endl;
 
-        // destroyFieldsImmediately_cb->refresh();
         int fieldCount = 0;
         int rateCount = 0;
         time_t totalTime = 0;
@@ -202,17 +184,16 @@ struct Speedtester {
 
 EMSCRIPTEN_BINDINGS(speedtester) {
     class_<Speedtester>("Speedtester")
-        .class_function("cppTestFn", &Speedtester::cppTestFn)
+       // .class_function("cppTestFn", &Speedtester::cppTestFn)
         //.class_function("makeFieldsEL", &Speedtester::makeFieldsEL, allow_raw_pointers())
         // .class_function("destroyEverythingEL", &Speedtester::destroyEverythingEL,
         //                 allow_raw_pointers())
+        .function("updateState", &Speedtester::updateState, allow_raw_pointers())
         .function("destroyEverything", &Speedtester::destroyEverything, allow_raw_pointers())
         .function("makeTrsNoGraph", &Speedtester::makeTrsNoGraph, allow_raw_pointers());
 }
 
 Speedtester *Speedtester::staticTester = nullptr;
-// std::function<void()> Speedtester::makeFieldsLbd = nullptr;
-// std::function<void()> Speedtester::destroyEverythingLbd = nullptr;
 
 /**
  * @brief Contains controls to allow testing speed of creating/destroying nodes.
@@ -237,31 +218,31 @@ struct Speedtest : public PageContent {
         ClarityNode::setClogSilent();
 
         Speedtester::staticTester = new Speedtester();
-
-        // ClarityNode::addJSAuxScript("speedtest.js");
         ClarityNode::runJSAuxScripts();
 
         val Module = val::global("Module");
-        val MyClassJS = Module["MyClass"];
+        //val MyClassJS = Module["MyClass"];
         val Speedtest = Module["Speedtest"];
         val Speedtester = Module["Speedtester"];
 
         val updateStateEL = Speedtest["updateStateEL"];
+        //val updateStateEL = val::global("elgUpdateState")(Speedtester::staticTester);
 
-        val makeFields = Speedtester["makeFields"];
-        val stfn = Speedtester["getCallback"];
+        // val makeFields = Speedtester["makeFields"];
+        // val stfn = Speedtester["getCallback"];
         // val cppTestFn = Speedtester["cppTestFn"];
-        val cppTestFn = val::global("doNothingEL");
+        //val cppTestFn = val::global("fooboo");
 
-        // val destroyEverythingEL = Speedtester["destroyEverythingEL"];
         val destroyEverythingEL = val::global("elgDestroyFields")(Speedtester::staticTester);
 
-        // val runUpdateStateEL = Speedtester["runUpdateStateEL"];
-        // val makeFieldsEL = Speedtester["makeFieldsEL"];
         val makeFieldsEL = val::global("elgMakeFields")(Speedtester::staticTester);
 
-        val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
-        val listNodes = ClarityNode::JSProxyNode_["listNodes_int"];
+        val doNothingEL = val::global("doNothingEL");
+
+
+
+        // val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
+        // val listNodes = ClarityNode::JSProxyNode_["listNodes_int"];
 
         CLNodeFactory<HybridNode, int, double> builder("div", "maindiv");
         auto *maindiv = builder.build();
@@ -310,17 +291,14 @@ struct Speedtest : public PageContent {
 
         auto *boomButton = childOfMaindivBuilder.button("boomButton", "BOOM!", destroyEverythingEL);
 
-        auto *helloButton = childOfMaindivBuilder.button("helloButton", "Say Hello!", cppTestFn);
+        auto *helloButton = childOfMaindivBuilder.button("helloButton", "Say Hello!", doNothingEL);
 
         auto *makeTrsButton =
             childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", makeFieldsEL);
 
         auto *updateState_btn =
             childOfMaindivBuilder.button("updateState_btn", "Update State!", updateStateEL);
-
-        // auto *listNodes_btn =
-        //     childOfMaindivBuilder.button("listNodes_btn", "List Nodes", listNodes);
-
+      
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
 
         auto *destroyFieldsImmediately_cb =
@@ -335,19 +313,12 @@ struct Speedtest : public PageContent {
             childOfMaindivBuilder.withName("graphCanvas").canvas("canvasTestPattern");
 
         auto updateTotalFields = [&, nTotalFields_inp, destroyFieldsImmediately_cb](val ev) {
-            // printState();
             cout << "updateTotalFields works!\n";
             Speedtester::staticTester->updateState();
             nTotalFields_inp->refresh();
             destroyFieldsImmediately_cb->refresh();
         };
-
-        // Speedtester::makeFieldsLbd = [=] {
-        //     Speedtester::staticTester->makeTrs(*Speedtester::staticTester->fieldBuilder_,
-        //     graphCanvas);
-        // };
-        //  Speedtester::destroyEverythingLbd = [=] {
-        //  Speedtester::staticTester->destroyEverything(); };
+        
         Speedtest::updateState_st = updateTotalFields;
 
         cout << "Setup complete!\n";
