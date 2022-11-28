@@ -16,15 +16,25 @@ LIBCLR_OBJS = ClarityNode.o ModelNode.o CanvasElement.o CLNodeFactory.o
 FRAMEWORK_DEPS = JSProxyNode.js Util.js showcase.html Makefile
 
 %.o : %.cpp $(FRAMEWORK_DEPS)
-	$(ENV) $(CC) $< -o $@ -c $(CFLAGS) # -D USETF=1
+	$(ENV) $(CC) $< -o $@ -c $(CFLAGS) -D USETF=1
 
 # speedtest: speedtest.o ClarityNode.o Selectables.o clarity.o
 # 	$(CC) -lembind speedtest.o ClarityNode.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+
+speedtest-prod: CFLAGS = -O1 -std=c++17
+#speedtest-prod: ENV	=
+speedtest-prod: speedtest.o ClarityNode.o Selectables.o clarity.o
+	$(CC) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+
 
 speedtest: speedtest.o ClarityNode.o Selectables.o clarity.o
 	$(CC) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 showcase: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
+	$(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+
+showcase-prod: CFLAGS = -O3 -std=c++17 
+showcase-prod: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 simpletest: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o

@@ -39,9 +39,9 @@ struct Speedtester {
     bool *destroyFieldsImmediately_ = new bool(false);
 
     Speedtester() {
-        nInputFields_ = new int(10);
-        nFieldsets_ = new int(3);
-        nSetGroups_ = new int(2);
+        nInputFields_ = new int(50);
+        nFieldsets_ = new int(25);
+        nSetGroups_ = new int(3);
         nTotalFields_ = new int(*nInputFields_ * *nFieldsets_ * *nSetGroups_);
     }
 
