@@ -35,7 +35,9 @@ let bootScripts = [ "Selectables.js", "Util.js"];
 bootScripts.map(loadBootScript);
 // This call to loadJSFile is needed because user apps will usually
 // not have their compiled JS in the same directory as the boot scripts.
-loadJSFile(appfile);
+
+if (typeof appUrl !== "undefined") loadJSFile(appfile, appUrl);
+else loadJSFile(appfile);
 
 class JSProxyNode {
 
