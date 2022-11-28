@@ -4,8 +4,8 @@
 #include "CLNodeFactory.hpp"
 #include "CanvasElement.hpp"
 #include "ClarityNode.hpp"
-#include "clarity.hpp"
 #include "PageContent.hpp"
+#include "clarity.hpp"
 
 using namespace clarity;
 
@@ -29,7 +29,14 @@ struct Showcase : public PageContent {
         double *cir1Radius_value = new double(88.4);
 
         CLNodeFactory<HybridNode, double, double> builder("div", "showcase_root");
+
+#ifdef USETF
         auto *maindiv = builder.build();
+#else
+        auto *maindiv = builder.withAttachmentId("hookid")
+                            .withAttachmentMode(clarity::ClarityNode::AttachmentMode::REPLACE_ID)
+                            .build();
+#endif
 
         CLNodeFactory<HybridNode, double, double> childOfMaindivBuilder =
             builder.withChildrenOf(maindiv);

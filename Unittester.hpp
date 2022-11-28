@@ -229,7 +229,7 @@ class SimpleSelectUT : public Unittester<Nc, V, N> {
             // val("background-color: lightgreen;"));
             return true;
         }
-        cout << "TEST FAILED!" << endl;
+        cout << "SimpleSelectUT TEST FAILED!" << endl;
         // this->node_->getDomElement().template call<void>("setAttribute", val("style"),
         //                                                  val("background-color: red;"));
         return false;

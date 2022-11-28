@@ -16,7 +16,7 @@ LIBCLR_OBJS = ClarityNode.o ModelNode.o CanvasElement.o CLNodeFactory.o
 FRAMEWORK_DEPS = JSProxyNode.js Util.js showcase.html Makefile
 
 %.o : %.cpp $(FRAMEWORK_DEPS)
-	$(ENV) $(CC) $< -o $@ -c $(CFLAGS)
+	$(ENV) $(CC) $< -o $@ -c $(CFLAGS) # -D USETF=1
 
 # speedtest: speedtest.o ClarityNode.o Selectables.o clarity.o
 # 	$(CC) -lembind speedtest.o ClarityNode.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
