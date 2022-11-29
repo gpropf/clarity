@@ -432,6 +432,25 @@ class JSProxyNode {
     console.log(`CNN: FOR ID: ${this.id}, THIS VAL = ${this.domElement_.value}`);
   }  
 
+  clearCanvasUsingDomElement(domElement, fillColor) {
+    if (domElement.getContext) {
+      domElement.style.display = 'none';
+      domElement.style.display = 'block';
+      let ctx = domElement.getContext('2d');
+      let [w, h] = [domElement.width, domElement.height];      
+      ctx.scale(1, 1);
+      ctx.fillStyle = fillColor;
+      ctx.fillRect(0, 0, w, h);      
+      console.log("clearCanvasUsingDomElement(" + fillColor + ")");
+    }
+  }
+
+  clearCanvas(fillColor) {
+    var domElement = this.domElement_;
+    clearCanvasUsingDomElement(domElement, fillColor);
+  }
+
+
   canvasTestPattern() {
     var domElement = this.domElement_;
     if (domElement.getContext) {

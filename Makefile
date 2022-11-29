@@ -5,7 +5,7 @@ CC		= emcc
 ENV		= DEMANGLE_SUPPORT=1
 
 #CFLAGS	=  -O0 -g -gsource-map --source-map-base=http://localhost:6931/ -std=c++17
-CFLAGS	=  -O0 -g -std=c++17 -D USETF=1 #-sASSERTIONS
+CFLAGS	=  -O0 -g -std=c++17 -D USETF=1 #-sWASM_WORKERS #-sASSERTIONS
 #CFLAGS	=  -O3 -std=c++17
 
 JSOUT	= clarity_embind.js
@@ -22,7 +22,7 @@ FRAMEWORK_DEPS = JSProxyNode.js Util.js showcase.html Makefile
 # 	$(CC) -lembind speedtest.o ClarityNode.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 # Still have that weird problem with the acorn-optimizer error if you use anything but -O0 or -O1
-speedtest-prod: CFLAGS = -O1 -std=c++17 
+speedtest-prod: CFLAGS = -O1 -std=c++17 #-sWASM_WORKERS
 #speedtest-prod: ENV	= EMCC_DEBUG=2
 #speedtest-prod: ENV	=
 speedtest-prod: speedtest.o ClarityNode.o Selectables.o clarity.o

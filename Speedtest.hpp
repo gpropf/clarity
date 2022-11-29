@@ -93,11 +93,15 @@ struct Speedtester {
 
     void makeTrsNoArgs() {
         val graphCanvasDomElement = Speedtester::staticTester_->graphCanvas_->getDomElement();
+        Speedtester::staticTester_->graphCanvas_->getCLE().call<void>("clearCanvasUsingDomElement", graphCanvasDomElement, val("#775522"));
+        //graphCanvasDomElement.call<void>
+        //graphCanvasDomElement.call<val>("clearCanvasUsingDomElement", graphCanvasDomElement, val("#aa4567"));
         val ctx = graphCanvasDomElement.call<val>("getContext", val("2d"));
         ctx.set("strokeStyle", "red");
         int totalFieldsToCreate = *nInputFields_ * *nFieldsets_ * *nSetGroups_;
         cout << "We will be creating a total of " << totalFieldsToCreate << endl;
-
+        int totalRateMeasurements = *nSetGroups_ * *nFieldsets_;
+        double measurementWidth = 300 / totalRateMeasurements;
         int fieldCount = 0;
         int rateCount = 0;
         time_t totalTime = 0;
@@ -123,8 +127,8 @@ struct Speedtester {
                 cout << "\tSet: " << j << ", ms/field: " << msPerField << endl;
                 totalTime += delT;
                 double barHeight = msPerField * 50;                
-                ctx.call<void>("moveTo", val(rateCount), val(150 - barHeight));
-                ctx.call<void>("lineTo", val(rateCount), val(150));
+                ctx.call<void>("moveTo", val(rateCount*measurementWidth), val(150 - barHeight));
+                ctx.call<void>("lineTo", val(rateCount*measurementWidth), val(150));
                 ctx.call<void>("stroke");
                 if (*destroyFieldsImmediately_) destroyEverything();
             }
