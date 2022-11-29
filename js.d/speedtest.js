@@ -16,7 +16,6 @@ function elgMakeFields(speedtester) {
     }
 }
 
-
 function elgUpdateState(speedtester) {
     return function (e) {
         console.log("Simplified EL style...");
@@ -40,15 +39,5 @@ class Speedtester {
     static makeFields(tester) {
 
     }
-
-
-
-
-
-
-
-
-
-
 
 }

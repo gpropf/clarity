@@ -19,7 +19,7 @@
 
 using namespace clarity;
 
-//std::function<void()> lbd;
+// std::function<void()> lbd;
 std::function<void(val ev)> updateTotalFields;
 
 /**
@@ -50,7 +50,7 @@ struct Speedtester {
 
     static std::string getStringFromInstance(const Speedtester &instance) {
         return clto_str(*instance.nFieldsets_);
-    }   
+    }
 
     time_t msecsTime() {
         struct timeval timeNow {};
@@ -93,9 +93,11 @@ struct Speedtester {
 
     void makeTrsNoArgs() {
         val graphCanvasDomElement = Speedtester::staticTester_->graphCanvas_->getDomElement();
-        Speedtester::staticTester_->graphCanvas_->getCLE().call<void>("clearCanvasUsingDomElement", graphCanvasDomElement, val("#775522"));
-        //graphCanvasDomElement.call<void>
-        //graphCanvasDomElement.call<val>("clearCanvasUsingDomElement", graphCanvasDomElement, val("#aa4567"));
+        val clearCanvasUsingDomElement = ClarityNode::JSProxyNode_["clearCanvasUsingDomElement"];
+        clearCanvasUsingDomElement(graphCanvasDomElement, val("#223388"));
+        // graphCanvasDomElement.call<void>
+        // graphCanvasDomElement.call<val>("clearCanvasUsingDomElement", graphCanvasDomElement,
+        // val("#aa4567"));
         val ctx = graphCanvasDomElement.call<val>("getContext", val("2d"));
         ctx.set("strokeStyle", "red");
         int totalFieldsToCreate = *nInputFields_ * *nFieldsets_ * *nSetGroups_;
@@ -126,9 +128,9 @@ struct Speedtester {
                 double msPerField = double(delT) / double(*nInputFields_);
                 cout << "\tSet: " << j << ", ms/field: " << msPerField << endl;
                 totalTime += delT;
-                double barHeight = msPerField * 50;                
-                ctx.call<void>("moveTo", val(rateCount*measurementWidth), val(150 - barHeight));
-                ctx.call<void>("lineTo", val(rateCount*measurementWidth), val(150));
+                double barHeight = msPerField * 50;
+                ctx.call<void>("moveTo", val(rateCount * measurementWidth), val(150));
+                ctx.call<void>("lineTo", val(rateCount * measurementWidth), val(150 - barHeight));
                 ctx.call<void>("stroke");
                 if (*destroyFieldsImmediately_) destroyEverything();
             }
@@ -188,7 +190,7 @@ struct Speedtester {
 
 EMSCRIPTEN_BINDINGS(speedtester) {
     class_<Speedtester>("Speedtester")
-     
+
         //.class_function("makeFieldsEL", &Speedtester::makeFieldsEL, allow_raw_pointers())
         // .class_function("destroyEverythingEL", &Speedtester::destroyEverythingEL,
         //                 allow_raw_pointers())
@@ -204,11 +206,11 @@ Speedtester *Speedtester::staticTester_ = nullptr;
  *
  */
 struct Speedtest : public PageContent {
-   // std::function<void(val ev)> updateTotalFields_st;
-    //std::function<void()> lbd_;
-   // std::function<void()> updateTotalFields_;
+    // std::function<void(val ev)> updateTotalFields_st;
+    // std::function<void()> lbd_;
+    // std::function<void()> updateTotalFields_;
 
-    //void runLambda(val ev) { lbd_(); }
+    // void runLambda(val ev) { lbd_(); }
 
     static void updateStateEL(val ev) {
         cout << "updateStateEL updateStateEL updateStateEL updateStateEL updateStateEL\n";
@@ -275,14 +277,15 @@ struct Speedtest : public PageContent {
 
         auto *boomButton = childOfMaindivBuilder.button("boomButton", "BOOM!", destroyEverythingEL);
 
-        //childOfMaindivBuilder.br(); // Taking this *OUT* causes a memory access out of bounds error at runtime!
+        // childOfMaindivBuilder.br(); // Taking this *OUT* causes a memory access out of bounds
+        // error at runtime!
 
         auto *makeTrsButton =
             childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", makeFieldsEL);
 
         // auto *updateState_btn =
         //     childOfMaindivBuilder.button("updateState_btn", "Update State!", updateStateEL);
-      
+
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
 
         auto *destroyFieldsImmediately_cb =
@@ -302,7 +305,7 @@ struct Speedtest : public PageContent {
             nTotalFields_inp->refresh();
             destroyFieldsImmediately_cb->refresh();
         };
-        
+
         Speedtest::updateStateStatic_ = updateTotalFields;
 
         cout << "Setup complete!\n";

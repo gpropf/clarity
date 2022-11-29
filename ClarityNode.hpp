@@ -177,7 +177,7 @@ class ClarityNode {
         clog(msg, clt);
     }
 
-    static void addEventListenerGenerator(const string &nodeTypeCode, val handlerGenerator) {}
+    //static void addEventListenerGenerator(const string &nodeTypeCode, val handlerGenerator) {}
 
     /**
      * @brief Adds a special EL to this node. I don't think this form is actually in use.

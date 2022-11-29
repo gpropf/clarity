@@ -432,10 +432,10 @@ class JSProxyNode {
     console.log(`CNN: FOR ID: ${this.id}, THIS VAL = ${this.domElement_.value}`);
   }  
 
-  clearCanvasUsingDomElement(domElement, fillColor) {
+  static clearCanvasUsingDomElement(domElement, fillColor) {
     if (domElement.getContext) {
-      domElement.style.display = 'none';
-      domElement.style.display = 'block';
+      //domElement.style.display = 'none';
+      //domElement.style.display = 'block';
       let ctx = domElement.getContext('2d');
       let [w, h] = [domElement.width, domElement.height];      
       ctx.scale(1, 1);
