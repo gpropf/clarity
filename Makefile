@@ -40,6 +40,12 @@ showcase-prod: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 simpletest: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(CC) -lembind simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
+simpletest-prod: CFLAGS = -O3 -std=c++17 
+simpletest-prod: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
+	$(CC) -lembind simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+
+
+
 unittest: unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(CC) -lembind --pre-js Unittest.js unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
