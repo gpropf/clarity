@@ -46,6 +46,7 @@ struct Speedtester {
     }
 
     CLNodeFactory<HybridNode, int, int> *fieldBuilder_;
+    CanvasElement<int> *graphCanvas_;
 
     static std::string getStringFromInstance(const Speedtester &instance) {
         return clto_str(*instance.nFieldsets_);
@@ -90,7 +91,10 @@ struct Speedtester {
         cout << "nTotalFields_: " << *nTotalFields_ << endl;
     }
 
-    void makeTrsNoGraph() {
+    void makeTrsNoArgs() {
+        val graphCanvasDomElement = Speedtester::staticTester_->graphCanvas_->getDomElement();
+        val ctx = graphCanvasDomElement.call<val>("getContext", val("2d"));
+        ctx.set("strokeStyle", "red");
         int totalFieldsToCreate = *nInputFields_ * *nFieldsets_ * *nSetGroups_;
         cout << "We will be creating a total of " << totalFieldsToCreate << endl;
 
@@ -118,7 +122,10 @@ struct Speedtester {
                 double msPerField = double(delT) / double(*nInputFields_);
                 cout << "\tSet: " << j << ", ms/field: " << msPerField << endl;
                 totalTime += delT;
-                double barHeight = msPerField * 50;
+                double barHeight = msPerField * 50;                
+                ctx.call<void>("moveTo", val(rateCount), val(150 - barHeight));
+                ctx.call<void>("lineTo", val(rateCount), val(150));
+                ctx.call<void>("stroke");
                 if (*destroyFieldsImmediately_) destroyEverything();
             }
         }
@@ -183,7 +190,7 @@ EMSCRIPTEN_BINDINGS(speedtester) {
         //                 allow_raw_pointers())
         .function("updateState", &Speedtester::updateState, allow_raw_pointers())
         .function("destroyEverything", &Speedtester::destroyEverything, allow_raw_pointers())
-        .function("makeTrsNoGraph", &Speedtester::makeTrsNoGraph, allow_raw_pointers());
+        .function("makeTrsNoArgs", &Speedtester::makeTrsNoArgs, allow_raw_pointers());
 }
 
 Speedtester *Speedtester::staticTester_ = nullptr;
@@ -282,8 +289,8 @@ struct Speedtest : public PageContent {
         auto *labelled_destroyFieldsImmediately_cb = childOfMaindivBuilder.label(
             destroyFieldsImmediately_cb, "Destroy fields as we go", true);
 
-        auto *graphCanvas =
-            childOfMaindivBuilder.withName("graphCanvas").canvas("canvasTestPattern");
+        Speedtester::staticTester_->graphCanvas_ =
+            childOfMaindivBuilder.withName("graphCanvas_").canvas("canvasTestPattern");
 
         auto updateTotalFields = [&, nTotalFields_inp, destroyFieldsImmediately_cb](val ev) {
             cout << "updateTotalFields works!\n";

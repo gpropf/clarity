@@ -58,7 +58,7 @@ docsclean:
 	rm -rf html latex
 
 clean:
-	rm -f *.o 
+	rm -f *.o clarity_embind.js
 
 realclean: clean docsclean
 	rm -f *.wasm *.wasm.map *.a $(JSOUT)

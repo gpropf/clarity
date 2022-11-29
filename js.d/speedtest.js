@@ -12,7 +12,7 @@ function elgMakeFields(speedtester) {
     return function (e) {
         console.log("Simplified EL style...");
         console.log(speedtester);
-        speedtester.makeTrsNoGraph();
+        speedtester.makeTrsNoArgs();
     }
 }
 

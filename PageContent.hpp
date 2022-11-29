@@ -22,11 +22,13 @@ struct PageContent {
 /**
  * @brief Provides a 'List Nodes' button and eventually perhaps other controls meant to provide a
  * test framework for new and existing controls as well as aid users in developing and testing their
- * projects.
+ * projects. Unless the 'USETF' flag is set in the Makefile, this just acts as a passthrough and
+ * does nothing.
  *
  */
 struct TestFramework : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
+#ifdef USETF
         val listNodes = ClarityNode::JSProxyNode_["listNodes_double"];
 
         CLNodeFactory<HybridNode, double, double> rootBuilder("div", "tf_root");
@@ -42,12 +44,16 @@ struct TestFramework : public PageContent {
         auto *sidebar = rootBuilder.withParent(root)
                             .withName("sidebar")
                             .withInnerHTML("<h1>Clarity Web Framework</h1>")
-                            .withAttributes({{"class", val("sidebar")}})
+                            .withAttributes(
+                                {{ "class",
+                                   val("sidebar") }})
                             .build();
         auto *testarea = rootBuilder.withParent(root)
                              .withInnerHTML("<h2>Test Area</h2>")
                              .withName("testarea")
-                             .withAttributes({{"class", val("mainarea")}})
+                             .withAttributes(
+                                 {{ "class",
+                                    val("mainarea") }})
                              .build();
 
         testarea->appendChild(innerContent);
@@ -62,7 +68,8 @@ struct TestFramework : public PageContent {
                                .withAttributes({{"width", val("600")},
                                                 {"height", val("100")},
                                                 {"viewBox", val("0 0 600 100")},
-                                                {"style", val("border: 1px solid black")}})
+                                                { "style",
+                                                  val("border: 1px solid black") }})
                                .build();
         sidebarBuilder.br();
 
@@ -70,6 +77,9 @@ struct TestFramework : public PageContent {
                                     .button("listNodesButton", "List Nodes", listNodes);
 
         return root;
+#else
+        return innerContent;
+#endif
     }
 };
 
