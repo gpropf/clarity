@@ -20,31 +20,32 @@ CLARITY_OBJS = ClarityNode.o Selectables.o clarity.o
 # Still have that weird problem with the acorn-optimizer error if you use anything but -O0 or -O1
 speedtest-prod: CFLAGS = -O1 -std=c++17 #-sWASM_WORKERS
 #speedtest-prod: ENV	= EMCC_DEBUG=2
-#speedtest-prod: ENV	=
+speedtest-prod: ENV	=
 speedtest-prod: speedtest.o ClarityNode.o Selectables.o clarity.o CanvasElement.o
-	$(CC) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o CanvasElement.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o CanvasElement.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 
 speedtest: speedtest.o ClarityNode.o Selectables.o clarity.o CanvasElement.o
-	$(CC) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o CanvasElement.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o CanvasElement.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 showcase: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 showcase-prod: CFLAGS = -O3 -std=c++17 
+showcase-prod: ENV	=
 showcase-prod: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 simpletest: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(CC) -lembind simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) -lembind simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 simpletest-prod: CFLAGS = -O3 -std=c++17 
 simpletest-prod: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(CC) -lembind simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) -lembind simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 
 unittest: unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(CC) -lembind --pre-js Unittest.js unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) -lembind --pre-js Unittest.js unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 docs: clarity.doxyconfig
 	doxygen clarity.doxyconfig
