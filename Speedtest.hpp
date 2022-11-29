@@ -264,13 +264,13 @@ struct Speedtest : public PageContent {
 
         auto *boomButton = childOfMaindivBuilder.button("boomButton", "BOOM!", destroyEverythingEL);
 
-        childOfMaindivBuilder.br(); // Taking this *OUT* causes a memory access out of bounds error at runtime!
+        //childOfMaindivBuilder.br(); // Taking this *OUT* causes a memory access out of bounds error at runtime!
 
         auto *makeTrsButton =
             childOfMaindivBuilder.button("makeTrsButton", "Make the fields!", makeFieldsEL);
 
-        auto *updateState_btn =
-            childOfMaindivBuilder.button("updateState_btn", "Update State!", updateStateEL);
+        // auto *updateState_btn =
+        //     childOfMaindivBuilder.button("updateState_btn", "Update State!", updateStateEL);
       
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
 
