@@ -285,6 +285,9 @@ class ClarityNode {
     INLINE virtual void setDOMVal(const val &inval) {
         clean_ = false;
         if (boundField_ != "") {
+            if (domElement_.isUndefined()) {
+                 domElement_ = jsProxyNode_["domElement"];
+            }
             domElement_.set(boundField_, inval);
             domElement_.call<void>("setAttribute", val(boundField_), inval);
         } else {

@@ -38,7 +38,7 @@ showcase-prod: ENV	=
 showcase-prod: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(ENV) $(CC) $(CFLAGS) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
-showcase-pthread: CFLAGS = -O3 -std=c++17 -pthread
+showcase-pthread: CFLAGS = $(DEBUG_CFLAGS) -pthread -sPTHREAD_POOL_SIZE=5
 showcase-pthread: ENV	=
 showcase-pthread: showcase-pthread.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(ENV) $(CC) $(CFLAGS) -lembind showcase-pthread.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)

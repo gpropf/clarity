@@ -13,17 +13,18 @@
 using namespace clarity;
 
 HybridNode<double> *cir1Radius_tinp_;
+pthread_t id;
+int ret;
 
 double *globalDbl = new double(6.28);
 // emscripten_wasm_worker_t worker = emscripten_malloc_wasm_worker(/*stack size: */ 1024);
 
 void run_in_worker() {
     printf("Hello from wasm worker!\n");
-    // cir1Radius_tinp_->setCppValFromJSVal(val(42.0));
-    cir1Radius_tinp_->setCppVal(globalDbl);
-    // cir1Radius_tinp_->pushValToPeers(cir1Radius_tinp_);
+    cir1Radius_tinp_->setCppValFromJSVal(val(*globalDbl));
+    printf("Set the value!.\n");
     cir1Radius_tinp_->refresh();
-    // return 42;
+    printf("Refresh Successful!!!.\n");
 }
 
 void *threadFunction(void *args) {
@@ -34,17 +35,15 @@ void *threadFunction(void *args) {
         *globalDbl += 3.1;
 
         if ((i % 7) == 0) {
-             printf("I am threadFunction %d, %lf.\n", i, *globalDbl);
+            printf("I am threadFunction %d, %lf.\n", i, *globalDbl);
             cir1Radius_tinp_->setCppValFromJSVal(val(*globalDbl));
-            // cir1Radius_tinp_->pushValToPeers(cir1Radius_tinp_);
+            printf("Set the value!.\n");
             cir1Radius_tinp_->refresh();
-           
+            printf("Refresh Successful!!!.\n");
         }
     }
 }
 
-pthread_t id;
-int ret;
 int initMyThread() {
     /*creating thread*/
     ret = pthread_create(&id, NULL, &threadFunction, NULL);
@@ -52,7 +51,7 @@ int initMyThread() {
         printf("Thread created successfully.\n");
     } else {
         printf("Thread not created.\n");
-        return 0; /*return from main*/
+        return -1; /*return from main*/
     }
     return 0;
 }
@@ -61,10 +60,10 @@ void runww() {
     // emscripten_wasm_worker_post_function_v(worker, run_in_worker);
 }
 
-EMSCRIPTEN_BINDINGS(wwtest) {
-    emscripten::function("run_in_worker", &run_in_worker, allow_raw_pointers());
-    emscripten::function("runww", &runww, allow_raw_pointers());
-}
+// EMSCRIPTEN_BINDINGS(wwtest) {
+// emscripten::function("run_in_worker", &run_in_worker, allow_raw_pointers())
+//  .emscripten::function("runww", &runww, allow_raw_pointers());
+//}
 
 /**
  * @brief Used to test all the major types of web controls.
@@ -83,7 +82,7 @@ struct Showcase : public PageContent {
         val blackbody_st = ClarityNode::JSProxyNode_["blackbody_st"];
 
         // double *temp = new double(330);
-        double *cir1Radius_value = new double(88.4);
+        double *cir1Radius_value = new double(9.14);
 
         CLNodeFactory<HybridNode, double, double> builder("div", "showcase_root");
 
@@ -104,6 +103,7 @@ struct Showcase : public PageContent {
                                .textInput();
 
         initMyThread();
+        //emscripten_wasm_worker_post_function_v(worker, run_in_worker);
 
         // auto *cir1Radius_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
         //                             .withName("cir1Radius_rinp")
