@@ -14,11 +14,18 @@
 #include "embindings.hpp"
 #include "globals.hpp"
 
-void run_in_worker() { printf("Hello from wasm worker!\n"); }
+int gi = 32;
+
+void run_in_worker() {
+    printf("Hello from wasm worker!\n");
+    cout << "Global val: " << gi << endl;
+    
+}
 
 int main() {
-    emscripten_wasm_worker_t worker = emscripten_malloc_wasm_worker(/*stack size: */ 1024);
-    emscripten_wasm_worker_post_function_v(worker, run_in_worker);
+     emscripten_wasm_worker_t worker = emscripten_malloc_wasm_worker(/*stack size: */ 1024);
+     emscripten_wasm_worker_post_function_v(worker, run_in_worker);
+    
     SimpleTest simpleTest;
     TestFramework testFramework;
     testFramework.content(simpleTest.content());

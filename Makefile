@@ -30,15 +30,15 @@ speedtest: speedtest.o ClarityNode.o Selectables.o clarity.o CanvasElement.o
 	$(ENV) $(CC) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o CanvasElement.o clarity.o $(CFLAGS) -o $(JSOUT)
 
 showcase: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(ENV) $(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) $(CFLAGS) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o -o $(JSOUT)
 
 showcase-prod: CFLAGS = -O3 -std=c++17 
 showcase-prod: ENV	=
 showcase-prod: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(ENV) $(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) $(CFLAGS) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
-simpletest: CFLAGS = $(DEBUG_CFLAGS) -sWASM_WORKERS
-simpletest: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
+simpletest-ww: CFLAGS = $(DEBUG_CFLAGS) -sWASM_WORKERS
+simpletest-ww: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(ENV) $(CC) $(CFLAGS) -lembind simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o -o $(JSOUT)
 
 simpletest-prod: CFLAGS = -O3 -std=c++17 
