@@ -6,6 +6,7 @@ ENV		= DEMANGLE_SUPPORT=1
 
 #CFLAGS	=  -O0 -g -gsource-map --source-map-base=http://localhost:6931/ -std=c++17
 CFLAGS	=  -O0 -g -std=c++17 -D USETF=1 #-sWASM_WORKERS #-sASSERTIONS
+DEBUG_CFLAGS = -O0 -g -std=c++17 -D USETF=1
 #CFLAGS	=  -O3 -std=c++17
 
 JSOUT	= clarity_embind.js
@@ -14,7 +15,7 @@ FRAMEWORK_DEPS = JSProxyNode.js Util.js showcase.html Makefile
 CLARITY_OBJS = ClarityNode.o Selectables.o clarity.o
 
 %.o : %.cpp $(FRAMEWORK_DEPS)
-	$(ENV) $(CC) $< -o $@ -c $(CFLAGS) 
+	$(ENV) $(CC) $(CFLAGS) $< -o $@ -c
 
 
 # Still have that weird problem with the acorn-optimizer error if you use anything but -O0 or -O1
@@ -36,8 +37,9 @@ showcase-prod: ENV	=
 showcase-prod: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(ENV) $(CC) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
+simpletest: CFLAGS = $(DEBUG_CFLAGS) -sWASM_WORKERS
 simpletest: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(ENV) $(CC) -lembind simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) $(CFLAGS) -lembind simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o -o $(JSOUT)
 
 simpletest-prod: CFLAGS = -O3 -std=c++17 
 simpletest-prod: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
