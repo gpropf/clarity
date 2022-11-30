@@ -1,6 +1,8 @@
 #ifndef showcase_hpp
 #define showcase_hpp
 
+#include <emscripten/wasm_worker.h>
+
 #include "CLNodeFactory.hpp"
 #include "CanvasElement.hpp"
 #include "ClarityNode.hpp"
@@ -8,6 +10,28 @@
 #include "clarity.hpp"
 
 using namespace clarity;
+
+
+HybridNode<double> * cir1Radius_tinp_;
+
+double *globalDbl = new double (6.28);
+emscripten_wasm_worker_t worker = emscripten_malloc_wasm_worker(/*stack size: */ 1024);
+
+void run_in_worker() {
+    printf("Hello from wasm worker!\n");
+    //cir1Radius_tinp_->setCppValFromJSVal(val(42.0));
+    cir1Radius_tinp_->setCppVal(globalDbl);
+    //cir1Radius_tinp_->pushValToPeers(cir1Radius_tinp_);
+    cir1Radius_tinp_->refresh();
+    // return 42;
+}
+
+void runww() { emscripten_wasm_worker_post_function_v(worker, run_in_worker); }
+
+EMSCRIPTEN_BINDINGS(wwtest) {
+    emscripten::function("run_in_worker", &run_in_worker, allow_raw_pointers());
+    emscripten::function("runww", &runww, allow_raw_pointers());
+}
 
 /**
  * @brief Used to test all the major types of web controls.
@@ -41,8 +65,8 @@ struct Showcase : public PageContent {
         CLNodeFactory<HybridNode, double, double> childOfMaindivBuilder =
             builder.withChildrenOf(maindiv);
 
-        auto *cir1Radius_tinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
-                                    .withName("cir1Radius_tinp")
+        cir1Radius_tinp_ = childOfMaindivBuilder.withLinkMultiplierConstant(1)
+                                    .withName("cir1Radius_tinp_")
                                     .withCppVal(cir1Radius_value)
                                     .textInput();
 
@@ -50,10 +74,10 @@ struct Showcase : public PageContent {
                                     .withName("cir1Radius_rinp")
                                     .rangeInput();
 
-        cir1Radius_rinp->addPeer(cir1Radius_tinp, 0.5);
+        cir1Radius_rinp->addPeer(cir1Radius_tinp_, 0.5);
 
         auto *g1 = childOfMaindivBuilder.withName("cir1Radius_grp")
-                       .group({cir1Radius_tinp, cir1Radius_rinp});
+                       .group({cir1Radius_tinp_, cir1Radius_rinp});
 
         auto g1_lbl = childOfMaindivBuilder.labelGivenNode(g1, "Circle radius");
 
@@ -81,7 +105,7 @@ struct Showcase : public PageContent {
                                           {"stroke-width", val(4)}})
                          .build();
 
-        auto *cir1Radius = childOfMaindivBuilder.withPeer(cir1Radius_tinp)
+        auto *cir1Radius = childOfMaindivBuilder.withPeer(cir1Radius_tinp_)
                                .withName("cir1Radius")
                                .withLinkMultiplierConstant(1)
                                .withAttributes({})
@@ -231,6 +255,12 @@ struct Showcase : public PageContent {
         auto *cbTest = checkboxBuilder.withCppVal(checkme).withName("checkme").checkbox();
 
         auto *lblTest = childOfMaindivBuilder_str.label(cbTest, "Label should engulf CB", true);
+
+        //val runww = val::global("Module")["run_in_worker"];
+        val runww = val::global("Module")["runww"];
+        val runww_el = ClarityNode::JSProxyNode_["eventListenerify"](runww);
+        auto *wwtest_btn = (CLNodeFactory<HybridNode, double, int>(childOfMaindivBuilder_str))
+                               .button("wwtest_btn", "Test Web Worker", runww_el);
 
         printf("Setup complete!\n");
         return maindiv;

@@ -29,10 +29,11 @@ speedtest-prod: speedtest.o ClarityNode.o Selectables.o clarity.o CanvasElement.
 speedtest: speedtest.o ClarityNode.o Selectables.o clarity.o CanvasElement.o
 	$(ENV) $(CC) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o CanvasElement.o clarity.o $(CFLAGS) -o $(JSOUT)
 
+showcase: CFLAGS = $(DEBUG_CFLAGS) -sWASM_WORKERS
 showcase: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(ENV) $(CC) $(CFLAGS) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o -o $(JSOUT)
 
-showcase-prod: CFLAGS = -O3 -std=c++17 
+showcase-prod: CFLAGS = -O3 -std=c++17 -sWASM_WORKERS
 showcase-prod: ENV	=
 showcase-prod: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(ENV) $(CC) $(CFLAGS) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)

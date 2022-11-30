@@ -424,7 +424,7 @@ class JSProxyNode {
     })
   }
 
-  eventListenerify(fn) {
+  static eventListenerify(fn) {
     return (ev) => {fn()}
   }
   

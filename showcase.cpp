@@ -2,6 +2,8 @@
 
 #include "Showcase.hpp"
 
+//#include <emscripten/wasm_worker.h>
+
 #include <map>
 
 #include "CLNodeFactory.hpp"
@@ -11,9 +13,11 @@
 #include "embindings.hpp"
 #include "globals.hpp"
 
-//#define USETF
+
 
 int main() {
+   
+
     Showcase showcase;
 
 #ifdef USETF
