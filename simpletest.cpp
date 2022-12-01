@@ -2,7 +2,7 @@
 
 #include "SimpleTest.hpp"
 
-#include <emscripten/wasm_worker.h>
+//#include <emscripten/wasm_worker.h>
 #include <stdio.h>
 
 #include <map>
@@ -23,8 +23,8 @@ void run_in_worker() {
 }
 
 int main() {
-     emscripten_wasm_worker_t worker = emscripten_malloc_wasm_worker(/*stack size: */ 1024);
-     emscripten_wasm_worker_post_function_v(worker, run_in_worker);
+    //  emscripten_wasm_worker_t worker = emscripten_malloc_wasm_worker(/*stack size: */ 1024);
+    //  emscripten_wasm_worker_post_function_v(worker, run_in_worker);
     
     SimpleTest simpleTest;
     TestFramework testFramework;
