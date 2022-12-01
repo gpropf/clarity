@@ -63,10 +63,23 @@ class Util {
         return loc;
     }
 
-    static callMethodByName(obj, objMethod) {
+    /**
+     * This is meant to be used as a quick way to create JS functions that can be called from setTimeout()
+     *  or setInterval() or used as event listeners for buttons
+     * 
+     * @param {bound object} obj The actual bound C++ object that we want to call the method on.
+     * @param {string} objMethod A string that names a method defined on the object.
+     * @returns a function that calls the named method on the object
+     */
+    static callMethodByName(obj, objMethod, isEventListener = false) {
         let fnStr = `obj.${objMethod}()`;
         console.log(fnStr);
-        return function() {
+        if (isEventListener) {
+            return function (ev) {
+                eval(fnStr);
+            }
+        }
+        return function () {
             eval(fnStr);
         }
     }
