@@ -5,14 +5,15 @@ CC		= emcc
 ENV		= DEMANGLE_SUPPORT=1
 
 #CFLAGS	=  -O0 -g -gsource-map --source-map-base=http://localhost:6931/ -std=c++17
-CFLAGS	=  -O0 -g -std=c++17 -D USETF=1 #-sWASM_WORKERS #-sASSERTIONS
 DEBUG_CFLAGS = -O0 -g -std=c++17 -D USETF=1
+CFLAGS	= $(DEBUG_CFLAGS)
+
 #CFLAGS	=  -O3 -std=c++17
 
 JSOUT	= clarity_embind.js
 
-FRAMEWORK_DEPS = JSProxyNode.js Util.js showcase.html Makefile
-CLARITY_OBJS = ClarityNode.o Selectables.o clarity.o
+FRAMEWORK_DEPS = JSProxyNode.js Util.js Selectables.js showcase.html Makefile
+CLARITY_OBJS = ClarityNode.o CanvasElement.o Selectables.o clarity.o
 
 %.o : %.cpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $(CFLAGS) $< -o $@ -c
@@ -23,11 +24,11 @@ speedtest-prod: CFLAGS = -O1 -std=c++17 #-sWASM_WORKERS
 #speedtest-prod: ENV	= EMCC_DEBUG=2
 speedtest-prod: ENV	=
 speedtest-prod: speedtest.o ClarityNode.o Selectables.o clarity.o CanvasElement.o
-	$(ENV) $(CC) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o CanvasElement.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) $(CFLAGS) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o CanvasElement.o clarity.o -o $(JSOUT)
 
 
 speedtest: speedtest.o ClarityNode.o Selectables.o clarity.o CanvasElement.o
-	$(ENV) $(CC) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o CanvasElement.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) $(CFLAGS) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o CanvasElement.o clarity.o -o $(JSOUT)
 
 showcase: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(ENV) $(CC) $(CFLAGS) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o -o $(JSOUT)
@@ -43,11 +44,11 @@ simpletest-ww: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.
 
 simpletest-prod: CFLAGS = -O3 -std=c++17 
 simpletest-prod: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(ENV) $(CC) -lembind simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) $(CFLAGS) -lembind simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o -o $(JSOUT)
 
 
 unittest: unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(ENV) $(CC) -lembind --pre-js Unittest.js unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+	$(ENV) $(CC) $(CFLAGS) -lembind --pre-js Unittest.js unittest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o -o $(JSOUT)
 
 docs: clarity.doxyconfig
 	doxygen clarity.doxyconfig
