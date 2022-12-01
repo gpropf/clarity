@@ -65,7 +65,13 @@ class Util {
 
     /**
      * This is meant to be used as a quick way to create JS functions that can be called from setTimeout()
-     *  or setInterval() or used as event listeners for buttons
+     * or setInterval() or used as event listeners for buttons or other fire-and-forget situations. For
+     * genuine JavaScript objects you can, of course, just use the 'apply' or 'call' functions but the 
+     * idea here is that the "obj" parameter actaully represents a C++ object that has an embinding that
+     * allows it to be passed to JS functions. The event object is just thrown away if you set
+     * "isEventListener" to true but the point of having that flag is simply to produce something that
+     * has the correct form for the application.
+     * 
      * 
      * @param {bound object} obj The actual bound C++ object that we want to call the method on.
      * @param {string} objMethod A string that names a method defined on the object.
@@ -73,7 +79,7 @@ class Util {
      */
     static callMethodByName(obj, objMethod, isEventListener = false) {
         let fnStr = `obj.${objMethod}()`;
-        console.log(fnStr);
+        //console.log(fnStr);
         if (isEventListener) {
             return function (ev) {
                 eval(fnStr);
