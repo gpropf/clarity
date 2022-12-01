@@ -306,6 +306,11 @@ class ClarityNode {
 
     virtual void doNothing() = 0;
 
+    static void deleteNodeById(int id) {
+        auto *node = ClarityNode::getClarityNodeById(id);
+        delete node;
+    }
+
     INLINE string getBoundField() const { return boundField_; }
 
     INLINE void setBoundField(const string &boundField) {

@@ -1,5 +1,5 @@
-#include "ClarityNode.hpp"
 #include "CanvasElement.hpp"
+#include "ClarityNode.hpp"
 #include "Selectables.hpp"
 
 using clarity::ClarityNode;
@@ -16,11 +16,11 @@ EMSCRIPTEN_BINDINGS(clarity) {
                         allow_raw_pointers())
         .class_function("updateNodeFromDomById", &ClarityNode::updateNodeFromDomById,
                         allow_raw_pointers())
+        .class_function("deleteNodeById", &ClarityNode::deleteNodeById, allow_raw_pointers())
         // .function("pullValFromPeers", &ClarityNode::pullValFromPeers,
         //           allow_raw_pointers())
         .function("nodelog", &ClarityNode::nodelog, allow_raw_pointers())
-        .class_function("nodelogStatic", &ClarityNode::nodelogStatic,
-                        allow_raw_pointers())
+        .class_function("nodelogStatic", &ClarityNode::nodelogStatic, allow_raw_pointers())
 
         .function("getId", &ClarityNode::getId, allow_raw_pointers())
         .function("getName", &ClarityNode::getName, allow_raw_pointers())

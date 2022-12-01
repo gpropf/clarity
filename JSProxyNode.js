@@ -206,6 +206,12 @@ class JSProxyNode {
     Module.ClarityNode.nodelogStatic("doNothing(): a function that proudly does nothing...");
   }
 
+  static makeDeleteNodeFn(nodeId) {
+    return function () {
+      Module.ClarityNode.deleteNodeById(nodeId);
+    }
+  }
+
   static listNodes_int() {
     Module.HybridNode_i.listNodes_int();
   }

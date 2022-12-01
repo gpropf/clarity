@@ -76,6 +76,10 @@ struct TestFramework : public PageContent {
         auto *listNodesButton = (CLNodeFactory<HybridNode, int, int>(sidebarBuilder))
                                     .button("listNodesButton", "List Nodes", listNodes);
 
+        // val nukeFn = ClarityNode::JSProxyNode_["makeDeleteNodeFn"](1);
+        // auto *nukeButton = (CLNodeFactory<HybridNode, int, int>(sidebarBuilder))
+        //                        .button("nukeButton", "Destroy Everything!", nukeFn);
+
         return root;
 #else
         return innerContent;
