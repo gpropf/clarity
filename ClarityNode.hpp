@@ -650,6 +650,7 @@ class HybridNode : public ClarityNode {
      */
     virtual void refresh() {
         // nodelog("refresh()");
+        this->stateFunction_(this, this->cppVal_);
         for (auto child : children_) {
             child->refresh();
         }
@@ -716,8 +717,12 @@ class HybridNode : public ClarityNode {
     ~HybridNode() {  // cout << "DESTROYING HybridNode with id: " << id_ << "\n";
     }
 
+    //inline void doNothingStateFn() {}
+    inline void setStateFunction(std::function<void(HybridNode<V>*,V*)> stateFunction) { this->stateFunction_ = stateFunction;}
+
    protected:
     V *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'
+    std::function<void(HybridNode<V>*,V*)> stateFunction_ = [&](HybridNode<V>*,V*) {};
 };
 
 }  // namespace clarity

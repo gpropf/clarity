@@ -34,9 +34,12 @@ struct SimpleTest : public PageContent {
         CLNodeFactory<HybridNode, double, double> childOfMaindivBuilder =
             builder.withChildrenOf(maindiv);
 
+        auto foofn = [&](HybridNode<double>*,double*) {cout << "STATEFUNC WORKS!\n";};
+
         auto *cir1Radius_tinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
                                     .withName("cir1Radius_tinp")
                                     .withCppVal(cir1Radius_value)
+                                    .withStateFunction(foofn)
                                     .textInput();
 
         // auto *cir1Radius_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
