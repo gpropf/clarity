@@ -73,7 +73,7 @@ class Util {
      * has the correct form for the application.
      * 
      * 
-     * @param {bound object} obj The actual bound C++ object that we want to call the method on.
+     * @param {bound C++ object} obj The actual bound C++ object that we want to call the method on.
      * @param {string} objMethod A string that names a method defined on the object.
      * @returns a function that calls the named method on the object
      */
