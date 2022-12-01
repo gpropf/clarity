@@ -62,6 +62,14 @@ class Util {
         let loc = { x: (ev.x - domrect.x), y: (ev.y - domrect.y) };
         return loc;
     }
+
+    static callMethodByName(obj, objMethod) {
+        fnStr = `obj.${objMethod}()`;
+        console.log(fnStr);
+        return function() {
+            eval(fnStr);
+        }
+    }
 }
 
 
