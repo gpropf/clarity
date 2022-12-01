@@ -3,6 +3,7 @@
 
 #include <chrono>
 #include <thread>
+#include <emscripten/wasm_worker.h>
 
 #include "CLNodeFactory.hpp"
 #include "CanvasElement.hpp"
@@ -17,7 +18,7 @@ pthread_t id;
 int ret;
 
 double *globalDbl = new double(6.28);
-// emscripten_wasm_worker_t worker = emscripten_malloc_wasm_worker(/*stack size: */ 1024);
+emscripten_wasm_worker_t worker = emscripten_malloc_wasm_worker(/*stack size: */ 1024);
 
 void run_in_worker() {
     printf("Hello from wasm worker!\n");
@@ -102,200 +103,11 @@ struct Showcase : public PageContent {
                                .withCppVal(cir1Radius_value)
                                .textInput();
 
-        initMyThread();
+        //initMyThread();
         //emscripten_wasm_worker_post_function_v(worker, run_in_worker);
+        run_in_worker();
 
-        // auto *cir1Radius_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
-        //                             .withName("cir1Radius_rinp")
-        //                             .rangeInput();
-
-        // cir1Radius_rinp->addPeer(cir1Radius_tinp_, 0.5);
-
-        // auto *g1 = childOfMaindivBuilder.withName("cir1Radius_grp")
-        //                .group({cir1Radius_tinp_, cir1Radius_rinp});
-
-        // auto g1_lbl = childOfMaindivBuilder.labelGivenNode(g1, "Circle radius");
-
-        // CLNodeFactory<HybridNode, string, int> childOfMaindivBuilder_str(childOfMaindivBuilder);
-        // // CLNodeFactory<HybridNode, void, int>
-        // childOfMaindivBuilder_void(childOfMaindivBuilder);
-
-        // childOfMaindivBuilder.br();
-
-        // auto *svgarea = childOfMaindivBuilder.withName("svgarea")
-        //                     .withTag("svg")
-        //                     .withAttributes({{"width", val("300")},
-        //                                      {"height", val("200")},
-        //                                      {"viewBox", val("0 0 200 200")},
-        //                                      {"style", val("border: 1px solid black")}})
-        //                     .build();
-
-        // auto *cir1 = childOfMaindivBuilder.withName("cir1")
-        //                  .withParent(svgarea)
-        //                  .withTag("circle")
-        //                  .withAttributes({{"r", val("30")},
-        //                                   {"cx", val(100)},
-        //                                   {"cy", val(100)},
-        //                                   {"stroke", val("green")},
-        //                                   {"fill", val("rgb(50,199,77)")},
-        //                                   {"stroke-width", val(4)}})
-        //                  .build();
-
-        // auto *cir1Radius = childOfMaindivBuilder.withPeer(cir1Radius_tinp_)
-        //                        .withName("cir1Radius")
-        //                        .withLinkMultiplierConstant(1)
-        //                        .withAttributes({})
-        //                        .attributeNode("r", cir1);
-
-        // auto *temp_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
-        //                       .withName("temp_rinp")
-        //                       .withCppVal(temp)
-        //                       .rangeInput(0, 2000);
-
-        // auto *circleFill = childOfMaindivBuilder.withPeer(temp_rinp)
-        //                        .withName("circleFill")
-        //                        .withTransformFns(blackbody_st, blackbody_st)
-        //                        .attributeNode("fill", cir1);
-        // childOfMaindivBuilder.br();
-
-        // string *flexLabelText =
-        //     new string("This is the label for 'svgarea'. You can edit the text below.");
-        // auto *flexLabel = childOfMaindivBuilder_str.withCppVal(flexLabelText)
-        //                       .withName("flexLabel")
-        //                       .label(svgarea, *flexLabelText);
-        // childOfMaindivBuilder.br();
-
-        // auto *inputFlexTextLabel =
-        //     childOfMaindivBuilder_str.withName("inputFlexTextLabel")
-        //         .withPeer(flexLabel)
-        //         .withAttributes({{"title", val("YOU CAN CHANGE THE LABEL TEXT")}})
-        //         .textInput();
-        // childOfMaindivBuilder.br();
-
-        // childOfMaindivBuilder.hr();
-        // double *d1 = new double(1.2);
-        // auto *daisyChain1_trinp = childOfMaindivBuilder.withCppVal(d1).textInput();
-        // auto *daisyChain2_trinp = childOfMaindivBuilder.withPeer(daisyChain1_trinp)
-        //                               .withLinkMultiplierConstant(0.1)
-        //                               .textInput();
-        // auto *daisyChain3_trinp = childOfMaindivBuilder.withPeer(daisyChain2_trinp)
-        //                               .withLinkMultiplierConstant(0.1)
-        //                               .textInput();
-
-        // auto *daisies =
-        //     childOfMaindivBuilder.group({daisyChain1_trinp, daisyChain2_trinp,
-        //     daisyChain3_trinp});
-        // auto *daisies_lbl = childOfMaindivBuilder.label(
-        //     daisies,
-        //     "These three nodes are linked in a daisy chain to illustrate intragraph value "
-        //     "transformations and the ability to have nodes that do not themselves contain a model
-        //     " "value. Only the leftmost has a cppVal_", true);
-
-        // childOfMaindivBuilder.br();
-        // childOfMaindivBuilder.br();
-
-        // double *d2 = new double(5.3);
-        // double *lrConstant = new double(11.1);
-        // auto *daisyChain4_trinp = childOfMaindivBuilder.withCppVal(d2).textInput();
-        // auto *daisyChain5_trinp = childOfMaindivBuilder
-        //                               .withCppVal(lrConstant)
-        //                               //.withLinkMultiplierConstant(0.1)
-        //                               .textInput();
-        // auto *daisyChain6_trinp = childOfMaindivBuilder.withPeer(daisyChain4_trinp)
-        //                               .withLinkMultiplierVariable(lrConstant)
-        //                               .textInput();
-
-        // auto *daisies2 =
-        //     childOfMaindivBuilder.group({daisyChain4_trinp, daisyChain5_trinp,
-        //     daisyChain6_trinp});
-        // auto *daisies2_lbl = childOfMaindivBuilder.label(
-        //     daisies2,
-        //     "These nodes are similar to the ones above except that the middle value is the "
-        //     "multiplier used to determine the right side value from the left side one. This "
-        //     "feature is not fully implemented yet.",
-        //     true);
-
-        // childOfMaindivBuilder.br();
-        // childOfMaindivBuilder.br();
-
-        // // string *clickme = new string("CLICK ME");
-        // string clickme2("CLICK ME TOO");
-        // // Demonstrates the withEventListenerGenerator method.
-        // auto *elgDemo_tinp =
-        //     CLNodeFactory<HybridNode, string, double>(childOfMaindivBuilder)
-        //         .withName("elgDemo_tinp")
-        //         //.withCppVal(canvas1->getPtr2CurrentCellVal())
-        //         .withAttributes({{"style", val("border: 3px solid #4055aa")}, {"size", val(15)}})
-        //         .withEventListenerGenerator("mousedown",
-        //                                     ClarityNode::JSProxyNode_["elgInputAlltypesMousedown"])
-        //         .withInitVal(clickme2)
-        //         .textInput();
-
-        // childOfMaindivBuilder.br();
-
-        // string *textarea_val = new string("This is a textarea.");
-        // auto *textarea1 =
-        //     childOfMaindivBuilder_str.withName("textarea1").textarea(textarea_val, 3, 40);
-        // childOfMaindivBuilder.br();
-
-        // CLNodeFactory<HybridNode, unsigned char, double> canvasBuilder("div", "canvasDiv");
-
-        // CanvasGrid<unsigned char> *canvas1 =
-        //     canvasBuilder.withName("canvas1")
-        //         .withTag("canvas")
-        //         .withAttributes({{"style", val("border: 1px solid green")},
-        //                          {"width", val(600)},
-        //                          {"height", val(400)}})
-        //         .canvasGrid(30, 20, 600, 400);
-
-        // canvas1->setCurrentCellVal(5);
-
-        // auto *canvas1CurrentCellColor_tinp =
-        //     canvasBuilder.withName("currentCellColor_tinp")
-        //         .withCppVal(canvas1->getPtr2CurrentCellVal())
-        //         //.withAttributes({{"style", val("border: 3px dashed purple")}, {"size",
-        //         val(2)}}) .withAttributes({{"class", val("small_width")}}) .textInput();
-
-        // maindiv->appendChild(canvas1);
-        // maindiv->appendChild(canvas1CurrentCellColor_tinp);
-        // childOfMaindivBuilder.br();
-        // childOfMaindivBuilder.hr();
-
-        // CLNodeFactory<Select, vector<pair<int, string>>, int>
-        // selectBuilder(childOfMaindivBuilder); vector<pair<int, string>> *carOptions = new
-        // vector<pair<int, string>>; carOptions->push_back({0, "Chevy"}); carOptions->push_back({1,
-        // "Ford"}); carOptions->push_back({2, "Toyota"}); carOptions->push_back({3, "Honda"});
-
-        // Select<vector<pair<int, string>>> *carSelect =
-        //     selectBuilder.withName("cars").withCppVal(carOptions).select();
-
-        // CLNodeFactory<SimpleSelect, int, int> simpleSelectBuilder(childOfMaindivBuilder);
-        // vector<pair<int, string>> *carOptions2 = new vector<pair<int, string>>;
-        // carOptions2->push_back({0, "BMW"});
-        // carOptions2->push_back({1, "Lambo"});
-        // carOptions2->push_back({2, "Lada"});
-        // carOptions2->push_back({3, "Ferrari"});
-
-        // int *carSelection = new int(2);
-
-        // SimpleSelect<int> *carSelect_ss = simpleSelectBuilder.withName("carSelect_ss")
-        //                                       .withCppVal(carSelection)
-        //                                       .withLabelText("Pick a better car")
-        //                                       .simpleSelect<string>(*carOptions2);
-
-        // CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
-        // // string * checkme = new string("checked");
-        // bool *checkme = new bool(false);
-        // auto *cbTest = checkboxBuilder.withCppVal(checkme).withName("checkme").checkbox();
-
-        // auto *lblTest = childOfMaindivBuilder_str.label(cbTest, "Label should engulf CB", true);
-
-        // // val runww = val::global("Module")["run_in_worker"];
-        // val runww = val::global("Module")["runww"];
-        // val runww_el = ClarityNode::JSProxyNode_["eventListenerify"](runww);
-        // auto *wwtest_btn = (CLNodeFactory<HybridNode, double, int>(childOfMaindivBuilder_str))
-        //                        .button("wwtest_btn", "Test Web Worker", runww_el);
-
+        
         printf("Setup complete!\n");
         return maindiv;
     }

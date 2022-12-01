@@ -43,6 +43,11 @@ showcase-pthread: ENV	=
 showcase-pthread: showcase-pthread.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(ENV) $(CC) $(CFLAGS) -lembind showcase-pthread.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
 
+showcase-ww: CFLAGS = $(DEBUG_CFLAGS) -sWASM_WORKERS
+showcase-ww: ENV	=
+showcase-ww: showcase-pthread.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
+	$(ENV) $(CC) $(CFLAGS) -lembind showcase-pthread.o ClarityNode.o CanvasElement.o Selectables.o clarity.o $(CFLAGS) -o $(JSOUT)
+
 
 
 
