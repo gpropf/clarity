@@ -64,7 +64,7 @@ class Util {
     }
 
     static callMethodByName(obj, objMethod) {
-        fnStr = `obj.${objMethod}()`;
+        let fnStr = `obj.${objMethod}()`;
         console.log(fnStr);
         return function() {
             eval(fnStr);
