@@ -581,7 +581,7 @@ class ClarityNode {
     int id_ = -1;  //!< Unique identifier - needs to be immutable once set.
 
     string name_;  //!< Human readable name of node. Mutable, not required.
-
+    
     /** \brief List of peers linked through JS functions which are applied when
      * data is moved between nodes. */
     // vector<ClarityNode::ActiveLink> peers_;
@@ -751,6 +751,7 @@ class HybridNode : public ClarityNode {
 
    protected:
     V *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'
+    std::function<void(HybridNode<V>*,V*)> stateFunction;// = ClarityNode::updateNodeFromModel;
 };
 
 }  // namespace clarity
