@@ -93,7 +93,7 @@ When you create a node the system will install a set of event listeners that are
 
 4. ~~Speedtest needs to be put in the standard format used in Showcase.~~
 
-5. Web workers, pthreads, or both. Obviously we need a way for users to easily install repeating fuctions to make simulations and games easy. As a last resort, the old `setTimeout` and `setInterval` JS calls can be used.
+5. ~~Wasm workers, pthreads, or both.~~ As of right now (first week in December 2022) it seems that Wasm Workers will not easily run code that uses the DOM and the DOM is also confined to the main thread so that pthreads will not be able to touch it either. These considerations would seem to preclude using a pthread or Wasm Worker to directly take the place of `setInterval()/setTimeout()` for things like iterating simulations. However, using a thread to run the calculations should work. We would need to use `setInterval()` to refresh the view while the pthread or WW does the calculations in the background.
 
 6. ~~The template parameterized multiplier value in DualLink should be stored so it can be the target of user interaction. Basically, you could edit the conversion factor for some peer value.~~ This is partially implemented but should not currently be relied upon.
    
@@ -151,6 +151,7 @@ There is of course the possibility of developing something akin to React's JSX p
 * All of the C++ library code is contained within the `clarity` namespace.
 * Brackets: the first bracket is on the same line as the method name.
 * Member variables: member vars end with an underscore in both C++ and JS code.
+* In some places I've used underscore to indicate that what follows is some sort of type information so you have things like "_tinp" for "text input".
   
 #### Source Code Files ####
 
