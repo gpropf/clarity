@@ -1,26 +1,27 @@
 /**
- * Selectables.js: event listener generators and 
+ * Selectables.js: event listener generators
  */
 
 class Selectables {
 
   constructor() { }
 
-  static elgInputCheckboxChange(element) {
+  static elgInputCheckboxChange(jsProxyNode) {
     return function (e) {
-      Module.ClarityNode.updateNodeFromDomById(element.id)
-      if (element.domElement.checked) {
-        console.log("2 Checkbox is checked..");
+      Module.ClarityNode.updateNodeFromDomById(jsProxyNode.id)
+      if (jsProxyNode.domElement.checked) {
+        jsProxyNode.nodelog("2 Checkbox is checked..");
       } else {
-        console.log("2 Checkbox is not checked..");
+        jsProxyNode.nodelog("2 Checkbox is not checked..");
       }
     }
   }
 
-  static elgSelectAlltypesChange(element) {
+  static elgSelectAlltypesChange(jsProxyNode) {
     return function (e) {
-      Module.ClarityNode.updateNodeFromDomById(element.id)
-      console.log("<SELECT> element id: " + element.id + " Value changed to: " + e.target.value);
+      Module.ClarityNode.updateNodeFromDomById(jsProxyNode.id)
+      jsProxyNode.nodelog("<SELECT> value changed to: " + e.target.value);
+      //console.log("<SELECT> element id: " + jsProxyNode.id + " Value changed to: " + e.target.value);
     }
   }
 
@@ -62,13 +63,13 @@ class Selectables {
     }
   }
 
-  static elgSimpleSelectAlltypesChange(element) {
+  static elgSimpleSelectAlltypesChange(jsProxyNode) {
     return function (e) {
-      element.currentSelection = parseInt(e.target.value);
-      console.log("elgSimpleSelectAlltypesChange element id: " + element.id + " Value changed to: " + e.target.value);
-      Module.ClarityNode.updateNodeFromDomById(element.id)
-      let selectedCar = element.clarityNode.getSelectedLabel();
-      console.log("Selected car is " + selectedCar);
+      jsProxyNode.currentSelection = parseInt(e.target.value);
+      jsProxyNode.nodelog("elgSimpleSelectAlltypesChange element id: " + jsProxyNode.id + " Value changed to: " + e.target.value);
+      Module.ClarityNode.updateNodeFromDomById(jsProxyNode.id)
+      let selectedCar = jsProxyNode.clarityNode.getSelectedLabel();
+      jsProxyNode.nodelog("Selected car is " + selectedCar);
     }
   }
 

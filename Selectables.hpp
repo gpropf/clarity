@@ -46,7 +46,7 @@ class Select : public HybridNode<V> {
     }
 
     INLINE virtual void finalize() {
-        // cout << "Select::finalize()\n";
+        //this->nodelog("Select::finalize()");
         this->jsProxyNode_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
@@ -68,14 +68,13 @@ class Select : public HybridNode<V> {
 
     virtual void updateNodeFromDom() {
         this->runStateFunction();
-        cout << "Select::updateNodeFromDom() FIXME! This method does nothing.\n";
+        this->nodelog("Select::updateNodeFromDom() FIXME! This method does nothing.");
     }
 
     INLINE virtual string getNodeTypeCode() { return string("SV"); }
 
     inline virtual void doNothing() {
-        cout << "This method exists so that Embind will create a type when this method in bound."
-             << endl;
+        this->nodelog("This method exists so that Embind will create a type when this method in bound.");             
     }
 
    protected:
@@ -95,25 +94,13 @@ class SimpleSelect : public HybridNode<V> {
 
     ~SimpleSelect() { this->nodelog("DESTROYING SimpleSelect"); }
 
-    inline void foo() { cout << "SimpleSelect says FOO!" << endl; }
+    //inline void foo() { cout << "SimpleSelect says FOO!" << endl; }
 
     inline virtual void doNothing() {
-        cout << "This method exists so that Embind will create a type when this method is bound."
-             << endl;
-    }
+        this->nodelog("This method exists so that Embind will create a type when this method is bound.");        
+    }    
 
-    // INLINE virtual void finalize() {
-    //     this->jsProxyNode_.set("clarityNode", this);
-    //     cout << "SimpleSelect::finalize()\n";
-    //     val Selectables = val::global("Selectables");
-    //     val simpleSelectGens = Selectables["simpleSelectGens"];
-    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType",
-    //     this->jsProxyNode_,
-    //                                          simpleSelectGens);
-    // }
-
-    INLINE virtual void finalize() {
-        // cout << "SimpleSelect::finalize()\n";
+    INLINE virtual void finalize() {        
         this->jsProxyNode_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
@@ -142,7 +129,7 @@ class SimpleSelect : public HybridNode<V> {
 
     virtual void updateNodeFromDom() {
         int currentSelection = this->jsProxyNode_["currentSelection"].template as<int>();
-        cout << "SimpleSelect::updateNodeFromDom() currentSelection = " << currentSelection << endl;
+        this->nodelog("SimpleSelect::updateNodeFromDom() currentSelection = " + clto_str(currentSelection));       
         *this->cppVal_ = currentSelection;
         this->runStateFunction();
     }
@@ -174,20 +161,9 @@ class Checkbox : public HybridNode<V> {
    public:
     Checkbox(const string &name, const string &tag, bool useExistingDOMElement,
              ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
-        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
+        : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}   
 
-    // inline virtual void finalize() {
-    //     cout << "Checkbox::finalize()\n";
-    //     this->jsProxyNode_.set("clarityNode", this);
-    //     val Selectables = val::global("Selectables");
-    //     val listenerGenerators = Selectables["listenerGenerators"];
-    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType",
-    //     this->jsProxyNode_,
-    //                                          listenerGenerators);
-    // }
-
-    INLINE virtual void finalize() {
-        // cout << "Checkbox::finalize()\n";
+    INLINE virtual void finalize() {        
         this->jsProxyNode_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
@@ -202,8 +178,7 @@ class Checkbox : public HybridNode<V> {
         return string("FIXME");
     }
 
-    virtual void refreshDOMValueFromModel() {
-        cout << "Checkbox::refreshDOMValueFromModel()\n";
+    virtual void refreshDOMValueFromModel() {        
         HybridNode<V>::refreshDOMValueFromModel();
     };
 
@@ -214,8 +189,7 @@ class Checkbox : public HybridNode<V> {
     virtual void setDOMVal(const val &inval);
 
     inline virtual void doNothing() {
-        cout << "This method exists so that Embind will create a type when this method in bound."
-             << endl;
+         this->nodelog("This method exists so that Embind will create a type when this method is bound.");
     }
 
    protected:

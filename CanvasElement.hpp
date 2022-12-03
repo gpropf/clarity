@@ -174,11 +174,10 @@ class CanvasGrid : public CanvasElement<V> {
 
     void setValXY(int x, int y) {
         setValXYNoDraw(x, y, currentCellVal_);
-
         drawGrid();
-        V checkVal = getValXY(x, y);
-        this->nodelog("Value at " + clto_str(x) + "," + clto_str(y) + " is " +
-                      clto_str(int(checkVal)));
+        // V checkVal = getValXY(x, y);
+        // this->nodelog("Value at " + clto_str(x) + "," + clto_str(y) + " is " +
+        //               clto_str(int(checkVal)));
         // return addr;
     }
 
