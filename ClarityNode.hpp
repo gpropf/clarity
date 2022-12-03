@@ -177,7 +177,7 @@ class ClarityNode {
         clog(msg, clt);
     }
 
-    //static void addEventListenerGenerator(const string &nodeTypeCode, val handlerGenerator) {}
+    // static void addEventListenerGenerator(const string &nodeTypeCode, val handlerGenerator) {}
 
     /**
      * @brief Adds a special EL to this node. I don't think this form is actually in use.
@@ -216,7 +216,7 @@ class ClarityNode {
     inline ClarityNode() { init(); }
 
     virtual ~ClarityNode() {
-        // cout << "DESTROYING ClarityNode " << id_ << "\n";
+        cout << "DESTROYING ClarityNode " << id_ << "\n";
         switchboard.erase(id_);
         for (auto dl : dlpeers_) {
             dl.reset();
@@ -368,10 +368,38 @@ class ClarityNode {
     INLINE int countPeers() const { return dlpeers_.size(); }
 
     bool appendChild(ClarityNode *child) {
+        if (child->parent_ != nullptr) {
+            nodelog(
+                "Adding node with id = " + clto_str(child->getId()) +
+                    " that already has a parent. Parent id = " + clto_str(child->parent_->getId()),
+                ClogType::WARNING);
+            child->parent_->removeChild(child);
+        }
         children_.push_back(child);
         child->setParent(this);
         jsProxyNode_.call<void>("appendChild", child->getCLE());
         return true;  // FIXME: need to check for duplicate ids.
+    }
+
+    /**
+     * @brief Attempts to find the child referenced by the pointer. If the child is found we set its
+     * parent_ pointer to nullptr and erase it from the children_ vector.
+     *
+     * @param child
+     * @return true if the child node is found and removed from the children_ vector.
+     * @return false if the child node is not found. This should really never happen and we issue a warning message.
+     */
+    bool removeChild(ClarityNode *child) {
+        auto it = find(children_.begin(), children_.end(), child);
+        if (it != children_.end()) {
+            children_.erase(it);
+            child->setParent(nullptr);
+            return true;
+        }
+        nodelog("Attempt to remove child node with id = " + clto_str(child->getId()) +
+                    " that is not a child of this node.",
+                ClogType::WARNING);
+        return false;
     }
 
     INLINE string nodeStats(const string &msg) const {
@@ -548,7 +576,7 @@ class ClarityNode {
     /** \brief A node's parent is the DOM element that contains it. In the
      * case of the WebAttrNode this is the WebElemNode for which this is an
      * attribute. */
-    ClarityNode *parent_;
+    ClarityNode *parent_ = nullptr;
 
     int id_ = -1;  //!< Unique identifier - needs to be immutable once set.
 
