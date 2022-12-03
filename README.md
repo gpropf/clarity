@@ -85,7 +85,7 @@ When you create a node the system will install a set of event listeners that are
 
 1. Reorganizing and cleaning up this README!
    
-2. We need some way to register getter and setter methods for model data that is inside classes and has non-public access.
+2. We need some way to register getter and setter methods for model data that is inside classes and has non-public access. Not everyone can modify their model classes to add `friend` declarations and the use of `friend` is frowned upon in any case.
 
 3. `CanvasGrid` needs to have a more generic type for its color selection. Right now I have the 8 colors for the `PixelReactor` app in clarity-apps hardcoded in as the color choices for all CanvasGrids. This violates the principle of separating framework and app logic.
 
@@ -97,7 +97,7 @@ When you create a node the system will install a set of event listeners that are
 
 6. ~~The template parameterized multiplier value in DualLink should be stored so it can be the target of user interaction. Basically, you could edit the conversion factor for some peer value.~~ This is partially implemented but should not currently be relied upon.
    
-7. Radio buttons.
+7. Need support for radio buttons in CLNF.
    
 8. ~~Checkboxes~~: We have a Checkbox class in Selectables now.
 
@@ -108,6 +108,7 @@ When you create a node the system will install a set of event listeners that are
 ### Todo (cleanups and "doing things right" fixes - somewhat lower priority) ###
 
 1. Go through and replace my improvised val(NULL) constructs with the (presumably more correct/efficient) val::nul()).
+2. Need to make sure that runStateFunction() is called in all places where it needs to be. This could also shine some more light on the data flow.
 
 ### Todo (Lowest priority but probably more fun) ###
 

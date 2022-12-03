@@ -88,6 +88,8 @@ class CLNodeFactory {
      * new node in the DOM.*/
     string attachmentId_ = "";
 
+    std::function<void(HybridNode<V>*,V*)> stateFunction_;
+
     /**
      * @brief Construct a new CLNodeFactory object from another of possibly different template
      * parameters. It seems that we cannot rely on the implicit copy constructor if we want to build
@@ -259,6 +261,8 @@ class CLNodeFactory {
                 newNode->addEventListener(eventListener, eventListenerGenerator_.first);
             }
         }
+
+        newNode->setStateFunction(this->stateFunction_);
 
         // if (labelText_ != "") {
         //     Nc<V> *labelNode = label(newNode, labelText_, true);
@@ -518,6 +522,18 @@ class CLNodeFactory {
         assert(peer != nullptr);
         CLNodeFactory cpy(std::move(*this));
         cpy.peer_ = peer;
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withStateFunction(std::function<void(HybridNode<V>*,V*)> stateFunction) const & {
+        CLNodeFactory cpy(*this);
+        cpy.stateFunction_ = stateFunction;
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withStateFunction(std::function<void(HybridNode<V>*,V*)> stateFunction) && {
+        CLNodeFactory cpy(std::move(*this));
+        cpy.stateFunction_ = stateFunction;
         return cpy;
     }
 

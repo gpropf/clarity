@@ -216,7 +216,7 @@ class ClarityNode {
     inline ClarityNode() { init(); }
 
     virtual ~ClarityNode() {
-        cout << "DESTROYING ClarityNode " << id_ << "\n";
+        nodelog("DESTROYING ClarityNode");
         switchboard.erase(id_);
         for (auto dl : dlpeers_) {
             dl.reset();
@@ -387,7 +387,8 @@ class ClarityNode {
      *
      * @param child
      * @return true if the child node is found and removed from the children_ vector.
-     * @return false if the child node is not found. This should really never happen and we issue a warning message.
+     * @return false if the child node is not found. This should really never happen and we issue a
+     * warning message.
      */
     bool removeChild(ClarityNode *child) {
         auto it = find(children_.begin(), children_.end(), child);
@@ -581,7 +582,7 @@ class ClarityNode {
     int id_ = -1;  //!< Unique identifier - needs to be immutable once set.
 
     string name_;  //!< Human readable name of node. Mutable, not required.
-    
+
     /** \brief List of peers linked through JS functions which are applied when
      * data is moved between nodes. */
     // vector<ClarityNode::ActiveLink> peers_;
@@ -658,6 +659,10 @@ class HybridNode : public ClarityNode {
                                 this->jsProxyNode_, listenerGenerators);
     }
 
+    inline void setStateFunction(std::function<void(HybridNode<V> *, V *)> stateFunction) {
+        this->stateFunction_ = stateFunction;
+    }
+
     INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
     INLINE V *getCppVal() const { return cppVal_; }
 
@@ -686,6 +691,7 @@ class HybridNode : public ClarityNode {
         for (auto child : children_) {
             child->refresh();
         }
+
         refreshDOMValueFromModel();
         pushValToPeers(this);
     }
@@ -731,6 +737,16 @@ class HybridNode : public ClarityNode {
             val jsval = val(*cppVal_);
             setDOMVal(jsval);
         }
+        runStateFunction();
+    }
+
+    void runStateFunction() {
+        if (this->stateFunction_) {
+            // nodelog("State function IS set.", ClogType::WARNING);
+            this->stateFunction_(this, this->cppVal_);
+        } else {
+            nodelog("State function is not set.", ClogType::WARNING);
+        }
     }
 
     virtual void updateNodeFromDom() {
@@ -743,6 +759,7 @@ class HybridNode : public ClarityNode {
             cout << "cppVal_ exists!\n";
             *cppVal_ = jsval.as<V>();
         }
+        runStateFunction();
         pushValToPeers(this);
     }
 
@@ -751,7 +768,16 @@ class HybridNode : public ClarityNode {
 
    protected:
     V *cppVal_ = nullptr;  //!< The C++ data object that acts as the 'model'
-    std::function<void(HybridNode<V>*,V*)> stateFunction;// = ClarityNode::updateNodeFromModel;
+
+    std::function<void(HybridNode<V> *, V *)>
+        stateFunction_;  //!< A function that will be run whenever the node changes state. The idea
+                         //!< is to facilitate things like a button that can be clicked to cycle
+                         //!< through several states with each state changing the color of the
+                         //!< button. Another simple use of this is a function that changes the icon
+                         //!< displayed on the "play/pause" button of a media player. Event
+                         //!< listeners and dedicated attribute nodes can accomplish the same things
+                         //!< but this may offer a more "compact" way to do this for some types of
+                         //!< controls.
 };
 
 }  // namespace clarity

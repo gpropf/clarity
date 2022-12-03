@@ -1,6 +1,6 @@
 /**
  * @file Selectables.hpp
- * @author your name (you@domain.com)
+ * @author Greg Propf
  * @brief Controls that feature groups of things that can be selected are here. This includes things
  * like <select>, checkbox groups, and radio button groups.
  * @version 1.0
@@ -41,7 +41,9 @@ class Select : public HybridNode<V> {
            ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
         : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
-    ~Select() { cout << "DESTROYING Select with id: " << this->id_ << "\n"; }
+    ~Select() { 
+        this->nodelog("DESTROYING Select");
+    }
 
     INLINE virtual void finalize() {
         // cout << "Select::finalize()\n";
@@ -57,14 +59,15 @@ class Select : public HybridNode<V> {
     void populateOptions() {
         for (auto opt : *this->cppVal_) {
             auto [optFirst, optSecond] = opt;
-            this->jsProxyNode_.template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
-                                           val(optSecond));
+            this->jsProxyNode_.template call<void>("addOptionElementFromValueLabelPair",
+                                                   val(optFirst), val(optSecond));
         }
     }
 
     inline virtual void refreshDOMValueFromModel() { populateOptions(); };
 
     virtual void updateNodeFromDom() {
+        this->runStateFunction();
         cout << "Select::updateNodeFromDom() FIXME! This method does nothing.\n";
     }
 
@@ -90,12 +93,12 @@ class SimpleSelect : public HybridNode<V> {
                  ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
         : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
-    ~SimpleSelect() { cout << "DESTROYING SimpleSelect with id: " << this->id_ << "\n"; }
+    ~SimpleSelect() { this->nodelog("DESTROYING SimpleSelect"); }
 
     inline void foo() { cout << "SimpleSelect says FOO!" << endl; }
 
     inline virtual void doNothing() {
-        cout << "This method exists so that Embind will create a type when this method in bound."
+        cout << "This method exists so that Embind will create a type when this method is bound."
              << endl;
     }
 
@@ -104,7 +107,8 @@ class SimpleSelect : public HybridNode<V> {
     //     cout << "SimpleSelect::finalize()\n";
     //     val Selectables = val::global("Selectables");
     //     val simpleSelectGens = Selectables["simpleSelectGens"];
-    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->jsProxyNode_,
+    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType",
+    //     this->jsProxyNode_,
     //                                          simpleSelectGens);
     // }
 
@@ -114,7 +118,8 @@ class SimpleSelect : public HybridNode<V> {
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2",
-                                             val("SimpleSelect"), this->jsProxyNode_, listenerGenerators);
+                                             val("SimpleSelect"), this->jsProxyNode_,
+                                             listenerGenerators);
     }
 
     virtual string cppValToString() const;
@@ -127,8 +132,9 @@ class SimpleSelect : public HybridNode<V> {
     void populateOptions() {
         for (auto opt : options_) {
             auto [optFirst, optSecond] = opt;
-            this->jsProxyNode_.template call<void>("addOptionElementFromValueLabelPair", val(optFirst),
-                                           val(optSecond), val(optFirst == *this->cppVal_));
+            this->jsProxyNode_.template call<void>("addOptionElementFromValueLabelPair",
+                                                   val(optFirst), val(optSecond),
+                                                   val(optFirst == *this->cppVal_));
         }
     }
 
@@ -138,6 +144,7 @@ class SimpleSelect : public HybridNode<V> {
         int currentSelection = this->jsProxyNode_["currentSelection"].template as<int>();
         cout << "SimpleSelect::updateNodeFromDom() currentSelection = " << currentSelection << endl;
         *this->cppVal_ = currentSelection;
+        this->runStateFunction();
     }
 
     INLINE virtual string getNodeTypeCode() { return string("SS"); }
@@ -174,7 +181,8 @@ class Checkbox : public HybridNode<V> {
     //     this->jsProxyNode_.set("clarityNode", this);
     //     val Selectables = val::global("Selectables");
     //     val listenerGenerators = Selectables["listenerGenerators"];
-    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", this->jsProxyNode_,
+    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType",
+    //     this->jsProxyNode_,
     //                                          listenerGenerators);
     // }
 
@@ -187,7 +195,7 @@ class Checkbox : public HybridNode<V> {
                                              this->jsProxyNode_, listenerGenerators);
     }
 
-    ~Checkbox() { cout << "DESTROYING Checkbox with id: " << this->id_ << "\n"; }
+    ~Checkbox() { this->nodelog("DESTROYING Checkbox"); }
 
     inline string cppValToString() const {
         if (this->cppVal_ == nullptr) return "Checkbox NULLPTR";

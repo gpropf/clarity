@@ -4,8 +4,8 @@
 #include "CLNodeFactory.hpp"
 #include "CanvasElement.hpp"
 #include "ClarityNode.hpp"
-#include "clarity.hpp"
 #include "PageContent.hpp"
+#include "clarity.hpp"
 
 using namespace clarity;
 
@@ -34,9 +34,21 @@ struct SimpleTest : public PageContent {
         CLNodeFactory<HybridNode, double, double> childOfMaindivBuilder =
             builder.withChildrenOf(maindiv);
 
+        // Shows the use of the stateFunction_ member of HybridNode. Sets the field background to a
+        // shade that goes from purple to light green depending on the value entered.
+        std::function<void(HybridNode<double> *, double *v)> stateFn = [&](HybridNode<double> *hn,
+                                                                           double *v) {
+            cout << "stateFunction_: v = " << *hn->getCppVal() << endl;
+            string colorString =
+                "background-color: rgb(200," + clto_str(int(*hn->getCppVal())) + ",200)" + ";";
+            hn->nodelog("Trying to set style: " + colorString);
+            hn->getDomElement().template call<void>("setAttribute", val("style"), val(colorString));
+        };
+
         auto *cir1Radius_tinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
                                     .withName("cir1Radius_tinp")
                                     .withCppVal(cir1Radius_value)
+                                    .withStateFunction(stateFn)
                                     .textInput();
 
         // auto *cir1Radius_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
@@ -51,7 +63,8 @@ struct SimpleTest : public PageContent {
         // auto g1_lbl = childOfMaindivBuilder.labelGivenNode(g1, "Circle radius");
 
         // CLNodeFactory<HybridNode, string, int> childOfMaindivBuilder_str(childOfMaindivBuilder);
-        // // CLNodeFactory<HybridNode, void, int> childOfMaindivBuilder_void(childOfMaindivBuilder);
+        // // CLNodeFactory<HybridNode, void, int>
+        // childOfMaindivBuilder_void(childOfMaindivBuilder);
 
         // childOfMaindivBuilder.br();
 
@@ -116,13 +129,13 @@ struct SimpleTest : public PageContent {
         //                               .textInput();
 
         // auto *daisies =
-        //     childOfMaindivBuilder.group({daisyChain1_trinp, daisyChain2_trinp, daisyChain3_trinp});
+        //     childOfMaindivBuilder.group({daisyChain1_trinp, daisyChain2_trinp,
+        //     daisyChain3_trinp});
         // auto *daisies_lbl = childOfMaindivBuilder.label(
         //     daisies,
         //     "These three nodes are linked in a daisy chain to illustrate intragraph value "
-        //     "transformations and the ability to have nodes that do not themselves contain a model "
-        //     "value. Only the leftmost has a cppVal_",
-        //     true);
+        //     "transformations and the ability to have nodes that do not themselves contain a model
+        //     " "value. Only the leftmost has a cppVal_", true);
 
         // childOfMaindivBuilder.br();
         // childOfMaindivBuilder.br();
@@ -139,7 +152,8 @@ struct SimpleTest : public PageContent {
         //                               .textInput();
 
         // auto *daisies2 =
-        //     childOfMaindivBuilder.group({daisyChain4_trinp, daisyChain5_trinp, daisyChain6_trinp});
+        //     childOfMaindivBuilder.group({daisyChain4_trinp, daisyChain5_trinp,
+        //     daisyChain6_trinp});
         // auto *daisies2_lbl = childOfMaindivBuilder.label(
         //     daisies2,
         //     "These nodes are similar to the ones above except that the middle value is the "
@@ -185,21 +199,18 @@ struct SimpleTest : public PageContent {
         // auto *canvas1CurrentCellColor_tinp =
         //     canvasBuilder.withName("currentCellColor_tinp")
         //         .withCppVal(canvas1->getPtr2CurrentCellVal())
-        //         //.withAttributes({{"style", val("border: 3px dashed purple")}, {"size", val(2)}})
-        //         .withAttributes({{"class", val("small_width")}})
-        //         .textInput();
+        //         //.withAttributes({{"style", val("border: 3px dashed purple")}, {"size",
+        //         val(2)}}) .withAttributes({{"class", val("small_width")}}) .textInput();
 
         // maindiv->appendChild(canvas1);
         // maindiv->appendChild(canvas1CurrentCellColor_tinp);
         // childOfMaindivBuilder.br();
         // childOfMaindivBuilder.hr();
 
-        // CLNodeFactory<Select, vector<pair<int, string>>, int> selectBuilder(childOfMaindivBuilder);
-        // vector<pair<int, string>> *carOptions = new vector<pair<int, string>>;
-        // carOptions->push_back({0, "Chevy"});
-        // carOptions->push_back({1, "Ford"});
-        // carOptions->push_back({2, "Toyota"});
-        // carOptions->push_back({3, "Honda"});
+        // CLNodeFactory<Select, vector<pair<int, string>>, int>
+        // selectBuilder(childOfMaindivBuilder); vector<pair<int, string>> *carOptions = new
+        // vector<pair<int, string>>; carOptions->push_back({0, "Chevy"}); carOptions->push_back({1,
+        // "Ford"}); carOptions->push_back({2, "Toyota"}); carOptions->push_back({3, "Honda"});
 
         // Select<vector<pair<int, string>>> *carSelect =
         //     selectBuilder.withName("cars").withCppVal(carOptions).select();

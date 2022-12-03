@@ -29,7 +29,7 @@ class CanvasElement : public HybridNode<V> {
                   ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
         : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
-    ~CanvasElement() { cout << "DESTROYING CanvasElement with id: " << this->id_ << "\n"; }
+    ~CanvasElement() { this->nodelog("DESTROYING CanvasElement"); }
 
     inline string cppValToString() const {
         if (this->cppVal_ == nullptr) return "CanvasElement NULLPTR";
@@ -245,7 +245,7 @@ class CanvasGrid : public CanvasElement<V> {
         cellHeight_ = pixelHeight_ / gridHeight_;
     }
 
-    ~CanvasGrid() { cout << "DESTROYING CanvasGrid with id: " << this->id_ << "\n"; }
+    ~CanvasGrid() { this->nodelog("DESTROYING CanvasGrid"); }
 };
 
 }  // namespace clarity
