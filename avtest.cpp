@@ -1,0 +1,33 @@
+//#include "testbed.hpp"
+
+#include "AVTest.hpp"
+
+//#include <emscripten/wasm_worker.h>
+#include <stdio.h>
+
+#include <map>
+
+#include "CLNodeFactory.hpp"
+#include "ClarityNode.hpp"
+#include "PageContent.hpp"
+#include "clarity.hpp"
+#include "embindings.hpp"
+#include "globals.hpp"
+
+int gi = 32;
+
+void run_in_worker() {
+    printf("Hello from wasm worker!\n");
+    cout << "Global val: " << gi << endl;
+    
+}
+
+int main() {
+    //  emscripten_wasm_worker_t worker = emscripten_malloc_wasm_worker(/*stack size: */ 1024);
+    //  emscripten_wasm_worker_post_function_v(worker, run_in_worker);
+    
+    AVTest avtest;
+    TestFramework testFramework;
+    testFramework.content(avtest.content());
+    return 0;
+}
