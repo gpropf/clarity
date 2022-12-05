@@ -8,22 +8,22 @@
 
 template <template <typename V> class Nc, typename V, typename N>
 class ActiveVector {
-    typedef typename vector<pair<V*, ClarityNode*>>::iterator storageVectorIterator;
-
    public:
+    typedef typename vector<pair<V*, ClarityNode*>>::iterator storageVectorIterator;
     // ActiveVector() {}
     ActiveVector(ClarityNode* rootNode) { builder_ = builder_.withChildrenOf(rootNode); }
 
     virtual val deleteLastFn() = 0;
 
     virtual ClarityNode* makeElementControl(V* v) {
-        //val deleteLastFn =
-            
+        // val deleteLastFn =
 
         auto* reprNode = makeElementRepresentation(v);
         storageVectorIterator currentLast = storageVector_.end();
-        // std::function<void(val ev)> deleteLastFn = [&](val ev) { this->erase(currentLast); };
-        // val deleteEL = val::null();
+        // std::function<void(val ev)> deleteLastFn = [this,&currentLast](val ev) {
+        // this->erase(currentLast); }; val deleteLastFn =
+        // val::global("Util").call<val>("callMethodByName", this, val("erase"));
+        val deleteLastFn = this->deleteLastFn();
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
         // auto* deleteCheckbox =
         //     checkboxBuilder.withName("delete_" + clto_str(reprNode->getId())).checkbox();
@@ -31,7 +31,7 @@ class ActiveVector {
                                  .button("delete_btn_" + clto_str(reprNode->getId()), "X");
         auto* grp = builder_.group({reprNode, deleteButton});
         // deleteEL = ClarityNode::JSProxyNode_["makeDeleteNodeFn"](grp->getId());
-       // deleteButton->addEventListener(deleteLastFn, "click");
+        deleteButton->addEventListener(deleteLastFn, "click");
         return grp;
     }
 
@@ -45,7 +45,11 @@ class ActiveVector {
         return storageVector_.erase(position);
     }
 
-    // static void eraseFrom(decltype (this) v, storageVectorIterator i) {
+    val eraseFn(storageVectorIterator pos) {
+        return val([this, pos]() { this->erase(pos); });
+    }
+
+    // static void eraseFrom(ActiveVector<Nc,V,N> v, storageVectorIterator i) {
     //     v.erase(i);
     // }
     // erase(const iterator<pair<V*, ClarityNode*>> first, const iterator<pair<V*, ClarityNode*>>

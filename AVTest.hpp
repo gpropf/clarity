@@ -15,7 +15,9 @@ class AVString : public ActiveVector<HybridNode, string, int> {
     AVString(ClarityNode *rootNode) : ActiveVector(rootNode) {}
 
     virtual val deleteLastFn() {
-        return val::null();
+        //return val::null();
+        storageVectorIterator currentLast = storageVector_.end();
+        return val([this, currentLast]() {this->erase(currentLast);});
         //return val::global("Module")["AVString"].call<void>("eraseLast");
     }
 
@@ -28,10 +30,12 @@ class AVString : public ActiveVector<HybridNode, string, int> {
     }
 };
 
-EMSCRIPTEN_BINDINGS(AVString) {
+EMSCRIPTEN_BINDINGS(avstring) {
     class_<AVString>("AVString")
-        .function("erase", &AVString::erase, allow_raw_pointers());
-       // .function("eraseLast", &AVString::eraseLast, allow_raw_pointers());
+        //.class_function("eraseFrom", &AVString::ActiveVector::eraseFrom, allow_raw_pointers())
+        .function("erase", &AVString::erase, allow_raw_pointers())
+        .function("deleteLastFn", &AVString::deleteLastFn, allow_raw_pointers())
+        .function("eraseFn", &AVString::eraseFn, allow_raw_pointers());
 }
 
 /**
