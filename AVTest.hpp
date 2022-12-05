@@ -14,13 +14,9 @@ class AVString : public ActiveVector<HybridNode, string, int> {
    public:
     AVString(ClarityNode *rootNode) : ActiveVector(rootNode) {}
 
-    ClarityNode *map(string *s) {
-        ClarityNode *node = builder_.withName(*s).withCppVal(s).textInput();
-        CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
-        ClarityNode *deleteCheckbox =
-            checkboxBuilder.withName("delete_" + clto_str(node->getId())).checkbox();
-        ClarityNode *grp = builder_.group({node, deleteCheckbox});
-        return grp;
+    ClarityNode *makeElementRepresentation(string *s) {
+        auto *reprNode = builder_.withName("av_element").withCppVal(s).textInput();
+        return reprNode;
     }
 };
 

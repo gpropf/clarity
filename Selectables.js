@@ -10,9 +10,9 @@ class Selectables {
     return function (e) {
       Module.ClarityNode.updateNodeFromDomById(jsProxyNode.id)
       if (jsProxyNode.domElement.checked) {
-        jsProxyNode.nodelog("2 Checkbox is checked..");
+        jsProxyNode.nodelog("Checkbox is checked..");
       } else {
-        jsProxyNode.nodelog("2 Checkbox is not checked..");
+        jsProxyNode.nodelog("Checkbox is not checked..");
       }
     }
   }
@@ -20,8 +20,7 @@ class Selectables {
   static elgSelectAlltypesChange(jsProxyNode) {
     return function (e) {
       Module.ClarityNode.updateNodeFromDomById(jsProxyNode.id)
-      jsProxyNode.nodelog("<SELECT> value changed to: " + e.target.value);
-      //console.log("<SELECT> element id: " + jsProxyNode.id + " Value changed to: " + e.target.value);
+      jsProxyNode.nodelog("<SELECT> value changed to: " + e.target.value);      
     }
   }
 

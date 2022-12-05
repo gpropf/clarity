@@ -15,12 +15,17 @@ class ActiveVector {
     ActiveVector(ClarityNode* rootNode) { builder_ = builder_.withChildrenOf(rootNode); }
 
     virtual ClarityNode * makeElementControl(V * v) {
-        
+        auto *node = makeElementRepresentation(v);
+        CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
+        auto *deleteCheckbox =
+            checkboxBuilder.withName("delete_" + clto_str(node->getId())).checkbox();
+        auto *grp = builder_.group({node, deleteCheckbox});
+        return grp;
     }
 
-    virtual ClarityNode* map(V*) = 0;
+    virtual ClarityNode* makeElementRepresentation(V*) = 0;
     virtual void push_back(V* v) {
-        ClarityNode* node = map(v);
+        ClarityNode* node = makeElementControl(v);
         storageVector_.push_back(pair(v, node));
     }
 
