@@ -14,17 +14,24 @@ class ActiveVector {
     // ActiveVector() {}
     ActiveVector(ClarityNode* rootNode) { builder_ = builder_.withChildrenOf(rootNode); }
 
+    virtual val deleteLastFn() = 0;
+
     virtual ClarityNode* makeElementControl(V* v) {
+        //val deleteLastFn =
+            
+
         auto* reprNode = makeElementRepresentation(v);
-        val deleteEL = val::null();
+        storageVectorIterator currentLast = storageVector_.end();
+        // std::function<void(val ev)> deleteLastFn = [&](val ev) { this->erase(currentLast); };
+        // val deleteEL = val::null();
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
         // auto* deleteCheckbox =
         //     checkboxBuilder.withName("delete_" + clto_str(reprNode->getId())).checkbox();
-        auto* deleteButton = builder_.withAttributes({{"class", val("buttonDelete")}, {"disabled", val("disabled")}})
+        auto* deleteButton = builder_.withAttributes({{"class", val("buttonDelete")}})
                                  .button("delete_btn_" + clto_str(reprNode->getId()), "X");
         auto* grp = builder_.group({reprNode, deleteButton});
-        deleteEL = ClarityNode::JSProxyNode_["makeDeleteNodeFn"](grp->getId());
-        deleteButton->addEventListener(deleteEL, "click");
+        // deleteEL = ClarityNode::JSProxyNode_["makeDeleteNodeFn"](grp->getId());
+       // deleteButton->addEventListener(deleteLastFn, "click");
         return grp;
     }
 
@@ -37,6 +44,10 @@ class ActiveVector {
     storageVectorIterator erase(storageVectorIterator position) {
         return storageVector_.erase(position);
     }
+
+    // static void eraseFrom(decltype (this) v, storageVectorIterator i) {
+    //     v.erase(i);
+    // }
     // erase(const iterator<pair<V*, ClarityNode*>> first, const iterator<pair<V*, ClarityNode*>>
     // last) {
     //     return storageVector_.erase(first, last);

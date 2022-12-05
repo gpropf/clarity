@@ -14,6 +14,11 @@ class AVString : public ActiveVector<HybridNode, string, int> {
    public:
     AVString(ClarityNode *rootNode) : ActiveVector(rootNode) {}
 
+    virtual val deleteLastFn() {
+        return val::null();
+        //return val::global("Module")["AVString"].call<void>("eraseLast");
+    }
+
     ClarityNode *makeElementRepresentation(string *s) {
         auto *reprNode = builder_.withName("av_element")
                              .withCppVal(s)
@@ -22,6 +27,12 @@ class AVString : public ActiveVector<HybridNode, string, int> {
         return reprNode;
     }
 };
+
+EMSCRIPTEN_BINDINGS(AVString) {
+    class_<AVString>("AVString")
+        .function("erase", &AVString::erase, allow_raw_pointers());
+       // .function("eraseLast", &AVString::eraseLast, allow_raw_pointers());
+}
 
 /**
  * @brief Testbed for ActiveVector class
@@ -58,6 +69,8 @@ struct AVTest : public PageContent {
         AVString avstring(static_cast<ClarityNode *>(avstringsDiv));
         string *s = new string("FOO_String");
         avstring.push_back(s);
+        string *s2 = new string("BOO_String");
+        avstring.push_back(s2);
 
         printf("Setup complete!\n");
         return maindiv;
