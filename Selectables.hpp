@@ -50,7 +50,7 @@ class Select : public HybridNode<V> {
         this->jsProxyNode_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
-        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("Select"),
+        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", val("Select"),
                                              this->jsProxyNode_, listenerGenerators);
     }
 
@@ -104,7 +104,7 @@ class SimpleSelect : public HybridNode<V> {
         this->jsProxyNode_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
-        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2",
+        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType",
                                              val("SimpleSelect"), this->jsProxyNode_,
                                              listenerGenerators);
     }
@@ -167,7 +167,7 @@ class Checkbox : public HybridNode<V> {
         this->jsProxyNode_.set("clarityNode", this);
         val Selectables = val::global("Selectables");
         val listenerGenerators = Selectables["listenerGenerators"];
-        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("Checkbox"),
+        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", val("Checkbox"),
                                              this->jsProxyNode_, listenerGenerators);
     }
 

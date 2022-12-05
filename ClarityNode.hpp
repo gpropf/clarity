@@ -655,7 +655,7 @@ class HybridNode : public ClarityNode {
         this->jsProxyNode_.set("clarityNode", this);
         // val Selectables = val::global("Selectables");
         val listenerGenerators = JSProxyNode_["listenerGenerators"];
-        JSProxyNode_.call<void>("installEventListenersByTagAndType2", val("HybridNode"),
+        JSProxyNode_.call<void>("installEventListenersByTagAndType", val("HybridNode"),
                                 this->jsProxyNode_, listenerGenerators);
     }
 

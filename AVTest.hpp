@@ -1,17 +1,31 @@
 #ifndef showcase_hpp
 #define showcase_hpp
 
+#include "ActiveVector.hpp"
 #include "CLNodeFactory.hpp"
 #include "CanvasElement.hpp"
 #include "ClarityNode.hpp"
 #include "PageContent.hpp"
 #include "clarity.hpp"
-#include "ActiveVector.hpp"
 
 using namespace clarity;
 
+class AVString : public ActiveVector<HybridNode, string, int> {
+   public:
+    AVString(ClarityNode *rootNode) : ActiveVector(rootNode) {}
+
+    ClarityNode *map(string *s) {
+        ClarityNode *node = builder_.withName(*s).withCppVal(s).textInput();
+        CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
+        ClarityNode *deleteCheckbox =
+            checkboxBuilder.withName("delete_" + clto_str(node->getId())).checkbox();
+        ClarityNode *grp = builder_.group({node, deleteCheckbox});
+        return grp;
+    }
+};
+
 /**
- * @brief Used to test all the major types of web controls.
+ * @brief Testbed for ActiveVector class
  *
  */
 struct AVTest : public PageContent {
@@ -52,7 +66,11 @@ struct AVTest : public PageContent {
                                     .withStateFunction(stateFn)
                                     .textInput();
 
-        
+        // ClarityNode * clroot = &*maindiv;
+        auto *avstringsDiv = childOfMaindivBuilder.withTag("div").withName("AVStringsDiv").build();
+        AVString avstring(static_cast<ClarityNode *>(avstringsDiv));
+        string *s = new string("FOO_String");
+        avstring.push_back(s);
 
         printf("Setup complete!\n");
         return maindiv;

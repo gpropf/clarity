@@ -414,7 +414,7 @@ class JSProxyNode {
   }
 
 
-  static installEventListenersByTagAndType2(clarityNodeClass, cle,  listenerGeneratorMap) {      
+  static installEventListenersByTagAndType(clarityNodeClass, cle,  listenerGeneratorMap) {      
     if (cle.domElement == null) return;  
     var eventListenerGenerators = JSProxyNode.getEventListenerGenerators2(listenerGeneratorMap, clarityNodeClass, cle.tag_, cle.domElement.getAttribute("type"));
     if (eventListenerGenerators == null) return;    
@@ -430,6 +430,12 @@ class JSProxyNode {
     })
   }
 
+  /**
+   * Encapsulates a function in an event listener.
+   * 
+   * @param {Function} fn 
+   * @returns 
+   */
   eventListenerify(fn) {
     return (ev) => {fn()}
   }
@@ -455,7 +461,6 @@ class JSProxyNode {
     var domElement = this.domElement_;
     clearCanvasUsingDomElement(domElement, fillColor);
   }
-
 
   canvasTestPattern() {
     var domElement = this.domElement_;

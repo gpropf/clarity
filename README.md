@@ -38,7 +38,11 @@ The current system is the result of several complete refactorings over the Summe
 
 __JavaScript__
 
-I've tried to keep most of the functionality in the C++ code but when dealing with things like event listeners, some JavaScript is unavoidable. There is one main JavaScript file called `Clarity.js`. It contains a class called `JSProxyNode` that acts as a kind of "mirror image" of `ClarityNode` in the JS world. It exists to carry out the system's tasks for a given node on the JS side. There's also `Selectables.js` which performs similar tasks for the C++ classes in `Selectables.cpp`. These files might end up getting merged. There's also `Util.js` which does what the name suggests it might. 
+I've tried to keep most of the functionality in the C++ code but when dealing with things like event listeners, some JavaScript is unavoidable. There is one main JavaScript file called `JSProxyNode.js`. It contains a class called `JSProxyNode` that acts as a kind of "mirror image" of `ClarityNode` in the JS world. It exists to carry out the system's tasks for a given node on the JS side. There's also `Selectables.js` which contains some event listener generators that support the C++ classes in `Selectables.cpp`. There's also `Util.js` which does what the name suggests it might.
+
+### Event Listener Generators
+
+One idiom that I make use of throughout the project is that of the event listener generator. This is a function that generally takes a bound C++ or plain JavaScript object as an argument and returns an event listener function. These functions are useful for encapsulating object behavior in web controls. The best example being button event listeners which fire when the user clicks the button. Every text or other input control, however, has its own event listener that is manufactured for it by one of these generator functions. There are several static objects called `listenerGenerators` in `JSProxyNode.js` and other JavaScript files that organize these functions according to C++ class, HTML tag, and input type, in that order. When an input control is created a method called `installEventListenersByTagAndType` in `JSProxyNode` is run to equip it with the appropriate listener.
 
 ### The C++ Object Hierarchy ###
 
@@ -151,7 +155,8 @@ There is of course the possibility of developing something akin to React's JSX p
 * All of the C++ library code is contained within the `clarity` namespace.
 * Brackets: the first bracket is on the same line as the method name.
 * Member variables: member vars end with an underscore in both C++ and JS code.
-* In some places I've used underscore to indicate that what follows is some sort of type information so you have things like "_tinp" for "text input".
+* In some places I've used underscore to indicate that what follows is some sort of type information
+  so you have things like "_tinp" for "text input".
   
 #### Source Code Files ####
 
@@ -190,8 +195,6 @@ If you see a BindingError like this on loading a page you've created the issue i
 ```
 
 The 4 letters at the end of the type actually tell you exactly what's missing. In this case the most relevant part is the 'b' which means type `bool`. So essentially we didn't have a Checkbox<bool> type defined anywhere.
-
-
 
 #### Important Constants and Definitions ####
 
