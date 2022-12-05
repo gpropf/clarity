@@ -15,7 +15,10 @@ class AVString : public ActiveVector<HybridNode, string, int> {
     AVString(ClarityNode *rootNode) : ActiveVector(rootNode) {}
 
     ClarityNode *makeElementRepresentation(string *s) {
-        auto *reprNode = builder_.withName("av_element").withCppVal(s).textInput();
+        auto *reprNode = builder_.withName("av_element")
+                             .withCppVal(s)
+                             .withHoverText(string("Edit this element"))
+                             .textInput();
         return reprNode;
     }
 };
@@ -45,21 +48,9 @@ struct AVTest : public PageContent {
         CLNodeFactory<HybridNode, double, double> childOfMaindivBuilder =
             builder.withChildrenOf(maindiv);
 
-        // Shows the use of the stateFunction_ member of HybridNode. Sets the field background to a
-        // shade that goes from purple to light green depending on the value entered.
-        std::function<void(HybridNode<double> *, double *v)> stateFn = [&](HybridNode<double> *hn,
-                                                                           double *v) {
-            cout << "stateFunction_: v = " << *hn->getCppVal() << endl;
-            string colorString =
-                "background-color: rgb(200," + clto_str(int(*hn->getCppVal())) + ",50)" + ";";
-            hn->nodelog("Trying to set style: " + colorString);
-            hn->getDomElement().template call<void>("setAttribute", val("style"), val(colorString));
-        };
-
         auto *cir1Radius_tinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
                                     .withName("cir1Radius_tinp")
                                     .withCppVal(cir1Radius_value)
-                                    .withStateFunction(stateFn)
                                     .textInput();
 
         // ClarityNode * clroot = &*maindiv;

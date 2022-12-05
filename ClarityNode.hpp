@@ -676,6 +676,7 @@ class HybridNode : public ClarityNode {
     void setCppValFromJSVal(const val &jsval) {
         V newCppVal = jsval.as<V>();
         *reinterpret_cast<V *>(cppVal_) = newCppVal;
+        runStateFunction();
         pushValToPeers(this);
     }
 

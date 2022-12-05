@@ -14,12 +14,17 @@ class ActiveVector {
     // ActiveVector() {}
     ActiveVector(ClarityNode* rootNode) { builder_ = builder_.withChildrenOf(rootNode); }
 
-    virtual ClarityNode * makeElementControl(V * v) {
-        auto *node = makeElementRepresentation(v);
+    virtual ClarityNode* makeElementControl(V* v) {
+        auto* reprNode = makeElementRepresentation(v);
+        val deleteEL = val::null();
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
-        auto *deleteCheckbox =
-            checkboxBuilder.withName("delete_" + clto_str(node->getId())).checkbox();
-        auto *grp = builder_.group({node, deleteCheckbox});
+        // auto* deleteCheckbox =
+        //     checkboxBuilder.withName("delete_" + clto_str(reprNode->getId())).checkbox();
+        auto* deleteButton = builder_.withAttributes({{"class", val("buttonDelete")}, {"disabled", val("disabled")}})
+                                 .button("delete_btn_" + clto_str(reprNode->getId()), "X");
+        auto* grp = builder_.group({reprNode, deleteButton});
+        deleteEL = ClarityNode::JSProxyNode_["makeDeleteNodeFn"](grp->getId());
+        deleteButton->addEventListener(deleteEL, "click");
         return grp;
     }
 

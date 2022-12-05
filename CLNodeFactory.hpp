@@ -88,7 +88,7 @@ class CLNodeFactory {
      * new node in the DOM.*/
     string attachmentId_ = "";
 
-    std::function<void(HybridNode<V>*,V*)> stateFunction_;
+    std::function<void(HybridNode<V> *, V *)> stateFunction_;
 
     /**
      * @brief Construct a new CLNodeFactory object from another of possibly different template
@@ -482,6 +482,26 @@ class CLNodeFactory {
     }
 
     /**
+     * @brief Uses the 'title' attribute to provide a convenient way to create hover text.
+     *
+     * @param hoverText
+     * @return INLINE
+     */
+    INLINE CLNodeFactory withHoverText(const string &hoverText) const & {
+        CLNodeFactory cpy(*this);
+        map<string, val> hoverTextAttrs = {{"title", val(hoverText)}};
+        cpy.attrs_.merge(hoverTextAttrs);
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withHoverText(const string &hoverText) && {
+        CLNodeFactory cpy(std::move(*this));
+        map<string, val> hoverTextAttrs = {{"title", val(hoverText)}};
+        cpy.attrs_.merge(hoverTextAttrs);
+        return cpy;
+    }
+
+    /**
      * @brief For nodes that don't have a cppVal_ or a peer that can provide them with an initial
      * value we can supply one here.
      *
@@ -525,13 +545,15 @@ class CLNodeFactory {
         return cpy;
     }
 
-    INLINE CLNodeFactory withStateFunction(std::function<void(HybridNode<V>*,V*)> stateFunction) const & {
+    INLINE CLNodeFactory
+    withStateFunction(std::function<void(HybridNode<V> *, V *)> stateFunction) const & {
         CLNodeFactory cpy(*this);
         cpy.stateFunction_ = stateFunction;
         return cpy;
     }
 
-    INLINE CLNodeFactory withStateFunction(std::function<void(HybridNode<V>*,V*)> stateFunction) && {
+    INLINE CLNodeFactory
+    withStateFunction(std::function<void(HybridNode<V> *, V *)> stateFunction) && {
         CLNodeFactory cpy(std::move(*this));
         cpy.stateFunction_ = stateFunction;
         return cpy;
