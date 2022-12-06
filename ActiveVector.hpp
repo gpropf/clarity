@@ -21,40 +21,44 @@ class ActiveVector {
         }
     }
 
-    virtual val deleteLastFn() {
+    virtual val deleteFirstFn() {
         cout << "ActiveVector::Creating deleter function for index: " << currentIndex_ << endl;
-        val deleteLastEL = val::global("eraseNth")(*this, val(currentIndex_));
-        return deleteLastEL;
+        val deleteFirstEL = val::global("eraseNth")(*this, val(currentIndex_));
+        return deleteFirstEL;
     }
 
-    storageVectorIterator find(std::function<bool(pair<V*,HybridNode<V>*>)> findFunction) {
-
+    pair<V*, HybridNode<V>*> find(std::function<bool(pair<V*, HybridNode<V>*>)> findFunction) {
+        int i=0;
+        for (storageVectorIterator it = storageVector_.begin(); it != storageVector_.end(); it++, i++) {
+            if (findFunction(storageVector_[i])) return storageVector_[i];
+        }
+        return pair(nullptr, nullptr);
     }
 
     virtual HybridNode<V>* makeElementControl(V* v) {
-        // val deleteLastFn =
+        // val deleteFirstFn =
 
         auto* reprNode = makeElementRepresentation(v);
-        storageVectorIterator currentLast = storageVector_.end();
-        // std::function<void(val ev)> deleteLastFn = [this,&currentLast](val ev) {
-        // this->erase(currentLast); }; val deleteLastFn =
+        storageVectorIterator currentFirst = storageVector_.end();
+        // std::function<void(val ev)> deleteFirstFn = [this,&currentFirst](val ev) {
+        // this->erase(currentFirst); }; val deleteFirstFn =
         // val::global("Util").call<val>("callMethodByName", this, val("erase"));
-        // val deleteLastFn = this->deleteLastFn();
+        // val deleteFirstFn = this->deleteFirstFn();
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
 
         // auto* deleteCheckbox =
         //     checkboxBuilder.withName("delete_" + clto_str(reprNode->getId())).checkbox();
 
-        // val deleteLastEL = val::global("eraseNth")(val(this), val(0));
-        val deleteLastEL = deleteLastFn();
-        // val deleteLastEL = val::null();
+        // val deleteFirstEL = val::global("eraseNth")(val(this), val(0));
+        val deleteFirstEL = deleteFirstFn();
+        // val deleteFirstEL = val::null();
 
         auto* deleteButton =
             builder_.withAttributes({{"class", val("buttonDelete")}})
-                .button("delete_btn_" + clto_str(reprNode->getId()), "X", deleteLastEL);
+                .button("delete_btn_" + clto_str(reprNode->getId()), "X", deleteFirstEL);
         auto* grp = builder_.group({reprNode, deleteButton});
         // deleteEL = HybridNode<V>::JSProxyNode_["makeDeleteNodeFn"](grp->getId());
-        // deleteButton->addEventListener(deleteLastFn, "click");
+        // deleteButton->addEventListener(deleteFirstFn, "click");
         return grp;
     }
 
@@ -83,17 +87,16 @@ class ActiveVector {
     //     return val([this, pos]() { this->erase(pos); });
     // }
 
-    //static void eraseFrom(ActiveVector<Nc, V, N> v, storageVectorIterator i) { v.erase(i); }
-    // erase(const iterator<pair<V*, HybridNode<V>*>> first, const iterator<pair<V*, HybridNode<V>*>>
-    // last) {
-    //     return storageVector_.erase(first, last);
-    // }
+    // static void eraseFrom(ActiveVector<Nc, V, N> v, storageVectorIterator i) { v.erase(i); }
+    //  erase(const iterator<pair<V*, HybridNode<V>*>> first, const iterator<pair<V*,
+    //  HybridNode<V>*>> last) {
+    //      return storageVector_.erase(first, last);
+    //  }
 
     // protected:
     CLNodeFactory<Nc, V, N> builder_;
     vector<pair<V*, HybridNode<V>*>> storageVector_;
     int currentIndex_ = 0;
 };
-
 
 #endif

@@ -8,11 +8,11 @@ function countElementsELG(avstring) {
     }
 }
 
-function deleteLast(avstring, iterator) {
+function deleteFirst(avstring, iterator) {
     return function (ev) {
         console.log(avstring);
         console.log(iterator);
-        console.log("deleteLast Clicked!");
+        console.log("deleteFirst Clicked!");
         avstring.erase(iterator);
     }
 }

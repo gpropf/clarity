@@ -16,7 +16,7 @@ class AVString : public ActiveVector<HybridNode, string, int> {
    public:
     AVString(HybridNode<string> *rootNode) : ActiveVector(rootNode) {}
 
-    virtual val deleteLastFn();
+    virtual val deleteFirstFn();
 
     void countElements() { ActiveVector<HybridNode, string, int>::countElements(); }
 
@@ -65,16 +65,16 @@ EMSCRIPTEN_BINDINGS(avstring) {
         .constructor<HybridNode<string> *>()
         .function("erase", &AVString::erase, allow_raw_pointers())
         .function("eraseNth", &AVString::eraseNth, allow_raw_pointers())
-        // .function("deleteLastFn", &AVString::deleteLastFn, allow_raw_pointer<arg<0>>())
-        .function("deleteLastFn", &AVString::deleteLastFn, allow_raw_pointers())
+        // .function("deleteFirstFn", &AVString::deleteFirstFn, allow_raw_pointer<arg<0>>())
+        .function("deleteFirstFn", &AVString::deleteFirstFn, allow_raw_pointers())
         .function("countElements", &AVString::countElements, allow_raw_pointers());
     //.function("eraseFn", &AVString::eraseFn, allow_raw_pointers());
 }
 
-val AVString::deleteLastFn() {
+val AVString::deleteFirstFn() {
     cout << "AVString::Creating deleter function for index: " << currentIndex_ << endl;
-    val deleteLastEL = val::global("eraseNth")(*this, val(currentIndex_));
-    return deleteLastEL;
+    val deleteFirstEL = val::global("eraseNth")(*this, val(currentIndex_));
+    return deleteFirstEL;
     // return val::null();
 }
 
@@ -112,9 +112,19 @@ struct AVTest : public PageContent {
         auto *countElementsBtn =
             builder.button("countElementsBtn", "Count Elements", countElementsELG);
 
-        val deleteLastEL = val::global("eraseNth")(avstring, val(0));
+        val deleteFirstEL = val::global("eraseNth")(avstring, val(0));
 
-        auto *deleteLastBtn = builder.button("deleteLastBtn", "Delete Last", deleteLastEL);
+        auto *deleteFirstBtn = builder.button("deleteFirstBtn", "Delete First", deleteFirstEL);
+
+        auto ff =
+            [](pair<string *, HybridNode<string> *> p) {
+                if (*p.first == "BOO_String") return true;
+                return false;
+            };
+
+        auto greg = avstring->find(ff);
+
+        cout << (greg.second)->getId() << endl;
 
         printf("Setup complete!\n");
         return maindiv;
