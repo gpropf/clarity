@@ -764,7 +764,7 @@ class HybridNode : public ClarityNode {
         pushValToPeers(this);
     }
 
-    ~HybridNode() {  // cout << "DESTROYING HybridNode with id: " << id_ << "\n";
+    virtual ~HybridNode() {  // cout << "DESTROYING HybridNode with id: " << id_ << "\n";
     }
 
    protected:

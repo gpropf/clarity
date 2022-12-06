@@ -41,7 +41,7 @@ class Select : public HybridNode<V> {
            ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
         : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
-    ~Select() { 
+    virtual ~Select() { 
         this->nodelog("DESTROYING Select");
     }
 
@@ -92,7 +92,7 @@ class SimpleSelect : public HybridNode<V> {
                  ClarityNode::AttachmentMode attachmentMode, const string &attachmentId = "")
         : HybridNode<V>(name, tag, useExistingDOMElement, attachmentMode, attachmentId) {}
 
-    ~SimpleSelect() { this->nodelog("DESTROYING SimpleSelect"); }
+    virtual ~SimpleSelect() { this->nodelog("DESTROYING SimpleSelect"); }
 
     //inline void foo() { cout << "SimpleSelect says FOO!" << endl; }
 
@@ -171,7 +171,7 @@ class Checkbox : public HybridNode<V> {
                                              this->jsProxyNode_, listenerGenerators);
     }
 
-    ~Checkbox() { this->nodelog("DESTROYING Checkbox"); }
+    virtual ~Checkbox() { this->nodelog("DESTROYING Checkbox"); }
 
     inline string cppValToString() const {
         if (this->cppVal_ == nullptr) return "Checkbox nullptr";

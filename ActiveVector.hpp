@@ -6,6 +6,20 @@
 
 #include "CLNodeFactory.hpp"
 
+/**
+ * @brief An experiment in creating a sort of "active mapping" container. The basic idea is that we
+ * maintain a GUI representation of each element in a collection that grows or shrinks automatically
+ * as the source collection does. So if an element is added, a new GUI element appears and if a
+ * source element is deleted, the representation of it also vanishes. This is essentially a
+ * classical Functor as thought of in category theory but without the notion of mapping the "arrows"
+ * that exist amongst the source category. The intended applications are pretty broad. One thing I'm
+ * hoping to do here is automatically manage the <option> tags that exist in <select> dropdowns but
+ * I'd also like to use this to facilitate writing GUI builder and monitoring tools.
+ *
+ * @tparam Nc
+ * @tparam V
+ * @tparam N
+ */
 template <template <typename V> class Nc, typename V, typename N>
 class ActiveVector {
    public:
