@@ -93,11 +93,11 @@ struct AVTest : public PageContent {
 
         // ClarityNode * clroot = &*maindiv;
         auto *avstringsDiv = childOfMaindivBuilder.withTag("div").withName("AVStringsDiv").build();
-        AVString avstring(static_cast<ClarityNode *>(avstringsDiv));
+        AVString * avstring = new AVString(static_cast<ClarityNode *>(avstringsDiv));
         string *s = new string("FOO_String");
-        avstring.push_back(s);
+        avstring->push_back(s);
         string *s2 = new string("BOO_String");
-        avstring.push_back(s2);
+        avstring->push_back(s2);
 
         // val ActiveVectorCtx = val::global("Module.AVString.countElements");
         //  ActiveVector<HybridNode, string, int>::storageVectorIterator currentLast =
