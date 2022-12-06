@@ -25,10 +25,17 @@ class ActiveVector {
         // val::global("Util").call<val>("callMethodByName", this, val("erase"));
         // val deleteLastFn = this->deleteLastFn();
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
+
         // auto* deleteCheckbox =
         //     checkboxBuilder.withName("delete_" + clto_str(reprNode->getId())).checkbox();
-        auto* deleteButton = builder_.withAttributes({{"class", val("buttonDelete")}})
-                                 .button("delete_btn_" + clto_str(reprNode->getId()), "X");
+
+        // val deleteLastEL = val::global("eraseNth")(val(this), val(0));
+        val deleteLastEL = deleteLastFn();
+       // val deleteLastEL = val::null();
+
+        auto* deleteButton =
+            builder_.withAttributes({{"class", val("buttonDelete")}})
+                .button("delete_btn_" + clto_str(reprNode->getId()), "X", deleteLastEL);
         auto* grp = builder_.group({reprNode, deleteButton});
         // deleteEL = ClarityNode::JSProxyNode_["makeDeleteNodeFn"](grp->getId());
         // deleteButton->addEventListener(deleteLastFn, "click");
@@ -38,7 +45,9 @@ class ActiveVector {
     virtual ClarityNode* makeElementRepresentation(V*) { return nullptr; };  // FIXME!
     virtual void push_back(V* v) {
         ClarityNode* node = makeElementControl(v);
+
         storageVector_.push_back(pair(v, node));
+        currentIndex_++;
     }
 
     storageVectorIterator erase(storageVectorIterator position) {
@@ -47,6 +56,9 @@ class ActiveVector {
 
     storageVectorIterator eraseNth(int n) {
         storageVectorIterator nIter = storageVector_.begin() + n;
+        auto [element, node] = storageVector_[n];
+        delete element;
+        delete node;
         return storageVector_.erase(nIter);
     }
 
@@ -60,9 +72,16 @@ class ActiveVector {
     //     return storageVector_.erase(first, last);
     // }
 
-   //protected:
+    // protected:
     CLNodeFactory<Nc, V, N> builder_;
     vector<pair<V*, ClarityNode*>> storageVector_;
+    int currentIndex_ = 0;
 };
+
+// EMSCRIPTEN_BINDINGS(activeVector) {
+//     class_<ActiveVector<HybridNode, string, int>>("ActiveVector")
+//         .function("eraseNth", &ActiveVector<HybridNode, string, int>::eraseNth,
+//                   allow_raw_pointers());
+// }
 
 #endif

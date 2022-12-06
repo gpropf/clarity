@@ -10,16 +10,13 @@
 
 using namespace clarity;
 
+// class AVString;
+
 class AVString : public ActiveVector<HybridNode, string, int> {
    public:
     AVString(ClarityNode *rootNode) : ActiveVector(rootNode) {}
 
-    virtual val deleteLastFn() {
-        // return val::null();
-        storageVectorIterator currentLast = storageVector_.end();
-        return val([this, currentLast]() { this->erase(currentLast); });
-        // return val::global("Module")["AVString"].call<void>("eraseLast");
-    }
+    virtual val deleteLastFn();
 
     ClarityNode *makeElementRepresentation(string *s) {
         auto *reprNode = builder_.withName("av_element")
@@ -34,20 +31,26 @@ class AVString : public ActiveVector<HybridNode, string, int> {
     }
 
     storageVectorIterator eraseNth(int n) {
-        storageVectorIterator nIter = storageVector_.begin() + n;
-        storageVectorIterator erasedIter = this->erase(nIter);
-        this->countElements(100);
+        // storageVectorIterator nIter = storageVector_.begin() + n;
+        // storageVectorIterator erasedIter = this->erase(nIter);
+        // this->countElements(100);
+        storageVectorIterator erasedIter = ActiveVector<HybridNode, string, int>::eraseNth(n);
+
         return erasedIter;
     }
 
-    void countElements(int lastSize) {
+    void countElements() {
         cout << "This vector has " << this->storageVector_.size() << " elements" << endl;
-        cout << "Last size was " << lastSize << " elements" << endl;
+        for (auto [element, node] : this->storageVector_) {
+            cout << "ELEM: " << *element << " : " << node->getId() << endl;
+        }
     }
 };
 
 EMSCRIPTEN_BINDINGS(avstring) {
     class_<ActiveVector<HybridNode, string, int>>("ActiveVector")
+        .function("eraseNth", &ActiveVector<HybridNode, string, int>::eraseNth,
+                  allow_raw_pointers())
         .class_function("eraseFrom", &ActiveVector<HybridNode, string, int>::eraseFrom,
                         allow_raw_pointers());
 
@@ -56,9 +59,15 @@ EMSCRIPTEN_BINDINGS(avstring) {
     class_<AVString>("AVString")
         .function("erase", &AVString::erase, allow_raw_pointers())
         .function("eraseNth", &AVString::eraseNth, allow_raw_pointers())
-        .function("deleteLastFn", &AVString::deleteLastFn, allow_raw_pointers())
+        .function("deleteLastFn", &AVString::deleteLastFn, allow_raw_pointer<arg<0>>())
         .function("countElements", &AVString::countElements, allow_raw_pointers())
         .function("eraseFn", &AVString::eraseFn, allow_raw_pointers());
+}
+
+val AVString::deleteLastFn() {  // return val::null();
+    val deleteLastEL = val::global("eraseNth")(*this, val(currentIndex_));
+    return deleteLastEL;
+    // return val::null();
 }
 
 /**
@@ -93,18 +102,22 @@ struct AVTest : public PageContent {
 
         // ClarityNode * clroot = &*maindiv;
         auto *avstringsDiv = childOfMaindivBuilder.withTag("div").withName("AVStringsDiv").build();
-        AVString * avstring = new AVString(static_cast<ClarityNode *>(avstringsDiv));
-        string *s = new string("FOO_String");
-        avstring->push_back(s);
+        AVString *avstring = new AVString(static_cast<ClarityNode *>(avstringsDiv));
+        string *s1 = new string("FOO_String");
+        avstring->push_back(s1);
         string *s2 = new string("BOO_String");
         avstring->push_back(s2);
+        string *s3 = new string("Greg");
+        avstring->push_back(s3);
+        string *s4 = new string("Abby");
+        avstring->push_back(s4);
 
         // val ActiveVectorCtx = val::global("Module.AVString.countElements");
         //  ActiveVector<HybridNode, string, int>::storageVectorIterator currentLast =
         //      avstring.storageVector_.end();
         //  ActiveVectorCtx(val(avstring),val(currentLast));
 
-        val countElementsELG = val::global("countElementsELG")(avstring, val(0));
+        val countElementsELG = val::global("countElementsELG")(avstring);
         auto *countElementsBtn =
             childOfMaindivBuilder.button("countElementsBtn", "Count Elements", countElementsELG);
 

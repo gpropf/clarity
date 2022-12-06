@@ -1,10 +1,10 @@
 
 
-function countElementsELG(avstring, lastSize) {
+function countElementsELG(avstring) {
     return function (ev) {
         console.log("Count Elements  Clicked!");
         console.log(avstring);
-        avstring.countElements(lastSize);
+        avstring.countElements();
     }
 }
 
@@ -21,8 +21,7 @@ function eraseNth(avstring, n) {
     return function (ev) {
         console.log("eraseNth Clicked!");
         console.log(avstring);
-        console.log(n);
-        
+        console.log(n);        
         avstring.eraseNth(n);
     }
 }
