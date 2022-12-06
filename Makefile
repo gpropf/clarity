@@ -42,7 +42,7 @@ simpletest: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
 	$(ENV) $(CC) $(CFLAGS) -lembind simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o -o $(JSOUT)
 
 avtest: avtest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(ENV) $(CC) $(CFLAGS) -lembind avtest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o -o $(JSOUT)
+	$(ENV) $(CC) $(CFLAGS) -lembind --pre-js ActiveVector.js avtest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o -o $(JSOUT)
 
 simpletest-ww: CFLAGS = $(DEBUG_CFLAGS) -sWASM_WORKERS
 simpletest-ww: simpletest.o ClarityNode.o CanvasElement.o Selectables.o clarity.o

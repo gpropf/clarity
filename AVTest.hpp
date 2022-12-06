@@ -15,10 +15,10 @@ class AVString : public ActiveVector<HybridNode, string, int> {
     AVString(ClarityNode *rootNode) : ActiveVector(rootNode) {}
 
     virtual val deleteLastFn() {
-        //return val::null();
+        // return val::null();
         storageVectorIterator currentLast = storageVector_.end();
-        return val([this, currentLast]() {this->erase(currentLast);});
-        //return val::global("Module")["AVString"].call<void>("eraseLast");
+        return val([this, currentLast]() { this->erase(currentLast); });
+        // return val::global("Module")["AVString"].call<void>("eraseLast");
     }
 
     ClarityNode *makeElementRepresentation(string *s) {
@@ -28,13 +28,36 @@ class AVString : public ActiveVector<HybridNode, string, int> {
                              .textInput();
         return reprNode;
     }
+
+    storageVectorIterator erase(storageVectorIterator position) {
+        return ActiveVector<HybridNode, string, int>::erase(position);
+    }
+
+    storageVectorIterator eraseNth(int n) {
+        storageVectorIterator nIter = storageVector_.begin() + n;
+        storageVectorIterator erasedIter = this->erase(nIter);
+        this->countElements(100);
+        return erasedIter;
+    }
+
+    void countElements(int lastSize) {
+        cout << "This vector has " << this->storageVector_.size() << " elements" << endl;
+        cout << "Last size was " << lastSize << " elements" << endl;
+    }
 };
 
 EMSCRIPTEN_BINDINGS(avstring) {
+    class_<ActiveVector<HybridNode, string, int>>("ActiveVector")
+        .class_function("eraseFrom", &ActiveVector<HybridNode, string, int>::eraseFrom,
+                        allow_raw_pointers());
+
+    class_<ActiveVector<HybridNode, string, int>::storageVectorIterator>("storageVectorIterator");
+
     class_<AVString>("AVString")
-        //.class_function("eraseFrom", &AVString::ActiveVector::eraseFrom, allow_raw_pointers())
         .function("erase", &AVString::erase, allow_raw_pointers())
+        .function("eraseNth", &AVString::eraseNth, allow_raw_pointers())
         .function("deleteLastFn", &AVString::deleteLastFn, allow_raw_pointers())
+        .function("countElements", &AVString::countElements, allow_raw_pointers())
         .function("eraseFn", &AVString::eraseFn, allow_raw_pointers());
 }
 
@@ -76,6 +99,26 @@ struct AVTest : public PageContent {
         string *s2 = new string("BOO_String");
         avstring.push_back(s2);
 
+        // val ActiveVectorCtx = val::global("Module.AVString.countElements");
+        //  ActiveVector<HybridNode, string, int>::storageVectorIterator currentLast =
+        //      avstring.storageVector_.end();
+        //  ActiveVectorCtx(val(avstring),val(currentLast));
+
+        val countElementsELG = val::global("countElementsELG")(avstring, val(0));
+        auto *countElementsBtn =
+            childOfMaindivBuilder.button("countElementsBtn", "Count Elements", countElementsELG);
+
+        // ActiveVector<HybridNode, string, int>::storageVectorIterator currentLast =
+        //     avstring.storageVector_.begin();
+
+        val deleteLastEL = val::global("eraseNth")(avstring, val(0));
+
+        auto *deleteLastBtn =
+            childOfMaindivBuilder.button("deleteLastBtn", "Delete Last", deleteLastEL);
+
+        // val deleteLastFn = val::global("Util")["callMethodByName"](avstring,
+        // val("countElements"));
+        //  val deleteLastFn = ActiveVectorCtx["eraseFrom"];
         printf("Setup complete!\n");
         return maindiv;
     }
