@@ -13,7 +13,23 @@ class ActiveVector {
     // ActiveVector() {}
     ActiveVector(ClarityNode* rootNode) { builder_ = builder_.withChildrenOf(rootNode); }
 
-    virtual val deleteLastFn() { return val::null(); }
+    void countElements() {
+        cout << "This vector has " << this->storageVector_.size() << " elements" << endl;
+        cout << "this pointer = " << this << endl;
+        for (auto [element, node] : this->storageVector_) {
+            cout << "ELEM: " << *element << " : " << node->getId() << endl;
+        }
+    }
+
+    virtual val deleteLastFn() {
+        cout << "ActiveVector::Creating deleter function for index: " << currentIndex_ << endl;
+        val deleteLastEL = val::global("eraseNth")(*this, val(currentIndex_));
+        return deleteLastEL;
+    }
+
+    storageVectorIterator find(std::function<bool(pair<V*,ClarityNode*>)> findFunction) {
+
+    }
 
     virtual ClarityNode* makeElementControl(V* v) {
         // val deleteLastFn =
@@ -31,7 +47,7 @@ class ActiveVector {
 
         // val deleteLastEL = val::global("eraseNth")(val(this), val(0));
         val deleteLastEL = deleteLastFn();
-       // val deleteLastEL = val::null();
+        // val deleteLastEL = val::null();
 
         auto* deleteButton =
             builder_.withAttributes({{"class", val("buttonDelete")}})
@@ -55,6 +71,7 @@ class ActiveVector {
     }
 
     storageVectorIterator eraseNth(int n) {
+        countElements();
         storageVectorIterator nIter = storageVector_.begin() + n;
         auto [element, node] = storageVector_[n];
         delete element;
@@ -62,11 +79,11 @@ class ActiveVector {
         return storageVector_.erase(nIter);
     }
 
-    val eraseFn(storageVectorIterator pos) {
-        return val([this, pos]() { this->erase(pos); });
-    }
+    // val eraseFn(storageVectorIterator pos) {
+    //     return val([this, pos]() { this->erase(pos); });
+    // }
 
-    static void eraseFrom(ActiveVector<Nc, V, N> v, storageVectorIterator i) { v.erase(i); }
+    //static void eraseFrom(ActiveVector<Nc, V, N> v, storageVectorIterator i) { v.erase(i); }
     // erase(const iterator<pair<V*, ClarityNode*>> first, const iterator<pair<V*, ClarityNode*>>
     // last) {
     //     return storageVector_.erase(first, last);
@@ -78,10 +95,5 @@ class ActiveVector {
     int currentIndex_ = 0;
 };
 
-// EMSCRIPTEN_BINDINGS(activeVector) {
-//     class_<ActiveVector<HybridNode, string, int>>("ActiveVector")
-//         .function("eraseNth", &ActiveVector<HybridNode, string, int>::eraseNth,
-//                   allow_raw_pointers());
-// }
 
 #endif
