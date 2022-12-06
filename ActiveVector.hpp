@@ -9,9 +9,9 @@
 template <template <typename V> class Nc, typename V, typename N>
 class ActiveVector {
    public:
-    typedef typename vector<pair<V*, ClarityNode*>>::iterator storageVectorIterator;
+    typedef typename vector<pair<V*, HybridNode<V>*>>::iterator storageVectorIterator;
     // ActiveVector() {}
-    ActiveVector(ClarityNode* rootNode) { builder_ = builder_.withChildrenOf(rootNode); }
+    ActiveVector(HybridNode<V>* rootNode) { builder_ = builder_.withChildrenOf(rootNode); }
 
     void countElements() {
         cout << "This vector has " << this->storageVector_.size() << " elements" << endl;
@@ -27,11 +27,11 @@ class ActiveVector {
         return deleteLastEL;
     }
 
-    storageVectorIterator find(std::function<bool(pair<V*,ClarityNode*>)> findFunction) {
+    storageVectorIterator find(std::function<bool(pair<V*,HybridNode<V>*>)> findFunction) {
 
     }
 
-    virtual ClarityNode* makeElementControl(V* v) {
+    virtual HybridNode<V>* makeElementControl(V* v) {
         // val deleteLastFn =
 
         auto* reprNode = makeElementRepresentation(v);
@@ -53,14 +53,14 @@ class ActiveVector {
             builder_.withAttributes({{"class", val("buttonDelete")}})
                 .button("delete_btn_" + clto_str(reprNode->getId()), "X", deleteLastEL);
         auto* grp = builder_.group({reprNode, deleteButton});
-        // deleteEL = ClarityNode::JSProxyNode_["makeDeleteNodeFn"](grp->getId());
+        // deleteEL = HybridNode<V>::JSProxyNode_["makeDeleteNodeFn"](grp->getId());
         // deleteButton->addEventListener(deleteLastFn, "click");
         return grp;
     }
 
-    virtual ClarityNode* makeElementRepresentation(V*) { return nullptr; };  // FIXME!
+    virtual HybridNode<V>* makeElementRepresentation(V*) { return nullptr; };  // FIXME!
     virtual void push_back(V* v) {
-        ClarityNode* node = makeElementControl(v);
+        HybridNode<V>* node = makeElementControl(v);
 
         storageVector_.push_back(pair(v, node));
         currentIndex_++;
@@ -84,14 +84,14 @@ class ActiveVector {
     // }
 
     //static void eraseFrom(ActiveVector<Nc, V, N> v, storageVectorIterator i) { v.erase(i); }
-    // erase(const iterator<pair<V*, ClarityNode*>> first, const iterator<pair<V*, ClarityNode*>>
+    // erase(const iterator<pair<V*, HybridNode<V>*>> first, const iterator<pair<V*, HybridNode<V>*>>
     // last) {
     //     return storageVector_.erase(first, last);
     // }
 
     // protected:
     CLNodeFactory<Nc, V, N> builder_;
-    vector<pair<V*, ClarityNode*>> storageVector_;
+    vector<pair<V*, HybridNode<V>*>> storageVector_;
     int currentIndex_ = 0;
 };
 

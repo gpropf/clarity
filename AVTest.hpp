@@ -14,13 +14,13 @@ using namespace clarity;
 
 class AVString : public ActiveVector<HybridNode, string, int> {
    public:
-    AVString(ClarityNode *rootNode) : ActiveVector(rootNode) {}
+    AVString(HybridNode<string> *rootNode) : ActiveVector(rootNode) {}
 
     virtual val deleteLastFn();
 
     void countElements() { ActiveVector<HybridNode, string, int>::countElements(); }
 
-    ClarityNode *makeElementRepresentation(string *s) {
+    HybridNode<string> *makeElementRepresentation(string *s) {
         auto *reprNode = builder_.withName("av_element")
                              .withCppVal(s)
                              .withHoverText(string("Edit this element"))
@@ -62,7 +62,7 @@ EMSCRIPTEN_BINDINGS(avstring) {
     class_<ActiveVector<HybridNode, string, int>::storageVectorIterator>("storageVectorIterator");
 
     class_<AVString>("AVString")
-        .constructor<ClarityNode *>()
+        .constructor<HybridNode<string> *>()
         .function("erase", &AVString::erase, allow_raw_pointers())
         .function("eraseNth", &AVString::eraseNth, allow_raw_pointers())
         // .function("deleteLastFn", &AVString::deleteLastFn, allow_raw_pointer<arg<0>>())
@@ -92,14 +92,13 @@ struct AVTest : public PageContent {
         ClarityNode::installListenerGenerators(
             "JSProxyNode", "HybridNode", elgInputAlltypesMouseover, "input", "range", "mouseover");
 
-        CLNodeFactory<HybridNode, double, double> builder("div", "showcase_root");
+        CLNodeFactory<HybridNode, string, int> builder("div", "showcase_root");
         auto *maindiv = builder.build();
 
-        CLNodeFactory<HybridNode, double, double> childOfMaindivBuilder =
-            builder.withChildrenOf(maindiv);
+        builder = builder.withChildrenOf(maindiv);
 
-        auto *avstringsDiv = childOfMaindivBuilder.withTag("div").withName("AVStringsDiv").build();
-        AVString *avstring = new AVString(static_cast<ClarityNode *>(avstringsDiv));
+        auto *avstringsDiv = builder.withTag("div").withName("AVStringsDiv").build();
+        AVString *avstring = new AVString(avstringsDiv);
         string *s1 = new string("FOO_String");
         avstring->push_back(s1);
         string *s2 = new string("BOO_String");
@@ -111,12 +110,11 @@ struct AVTest : public PageContent {
 
         val countElementsELG = val::global("countElementsELG")(avstring);
         auto *countElementsBtn =
-            childOfMaindivBuilder.button("countElementsBtn", "Count Elements", countElementsELG);
+            builder.button("countElementsBtn", "Count Elements", countElementsELG);
 
         val deleteLastEL = val::global("eraseNth")(avstring, val(0));
 
-        auto *deleteLastBtn =
-            childOfMaindivBuilder.button("deleteLastBtn", "Delete Last", deleteLastEL);
+        auto *deleteLastBtn = builder.button("deleteLastBtn", "Delete Last", deleteLastEL);
 
         printf("Setup complete!\n");
         return maindiv;
