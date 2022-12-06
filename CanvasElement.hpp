@@ -32,7 +32,7 @@ class CanvasElement : public HybridNode<V> {
     ~CanvasElement() { this->nodelog("DESTROYING CanvasElement"); }
 
     inline string cppValToString() const {
-        if (this->cppVal_ == nullptr) return "CanvasElement NULLPTR";
+        if (this->cppVal_ == nullptr) return "CanvasElement nullptr";
         return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
     }
 
@@ -100,7 +100,7 @@ class CanvasGrid : public CanvasElement<V> {
     inline V *getPtr2CurrentCellVal() { return &currentCellVal_; }
 
     inline string cppValToString() const {
-        if (this->cppVal_ == nullptr) return "CanvasGrid NULLPTR";
+        if (this->cppVal_ == nullptr) return "CanvasGrid nullptr";
         return clto_str(*(reinterpret_cast<V *>(this->cppVal_)));
     }
 

@@ -12,7 +12,7 @@
 // template <>
 // string HybridNode<Speedtester>::cppValToString() const {
 //     // cout << "HybridNode<string>::cppValToString()\n";
-//     if (cppVal_ == nullptr) return "HybridNode<Speedtest> NULLPTR";
+//     if (cppVal_ == nullptr) return "HybridNode<Speedtest> nullptr";
 //     return string("Speedtest object '" + this->name_ + "' currently set up to generate ") +
 //            clto_str(*cppVal_->nTotalFields) + string(" fields\n");  //
 //            static_cast<string>(cppVal_);

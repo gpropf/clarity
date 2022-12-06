@@ -4,6 +4,6 @@
 
 template <>
 string CanvasGrid<unsigned char>::cppValToString() const {    
-    if (cppVal_ == nullptr) return "CanvasGrid<unsigned char> NULLPTR";    
+    if (cppVal_ == nullptr) return "CanvasGrid<unsigned char> nullptr";    
     return clto_str<unsigned int>(*cppVal_);    
 }

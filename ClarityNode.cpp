@@ -14,14 +14,14 @@
 template <>
 string HybridNode<string>::cppValToString() const {
     //cout << "HybridNode<string>::cppValToString()\n";
-    if (cppVal_ == nullptr) return "HybridNode<string> NULLPTR";
+    if (cppVal_ == nullptr) return "HybridNode<string> nullptr";
     return *cppVal_;// static_cast<string>(cppVal_);
 }
 
 template <>
 string HybridNode<unsigned char>::cppValToString() const {
     //cout << "HybridNode<string>::cppValToString()\n";
-    if (cppVal_ == nullptr) return "HybridNode<unsigned char> NULLPTR";
+    if (cppVal_ == nullptr) return "HybridNode<unsigned char> nullptr";
     return clto_str<unsigned int>(*cppVal_);// static_cast<string>(cppVal_);
     //return string("<unsigned char> Canvas.");
 }
@@ -29,7 +29,7 @@ string HybridNode<unsigned char>::cppValToString() const {
 template <>
 string HybridNode<double>::cppValToString() const {
     //cout << "HybridNode<string>::cppValToString()\n";
-    if (cppVal_ == nullptr) return "HybridNode<double> NULLPTR";
+    if (cppVal_ == nullptr) return "HybridNode<double> nullptr";
     return clto_str<double>(*cppVal_);// static_cast<string>(cppVal_);
     //return string("<unsigned char> Canvas.");
 }
@@ -37,21 +37,21 @@ string HybridNode<double>::cppValToString() const {
 template <>
 string HybridNode<float>::cppValToString() const {
     //cout << "HybridNode<string>::cppValToString()\n";
-    if (cppVal_ == nullptr) return "HybridNode<float> NULLPTR";
+    if (cppVal_ == nullptr) return "HybridNode<float> nullptr";
     return clto_str<float>(*cppVal_);// static_cast<string>(cppVal_);
     //return string("<unsigned char> Canvas.");
 }
 
 template <>
 string HybridNode<int>::cppValToString() const {    
-    if (cppVal_ == nullptr) return "HybridNode<int> NULLPTR";
+    if (cppVal_ == nullptr) return "HybridNode<int> nullptr";
     return clto_str<double>(*cppVal_);
 }
 
 template <>
 string HybridNode<bool>::cppValToString() const {
     //cout << "HybridNode<string>::cppValToString()\n";
-    if (cppVal_ == nullptr) return "HybridNode<bool> NULLPTR";
+    if (cppVal_ == nullptr) return "HybridNode<bool> nullptr";
     return clto_str<bool>(*cppVal_);// static_cast<string>(cppVal_);
     //return string("<unsigned char> Canvas.");
 }

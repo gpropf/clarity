@@ -174,7 +174,7 @@ class Checkbox : public HybridNode<V> {
     ~Checkbox() { this->nodelog("DESTROYING Checkbox"); }
 
     inline string cppValToString() const {
-        if (this->cppVal_ == nullptr) return "Checkbox NULLPTR";
+        if (this->cppVal_ == nullptr) return "Checkbox nullptr";
         return string("FIXME");
     }
 

@@ -5,7 +5,7 @@
 
 template <>
 string SimpleSelect<int>::cppValToString() const {
-    if (cppVal_ == nullptr) return "SimpleSelect<int> NULLPTR";
+    if (cppVal_ == nullptr) return "SimpleSelect<int> nullptr";
     return (string("Current selection index : ") + clto_str(*cppVal_) + string(", ") +
             this->options_[*cppVal_].second);
 }
@@ -17,19 +17,19 @@ void SimpleSelect<int>::setDOMVal(const val &inval) {
 
 template <>
 string Select<vector<pair<int, string>>>::cppValToString() const {
-    if (cppVal_ == nullptr) return "Select<vector<pair<int, string>>> NULLPTR";
+    if (cppVal_ == nullptr) return "Select<vector<pair<int, string>>> nullptr";
     return string("Number of pair<int, string> in the selection: ") + clto_str(cppVal_->size());
 }
 
 template <>
 string Select<vector<string>>::cppValToString() const {
-    if (cppVal_ == nullptr) return "Select<vector<string>> NULLPTR";
+    if (cppVal_ == nullptr) return "Select<vector<string>> nullptr";
     return string("Number of strings in the selection: ") + clto_str(cppVal_->size());
 }
 
 template <>
 string Checkbox<bool>::cppValToString() const {
-    if (cppVal_ == nullptr) return "Checkbox<bool> NULLPTR";
+    if (cppVal_ == nullptr) return "Checkbox<bool> nullptr";
     if (*cppVal_) return string("TRUE");
     return string("FALSE");
 }
