@@ -215,60 +215,61 @@ class ClarityNode {
     // void EMSCRIPTEN_KEEPALIVE init();
     inline ClarityNode() { init(); }
 
-    virtual ~ClarityNode() {
-        nodelog("DESTROYING ClarityNode");
-        switchboard.erase(id_);
-        for (auto dl : dlpeers_) {
-            dl.reset();
-        }
-        dlpeers_.clear();
-        for (auto child : children_) {
-            delete child;
-        }
-        children_.clear();
-
-        if (!domElement_.isUndefined()) domElement_.template call<void>("remove");
-    }
-
-    // This version below throws an 'unreachable' error when deleting the stuff in showcase.
-    // -------------------------------
     // virtual ~ClarityNode() {
-    //     if (this->parent_) {
-    //         this->parent_->removeChild(this);
-    //     }
     //     nodelog("DESTROYING ClarityNode");
     //     switchboard.erase(id_);
     //     for (auto dl : dlpeers_) {
     //         dl.reset();
     //     }
     //     dlpeers_.clear();
-
-    //     if (children_.size() == 0)
-    //         nodelog("Ids of children deleted: NONE");
-    //     else {
-    //         string idString = "";
-    //         for (auto child : children_) {
-    //             idString += clto_str(child->getId()) + ", ";
-    //         }
-    //         nodelog("Ids of children to delete: " + idString);
-    //         for (auto child : children_) {
-    //             if (child != nullptr) delete child;
-    //         }
-    //         nodelog("Children deleted!");
+    //     for (auto child : children_) {
+    //         delete child;
     //     }
     //     children_.clear();
+
     //     if (!domElement_.isUndefined()) domElement_.template call<void>("remove");
     // }
 
-    // INLINE ClarityNode(const CppType storedValueType)
-    //     : storedValueType_(storedValueType) {
-    //     init();
-    //     jsProxyNode_.set("cpptype", val(storedValueType));
-    // }
-    INLINE ClarityNode(const string &name) : name_(name) {
-        init();
-        // jsProxyNode_.set("cpptype", val(storedValueType));
+    /**
+     * @brief Destroy the Clarity Node object. This version gives better debug output that the one
+     * above.
+     *
+     */
+    virtual ~ClarityNode() {
+        // if (this->parent_) {
+        //     this->parent_->removeChild(this);
+        // }
+        nodelog("DESTROYING ClarityNode");
+        switchboard.erase(id_);
+        for (auto dl : dlpeers_) {
+            dl.reset();
+        }
+        dlpeers_.clear();
+
+        if (children_.size() == 0)
+            nodelog("Ids of children deleted: NONE");
+        else {
+            string idString = "";
+            for (auto child : children_) {
+                idString += clto_str(child->getId()) + ", ";
+            }
+            nodelog("Ids of children to delete: " + idString);
+            for (auto child : children_) {
+                if (child != nullptr) delete child;
+            }
+            nodelog("Children deleted!");
+        }
+        children_.clear();
+        if (!domElement_.isUndefined()) domElement_.template call<void>("remove");
     }
+
+    /**
+     * @brief Constructor
+     *
+     * @param name
+     * @return
+     */
+    INLINE ClarityNode(const string &name) : name_(name) { init(); }
 
     /**
      * @brief Construct a new Web Element object
