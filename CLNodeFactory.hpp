@@ -695,7 +695,7 @@ class CLNodeFactory {
      * @brief A button.
      *
      * @param name
-     * @param text
+     * @param text Text to display on the button.
      * @param onPressCallback JS function to run when button is pressed.
      * @return Nc*
      */

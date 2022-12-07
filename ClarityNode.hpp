@@ -225,20 +225,21 @@ class ClarityNode {
             dl.reset();
         }
         dlpeers_.clear();
-        string idString = "";
+        
         if (children_.size() == 0)
-            idString = "NONE";
+        nodelog("Ids of children deleted: NONE");            
         else {
+            string idString = "";
             for (auto child : children_) {
                 idString += clto_str(child->getId()) + ", ";
+            }            
+            nodelog("Ids of children to delete: "+ idString);
+            for (auto child : children_) {
+                if (child != nullptr) delete child;
             }
-        }
-        nodelog("Ids of children to delete: " + idString);
-        for (auto child : children_) {
-            delete child;
+            nodelog("Children deleted!");
         }
         children_.clear();
-
         if (!domElement_.isUndefined()) domElement_.template call<void>("remove");
     }
 
@@ -319,7 +320,8 @@ class ClarityNode {
     virtual void doNothing() = 0;
 
     static void deleteNodeById(int id) {
-        clog("ClarityNode::deleteNodeById() called with id = " + clto_str(id), clarity::ClogType::INFO);
+        clog("ClarityNode::deleteNodeById() called with id = " + clto_str(id),
+             clarity::ClogType::INFO);
         auto *node = ClarityNode::getClarityNodeById(id);
         delete node;
     }
