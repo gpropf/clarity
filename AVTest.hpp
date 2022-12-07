@@ -92,17 +92,19 @@ struct AVTest : public PageContent {
         ClarityNode::installListenerGenerators(
             "JSProxyNode", "HybridNode", elgInputAlltypesMouseover, "input", "range", "mouseover");
 
-        CLNodeFactory<HybridNode, string, int> builder("div", "showcase_root");
-        auto *maindiv = builder.build();
+        CLNodeFactory<HybridNode, string, int> builderOrig("div", "showcase_root");
+        auto *maindiv = builderOrig.build();
 
-        builder = builder.withChildrenOf(maindiv);
+
+
+        CLNodeFactory<HybridNode, string, int>  builder = builderOrig.withChildrenOf(maindiv);
 
         auto *avstringsDiv = builder.withTag("div").withName("AVStringsDiv").build();
         AVString *avstring = new AVString(avstringsDiv);
         string *s1 = new string("FOO_String");
         avstring->push_back(s1);
-        string *s2 = new string("BOO_String");
-        avstring->push_back(s2);
+        // string *s2 = new string("BOO_String");
+        // avstring->push_back(s2);
         string *s3 = new string("Greg");
         avstring->push_back(s3);
         string *s4 = new string("Abby");

@@ -3,7 +3,7 @@
 #include "AVTest.hpp"
 
 //#include <emscripten/wasm_worker.h>
-#include <stdio.h>
+// #include <stdio.h>
 
 #include <map>
 
@@ -14,13 +14,13 @@
 #include "embindings.hpp"
 #include "globals.hpp"
 
-int gi = 32;
+// int gi = 32;
 
-void run_in_worker() {
-    printf("Hello from wasm worker!\n");
-    cout << "Global val: " << gi << endl;
+// void run_in_worker() {
+//     printf("Hello from wasm worker!\n");
+//     cout << "Global val: " << gi << endl;
     
-}
+// }
 
 int main() {
     //  emscripten_wasm_worker_t worker = emscripten_malloc_wasm_worker(/*stack size: */ 1024);
