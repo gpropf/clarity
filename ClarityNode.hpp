@@ -216,32 +216,49 @@ class ClarityNode {
     inline ClarityNode() { init(); }
 
     virtual ~ClarityNode() {
-        if (this->parent_) {
-            this->parent_->removeChild(this);
-        }
         nodelog("DESTROYING ClarityNode");
         switchboard.erase(id_);
         for (auto dl : dlpeers_) {
             dl.reset();
         }
         dlpeers_.clear();
-        
-        if (children_.size() == 0)
-        nodelog("Ids of children deleted: NONE");            
-        else {
-            string idString = "";
-            for (auto child : children_) {
-                idString += clto_str(child->getId()) + ", ";
-            }            
-            nodelog("Ids of children to delete: "+ idString);
-            for (auto child : children_) {
-                if (child != nullptr) delete child;
-            }
-            nodelog("Children deleted!");
+        for (auto child : children_) {
+            delete child;
         }
         children_.clear();
+
         if (!domElement_.isUndefined()) domElement_.template call<void>("remove");
     }
+
+    // This version below throws an 'unreachable' error when deleting the stuff in showcase.
+    // -------------------------------
+    // virtual ~ClarityNode() {
+    //     if (this->parent_) {
+    //         this->parent_->removeChild(this);
+    //     }
+    //     nodelog("DESTROYING ClarityNode");
+    //     switchboard.erase(id_);
+    //     for (auto dl : dlpeers_) {
+    //         dl.reset();
+    //     }
+    //     dlpeers_.clear();
+
+    //     if (children_.size() == 0)
+    //         nodelog("Ids of children deleted: NONE");
+    //     else {
+    //         string idString = "";
+    //         for (auto child : children_) {
+    //             idString += clto_str(child->getId()) + ", ";
+    //         }
+    //         nodelog("Ids of children to delete: " + idString);
+    //         for (auto child : children_) {
+    //             if (child != nullptr) delete child;
+    //         }
+    //         nodelog("Children deleted!");
+    //     }
+    //     children_.clear();
+    //     if (!domElement_.isUndefined()) domElement_.template call<void>("remove");
+    // }
 
     // INLINE ClarityNode(const CppType storedValueType)
     //     : storedValueType_(storedValueType) {
@@ -320,8 +337,6 @@ class ClarityNode {
     virtual void doNothing() = 0;
 
     static void deleteNodeById(int id) {
-        clog("ClarityNode::deleteNodeById() called with id = " + clto_str(id),
-             clarity::ClogType::INFO);
         auto *node = ClarityNode::getClarityNodeById(id);
         delete node;
     }
@@ -395,17 +410,6 @@ class ClarityNode {
         jsProxyNode_.call<void>("appendChild", child->getCLE());
         return true;  // FIXME: need to check for duplicate ids.
     }
-
-    // bool removeChild(ClarityNode *childToRemove) {
-    //     // for (auto & child: children_) {
-    //     //     if (child == childToRemove) {
-
-    //     //     }
-    //     // }
-    //     for (auto it = children_.begin(); it != children_.end(); it++) {
-    //         if (*it == childToRemove) children_.erase(it);
-    //     }
-    // }
 
     /**
      * @brief Attempts to find the child referenced by the pointer. If the child is found we set its
