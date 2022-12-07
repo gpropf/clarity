@@ -694,7 +694,7 @@ class CLNodeFactory {
     /**
      * @brief A button.
      *
-     * @param name
+     * @param name We require this mainly to enforce a policy that buttons should have names.
      * @param text Text to display on the button.
      * @param onPressCallback JS function to run when button is pressed.
      * @return Nc*
