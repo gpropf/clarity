@@ -103,6 +103,8 @@ class ActiveVector {
         storageVectorIterator nIter = storageVector_.begin() + n;
         auto [element, node] = storageVector_[n];
         delete element;
+        auto* rootNode = builder_.getParent();
+        rootNode->removeChild(node);
         delete node;
         return storageVector_.erase(nIter);
     }

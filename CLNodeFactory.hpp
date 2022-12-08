@@ -713,6 +713,15 @@ class CLNodeFactory {
     }
 
     /**
+     * @brief Get the Parent node. This is useful where a larger structure creates a factory and
+     * might need to retreive the root node.
+     *
+     * @return ClarityNode*
+     */
+    inline ClarityNode *getParent() { return parent_; }
+    
+
+    /**
      * @brief Puts the provided nodes inside a div.
      *
      * @param nodes
