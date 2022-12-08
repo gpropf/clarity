@@ -18,6 +18,12 @@ Or some such question. Well, I don't know what exactly you want to model here bu
 
 1. Clarity can only "see" things that are on the heap. If you create a model that is created within a function and is destroyed when it ends there's no way to attach web controls to it. Basically, your model needs to be persistent and visible within the `main()` function of your program.
 2. Figure out what you plan to expose to the user and create Clarity nodes of whatever type is appropriate to manipulating that part of the data model. When creating these controls you will invoke the `withCppVal()` method of the `CLNodeFactory` class. The argument to this method will be a pointer to whatever data you want to make accessible to the user. When the user changes a value in the web control the actual value in your model should change as well. 
+   
+   One potential problem here is that you may want to allow the user to manipulate the value of a data member that does not have `public` access. Eventually we may have a way to install designated getter and setter methods for these kinds of member. Currently though, there are three solutions:
+   1. When creating your special purpose subclass of `HybridNode`, make it a `friend` of the data type it will contain.  You can see this approach in the `Pixelreactor` demo app where the `BeakerNode` class is a `friend` of the `Beaker` class.
+   2. Create a method that returns a pointer to the member. You can see this approach in the `CanvasGrid` class in this project with the `getPtr2CurrentCellVal()` method. This method is what we use in the `showcase` demo and elsewhere to make it possible to change the color.
+   3. Finally, there's always the option to just declare `public` access to the member you need to expose.
+
 3. To "close the loop" and have the model update the interface you will call the `refresh()` method of the relevant nodes when your model updates itself. The usual method for this is still to use JavaScript's setInterval and setTimeout methods to periodically iterate your model and refresh the relevant Clarity nodes. I'd like to make use of web workers or Emscripten's thread capability for this eventually.
 
 ### Complex Controls for Complex Objects ###
@@ -42,7 +48,7 @@ I've tried to keep most of the functionality in the C++ code but when dealing wi
 
 ### Event Listener Generators
 
-One idiom that I make use of throughout the project is that of the event listener generator. This is a function that generally takes a bound C++ or plain JavaScript object as an argument and returns an event listener function. These functions are useful for encapsulating object behavior in web controls. The best example being button event listeners which fire when the user clicks the button. Every text or other input control, however, has its own event listener that is manufactured for it by one of these generator functions. There are several static objects called `listenerGenerators` in `JSProxyNode.js` and other JavaScript files that organize these functions according to C++ class, HTML tag, and input type, in that order. When an input control is created a method called `installEventListenersByTagAndType` in `JSProxyNode` is run to equip it with the appropriate listener.
+One idiom that I make use of throughout the project is that of the JavaScript event listener generator. This is a function that generally takes a bound C++ or plain JavaScript object as an argument and returns an event listener function. These functions are useful for encapsulating object behavior in web controls. The best example being button event listeners which fire when the user clicks the button. Every text or other input control, however, has its own event listener that is manufactured for it by one of these generator functions. There are several static objects called `listenerGenerators` in `JSProxyNode.js` and other JavaScript files that organize these functions according to C++ class, HTML tag, and input type, in that order. When an input control is created a method called `installEventListenersByTagAndType` in `JSProxyNode` is run to equip it with the appropriate listener.
 
 ### The C++ Object Hierarchy ###
 

@@ -6,6 +6,8 @@
 
 #include "CLNodeFactory.hpp"
 
+namespace clarity {
+
 /**
  * @brief An experiment in creating a sort of "active mapping" container. The basic idea is that we
  * maintain a GUI representation of each element in a collection that grows or shrinks automatically
@@ -21,9 +23,13 @@
  * @tparam N
  */
 template <template <typename V> class Nc, typename V, typename N>
-class ActiveVector {
+class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
    public:
-    typedef typename vector<pair<V*, HybridNode<V>*>>::iterator storageVectorIterator;
+    typedef typename std::pair<V*, HybridNode<V>*> ActivePairT;
+    typedef typename vector<ActivePairT>::iterator StorageVectorIteratorT;
+    typedef typename std::function<bool(pair<V*, HybridNode<V>*>)> ActivePairLambdaT;
+
+    static ActivePairLambdaT removeCheckedFn_;
 
     ActiveVector(HybridNode<V>* rootNode) { builder_ = builder_.withChildrenOf(rootNode); }
 
@@ -43,7 +49,7 @@ class ActiveVector {
 
     pair<V*, HybridNode<V>*> find(std::function<bool(pair<V*, HybridNode<V>*>)> findFunction) {
         int i = 0;
-        for (storageVectorIterator it = storageVector_.begin(); it != storageVector_.end();
+        for (StorageVectorIteratorT it = storageVector_.begin(); it != storageVector_.end();
              it++, i++) {
             if (findFunction(storageVector_[i])) return storageVector_[i];
         }
@@ -60,16 +66,15 @@ class ActiveVector {
      */
     virtual HybridNode<V>* makeElementControl(V* v) {
         auto* reprNode = makeElementRepresentation(v);
-        storageVectorIterator currentFirst = storageVector_.end();
+        StorageVectorIteratorT currentFirst = storageVector_.end();
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
 
         val deleteFirstEL = deleteFirstFn();
 
-        auto* deleteButton =
-            builder_.withAttributes({{"class", val("buttonDelete")}})
-                .button("delete_btn_" + clto_str(reprNode->getId()), "X", deleteFirstEL);
+        auto* deleteBox =
+            checkboxBuilder.withName("delete_" + clto_str(reprNode->getId())).checkbox();
 
-        auto* grp = builder_.group({reprNode, deleteButton});
+        auto* grp = builder_.group({reprNode, deleteBox});
 
         return grp;
     }
@@ -88,26 +93,69 @@ class ActiveVector {
         currentIndex_++;
     }
 
-    storageVectorIterator erase(storageVectorIterator position) {
+    StorageVectorIteratorT erase(StorageVectorIteratorT position) {
         return storageVector_.erase(position);
+    }
+
+    StorageVectorIteratorT remove(StorageVectorIteratorT first, StorageVectorIteratorT last,
+                                  const ActivePairT& val) {
+        auto [element, node] = val;
+        delete element;
+        auto* rootNode = builder_.getParent();
+        if (rootNode != nullptr) rootNode->removeChild(node);
+        delete node;
+        return storageVector_.remove(val);
     }
 
     /**
      * @brief Erase the nth element, deleting the content of the paired pointers as well.
      *
      * @param n
-     * @return storageVectorIterator
+     * @return StorageVectorIteratorT
      */
-    storageVectorIterator eraseNth(int n) {
-        countElements();
-        storageVectorIterator nIter = storageVector_.begin() + n;
+    StorageVectorIteratorT eraseNth(int n) {
+        // countElements();
+        StorageVectorIteratorT nIter = storageVector_.begin() + n;
         auto [element, node] = storageVector_[n];
         delete element;
         auto* rootNode = builder_.getParent();
-        rootNode->removeChild(node);
+        if (rootNode != nullptr) rootNode->removeChild(node);
         delete node;
         return storageVector_.erase(nIter);
     }
+
+    // StorageVectorIteratorT remove_if(StorageVectorIteratorT begin, StorageVectorIteratorT end,
+    // ActivePairLambdaT filterFn) {
+    //     return remove_if(storageVector_.begin(), storageVector_.end(), filterFn);
+    // }
+
+    StorageVectorIteratorT filterWithLambda(ActivePairLambdaT filterFn) {
+        int vectorSize = storageVector_.size();
+        vector<ActivePairT> tmpVec(vectorSize);
+        StorageVectorIteratorT filterEnd =
+            copy_if(storageVector_.begin(), storageVector_.end(), tmpVec.begin(), filterFn);
+        auto* rootNode = builder_.getParent();
+
+        if (rootNode != nullptr) {
+            for (auto [element, node] : tmpVec) {
+                if (element == nullptr) break;
+                delete element;
+                delete node;
+                rootNode->removeChild(node);
+            }
+        } else {
+            for (auto [element, node] : tmpVec) {
+                if (element == nullptr) break;
+                delete element;
+                delete node;
+            }
+        }
+        storageVector_.shrink_to_fit();
+
+        return filterEnd;
+    }
+
+    StorageVectorIteratorT removeChecked() { return filterWithLambda(removeCheckedFn_); }
 
     // protected:
     CLNodeFactory<Nc, V, N> builder_;
@@ -115,4 +163,21 @@ class ActiveVector {
     int currentIndex_ = 0;
 };
 
+template <template <typename V> class Nc, typename V, typename N>
+typename ActiveVector<Nc, V, N>::ActivePairLambdaT ActiveVector<Nc, V, N>::removeCheckedFn_ =
+    [](ActiveVector<Nc, V, N>::ActivePairT ap) {
+        auto [element, node] = ap;
+        // auto *deleteBox = static_cast<ClarityNode*>(node)->getChildren()[1];
+        auto* deleteBox = node->getChildren()[1];
+        bool deleteChecked = deleteBox->getVal().template as<bool>();
+        cout << "Checkbox: " << deleteChecked << endl;
+        // if (deleteChecked) {
+        //     delete element;
+        //     delete node;
+        // }
+
+        return deleteChecked;
+    };
+
+}  // namespace clarity
 #endif

@@ -361,6 +361,7 @@ class ClarityNode {
      */
     virtual string getNodeTypeCode() { return string("--"); };
 
+    inline vector<ClarityNode *>& getChildren() { return children_; }
     INLINE val getCLE() const { return jsProxyNode_; }
     INLINE val getDomElement() { return domElement_; }
     INLINE void setDomElement(val domElement) { domElement_ = domElement; }

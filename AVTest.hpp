@@ -8,17 +8,27 @@
 #include "PageContent.hpp"
 #include "clarity.hpp"
 
-using namespace clarity;
+namespace clarity {
+// using namespace clarity;
 
 // class AVString;
 
 class AVString : public ActiveVector<HybridNode, string, int> {
    public:
+    using ActiveVector::ActivePairT;
+
     AVString(HybridNode<string> *rootNode) : ActiveVector(rootNode) {}
 
     virtual val deleteFirstFn();
 
-    void countElements() { ActiveVector<HybridNode, string, int>::countElements(); }
+    void countElements() {
+        // ActiveVector<HybridNode, string, int>::removeChecked();
+        ActiveVector<HybridNode, string, int>::countElements();
+    }
+
+    void removeChecked() {
+        StorageVectorIteratorT rend = ActiveVector<HybridNode, string, int>::removeChecked();
+    }
 
     HybridNode<string> *makeElementRepresentation(string *s) {
         auto *reprNode = builder_.withName("av_element")
@@ -28,15 +38,15 @@ class AVString : public ActiveVector<HybridNode, string, int> {
         return reprNode;
     }
 
-    storageVectorIterator erase(storageVectorIterator position) {
+    StorageVectorIteratorT erase(StorageVectorIteratorT position) {
         return ActiveVector<HybridNode, string, int>::erase(position);
     }
 
-    storageVectorIterator eraseNth(int n) {
-        // storageVectorIterator nIter = storageVector_.begin() + n;
-        // storageVectorIterator erasedIter = this->erase(nIter);
+    StorageVectorIteratorT eraseNth(int n) {
+        // StorageVectorIteratorT nIter = storageVector_.begin() + n;
+        // StorageVectorIteratorT erasedIter = this->erase(nIter);
         // this->countElements(100);
-        storageVectorIterator erasedIter = ActiveVector<HybridNode, string, int>::eraseNth(n);
+        StorageVectorIteratorT erasedIter = ActiveVector<HybridNode, string, int>::eraseNth(n);
 
         return erasedIter;
     }
@@ -55,11 +65,13 @@ EMSCRIPTEN_BINDINGS(avstring) {
         .function("eraseNth", &ActiveVector<HybridNode, string, int>::eraseNth,
                   allow_raw_pointers())
         .function("countElements", &ActiveVector<HybridNode, string, int>::countElements,
+                  allow_raw_pointers())
+        .function("removeChecked", &ActiveVector<HybridNode, string, int>::removeChecked,
                   allow_raw_pointers());
     // .class_function("eraseFrom", &ActiveVector<HybridNode, string, int>::eraseFrom,
     //                 allow_raw_pointers());
 
-    class_<ActiveVector<HybridNode, string, int>::storageVectorIterator>("storageVectorIterator");
+    class_<ActiveVector<HybridNode, string, int>::StorageVectorIteratorT>("StorageVectorIteratorT");
 
     class_<AVString>("AVString")
         .constructor<HybridNode<string> *>()
@@ -67,7 +79,8 @@ EMSCRIPTEN_BINDINGS(avstring) {
         .function("eraseNth", &AVString::eraseNth, allow_raw_pointers())
         // .function("deleteFirstFn", &AVString::deleteFirstFn, allow_raw_pointer<arg<0>>())
         .function("deleteFirstFn", &AVString::deleteFirstFn, allow_raw_pointers())
-        .function("countElements", &AVString::countElements, allow_raw_pointers());
+        .function("countElements", &AVString::countElements, allow_raw_pointers())
+        .function("removeChecked", &AVString::removeChecked, allow_raw_pointers());
     //.function("eraseFn", &AVString::eraseFn, allow_raw_pointers());
 }
 
@@ -95,42 +108,46 @@ struct AVTest : public PageContent {
         CLNodeFactory<HybridNode, string, int> builder("div", "showcase_root");
         auto *maindiv = builder.build();
 
-
-
         builder = builder.withChildrenOf(maindiv);
 
         auto *avstringsDiv = builder.withTag("div").withName("AVStringsDiv").build();
         AVString *avstring = new AVString(avstringsDiv);
-        string *s1 = new string("FOO_String");
+        string *s1 = new string("Jan");
         avstring->push_back(s1);
-        // string *s2 = new string("BOO_String");
-        // avstring->push_back(s2);
+        string *s2 = new string("Tyler");
+        avstring->push_back(s2);
         string *s3 = new string("Greg");
         avstring->push_back(s3);
         string *s4 = new string("Abby");
         avstring->push_back(s4);
 
         val countElementsELG = val::global("countElementsELG")(avstring);
+
         auto *countElementsBtn =
             builder.button("countElementsBtn", "Count Elements", countElementsELG);
+
+        val removeChecked = val::global("removeChecked")(avstring);
+
+        auto *removeCheckedBtn =
+            builder.button("removeCheckedBtn", "Remove Checked", removeChecked);
 
         val deleteFirstEL = val::global("eraseNth")(avstring, val(0));
 
         auto *deleteFirstBtn = builder.button("deleteFirstBtn", "Delete First", deleteFirstEL);
 
-        auto ff =
-            [](pair<string *, HybridNode<string> *> p) {
-                if (*p.first == "BOO_String") return true;
-                return false;
-            };
+        auto ff = [](pair<string *, HybridNode<string> *> p) {
+            if (*p.first == "Greg") return true;
+            return false;
+        };
 
         auto greg = avstring->find(ff);
 
-        cout << (greg.second)->getId() << endl;
+        cout << "Greg node id = " << (greg.second)->getId() << endl;
 
         printf("Setup complete!\n");
         return maindiv;
     }
 };
 
+}  // namespace clarity
 #endif

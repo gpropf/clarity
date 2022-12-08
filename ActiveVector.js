@@ -25,3 +25,11 @@ function eraseNth(avstring, n) {
         avstring.eraseNth(n);
     }
 }
+
+function removeChecked(avstring) {
+    return function (ev) {
+        console.log(avstring);        
+        console.log("removeChecked Clicked!");
+        avstring.removeChecked();
+    }
+}
