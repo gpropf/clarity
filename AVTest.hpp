@@ -27,7 +27,7 @@ class AVString : public ActiveVector<HybridNode, string, int> {
     }
 
     void removeChecked() {
-        StorageVectorIteratorT rend = ActiveVector<HybridNode, string, int>::removeChecked();
+        ActiveVector<HybridNode, string, int>::removeChecked();
     }
 
     HybridNode<string> *makeElementRepresentation(string *s) {

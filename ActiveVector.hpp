@@ -36,7 +36,8 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
     void countElements() {
         cout << "This vector has " << this->storageVector_.size() << " elements" << endl;
         cout << "this pointer = " << this << endl;
-        for (auto [element, node] : this->storageVector_) {
+        for (auto& p : storageVector_) {
+            auto [element, node] = p;
             cout << "ELEM: " << *element << " : " << node->getId() << endl;
         }
     }
@@ -124,38 +125,69 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
         return storageVector_.erase(nIter);
     }
 
+    void deletePair(ActivePairT& p) {
+        auto [element, node] = p;
+        auto* rootNode = builder_.getParent();
+        if (rootNode != nullptr) rootNode->removeChild(node);
+        delete element;
+        delete node;
+        // element = nullptr;
+        // node = nullptr;
+        countElements();
+    }
+
     // StorageVectorIteratorT remove_if(StorageVectorIteratorT begin, StorageVectorIteratorT end,
     // ActivePairLambdaT filterFn) {
     //     return remove_if(storageVector_.begin(), storageVector_.end(), filterFn);
     // }
 
-    StorageVectorIteratorT filterWithLambda(ActivePairLambdaT filterFn) {
+    /**
+     * @brief Copies elements for which filterFn returns false to a temporary vector while deleting
+     * the rest. At the end we use std::move to re-assign the storageVector_ to the moved elements.
+     * After experimenting with std::remove_copy_if and std::remove_if and others this is the approach
+     * that I think is reasonably efficient and doesn't leak memory.
+     *
+     * @param filterFn
+     */
+    void filterWithLambda(ActivePairLambdaT filterFn) {
         int vectorSize = storageVector_.size();
-        vector<ActivePairT> tmpVec(vectorSize);
-        StorageVectorIteratorT filterEnd =
-            copy_if(storageVector_.begin(), storageVector_.end(), tmpVec.begin(), filterFn);
-        auto* rootNode = builder_.getParent();
-
-        if (rootNode != nullptr) {
-            for (auto [element, node] : tmpVec) {
-                if (element == nullptr) break;
-                delete element;
-                delete node;
-                rootNode->removeChild(node);
-            }
-        } else {
-            for (auto [element, node] : tmpVec) {
-                if (element == nullptr) break;
-                delete element;
-                delete node;
+        vector<ActivePairT> tmpVec;
+        for (auto& p : storageVector_) {
+            if (filterFn(p)) {
+                deletePair(p);
+                // p.second = 0;
+            } else {
+                tmpVec.push_back(p);
             }
         }
-        storageVector_.shrink_to_fit();
+        storageVector_ = std::move(tmpVec);
 
-        return filterEnd;
+        // vector<ActivePairT> tmpVec(vectorSize);
+        // StorageVectorIteratorT filterEnd =
+        //     remove_copy_if(storageVector_.begin(), storageVector_.end(), tmpVec.begin(),
+        //     filterFn);
+        // auto* rootNode = builder_.getParent();
+
+        // if (rootNode != nullptr) {
+        //     for (auto [element, node] : tmpVec) {
+        //         if (element == nullptr) break;
+        //         delete element;
+        //         delete node;
+        //         rootNode->removeChild(node);
+        //     }
+        // } else {
+        //     for (auto [element, node] : tmpVec) {
+        //         if (element == nullptr) break;
+        //         delete element;
+        //         delete node;
+        //     }
+        // }
+        // // storageVector_.shrink_to_fit();
+
+        // return filterEnd;
     }
 
-    StorageVectorIteratorT removeChecked() { return filterWithLambda(removeCheckedFn_); }
+    void removeChecked() { filterWithLambda(removeCheckedFn_); }
 
     // protected:
     CLNodeFactory<Nc, V, N> builder_;
