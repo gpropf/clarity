@@ -63,14 +63,14 @@ struct TestFramework : public PageContent {
         CLNodeFactory<HybridNode, double, double> testareaBuilder =
             rootBuilder.withName("testarea_subnode").withChildrenOf(testarea);
 
-        auto *pageViewer = sidebarBuilder.withName("pageViewer")
-                               .withTag("svg")
-                               .withAttributes({{"width", val("600")},
-                                                {"height", val("100")},
-                                                {"viewBox", val("0 0 600 100")},
-                                                { "style",
-                                                  val("border: 1px solid black") }})
-                               .build();
+        // auto *pageViewer = sidebarBuilder.withName("pageViewer")
+        //                        .withTag("svg")
+        //                        .withAttributes({{"width", val("600")},
+        //                                         {"height", val("100")},
+        //                                         {"viewBox", val("0 0 600 100")},
+        //                                         { "style",
+        //                                           val("border: 1px solid black") }})
+        //                        .build();
         sidebarBuilder.br();
 
         auto *listNodesButton = (CLNodeFactory<HybridNode, int, int>(sidebarBuilder))

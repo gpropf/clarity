@@ -203,6 +203,6 @@ The 4 letters at the end of the type actually tell you exactly what's missing. I
 
 #### Known Bugs
 
-* Setting `engulfForNode` to true when using a label causes problems when the thing being engulfed is an SVG area or attributeNode. Probabaly because the label "yanks away" the SVG components from their rightful parent nodes. Seems to work fine for other controls.
+* Setting `engulfForNode` to true when using a label causes problems when the thing being engulfed is an SVG area or attributeNode. Probably because the label "yanks away" the SVG components from their rightful parent nodes. Seems to work fine for other controls.
 * CanvasGrid uses an int for the cell width and height but this is derived by dividing the CG width in pixels by its width in cells. So if you have a canvas that is 210 pixels wide but 20 cells wide, the cells get rounded to 10px and then don't fill the whole width of the allocated canvas.
 * Not exactly a bug but if you delete a node you need to explicitly do a `removeChild()` call on the node's parent (if any). If the parent is later deleted itself, the dangling pointer will get double-deleted and cause a runtime error.
