@@ -101,14 +101,13 @@ class ActiveVector {
     }
 
     /**
-     * @brief The method that generates the core control element for a given source element. This
-     * method should be overridden for each subclass.
+     * @brief The method that generates the core control element for a given source element.
      *
      * @return HybridNode<V>*
      */
     // virtual HybridNode<V>* makeElementRepresentation(V*) = 0;  //{ return nullptr; };  // FIXME!
 
-    virtual void push_back(V* v) {
+    virtual void addElementWithControls(V* v) {
         HybridNode<V>* node = makeElementControl(v);
         storageVector_.push_back(pair(v, node));
         currentIndex_++;

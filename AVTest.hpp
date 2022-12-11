@@ -136,13 +136,13 @@ struct AVTest : public PageContent {
         auto *avstringsDiv = builder.withTag("div").withName("AVStringsDiv").build();
         AVString *avstring = new AVString(avstringsDiv);
         string *s1 = new string("Jan");
-        avstring->push_back(s1);
+        avstring->addElementWithControls(s1);
         string *s2 = new string("Tyler");
-        avstring->push_back(s2);
+        avstring->addElementWithControls(s2);
         string *s3 = new string("Greg");
-        avstring->push_back(s3);
+        avstring->addElementWithControls(s3);
         string *s4 = new string("Abby");
-        avstring->push_back(s4);
+        avstring->addElementWithControls(s4);
 
         val countElementsELG = val::global("countElementsELG")(avstring);
 
