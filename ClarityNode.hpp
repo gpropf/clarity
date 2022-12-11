@@ -778,7 +778,7 @@ class HybridNode : public ClarityNode {
             // nodelog("State function IS set.", ClogType::WARNING);
             this->stateFunction_(this, this->cppVal_);
         } else {
-            nodelog("State function is not set.", ClogType::WARNING);
+            nodelog("State function is not set.", ClogType::INFO);
         }
     }
 
