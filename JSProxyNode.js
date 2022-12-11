@@ -382,6 +382,14 @@ class JSProxyNode {
           "click": JSProxyNode.elgCanvasGridAlltypesClick
         }
       }
+    },
+    "CanvasElement": {
+      "canvas": {
+        "NOTYPE":
+        {
+          "click": JSProxyNode.elgCanvasGridAlltypesClick
+        }
+      }
     },    
     "HybridNode": {
       "input": {

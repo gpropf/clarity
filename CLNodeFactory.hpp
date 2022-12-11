@@ -856,7 +856,10 @@ class CLNodeFactory {
      * @return Nc*
      */
     INLINE CanvasElement<V> *canvas(const string &drawFunctionName) {
-        CanvasElement<V> *cel = static_cast<CanvasElement<V> *>(withTag("canvas").build());
+        CanvasElement<V> *cel = new CanvasElement<V>(name_, "canvas", useExistingDOMElement_,
+                  attachmentMode_, attachmentId_);
+        cel = static_cast<CanvasElement<V> *>(build(cel));
+        //static_cast<CanvasElement<V> *>(withTag("canvas").build());
         // cel->setDrawFuntionName("canvasTestPattern");
         cel->setDrawFuntionName(drawFunctionName);
         cel->refreshView();
