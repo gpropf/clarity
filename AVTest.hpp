@@ -19,21 +19,19 @@ class AVString : public ActiveVector<HybridNode, string, int> {
 
     AVString(HybridNode<string> *rootNode) : ActiveVector(rootNode) {}
 
-    virtual val deleteCurrentElementFn();
+    virtual val deleteCurrentElementEL();
 
-    void countElements() {        
-        ActiveVector<HybridNode, string, int>::countElements();
-    }
+    void countElements() { ActiveVector<HybridNode, string, int>::countElements(); }
 
     void removeChecked() { ActiveVector<HybridNode, string, int>::removeChecked(); }
 
-    // HybridNode<string> *makeElementRepresentation(string *s) {
-    //     auto *reprNode = builder_.withName("av_element")
-    //                          .withCppVal(s)
-    //                          .withHoverText(string("Edit this element"))
-    //                          .textInput();
-    //     return reprNode;
-    // }
+    virtual HybridNode<string> *makeElementRepresentation(string *s) {
+        auto *reprNode = builder_.withName("av_element")
+                             .withCppVal(s)
+                             .withHoverText(string("Edit this element"))
+                             .textInput();
+        return reprNode;
+    }
 
     /**
      * @brief Performs an "erase" operation on the underlying vector using `position` to specify the
@@ -74,7 +72,7 @@ class AVString : public ActiveVector<HybridNode, string, int> {
         StorageVectorIteratorT currentFirst = storageVector_.end();
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
 
-        val deleteFirstEL = deleteCurrentElementFn();
+        //val deleteCurrentElementEL = deleteCurrentElementEL();
 
         auto *deleteBox =
             checkboxBuilder.withName("delete_" + clto_str(reprNode->getId())).checkbox();
@@ -102,18 +100,18 @@ EMSCRIPTEN_BINDINGS(avstring) {
         .constructor<HybridNode<string> *>()
         .function("erase", &AVString::erase, allow_raw_pointers())
         .function("eraseNth", &AVString::eraseNth, allow_raw_pointers())
-        // .function("deleteCurrentElementFn", &AVString::deleteCurrentElementFn,
+        // .function("deleteCurrentElementEL", &AVString::deleteCurrentElementEL,
         // allow_raw_pointer<arg<0>>())
-        .function("deleteCurrentElementFn", &AVString::deleteCurrentElementFn, allow_raw_pointers())
+        .function("deleteCurrentElementEL", &AVString::deleteCurrentElementEL, allow_raw_pointers())
         .function("countElements", &AVString::countElements, allow_raw_pointers())
         .function("removeChecked", &AVString::removeChecked, allow_raw_pointers());
     //.function("eraseFn", &AVString::eraseFn, allow_raw_pointers());
 }
 
-val AVString::deleteCurrentElementFn() {
+val AVString::deleteCurrentElementEL() {
     cout << "AVString::Creating deleter function for index: " << currentIndex_ << endl;
-    val deleteFirstEL = val::global("eraseNth")(*this, val(currentIndex_));
-    return deleteFirstEL;
+    val deleteCurrentElementEL = val::global("eraseNth")(*this, val(currentIndex_));
+    return deleteCurrentElementEL;
 }
 
 /**
@@ -156,9 +154,9 @@ struct AVTest : public PageContent {
         auto *removeCheckedBtn =
             builder.button("removeCheckedBtn", "Remove Checked", removeChecked);
 
-        val deleteFirstEL = val::global("eraseNth")(avstring, val(0));
+        val deleteCurrentElementEL = val::global("eraseNth")(avstring, val(0));
 
-        auto *deleteFirstBtn = builder.button("deleteFirstBtn", "Delete First", deleteFirstEL);
+        auto *deleteFirstBtn = builder.button("deleteFirstBtn", "Delete First", deleteCurrentElementEL);
 
         auto ff = [](pair<string *, HybridNode<string> *> p) {
             if (*p.first == "Greg") return true;

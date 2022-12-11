@@ -59,7 +59,7 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
      *
      * @return val A JS deleter function.
      */
-    virtual val deleteCurrentElementFn() = 0;
+    virtual val deleteCurrentElementEL() = 0;
 
     pair<V*, HybridNode<V>*> find(std::function<bool(pair<V*, HybridNode<V>*>)> findFunction) {
         int i = 0;
@@ -69,6 +69,8 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
         }
         return pair(nullptr, nullptr);
     }
+
+    virtual HybridNode<string> *makeElementRepresentation(V *v) = 0;
 
     /**
      * @brief This method is designed to construct the entire control element for a given source
@@ -80,7 +82,22 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
      * @param v
      * @return HybridNode<V>*
      */
-    virtual HybridNode<V>* makeElementControl(V* v) = 0;
+    
+    virtual HybridNode<string> *makeElementControl(string *v) {
+        auto *reprNode = makeElementRepresentation(v);
+
+        StorageVectorIteratorT currentFirst = storageVector_.end();
+        CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
+
+        val deleteFirstEL = deleteCurrentElementEL();
+
+        auto *deleteBox =
+            checkboxBuilder.withName("delete_" + clto_str(reprNode->getId())).checkbox();
+
+        auto *grp = builder_.group({reprNode, deleteBox});
+
+        return grp;
+    }
 
     /**
      * @brief The method that generates the core control element for a given source element. This
@@ -95,6 +112,7 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
         storageVector_.push_back(pair(v, node));
         currentIndex_++;
     }
+
 
     StorageVectorIteratorT erase(StorageVectorIteratorT position) {
         return storageVector_.erase(position);
@@ -125,13 +143,10 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
      * @param n
      * @return StorageVectorIteratorT
      */
-    StorageVectorIteratorT eraseNth(int n) {
+    StorageVectorIteratorT eraseNth(int n) {        
+        auto p = storageVector_[n];
+        deletePair(p);        
         StorageVectorIteratorT nIter = storageVector_.begin() + n;
-        auto [element, node] = storageVector_[n];
-        delete element;
-        auto* rootNode = builder_.getParent();
-        if (rootNode != nullptr) rootNode->removeChild(node);
-        delete node;
         return storageVector_.erase(nIter);
     }
 
@@ -140,10 +155,7 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
         auto* rootNode = builder_.getParent();
         if (rootNode != nullptr) rootNode->removeChild(node);
         delete element;
-        delete node;
-        // element = nullptr;
-        // node = nullptr;
-        countElements();
+        delete node;        
     }
 
     /**
@@ -165,31 +177,7 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
                 tmpVec.push_back(p);
             }
         }
-        storageVector_ = std::move(tmpVec);
-
-        // vector<ActivePairT> tmpVec(vectorSize);
-        // StorageVectorIteratorT filterEnd =
-        //     remove_copy_if(storageVector_.begin(), storageVector_.end(), tmpVec.begin(),
-        //     filterFn);
-        // auto* rootNode = builder_.getParent();
-
-        // if (rootNode != nullptr) {
-        //     for (auto [element, node] : tmpVec) {
-        //         if (element == nullptr) break;
-        //         delete element;
-        //         delete node;
-        //         rootNode->removeChild(node);
-        //     }
-        // } else {
-        //     for (auto [element, node] : tmpVec) {
-        //         if (element == nullptr) break;
-        //         delete element;
-        //         delete node;
-        //     }
-        // }
-        // // storageVector_.shrink_to_fit();
-
-        // return filterEnd;
+        storageVector_ = std::move(tmpVec);        
     }
 
     virtual void removeChecked() { filterWithLambda(removeCheckedFn_); }
@@ -203,16 +191,10 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
 template <template <typename V> class Nc, typename V, typename N>
 typename ActiveVector<Nc, V, N>::ActivePairLambdaT ActiveVector<Nc, V, N>::removeCheckedFn_ =
     [](ActiveVector<Nc, V, N>::ActivePairT ap) {
-        auto [element, node] = ap;
-        // auto *deleteBox = static_cast<ClarityNode*>(node)->getChildren()[1];
+        auto [element, node] = ap;        
         auto* deleteBox = node->getChildren()[1];
         bool deleteChecked = deleteBox->getVal().template as<bool>();
-        cout << "Checkbox: " << deleteChecked << endl;
-        // if (deleteChecked) {
-        //     delete element;
-        //     delete node;
-        // }
-
+        cout << "Checkbox: " << deleteChecked << endl;        
         return deleteChecked;
     };
 
