@@ -46,7 +46,7 @@ struct Speedtester {
     }
 
     CLNodeFactory<HybridNode, int, int> *fieldBuilder_;
-    CanvasElement<int> *graphCanvas_;
+   // CanvasElement<int> *graphCanvas_;
 
     static std::string getStringFromInstance(const Speedtester &instance) {
         return clto_str(*instance.nFieldsets_);
@@ -92,21 +92,24 @@ struct Speedtester {
     }
 
     void makeTrsNoArgs() {
-        val graphCanvasDomElement = Speedtester::staticTester_->graphCanvas_->getDomElement();
-        val clearCanvasUsingDomElement = ClarityNode::JSProxyNode_["clearCanvasUsingDomElement"];
-        clearCanvasUsingDomElement(graphCanvasDomElement, val("#223388"));
+      //  val graphCanvasDomElement = Speedtester::staticTester_->graphCanvas_->getDomElement();
+     //   val clearCanvasUsingDomElement = ClarityNode::JSProxyNode_["clearCanvasUsingDomElement"];
+      //  clearCanvasUsingDomElement(graphCanvasDomElement, val("#223388"));
         // graphCanvasDomElement.call<void>
         // graphCanvasDomElement.call<val>("clearCanvasUsingDomElement", graphCanvasDomElement,
-        // val("#aa4567"));
-        val ctx = graphCanvasDomElement.call<val>("getContext", val("2d"));
-        ctx.set("strokeStyle", "red");
+        
+        // val ctx = graphCanvasDomElement.call<val>("getContext", val("2d"));
+        // ctx.set("strokeStyle", "red");
         int totalFieldsToCreate = *nInputFields_ * *nFieldsets_ * *nSetGroups_;
-        cout << "We will be creating a total of " << totalFieldsToCreate << endl;
+        cout << "We will be creating a total of " << totalFieldsToCreate << " fields." << endl;
         int totalRateMeasurements = *nSetGroups_ * *nFieldsets_;
         double measurementWidth = 300 / totalRateMeasurements;
         int fieldCount = 0;
         int rateCount = 0;
         time_t totalTime = 0;
+
+
+
         for (int k = 0; k < *nSetGroups_; k++) {
             cout << "Setgroup: " << k << endl;
             for (int j = 0; j < *nFieldsets_; j++) {
@@ -129,9 +132,9 @@ struct Speedtester {
                 cout << "\tSet: " << j << ", ms/field: " << msPerField << endl;
                 totalTime += delT;
                 double barHeight = msPerField * 50;
-                ctx.call<void>("moveTo", val(rateCount * measurementWidth), val(150));
-                ctx.call<void>("lineTo", val(rateCount * measurementWidth), val(150 - barHeight));
-                ctx.call<void>("stroke");
+                // ctx.call<void>("moveTo", val(rateCount * measurementWidth), val(150));
+                // ctx.call<void>("lineTo", val(rateCount * measurementWidth), val(150 - barHeight));
+                // ctx.call<void>("stroke");
                 if (*destroyFieldsImmediately_) destroyEverything();
             }
         }
@@ -144,8 +147,8 @@ struct Speedtester {
     template <template <typename V> class Nc, typename V, typename N>
     void makeTrs(CLNodeFactory<Nc, V, N> builder, ClarityNode *graphCanvas) {
         val graphCanvasDomElement = graphCanvas->getDomElement();
-        val ctx = graphCanvasDomElement.call<val>("getContext", val("2d"));
-        ctx.set("strokeStyle", "red");
+        // val ctx = graphCanvasDomElement.call<val>("getContext", val("2d"));
+        // ctx.set("strokeStyle", "red");
 
         int totalFieldsToCreate = *nInputFields_ * *nFieldsets_ * *nSetGroups_;
         cout << "We will be creating a total of " << totalFieldsToCreate << endl;
@@ -175,9 +178,9 @@ struct Speedtester {
                 cout << "\tSet: " << j << ", ms/field: " << msPerField << endl;
                 totalTime += delT;
                 double barHeight = msPerField * 50;
-                ctx.call<void>("moveTo", val(rateCount), val(150 - barHeight));
-                ctx.call<void>("lineTo", val(rateCount), val(150));
-                ctx.call<void>("stroke");
+                // ctx.call<void>("moveTo", val(rateCount), val(150 - barHeight));
+                // ctx.call<void>("lineTo", val(rateCount), val(150));
+                // ctx.call<void>("stroke");
                 if (*destroyFieldsImmediately_) destroyEverything();
             }
         }
@@ -197,6 +200,8 @@ EMSCRIPTEN_BINDINGS(speedtester) {
         .function("updateState", &Speedtester::updateState, allow_raw_pointers())
         .function("destroyEverything", &Speedtester::destroyEverything, allow_raw_pointers())
         .function("makeTrsNoArgs", &Speedtester::makeTrsNoArgs, allow_raw_pointers());
+
+    class_<CanvasElement<int>>("CanvasElement_i");
 }
 
 Speedtester *Speedtester::staticTester_ = nullptr;
@@ -296,8 +301,8 @@ struct Speedtest : public PageContent {
         auto *labelled_destroyFieldsImmediately_cb = childOfMaindivBuilder.label(
             destroyFieldsImmediately_cb, "Destroy fields as we go", true);
 
-        Speedtester::staticTester_->graphCanvas_ =
-            childOfMaindivBuilder.withName("graphCanvas_").canvas("canvasTestPattern");
+        // Speedtester::staticTester_->graphCanvas_ =
+        //     childOfMaindivBuilder.withName("graphCanvas_").canvas("canvasTestPattern");
 
         auto updateTotalFields = [&, nTotalFields_inp, destroyFieldsImmediately_cb](val ev) {
             cout << "updateTotalFields works!\n";
