@@ -29,8 +29,19 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
     typedef typename vector<ActivePairT>::iterator StorageVectorIteratorT;
     typedef typename std::function<bool(pair<V*, HybridNode<V>*>)> ActivePairLambdaT;
 
+    /**
+     * @brief Lambda function that looks at the control node for a given element and returns true if
+     * the delete box within the control node is checked or false if it is not.
+     *
+     */
     static ActivePairLambdaT removeCheckedFn_;
 
+    /**
+     * @brief Construct a new Active Vector object with all new nodes being added as children of the
+     * provided `rootNode`.
+     *
+     * @param rootNode
+     */
     ActiveVector(HybridNode<V>* rootNode) { builder_ = builder_.withChildrenOf(rootNode); }
 
     void countElements() {
@@ -42,11 +53,13 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
         }
     }
 
-    virtual val deleteFirstFn() {
-        cout << "ActiveVector::Creating deleter function for index: " << currentIndex_ << endl;
-        val deleteFirstEL = val::global("eraseNth")(*this, val(currentIndex_));
-        return deleteFirstEL;
-    }
+    /**
+     * @brief Returns a JS function that deletes the current element (as defined by `currentIndex_`
+     * in the AV.
+     *
+     * @return val A JS deleter function.
+     */
+    virtual val deleteCurrentElementFn() = 0;
 
     pair<V*, HybridNode<V>*> find(std::function<bool(pair<V*, HybridNode<V>*>)> findFunction) {
         int i = 0;
@@ -60,25 +73,14 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
     /**
      * @brief This method is designed to construct the entire control element for a given source
      * element. This control may include things like a delete button just for this source element or
-     * other things besided the control that manipulates the source element directly.
+     * other things besided the control that manipulates the source element directly. This is a
+     * virtual method because each subclass may require different subnodes. Most will want a
+     * checkbox or button to delete the referenced element.
      *
      * @param v
      * @return HybridNode<V>*
      */
-    virtual HybridNode<V>* makeElementControl(V* v) {
-        auto* reprNode = makeElementRepresentation(v);
-        StorageVectorIteratorT currentFirst = storageVector_.end();
-        CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
-
-        val deleteFirstEL = deleteFirstFn();
-
-        auto* deleteBox =
-            checkboxBuilder.withName("delete_" + clto_str(reprNode->getId())).checkbox();
-
-        auto* grp = builder_.group({reprNode, deleteBox});
-
-        return grp;
-    }
+    virtual HybridNode<V>* makeElementControl(V* v) = 0;
 
     /**
      * @brief The method that generates the core control element for a given source element. This
@@ -86,7 +88,7 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
      *
      * @return HybridNode<V>*
      */
-    virtual HybridNode<V>* makeElementRepresentation(V*) { return nullptr; };  // FIXME!
+    // virtual HybridNode<V>* makeElementRepresentation(V*) = 0;  //{ return nullptr; };  // FIXME!
 
     virtual void push_back(V* v) {
         HybridNode<V>* node = makeElementControl(v);
@@ -98,6 +100,15 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
         return storageVector_.erase(position);
     }
 
+    /**
+     * @brief Uses 'remove' on the storageVector_ to take out the emenent matching the provided
+     * pair, 'val'.
+     *
+     * @param first
+     * @param last
+     * @param val
+     * @return StorageVectorIteratorT
+     */
     StorageVectorIteratorT remove(StorageVectorIteratorT first, StorageVectorIteratorT last,
                                   const ActivePairT& val) {
         auto [element, node] = val;
@@ -115,7 +126,6 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
      * @return StorageVectorIteratorT
      */
     StorageVectorIteratorT eraseNth(int n) {
-        // countElements();
         StorageVectorIteratorT nIter = storageVector_.begin() + n;
         auto [element, node] = storageVector_[n];
         delete element;
@@ -136,20 +146,15 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
         countElements();
     }
 
-    // StorageVectorIteratorT remove_if(StorageVectorIteratorT begin, StorageVectorIteratorT end,
-    // ActivePairLambdaT filterFn) {
-    //     return remove_if(storageVector_.begin(), storageVector_.end(), filterFn);
-    // }
-
     /**
      * @brief Copies elements for which filterFn returns false to a temporary vector while deleting
      * the rest. At the end we use std::move to re-assign the storageVector_ to the moved elements.
-     * After experimenting with std::remove_copy_if and std::remove_if and others this is the approach
-     * that I think is reasonably efficient and doesn't leak memory.
+     * After experimenting with std::remove_copy_if and std::remove_if and others this is the
+     * approach that I think is reasonably efficient and doesn't leak memory.
      *
      * @param filterFn
      */
-    void filterWithLambda(ActivePairLambdaT filterFn) {
+    virtual void filterWithLambda(ActivePairLambdaT filterFn) {
         int vectorSize = storageVector_.size();
         vector<ActivePairT> tmpVec;
         for (auto& p : storageVector_) {
@@ -187,7 +192,7 @@ class ActiveVector : public std::vector<std::pair<V*, HybridNode<V>*>> {
         // return filterEnd;
     }
 
-    void removeChecked() { filterWithLambda(removeCheckedFn_); }
+    virtual void removeChecked() { filterWithLambda(removeCheckedFn_); }
 
     // protected:
     CLNodeFactory<Nc, V, N> builder_;

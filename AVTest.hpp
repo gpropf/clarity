@@ -19,57 +19,82 @@ class AVString : public ActiveVector<HybridNode, string, int> {
 
     AVString(HybridNode<string> *rootNode) : ActiveVector(rootNode) {}
 
-    virtual val deleteFirstFn();
+    virtual val deleteCurrentElementFn();
 
-    void countElements() {
-        // ActiveVector<HybridNode, string, int>::removeChecked();
+    void countElements() {        
         ActiveVector<HybridNode, string, int>::countElements();
     }
 
-    void removeChecked() {
-        ActiveVector<HybridNode, string, int>::removeChecked();
-    }
+    void removeChecked() { ActiveVector<HybridNode, string, int>::removeChecked(); }
 
-    HybridNode<string> *makeElementRepresentation(string *s) {
-        auto *reprNode = builder_.withName("av_element")
-                             .withCppVal(s)
-                             .withHoverText(string("Edit this element"))
-                             .textInput();
-        return reprNode;
-    }
+    // HybridNode<string> *makeElementRepresentation(string *s) {
+    //     auto *reprNode = builder_.withName("av_element")
+    //                          .withCppVal(s)
+    //                          .withHoverText(string("Edit this element"))
+    //                          .textInput();
+    //     return reprNode;
+    // }
 
+    /**
+     * @brief Performs an "erase" operation on the underlying vector using `position` to specify the
+     * element.
+     *
+     * @param position
+     * @return StorageVectorIteratorT
+     */
     StorageVectorIteratorT erase(StorageVectorIteratorT position) {
         return ActiveVector<HybridNode, string, int>::erase(position);
     }
 
+    /**
+     * @brief Performs an "erase" operation on the underlying vector at index `n` to specify the
+     * element.
+     *
+     * @param n
+     * @return StorageVectorIteratorT
+     */
     StorageVectorIteratorT eraseNth(int n) {
-        // StorageVectorIteratorT nIter = storageVector_.begin() + n;
-        // StorageVectorIteratorT erasedIter = this->erase(nIter);
-        // this->countElements(100);
         StorageVectorIteratorT erasedIter = ActiveVector<HybridNode, string, int>::eraseNth(n);
-
         return erasedIter;
     }
 
-    // virtual void countElements() {
-    //     cout << "This vector has " << this->storageVector_.size() << " elements" << endl;
-    //     cout << "this pointer = " << this << endl;
-    //     for (auto [element, node] : this->storageVector_) {
-    //         cout << "ELEM: " << *element << " : " << node->getId() << endl;
-    //     }
-    // }
+    /**
+     * @brief We create a 'delete' checkbox for each string. Later, when the user clicks 'Remove
+     * Checked', the checked elements are deleted.
+     *
+     * @param v
+     * @return HybridNode<string>*
+     */
+    virtual HybridNode<string> *makeElementControl(string *v) {
+        auto *reprNode = builder_.withName("av_element")
+                             .withCppVal(v)
+                             .withHoverText(string("Edit this element"))
+                             .textInput();
+
+        StorageVectorIteratorT currentFirst = storageVector_.end();
+        CLNodeFactory<HybridNode, bool, int> checkboxBuilder(builder_);
+
+        val deleteFirstEL = deleteCurrentElementFn();
+
+        auto *deleteBox =
+            checkboxBuilder.withName("delete_" + clto_str(reprNode->getId())).checkbox();
+
+        auto *grp = builder_.group({reprNode, deleteBox});
+
+        return grp;
+    }
 };
 
 EMSCRIPTEN_BINDINGS(avstring) {
-    class_<ActiveVector<HybridNode, string, int>>("ActiveVector")
-        .function("eraseNth", &ActiveVector<HybridNode, string, int>::eraseNth,
-                  allow_raw_pointers())
-        .function("countElements", &ActiveVector<HybridNode, string, int>::countElements,
-                  allow_raw_pointers())
-        .function("removeChecked", &ActiveVector<HybridNode, string, int>::removeChecked,
-                  allow_raw_pointers());
-    // .class_function("eraseFrom", &ActiveVector<HybridNode, string, int>::eraseFrom,
-    //                 allow_raw_pointers());
+    // class_<ActiveVector<HybridNode, string, int>>("ActiveVector")
+    //     .function("eraseNth", &ActiveVector<HybridNode, string, int>::eraseNth,
+    //               allow_raw_pointers())
+    //     .function("countElements", &ActiveVector<HybridNode, string, int>::countElements,
+    //               allow_raw_pointers())
+    //     .function("removeChecked", &ActiveVector<HybridNode, string, int>::removeChecked,
+    //               allow_raw_pointers());
+    // // .class_function("eraseFrom", &ActiveVector<HybridNode, string, int>::eraseFrom,
+    // //                 allow_raw_pointers());
 
     class_<ActiveVector<HybridNode, string, int>::StorageVectorIteratorT>("StorageVectorIteratorT");
 
@@ -77,18 +102,18 @@ EMSCRIPTEN_BINDINGS(avstring) {
         .constructor<HybridNode<string> *>()
         .function("erase", &AVString::erase, allow_raw_pointers())
         .function("eraseNth", &AVString::eraseNth, allow_raw_pointers())
-        // .function("deleteFirstFn", &AVString::deleteFirstFn, allow_raw_pointer<arg<0>>())
-        .function("deleteFirstFn", &AVString::deleteFirstFn, allow_raw_pointers())
+        // .function("deleteCurrentElementFn", &AVString::deleteCurrentElementFn,
+        // allow_raw_pointer<arg<0>>())
+        .function("deleteCurrentElementFn", &AVString::deleteCurrentElementFn, allow_raw_pointers())
         .function("countElements", &AVString::countElements, allow_raw_pointers())
         .function("removeChecked", &AVString::removeChecked, allow_raw_pointers());
     //.function("eraseFn", &AVString::eraseFn, allow_raw_pointers());
 }
 
-val AVString::deleteFirstFn() {
+val AVString::deleteCurrentElementFn() {
     cout << "AVString::Creating deleter function for index: " << currentIndex_ << endl;
     val deleteFirstEL = val::global("eraseNth")(*this, val(currentIndex_));
     return deleteFirstEL;
-    // return val::null();
 }
 
 /**
