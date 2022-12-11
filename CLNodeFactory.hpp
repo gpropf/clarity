@@ -132,7 +132,15 @@ class CLNodeFactory {
      * @brief Construct a new CLNodeFactory object
      *
      */
-    INLINE CLNodeFactory() {}
+    inline CLNodeFactory() {}
+
+    /**
+     * @brief This constructor provides a shortcut to makeing subnodes.
+     *
+     * @param rootNode
+     * @return
+     */
+    inline CLNodeFactory(ClarityNode *rootNode) { this = this->withChildrenOf(rootNode); }
 
     /**
      * @brief Construct a new CLNodeFactory object
@@ -719,7 +727,6 @@ class CLNodeFactory {
      * @return ClarityNode*
      */
     inline ClarityNode *getParent() { return parent_; }
-    
 
     /**
      * @brief Puts the provided nodes inside a div.
@@ -857,10 +864,8 @@ class CLNodeFactory {
      */
     INLINE CanvasElement<V> *canvas(const string &drawFunctionName) {
         CanvasElement<V> *cel = new CanvasElement<V>(name_, "canvas", useExistingDOMElement_,
-                  attachmentMode_, attachmentId_);
+                                                     attachmentMode_, attachmentId_);
         cel = static_cast<CanvasElement<V> *>(build(cel));
-        //static_cast<CanvasElement<V> *>(withTag("canvas").build());
-        // cel->setDrawFuntionName("canvasTestPattern");
         cel->setDrawFuntionName(drawFunctionName);
         cel->refreshView();
         return cel;
