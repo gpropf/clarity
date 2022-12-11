@@ -45,6 +45,10 @@ class ActiveVector {
      */
     ActiveVector(HybridNode<V>* rootNode) { builder_ = builder_.withChildrenOf(rootNode); }
 
+    /**
+     * @brief Utility method for debugging to print out some info on each element.
+     *
+     */
     void countElements() {
         cout << "This vector has " << this->storageVector_.size() << " elements" << endl;
         cout << "this pointer = " << this << endl;
@@ -71,7 +75,15 @@ class ActiveVector {
         return pair(nullptr, nullptr);
     }
 
-    virtual HybridNode<string>* makeElementRepresentation(V* v) = 0;
+    /**
+     * @brief Generates the core representation element for each type of source element. As an
+     * example, a subclass representing <option> tags would return the option tag for each element
+     * here.
+     *
+     * @param v
+     * @return HybridNode<V>*
+     */
+    virtual HybridNode<V>* makeElementRepresentation(V* v) = 0;
 
     /**
      * @brief This method is designed to construct the entire control element for a given source
@@ -105,10 +117,21 @@ class ActiveVector {
      *
      * @return HybridNode<V>*
      */
-    // virtual HybridNode<V>* makeElementRepresentation(V*) = 0;  //{ return nullptr; };  // FIXME!
-
     virtual void addElementWithControls(V* v) {
         HybridNode<V>* node = makeElementControl(v);
+        storageVector_.push_back(pair(v, node));
+        currentIndex_++;
+    }
+
+    /**
+     * @brief Adds a new element but simply uses the raw `makeElementRepresentation()` method to
+     * create the representation. This is the method we use for things like <option> tags where we
+     * are not intending to edit the collection through it representations.
+     *
+     * @param v
+     */
+    virtual void addElementWithoutControls(V* v) {
+        HybridNode<V>* node = makeElementRepresentation(v);
         storageVector_.push_back(pair(v, node));
         currentIndex_++;
     }
