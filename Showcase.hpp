@@ -52,14 +52,19 @@ struct Showcase : public PageContent {
             hn->getDomElement().template call<void>("setAttribute", val("style"), val(colorString));
         };
 
-        auto *cir1Radius_tinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
-                                    .withName("cir1Radius_tinp")
-                                    .withCppVal(cir1Radius_value)
-                                    .withStateFunction(stateFn)
-                                    .textInput();
+        auto *cir1Radius_tinp =
+            childOfMaindivBuilder.withLinkMultiplierConstant(1)
+                .withName("cir1Radius_tinp")
+                .withCppVal(cir1Radius_value)
+                .withStateFunction(stateFn)
+                .withHoverText(
+                    "Radius of circle, also demonstrates use of State Functions. Shade of green "
+                    "depends on value between 0 and 255.")
+                .textInput();
 
         auto *cir1Radius_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
                                     .withName("cir1Radius_rinp")
+                                    .withHoverText("Radius of circle (range input)")
                                     .rangeInput();
 
         cir1Radius_rinp->addPeer(cir1Radius_tinp, 0.5);
@@ -80,6 +85,7 @@ struct Showcase : public PageContent {
                                              {"height", val("200")},
                                              {"viewBox", val("0 0 200 200")},
                                              {"style", val("border: 1px solid black")}})
+                            .withHoverText("SVG Control")
                             .build();
 
         auto *cir1 = childOfMaindivBuilder.withName("cir1")
@@ -102,6 +108,7 @@ struct Showcase : public PageContent {
         auto *temp_rinp = childOfMaindivBuilder.withLinkMultiplierConstant(1)
                               .withName("temp_rinp")
                               .withCppVal(temp)
+                              .withHoverText("Circle 'temperature'")
                               .rangeInput(0, 2000);
 
         auto *circleFill = childOfMaindivBuilder.withPeer(temp_rinp)
@@ -120,18 +127,22 @@ struct Showcase : public PageContent {
         auto *inputFlexTextLabel =
             childOfMaindivBuilder_str.withName("inputFlexTextLabel")
                 .withPeer(flexLabel)
-                .withAttributes({{"title", val("YOU CAN CHANGE THE LABEL TEXT")}})
+                .withHoverText("You can change the label value")                
                 .textInput();
         childOfMaindivBuilder.br();
 
         childOfMaindivBuilder.hr();
         double *d1 = new double(1.2);
-        auto *daisyChain1_trinp = childOfMaindivBuilder.withCppVal(d1).textInput();
+        auto *daisyChain1_trinp =
+            childOfMaindivBuilder.withHoverText("Actual Stored Value").withCppVal(d1).textInput();
+
         auto *daisyChain2_trinp = childOfMaindivBuilder.withPeer(daisyChain1_trinp)
                                       .withLinkMultiplierConstant(0.1)
+                                      .withHoverText("Value derived from field to the left")
                                       .textInput();
         auto *daisyChain3_trinp = childOfMaindivBuilder.withPeer(daisyChain2_trinp)
                                       .withLinkMultiplierConstant(0.1)
+                                      .withHoverText("Value derived from field to the left")
                                       .textInput();
 
         auto *daisies =
@@ -148,14 +159,19 @@ struct Showcase : public PageContent {
 
         double *d2 = new double(5.3);
         double *lrConstant = new double(11.1);
-        auto *daisyChain4_trinp = childOfMaindivBuilder.withCppVal(d2).textInput();
-        auto *daisyChain5_trinp = childOfMaindivBuilder
-                                      .withCppVal(lrConstant)
+        auto *daisyChain4_trinp =
+            childOfMaindivBuilder.withCppVal(d2).withHoverText("Actual Stored Value").textInput();
+        auto *daisyChain5_trinp = childOfMaindivBuilder.withCppVal(lrConstant)
+                                      .withAttributes({{"disabled", val("disabled")}})
+                                      .withHoverText("Modifiable multiplier - not yet implemented")
                                       //.withLinkMultiplierConstant(0.1)
                                       .textInput();
-        auto *daisyChain6_trinp = childOfMaindivBuilder.withPeer(daisyChain4_trinp)
-                                      .withLinkMultiplierVariable(lrConstant)
-                                      .textInput();
+        auto *daisyChain6_trinp =
+            childOfMaindivBuilder.withPeer(daisyChain4_trinp)
+                .withLinkMultiplierVariable(lrConstant)
+                .withHoverText(
+                    "Value derived by dividing value in leftmost field by value in middle field.")
+                .textInput();
 
         auto *daisies2 =
             childOfMaindivBuilder.group({daisyChain4_trinp, daisyChain5_trinp, daisyChain6_trinp});
@@ -163,7 +179,8 @@ struct Showcase : public PageContent {
             daisies2,
             "These nodes are similar to the ones above except that the middle value is the "
             "multiplier used to determine the right side value from the left side one. This "
-            "feature is not fully implemented yet.",
+            "feature is not fully implemented yet and the multiplier value cannot be changed, "
+            "hence the field is disabled.",
             true);
 
         childOfMaindivBuilder.br();
@@ -180,6 +197,7 @@ struct Showcase : public PageContent {
                 .withEventListenerGenerator("mousedown",
                                             ClarityNode::JSProxyNode_["elgInputAlltypesMousedown"])
                 .withInitVal(clickme2)
+                .withHoverText("Demonstrates user-provided custom listener generator")
                 .textInput();
 
         childOfMaindivBuilder.br();
@@ -197,6 +215,7 @@ struct Showcase : public PageContent {
                 .withAttributes({{"style", val("border: 1px solid green")},
                                  {"width", val(600)},
                                  {"height", val(400)}})
+                .withHoverText("CanvasGrid Control")
                 .canvasGrid(30, 20, 600, 400);
 
         canvas1->setCurrentCellVal(5);
@@ -206,6 +225,7 @@ struct Showcase : public PageContent {
                 .withCppVal(canvas1->getPtr2CurrentCellVal())
                 //.withAttributes({{"style", val("border: 3px dashed purple")}, {"size", val(2)}})
                 .withAttributes({{"class", val("small_width")}})
+                .withHoverText("Index of current color for canvas (between 0-7)")
                 .textInput();
 
         maindiv->appendChild(canvas1);
@@ -221,7 +241,10 @@ struct Showcase : public PageContent {
         carOptions->push_back({3, "Honda"});
 
         Select<vector<pair<int, string>>> *carSelect =
-            selectBuilder.withName("cars").withCppVal(carOptions).select();
+            selectBuilder.withName("cars")
+                .withCppVal(carOptions)
+                .withHoverText("Demonstrates Select subclass")
+                .select();
 
         CLNodeFactory<SimpleSelect, int, int> simpleSelectBuilder(childOfMaindivBuilder);
         vector<pair<int, string>> *carOptions2 = new vector<pair<int, string>>;
@@ -234,13 +257,17 @@ struct Showcase : public PageContent {
 
         SimpleSelect<int> *carSelect_ss = simpleSelectBuilder.withName("carSelect_ss")
                                               .withCppVal(carSelection)
+                                              .withHoverText("Demonstrates SimpleSelect subclass")
                                               .withLabelText("Pick a better car")
                                               .simpleSelect<string>(*carOptions2);
 
         CLNodeFactory<HybridNode, bool, int> checkboxBuilder(childOfMaindivBuilder);
         // string * checkme = new string("checked");
         bool *checkme = new bool(false);
-        auto *cbTest = checkboxBuilder.withCppVal(checkme).withName("checkme").checkbox();
+        auto *cbTest = checkboxBuilder.withCppVal(checkme)
+                           .withName("checkme")
+                           .withHoverText("Demonstrates Checkbox subclass")
+                           .checkbox();
 
         auto *lblTest = childOfMaindivBuilder_str.label(cbTest, "Label should engulf CB", true);
 
