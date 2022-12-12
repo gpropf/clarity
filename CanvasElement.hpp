@@ -41,19 +41,20 @@ class CanvasElement : public HybridNode<V> {
              << endl;
     }
 
-    // inline virtual void finalize() {
-    //     cout << "CanvasElement::finalize()\n";
-    //     this->jsProxyNode_.set("clarityNode", this);
-    //     val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
-    //     ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType",
-    //     this->jsProxyNode_,
-    //                                          listenerGenerators);
+    inline val getContext2d() {
+        return this->getDomElement().template call<val>("getContext", val("2d"));
+    }
+
+    // inline void setDrawFunction(val drawFunction) {
+    //     this->drawFunction_ = drawFunction;
+    // }
+
+    // inline void runDrawFunction() {
+    //     this->drawFunction_(this);
     // }
 
     INLINE virtual void finalize() {
-        // cout << "CanvasElement::finalize()\n";
         this->jsProxyNode_.set("clarityNode", this);
-        // val Selectables = val::global("Selectables");
         val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
         ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType",
                                              val("CanvasElement"), this->jsProxyNode_,
@@ -144,9 +145,8 @@ class CanvasGrid : public CanvasElement<V> {
         this->jsProxyNode_.set("clarityNode", this);
         // val Selectables = val::global("Selectables");
         val listenerGenerators = ClarityNode::JSProxyNode_["listenerGenerators"];
-        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType",
-                                             val("CanvasGrid"), this->jsProxyNode_,
-                                             listenerGenerators);
+        ClarityNode::JSProxyNode_.call<void>("installEventListenersByTagAndType", val("CanvasGrid"),
+                                             this->jsProxyNode_, listenerGenerators);
     }
 
     INLINE virtual string getNodeTypeCode() { return string("CG"); }

@@ -860,7 +860,7 @@ class CLNodeFactory {
     /**
      * @brief Creates a JS canvas element with a simple test pattern.
      *
-     * @return Nc*
+     * @return CanvasElement<V>*
      */
     INLINE CanvasElement<V> *canvas(const string &drawFunctionName) {
         CanvasElement<V> *cel = new CanvasElement<V>(name_, "canvas", useExistingDOMElement_,
@@ -868,6 +868,20 @@ class CLNodeFactory {
         cel = static_cast<CanvasElement<V> *>(build(cel));
         cel->setDrawFuntionName(drawFunctionName);
         cel->refreshView();
+        return cel;
+    }
+
+    /**
+     * @brief Creates a JS canvas element without the drawFunctionName nonsense.
+     *
+     * @return CanvasElement<V>*
+     */
+    INLINE CanvasElement<V> *canvasElement() {
+        CanvasElement<V> *cel = new CanvasElement<V>(name_, "canvas", useExistingDOMElement_,
+                                                     attachmentMode_, attachmentId_);
+        cel = static_cast<CanvasElement<V> *>(build(cel));
+        // cel->setDrawFuntionName(drawFunctionName);
+        // cel->refreshView();
         return cel;
     }
 
