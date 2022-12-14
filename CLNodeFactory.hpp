@@ -722,7 +722,7 @@ class CLNodeFactory {
 
     INLINE Nc<V> *cycleButton(const string &text, V *cyclicVal, val onClickEL = val::null()) {
         Nc<V> *button = withTag("button").build();
-        button->setBoundField("textContent");
+        //button->setBoundField("textContent");
         //button->setDOMVal(val(text));
 
         if (onClickEL != val::null()) {
@@ -731,7 +731,7 @@ class CLNodeFactory {
         }
 //this.clarityNode_.nodelog
         val valueIncrementerEL =
-            button->getCLE().template call<val>("generateValueModifierEL", val(*cyclicVal), val(1));
+            button->getCLE().template call<val>("generateValueModifierEL", val(button->getCLE()), val(*cyclicVal), val(1));
         val buttonDOMElement = button->getCLE()["domElement"];
         buttonDOMElement.call<void>("addEventListener", val("click"), valueIncrementerEL);
         return button;
