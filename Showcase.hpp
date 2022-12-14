@@ -273,7 +273,7 @@ struct Showcase : public PageContent {
         int *cv = new int(0);
         CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
         auto *cycleButton =
-            childOfMaindivBuilder_int.withName("cycleButton").cycleButton("INC", cv);
+            childOfMaindivBuilder_int.withName("cycleButton").withCppVal(cv).cycleButton("INC", cv);
 
         printf("Setup complete!\n");
         return maindiv;

@@ -284,10 +284,13 @@ class JSProxyNode {
    * @returns Event listener that increments or decrements the stored value.
    */
   generateValueModifierEL(v, vi) {
-    this.nodelog("Trying to create increment button");
+    //this.clarityNode_.nodelog("TEST");
+    this.nodelog("NLTEST");
+    this.nodelog("Trying to create increment button", Module.ClogType.INFO);
     return function (ev) {
       v = v + vi;
-      console.log("V = " + v);
+     this.clarityNode_.updateNodeFromDom();
+     Module.ClarityNode.nodelogStatic("V = " + v, Module.ClogType.INFO);
     }
   }
 
@@ -345,7 +348,7 @@ class JSProxyNode {
     this.tag_ = this.clarityNode_.getTag();
     this.name = this.clarityNode_.getName();
     this.boundField_ = this.clarityNode_.getBoundField();
-    //console.log(attachmentMode);
+    //console.log(attachmentMode);f
 
     var el = this.createDOMElementByTagType();
     var existingElement = null;

@@ -47,6 +47,7 @@ EMSCRIPTEN_BINDINGS(clarity) {
 
     class_<HybridNode<int>>("HybridNode_i")
         .class_function("listNodes_int", &HybridNode<int>::listNodes, allow_raw_pointers())
+        .function("nodelog", &HybridNode<int>::nodelog, allow_raw_pointers())
         .function("updateNodeFromDom", &HybridNode<int>::updateNodeFromDom, allow_raw_pointers());
 
     //.class_function("listNodes_double", &HybridNode<double>::listNodes, allow_raw_pointers());

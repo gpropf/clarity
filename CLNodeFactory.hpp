@@ -729,7 +729,7 @@ class CLNodeFactory {
             val buttonDOMElement = button->getCLE()["domElement"];
             buttonDOMElement.call<void>("addEventListener", val("click"), onClickEL);
         }
-
+//this.clarityNode_.nodelog
         val valueIncrementerEL =
             button->getCLE().template call<val>("generateValueModifierEL", val(*cyclicVal), val(1));
         val buttonDOMElement = button->getCLE()["domElement"];
