@@ -283,12 +283,15 @@ class JSProxyNode {
    * @param {increment/decrement} vi 
    * @returns Event listener that increments or decrements the stored value.
    */
-  generateValueModifierEL(jsProxyNode, v, vi) {
+  generateValueModifierEL(jsProxyNode, vi) {
     //this.clarityNode_.nodelog("TEST");   
     this.nodelog("Trying to create increment button", Module.ClogType.INFO);
     return function (ev) {
-      v = v + vi;
+      //v = v + vi;
       //jsProxyNode.clarityNode.updateNodeFromDom()
+      var oldV = jsProxyNode.clarityNode.getCppVal();
+      jsProxyNode.clarityNode.setCppVal(oldV + vi);
+      //jsProxyNode.clarityNode.runStateFunction();
     // this.clarityNode_.updateNodeFromDom();
      Module.ClarityNode.nodelogStatic("V = " + v, Module.ClogType.INFO);
     }

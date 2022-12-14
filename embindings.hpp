@@ -45,8 +45,11 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .function("setValXY", &CanvasGrid<unsigned char>::setValXY, allow_raw_pointers())
         .function("doNothing", &CanvasGrid<unsigned char>::doNothing, allow_raw_pointers());
 
-    class_<HybridNode<int>>("HybridNode_i")
+    class_<HybridNode<int>>("HybridNode_i")       
         .class_function("listNodes_int", &HybridNode<int>::listNodes, allow_raw_pointers())
+        .function("getCppVal", &HybridNode<int>::getCppVal, allow_raw_pointers())
+        .function("setCppVal", &HybridNode<int>::setCppVal, allow_raw_pointers())
+        .function("runStateFunction", &HybridNode<int>::runStateFunction, allow_raw_pointers())
         .function("nodelog", &HybridNode<int>::nodelog, allow_raw_pointers())
         .function("updateNodeFromDom", &HybridNode<int>::updateNodeFromDom, allow_raw_pointers());
 
