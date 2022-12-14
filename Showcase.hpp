@@ -45,9 +45,10 @@ struct Showcase : public PageContent {
         // shade that goes from purple to light green depending on the value entered.
         std::function<void(HybridNode<double> *, double *v)> stateFn = [&](HybridNode<double> *hn,
                                                                            double *v) {
-            cout << "stateFunction_: v = " << *hn->getCppVal() << endl;
+            cout << "stateFunction_: hn->getCppVal = " << *hn->getCppVal() << ", new value = " << *v
+                 << endl;
             string colorString =
-                "background-color: rgb(50," + clto_str(int(*hn->getCppVal())) + ",50)" + ";";
+                "background-color: rgb(50," + clto_str(int(*v)) + ",50)" + ";";
             hn->nodelog("Trying to set style: " + colorString);
             hn->getDomElement().template call<void>("setAttribute", val("style"), val(colorString));
         };
@@ -124,11 +125,10 @@ struct Showcase : public PageContent {
                               .label(svgarea, *flexLabelText);
         childOfMaindivBuilder.br();
 
-        auto *inputFlexTextLabel =
-            childOfMaindivBuilder_str.withName("inputFlexTextLabel")
-                .withPeer(flexLabel)
-                .withHoverText("You can change the label value")                
-                .textInput();
+        auto *inputFlexTextLabel = childOfMaindivBuilder_str.withName("inputFlexTextLabel")
+                                       .withPeer(flexLabel)
+                                       .withHoverText("You can change the label value")
+                                       .textInput();
         childOfMaindivBuilder.br();
 
         childOfMaindivBuilder.hr();

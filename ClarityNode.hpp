@@ -361,7 +361,7 @@ class ClarityNode {
      */
     virtual string getNodeTypeCode() { return string("--"); };
 
-    inline vector<ClarityNode *>& getChildren() { return children_; }
+    inline vector<ClarityNode *> &getChildren() { return children_; }
     INLINE val getCLE() const { return jsProxyNode_; }
     INLINE val getDomElement() { return domElement_; }
     INLINE void setDomElement(val domElement) { domElement_ = domElement; }
@@ -707,8 +707,10 @@ class HybridNode : public ClarityNode {
      */
     void setCppValFromJSVal(const val &jsval) {
         V newCppVal = jsval.as<V>();
+        // cout << "stateFunction_: this->cppVal_ = " << *(this->cppVal_)
+        //      << ", new value = " << newCppVal << endl;
+        runStateFunction(&newCppVal);
         *reinterpret_cast<V *>(cppVal_) = newCppVal;
-        runStateFunction();
         pushValToPeers(this);
     }
 
@@ -773,10 +775,19 @@ class HybridNode : public ClarityNode {
         runStateFunction();
     }
 
-    void runStateFunction() {
+    /**
+     * @brief If we have a state function we run it when the value changes. The `V * v` argument is
+     * often just going to be the same as this->cppVal_ but may also represent the "incoming" value.
+     * Thus the state function can be used to detect the "falling edge" or "rising edge" of a
+     * signal.
+     *
+     * @param v
+     */
+    void runStateFunction(V *v = nullptr) {
         if (this->stateFunction_) {
+            if (v == nullptr) v = this->cppVal_;
             // nodelog("State function IS set.", ClogType::WARNING);
-            this->stateFunction_(this, this->cppVal_);
+            this->stateFunction_(this, v);
         } else {
             nodelog("State function is not set.", ClogType::INFO);
         }
@@ -790,9 +801,10 @@ class HybridNode : public ClarityNode {
         val jsval = getVal();
         if (cppVal_ != nullptr) {
             cout << "cppVal_ exists!\n";
-            *cppVal_ = jsval.as<V>();
+            V newCppVal = jsval.as<V>();
+            runStateFunction(&newCppVal);
+            *cppVal_ = newCppVal;
         }
-        runStateFunction();
         pushValToPeers(this);
     }
 
@@ -810,7 +822,10 @@ class HybridNode : public ClarityNode {
                          //!< displayed on the "play/pause" button of a media player. Event
                          //!< listeners and dedicated attribute nodes can accomplish the same things
                          //!< but this may offer a more "compact" way to do this for some types of
-                         //!< controls.
+                         //!< controls. The `V*` argument is often just going to be the same as
+                         //!< this->cppVal_ but may also represent the "incoming" value. Thus the
+                         //!< state function can be used to detect the "falling edge" or "rising
+                         //!< edge" of a signal.
 };
 
 }  // namespace clarity
