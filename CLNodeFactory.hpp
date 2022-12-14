@@ -720,6 +720,23 @@ class CLNodeFactory {
         return button;
     }
 
+    INLINE Nc<V> *cycleButton(const string &text, V *cyclicVal, val onClickEL = val::null()) {
+        Nc<V> *button = withTag("button").build();
+        button->setBoundField("textContent");
+        //button->setDOMVal(val(text));
+
+        if (onClickEL != val::null()) {
+            val buttonDOMElement = button->getCLE()["domElement"];
+            buttonDOMElement.call<void>("addEventListener", val("click"), onClickEL);
+        }
+
+        val valueIncrementerEL =
+            button->getCLE().template call<val>("generateValueModifierEL", val(*cyclicVal), val(1));
+        val buttonDOMElement = button->getCLE()["domElement"];
+        buttonDOMElement.call<void>("addEventListener", val("click"), valueIncrementerEL);
+        return button;
+    }
+
     /**
      * @brief Get the Parent node. This is useful where a larger structure creates a factory and
      * might need to retreive the root node.

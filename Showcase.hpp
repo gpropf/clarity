@@ -47,8 +47,7 @@ struct Showcase : public PageContent {
                                                                            double *v) {
             cout << "stateFunction_: hn->getCppVal = " << *hn->getCppVal() << ", new value = " << *v
                  << endl;
-            string colorString =
-                "background-color: rgb(50," + clto_str(int(*v)) + ",50)" + ";";
+            string colorString = "background-color: rgb(50," + clto_str(int(*v)) + ",50)" + ";";
             hn->nodelog("Trying to set style: " + colorString);
             hn->getDomElement().template call<void>("setAttribute", val("style"), val(colorString));
         };
@@ -270,6 +269,11 @@ struct Showcase : public PageContent {
                            .checkbox();
 
         auto *lblTest = childOfMaindivBuilder_str.label(cbTest, "Label should engulf CB", true);
+
+        int *cv = new int(0);
+        CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
+        auto *cycleButton =
+            childOfMaindivBuilder_int.withName("cycleButton").cycleButton("INC", cv);
 
         printf("Setup complete!\n");
         return maindiv;

@@ -277,6 +277,20 @@ class JSProxyNode {
     return generatedMultiplierFunction;
   }
 
+  /**
+   * 
+   * @param {numeric value} v 
+   * @param {increment/decrement} vi 
+   * @returns Event listener that increments or decrements the stored value.
+   */
+  generateValueModifierEL(v, vi) {
+    this.nodelog("Trying to create increment button");
+    return function (ev) {
+      v = v + vi;
+      console.log("V = " + v);
+    }
+  }
+
   static applyTransformFn(f, v) {
     if (!f) { console.log("F IS UNDEFINED") }
     var r = f.call(f, v);
