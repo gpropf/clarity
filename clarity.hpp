@@ -68,6 +68,13 @@ class TicketMachine {
     inline const int getNext() { return ++id_; }
 };
 
+template<typename V>
+struct NumWrapper {
+    V *v;
+};
+
+
+
 }  // namespace clarity
 
 using namespace clarity;

@@ -45,7 +45,7 @@ struct Showcase : public PageContent {
         // shade that goes from purple to light green depending on the value entered.
         std::function<void(HybridNode<double> *, double *v)> stateFn = [&](HybridNode<double> *hn,
                                                                            double *v) {
-            cout << "stateFunction_: hn->getCppVal = " << *hn->getCppVal() << ", new value = " << *v
+            cout << "stateFunction_: hn->getCppVal = " << hn->getCppVal() << ", new value = " << *v
                  << endl;
             string colorString = "background-color: rgb(50," + clto_str(int(*v)) + ",50)" + ";";
             hn->nodelog("Trying to set style: " + colorString);
@@ -293,7 +293,7 @@ struct Showcase : public PageContent {
 
         auto *lblTest = childOfMaindivBuilder_str.label(cbTest, "Label should engulf CB", true);
 
-        int *cv = new int(0);
+        int *cv = new int(12);
         CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
         auto *cycleButton = childOfMaindivBuilder_int.withName("cycleButton")
                                 .withClass("small_width")

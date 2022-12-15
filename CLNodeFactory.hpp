@@ -245,14 +245,14 @@ class CLNodeFactory {
         }
 
         if (cppVal_) {
-            newNode->setCppVal(cppVal_);
+            newNode->setCppValPtr(cppVal_);
         } else {
             if (initVal_) {
                 // If we have a special initializer value we set cppVal_ temporarily to it, refresh
                 // the node, and then set cppVal_ back to null.
-                newNode->setCppVal(initVal_);
+                newNode->setCppValPtr(initVal_);
                 newNode->refresh();
-                newNode->setCppVal(nullptr);
+                newNode->setCppValPtr(nullptr);
             }
         }
 
@@ -743,8 +743,8 @@ class CLNodeFactory {
 
     INLINE Nc<V> *cycleButton(const string &text, V *cyclicVal, val onClickEL = val::null()) {
         Nc<V> *button = withTag("button").build();
-        //button->setBoundField("textContent");
-        //button->setDOMVal(val(text));
+        button->setBoundField("textContent");
+        button->setDOMVal(val(text));
 
         if (onClickEL != val::null()) {
             val buttonDOMElement = button->getCLE()["domElement"];

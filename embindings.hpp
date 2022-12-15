@@ -48,6 +48,7 @@ EMSCRIPTEN_BINDINGS(clarity) {
     class_<HybridNode<int>>("HybridNode_i")       
         .class_function("listNodes_int", &HybridNode<int>::listNodes, allow_raw_pointers())
         .function("getCppVal", &HybridNode<int>::getCppVal, allow_raw_pointers())
+        .function("setCppValPtr", &HybridNode<int>::setCppValPtr, allow_raw_pointers())
         .function("setCppVal", &HybridNode<int>::setCppVal, allow_raw_pointers())
         .function("runStateFunction", &HybridNode<int>::runStateFunction, allow_raw_pointers())
         .function("nodelog", &HybridNode<int>::nodelog, allow_raw_pointers())
@@ -82,13 +83,13 @@ EMSCRIPTEN_BINDINGS(clarity) {
 
     class_<SimpleSelect<int>>("SimpleSelect")
         .function("getSelectedLabel", &SimpleSelect<int>::getSelectedLabel, allow_raw_pointers())
-        .function("doNothing", &Checkbox<void>::doNothing, allow_raw_pointers());
+        .function("doNothing", &SimpleSelect<int>::doNothing, allow_raw_pointers());
 
     class_<Select<vector<pair<int, string>>>>("Select_vector_pair_int_string")
-        .function("doNothing", &Select<void>::doNothing, allow_raw_pointers());
+        .function("doNothing", &Select<vector<pair<int, string>>>::doNothing, allow_raw_pointers());
 
     class_<Checkbox<bool>>("Checkbox_bool")
-        .function("doNothing", &Checkbox<void>::doNothing, allow_raw_pointers());
+        .function("doNothing", &Checkbox<bool>::doNothing, allow_raw_pointers());
 
     //
 

@@ -295,10 +295,12 @@ class JSProxyNode {
     this.nodelog("Trying to create increment button", Module.ClogType.INFO);
     return function (ev) {
       //v = v + vi;
-      //jsProxyNode.clarityNode.updateNodeFromDom()
       
-      // var oldV = jsProxyNode.clarityNode.getCppVal();
-      // jsProxyNode.clarityNode.setCppVal(oldV + vi);
+      
+       var oldV = jsProxyNode.clarityNode.getCppVal();
+       Module.ClarityNode.nodelogStatic("V = " + oldV, Module.ClogType.INFO);
+       jsProxyNode.clarityNode.setCppVal(oldV + vi);
+       jsProxyNode.clarityNode.updateNodeFromDom();
       
       //jsProxyNode.clarityNode.runStateFunction();
     // this.clarityNode_.updateNodeFromDom();

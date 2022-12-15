@@ -695,8 +695,11 @@ class HybridNode : public ClarityNode {
         this->stateFunction_ = stateFunction;
     }
 
-    INLINE void setCppVal(V *cppVal) { cppVal_ = cppVal; }
-    INLINE V *getCppVal() const { return cppVal_; }
+    INLINE void setCppValPtr(V *cppVal) { cppVal_ = cppVal; }
+    INLINE V getCppVal() const { return *cppVal_; }
+
+    INLINE void setCppVal(V cppVal) { *cppVal_ = cppVal; }
+    // INLINE V *getCppVal() const { return cppVal_; }
 
     INLINE virtual string getNodeTypeCode() { return string("HN"); }
 

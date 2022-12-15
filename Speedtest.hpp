@@ -120,7 +120,7 @@ struct Speedtester {
                                     .withName("cln_" + to_string(fieldCount++))
                                     .withCppVal(iptr)
                                     .trInput();
-                    cln->setCppVal(iptr);
+                    cln->setCppValPtr(iptr);
                     cln->refresh();
                     ns_.push_back(iptr);
                     clns_.push_back(cln);
@@ -166,7 +166,7 @@ struct Speedtester {
                                     .withName("cln_" + to_string(fieldCount++))
                                     .withCppVal(iptr)
                                     .trInput();
-                    cln->setCppVal(iptr);
+                    cln->setCppValPtr(iptr);
                     cln->refresh();
                     ns_.push_back(iptr);
                     clns_.push_back(cln);
