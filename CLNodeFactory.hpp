@@ -396,6 +396,27 @@ class CLNodeFactory {
     }
 
     /**
+     * @brief Convenience method because a lot of formatting will be done through setting the class
+     * of a control. This can be done using `withAttributes()` but this is more terse.
+     *
+     * @param className
+     * @return CLNodeFactory
+     */
+    INLINE CLNodeFactory withClass(const string &className) const & {
+        CLNodeFactory cpy(*this);
+        map<string, val> classAttrs = {{"class", val(className)}};
+        cpy.attrs_.merge(classAttrs);
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withClass(const string &className) && {
+        CLNodeFactory cpy(std::move(*this));
+        map<string, val> classAttrs = {{"class", val(className)}};
+        cpy.attrs_.merge(classAttrs);
+        return cpy;
+    }
+
+    /**
      * @brief Sets the HTML tag to use when creating the node.
      *
      * @param tag
