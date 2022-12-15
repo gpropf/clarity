@@ -204,6 +204,13 @@ class JSProxyNode {
     Module.ClarityNode.nodelogStatic("doNothing(): a function that proudly does nothing...");
   }
 
+  static doNothingEL() {
+    return function(ev) {
+      Module.ClarityNode.nodelogStatic("doNothingEL(): an event listener proudly does nothing...", Module.ClogType.INFO);
+     // Module.ClarityNode.nodelogStatic(ev, Module.ClogType.INFO);
+    }
+  }
+
   static makeDeleteNodeFn(nodeId) {
     return function () {
       Module.ClarityNode.deleteNodeById(nodeId);
@@ -289,11 +296,13 @@ class JSProxyNode {
     return function (ev) {
       //v = v + vi;
       //jsProxyNode.clarityNode.updateNodeFromDom()
-      var oldV = jsProxyNode.clarityNode.getCppVal();
-      jsProxyNode.clarityNode.setCppVal(oldV + vi);
+      
+      // var oldV = jsProxyNode.clarityNode.getCppVal();
+      // jsProxyNode.clarityNode.setCppVal(oldV + vi);
+      
       //jsProxyNode.clarityNode.runStateFunction();
     // this.clarityNode_.updateNodeFromDom();
-     Module.ClarityNode.nodelogStatic("V = " + v, Module.ClogType.INFO);
+    // Module.ClarityNode.nodelogStatic("V = " + v, Module.ClogType.INFO);
     }
   }
 

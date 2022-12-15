@@ -131,6 +131,29 @@ struct Showcase : public PageContent {
         childOfMaindivBuilder.br();
 
         childOfMaindivBuilder.hr();
+
+        // Button with modifiable text and text field to change it.
+        // =============================================================
+        string *buttonText = new string("Change this!");
+        val doNothingEL = ClarityNode::JSProxyNode_["doNothingEL"]();
+        auto *flexButton = childOfMaindivBuilder_str
+                               .withHoverText(
+                                   "You can change the button label on this button using the text "
+                                   "field to the right")
+                               .withCppVal(buttonText)
+                               .button("flexButton", "flexButton Text!", doNothingEL);
+
+        auto *flexButtonText = childOfMaindivBuilder_str.withName("flexButtonText")
+                                   .withPeer(flexButton)
+
+                                   .withHoverText("You can change the button label")
+                                   .textInput();
+
+        childOfMaindivBuilder.br();
+        childOfMaindivBuilder.hr();
+
+        // Daisy-chained text inputs
+        // =============================================================
         double *d1 = new double(1.2);
         auto *daisyChain1_trinp =
             childOfMaindivBuilder.withHoverText("Actual Stored Value").withCppVal(d1).textInput();
