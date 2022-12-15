@@ -294,11 +294,19 @@ struct Showcase : public PageContent {
         auto *lblTest = childOfMaindivBuilder_str.label(cbTest, "Label should engulf CB", true);
 
         int *cv = new int(12);
+        NumWrapper<int> nwcv(cv, 3);
         CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
-        auto *cycleButton = childOfMaindivBuilder_int.withName("cycleButton")
-                                .withClass("small_width")
-                                .withCppVal(cv)
-                                .cycleButton("FOO", cv);
+        auto *cycleButton = childOfMaindivBuilder_str.withName("cycleButton")
+                                .withClass("medium_width")
+                                .cycleButton<NumWrapper<int>>("Cycle Button", nwcv);
+
+        auto *cyclicValTIN =
+            childOfMaindivBuilder_int.withName("cyclicValTIN")
+                .withCppVal(cv)
+                //.withAttributes({{"style", val("border: 3px dashed purple")}, {"size", val(2)}})
+                .withAttributes({{"class", val("small_width")}})
+                .withHoverText("Cyclic value controlled by the button")
+                .textInput();
 
         printf("Setup complete!\n");
         return maindiv;

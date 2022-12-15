@@ -741,7 +741,8 @@ class CLNodeFactory {
         return button;
     }
 
-    INLINE Nc<V> *cycleButton(const string &text, V *cyclicVal, val onClickEL = val::null()) {
+    template<typename Cv>
+    INLINE Nc<V> *cycleButton(const string &text, Cv cyclicVal, val onClickEL = val::null()) {
         Nc<V> *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setDOMVal(val(text));
@@ -750,9 +751,9 @@ class CLNodeFactory {
             val buttonDOMElement = button->getCLE()["domElement"];
             buttonDOMElement.call<void>("addEventListener", val("click"), onClickEL);
         }
-//this.clarityNode_.nodelog
+
         val valueIncrementerEL =
-            button->getCLE().template call<val>("generateValueModifierEL", val(cyclicVal), val(1));
+            button->getCLE().template call<val>("generateValueModifierEL", button->getCLE(), val(cyclicVal), val(1));
         val buttonDOMElement = button->getCLE()["domElement"];
         buttonDOMElement.call<void>("addEventListener", val("click"), valueIncrementerEL);
         return button;

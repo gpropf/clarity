@@ -27,7 +27,6 @@ using namespace emscripten;
 
 namespace clarity {
 
-
 /**
  * @brief Given a string with something like '<T>' in the middle of it, this will use the typeid
  * operator to interpolate in the actual type. C++20 supposedly has simpler string interpolation
@@ -68,12 +67,23 @@ class TicketMachine {
     inline const int getNext() { return ++id_; }
 };
 
-template<typename V>
+template <typename V>
 struct NumWrapper {
-    V *v;
+    NumWrapper(V* v, V modulus = 0) : v_(v), modulus_(modulus) {}
+    inline void addWrappedValTo(NumWrapper<V> i) { _addTo(*i.v_); }
+    inline void addTo(V i) { _addTo(i); }
+    inline V getVal() { return *v_; }
+    V* v_;
+    V modulus_;
+
+   private:
+    inline void _addTo(V i) {
+        *v_ += i;
+        if (modulus_ != 0) {
+            *v_ = *v_ % modulus_;
+        }
+    }
 };
-
-
 
 }  // namespace clarity
 
