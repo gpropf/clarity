@@ -295,8 +295,9 @@ struct Showcase : public PageContent {
 
         int *cv = new int(12);
         NumWrapper<int> nwcv(cv, 3);
-        map<int,string> rgbClassMap({{0, "red"}, {1, "green"}, {2, "blue"}});
+        //map<int,string> rgbClassMap({{0, "red"}, {1, "green"}, {2, "blue"}});
         CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
+        val rgbClassMap = ClarityNode::JSProxyNode_["rgbClassMap"];
         auto *cycleButton = childOfMaindivBuilder_str.withName("cycleButton")
                                 .withClass("medium_width")
                                 .cycleButton<NumWrapper<int>>("Cycle Button", nwcv, rgbClassMap, doNothingEL);
@@ -309,6 +310,12 @@ struct Showcase : public PageContent {
                 .withAttributes({{"class", val("small_width")}})
                 .withHoverText("Cyclic value controlled by the button")
                 .textInput();
+
+        val playPauseClassMap = ClarityNode::JSProxyNode_["playPauseClassMap"];
+        NumWrapper<int> toggleWrapper(new int(1), 2);
+        auto *playPauseButton = childOfMaindivBuilder_str.withName("playPauseButton")
+                                .withClass("small_width")
+                                .cycleButton<NumWrapper<int>>("Play", toggleWrapper, playPauseClassMap, doNothingEL);
 
         printf("Setup complete!\n");
         return maindiv;

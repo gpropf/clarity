@@ -749,7 +749,8 @@ class CLNodeFactory {
      * type called clarity::NumWrapper. Essentially this is a wrapper around a pointer to a numeric
      * type, presumably one of the integer types, with an additional parameter called `modulus`. If
      * `modulus` is set, the wrapped value follows the rules of modular arithmetic. So, if modulus =
-     * 3, for example, the value will cycle through 0, 1, and 2 as the button is clicked.
+     * 3, for example, the value will cycle through 0, 1, and 2 as the button is clicked. This
+     * method can be easily used to create a toggle button as well if you set modulus to 2.
      *
      * @tparam Cv
      * @param text
@@ -758,7 +759,8 @@ class CLNodeFactory {
      * @return INLINE*
      */
     template <typename Cv>
-    INLINE Nc<V> *cycleButton(const string &text, Cv cyclicVal, map<int,string> &classMap, val onClickEL = val::null()) {
+    INLINE Nc<V> *cycleButton(const string &text, Cv cyclicVal, val classMap,
+                              val onClickEL = val::null()) {
         Nc<V> *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setDOMVal(val(text));

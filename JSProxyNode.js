@@ -285,6 +285,23 @@ class JSProxyNode {
   }
 
   /**
+   * Example classes for the cycleButton() demo.
+   */
+  static rgbClassMap = new Map([
+    [0, "red"],
+    [1, "green"],
+    [2, "blue"]
+  ]);
+
+  /**
+   * Use these as the 'class' attribute for a play button created using the cycleButton() method.
+   */
+  static playPauseClassMap = new Map([
+    [0, "play"],
+    [1, "pause"]    
+  ]);
+
+  /**
    * Creates an event listener that increments or decrements the stored value.
    * 
    * 
@@ -293,22 +310,26 @@ class JSProxyNode {
    * @returns Event listener that increments or decrements the stored value.
    */
   generateValueModifierEL(jsProxyNode, v, classMap, vi = 1) {
-    //this.clarityNode_.nodelog("TEST");   
-    this.nodelog("Trying to create increment button", Module.ClogType.INFO);
-    return function (ev) {      
+
+    this.nodelog("Creating EL...", Module.ClogType.INFO);
+
+    return function (ev) {
       jsProxyNode.nodelog("Cycle button clicked");       
       jsProxyNode.nodelog("V = " + v, Module.ClogType.INFO);
       v.addTo(vi);
-      const tempClassMap = new Map();
-      tempClassMap.set(0, "red");
-      tempClassMap.set(1, "green");
-      tempClassMap.set(2, "blue");
-      //  var classMapKeys = tempClassMap.keys();
-      //  var classMapKey = classMapKeys.get(v.getVal());
+      var cycleClass = classMap.get(v.getVal());
+      var currentClass = jsProxyNode["domElement"].getAttribute("class");
+      //if (currentClass != "") {
+      if (!("originalClass" in jsProxyNode)) {
+        jsProxyNode["originalClass"] = currentClass;
+      }
+      if (jsProxyNode["originalClass"] != "")
+        cycleClass = jsProxyNode["originalClass"] + " " + cycleClass;
+
+      jsProxyNode["domElement"].setAttribute("class", cycleClass);       
        
-      // The map binding isn't working at the moment
+      // The C++ map binding isn't working at the moment
       //jsProxyNode["domElement"].setAttribute("class", classMap.get(classMapKey));
-      jsProxyNode["domElement"].setAttribute("class", tempClassMap.get(v.getVal()));       
     }
   }
 
