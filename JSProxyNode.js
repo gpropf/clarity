@@ -284,6 +284,19 @@ class JSProxyNode {
     return generatedMultiplierFunction;
   }
 
+
+  setClass(className) {
+    var currentClass = this["domElement"].getAttribute("class");
+    //if (currentClass != "") {
+    if (!("originalClass" in this)) {
+      this["originalClass"] = currentClass;   
+    }
+    if (this["originalClass"] != "") className = this["originalClass"] + " " + className;
+    this["domElement"].setAttribute("class", className); 
+  }
+
+
+
   /**
    * Example classes for the cycleButton() demo.
    */
@@ -312,21 +325,23 @@ class JSProxyNode {
   generateValueModifierEL(jsProxyNode, v, classMap, vi = 1) {
 
     this.nodelog("Creating EL...", Module.ClogType.INFO);
-
+    this.setClass(classMap.get(v.getVal()));
     return function (ev) {
       jsProxyNode.nodelog("Cycle button clicked");       
       jsProxyNode.nodelog("V = " + v, Module.ClogType.INFO);
       v.addTo(vi);
       var cycleClass = classMap.get(v.getVal());
-      var currentClass = jsProxyNode["domElement"].getAttribute("class");
-      //if (currentClass != "") {
-      if (!("originalClass" in jsProxyNode)) {
-        jsProxyNode["originalClass"] = currentClass;
-      }
-      if (jsProxyNode["originalClass"] != "")
-        cycleClass = jsProxyNode["originalClass"] + " " + cycleClass;
+      
+      // var currentClass = jsProxyNode["domElement"].getAttribute("class");
+      // //if (currentClass != "") {
+      // if (!("originalClass" in jsProxyNode)) {
+      //   jsProxyNode["originalClass"] = currentClass;
+      // }
+      // if (jsProxyNode["originalClass"] != "")
+      //   cycleClass = jsProxyNode["originalClass"] + " " + cycleClass;
 
-      jsProxyNode["domElement"].setAttribute("class", cycleClass);       
+      // jsProxyNode["domElement"].setAttribute("class", cycleClass);       
+      jsProxyNode.setClass(cycleClass);
        
       // The C++ map binding isn't working at the moment
       //jsProxyNode["domElement"].setAttribute("class", classMap.get(classMapKey));

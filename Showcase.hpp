@@ -293,7 +293,7 @@ struct Showcase : public PageContent {
 
         auto *lblTest = childOfMaindivBuilder_str.label(cbTest, "Label should engulf CB", true);
 
-        int *cv = new int(12);
+        int *cv = new int(0);
         NumWrapper<int> nwcv(cv, 3);
         //map<int,string> rgbClassMap({{0, "red"}, {1, "green"}, {2, "blue"}});
         CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
