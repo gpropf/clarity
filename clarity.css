@@ -36,6 +36,19 @@
   background:linear-gradient(#33bdef, #019ad2);
 }
 
+
+/* 
+
+This doesn't seem to work. The text doesn't change.
+
+button.play {
+  content: "Play";
+}
+
+button.pause {
+  content: "Pause";
+} */
+
 .buttonDelete:hover {
   background: linear-gradient(#019ad2, #33bdef);
 }
