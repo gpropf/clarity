@@ -741,8 +741,24 @@ class CLNodeFactory {
         return button;
     }
 
-    template<typename Cv>
-    INLINE Nc<V> *cycleButton(const string &text, Cv cyclicVal, val onClickEL = val::null()) {
+    /**
+     * @brief This is a somewhat unusual control but I think it has some important uses. The basic
+     * control is similar to the ordinary button that you get from the button() method in this
+     * class. There's an additional functionality though. One of the arguments is intended to be
+     * "cyclic value", represented by the template parameter `Cv`. To support this I've created a
+     * type called clarity::NumWrapper. Essentially this is a wrapper around a pointer to a numeric
+     * type, presumably one of the integer types, with an additional parameter called `modulus`. If
+     * `modulus` is set, the wrapped value follows the rules of modular arithmetic. So, if modulus =
+     * 3, for example, the value will cycle through 0, 1, and 2 as the button is clicked.
+     *
+     * @tparam Cv
+     * @param text
+     * @param cyclicVal
+     * @param onClickEL
+     * @return INLINE*
+     */
+    template <typename Cv>
+    INLINE Nc<V> *cycleButton(const string &text, Cv cyclicVal, map<int,string> &classMap, val onClickEL = val::null()) {
         Nc<V> *button = withTag("button").build();
         button->setBoundField("textContent");
         button->setDOMVal(val(text));
@@ -752,8 +768,8 @@ class CLNodeFactory {
             buttonDOMElement.call<void>("addEventListener", val("click"), onClickEL);
         }
 
-        val valueIncrementerEL =
-            button->getCLE().template call<val>("generateValueModifierEL", button->getCLE(), val(cyclicVal), val(1));
+        val valueIncrementerEL = button->getCLE().template call<val>(
+            "generateValueModifierEL", button->getCLE(), val(cyclicVal), classMap, val(1));
         val buttonDOMElement = button->getCLE()["domElement"];
         buttonDOMElement.call<void>("addEventListener", val("click"), valueIncrementerEL);
         return button;

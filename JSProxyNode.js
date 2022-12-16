@@ -285,28 +285,30 @@ class JSProxyNode {
   }
 
   /**
+   * Creates an event listener that increments or decrements the stored value.
+   * 
    * 
    * @param {numeric value} v 
    * @param {increment/decrement} vi 
    * @returns Event listener that increments or decrements the stored value.
    */
-  generateValueModifierEL(jsProxyNode, v, vi) {
+  generateValueModifierEL(jsProxyNode, v, classMap, vi = 1) {
     //this.clarityNode_.nodelog("TEST");   
     this.nodelog("Trying to create increment button", Module.ClogType.INFO);
-    return function (ev) {
-      //v = v + vi;
-      
-      jsProxyNode.nodelog("Cycle button clicked")
-       //var oldV = jsProxyNode.clarityNode.getCppVal();
-       Module.ClarityNode.nodelogStatic("V = " + v, Module.ClogType.INFO);
-       v.addTo(vi);
-       jsProxyNode["domElement"].setAttribute("class", "color" + v.getVal());
-       //jsProxyNode.clarityNode.setCppVal(oldV + vi);
-       //jsProxyNode.clarityNode.updateNodeFromDom();
-      
-      //jsProxyNode.clarityNode.runStateFunction();
-    // this.clarityNode_.updateNodeFromDom();
-    // Module.ClarityNode.nodelogStatic("V = " + v, Module.ClogType.INFO);
+    return function (ev) {      
+      jsProxyNode.nodelog("Cycle button clicked");       
+      jsProxyNode.nodelog("V = " + v, Module.ClogType.INFO);
+      v.addTo(vi);
+      const tempClassMap = new Map();
+      tempClassMap.set(0, "red");
+      tempClassMap.set(1, "green");
+      tempClassMap.set(2, "blue");
+      //  var classMapKeys = tempClassMap.keys();
+      //  var classMapKey = classMapKeys.get(v.getVal());
+       
+      // The map binding isn't working at the moment
+      //jsProxyNode["domElement"].setAttribute("class", classMap.get(classMapKey));
+      jsProxyNode["domElement"].setAttribute("class", tempClassMap.get(v.getVal()));       
     }
   }
 

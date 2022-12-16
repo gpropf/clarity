@@ -106,4 +106,7 @@ EMSCRIPTEN_BINDINGS(clarity) {
         .value("WARNING", clarity::ClogType::WARNING)
         .value("ERROR", clarity::ClogType::ERROR)
         .value("INFO", clarity::ClogType::INFO);
+
+    register_map<int, string>("MapIntString");
+    register_vector<int>("vector<int>");
 }

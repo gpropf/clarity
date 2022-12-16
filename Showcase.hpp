@@ -295,11 +295,13 @@ struct Showcase : public PageContent {
 
         int *cv = new int(12);
         NumWrapper<int> nwcv(cv, 3);
+        map<int,string> rgbClassMap({{0, "red"}, {1, "green"}, {2, "blue"}});
         CLNodeFactory<HybridNode, int, int> childOfMaindivBuilder_int(childOfMaindivBuilder);
         auto *cycleButton = childOfMaindivBuilder_str.withName("cycleButton")
                                 .withClass("medium_width")
-                                .cycleButton<NumWrapper<int>>("Cycle Button", nwcv);
+                                .cycleButton<NumWrapper<int>>("Cycle Button", nwcv, rgbClassMap, doNothingEL);
 
+        
         auto *cyclicValTIN =
             childOfMaindivBuilder_int.withName("cyclicValTIN")
                 .withCppVal(cv)
