@@ -360,13 +360,13 @@ class CLNodeFactory {
      * @param attrs
      * @return CLNodeFactory
      */
-    INLINE CLNodeFactory withMergeAttributes(map<string, val> &attrs) const & {
+    INLINE CLNodeFactory withMergeAttributes(map<string, val> attrs) const & {
         CLNodeFactory cpy(*this);
         cpy.attrs_.merge(attrs);
         return cpy;
     }
 
-    INLINE CLNodeFactory withMergeAttributes(map<string, val> &attrs) && {
+    INLINE CLNodeFactory withMergeAttributes(map<string, val> attrs) && {
         CLNodeFactory cpy(std::move(*this));
         cpy.attrs_.merge(attrs);
         return cpy;
@@ -379,13 +379,15 @@ class CLNodeFactory {
      */
     INLINE CLNodeFactory withDisable() const & {
         CLNodeFactory cpy(*this);
-        cpy.attrs_.merge({{"disabled", val("disabled")}});
+        map<string, val> attrs = {{"disabled", val("disabled")}};
+        cpy.attrs_.merge(attrs);
         return cpy;
     }
 
     INLINE CLNodeFactory withDisable() && {
         CLNodeFactory cpy(std::move(*this));
-        cpy.attrs_.merge({{"disabled", val("disabled")}});
+        map<string, val> attrs = {{"disabled", val("disabled")}};
+         cpy.attrs_.merge(attrs);
         return cpy;
     }
 
