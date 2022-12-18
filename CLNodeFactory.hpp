@@ -351,6 +351,45 @@ class CLNodeFactory {
     }
 
     /**
+     * @brief Create the node with the listed DOM element attrs. This version should be used in
+     * future in preference to `withAttributes()` as `withAttributes()` overwrites any attributes
+     * that may previously have been present. This version allows for multiple
+     * `withMergeAttributes()` calls to build up the attributes that will ultimately be used once
+     * `build()` is called.
+     *
+     * @param attrs
+     * @return CLNodeFactory
+     */
+    INLINE CLNodeFactory withMergeAttributes(map<string, val> &attrs) const & {
+        CLNodeFactory cpy(*this);
+        cpy.attrs_.merge(attrs);
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withMergeAttributes(map<string, val> &attrs) && {
+        CLNodeFactory cpy(std::move(*this));
+        cpy.attrs_.merge(attrs);
+        return cpy;
+    }
+
+    /**
+     * @brief Shortcut way to create a disabled control
+     *
+     * @return CLNodeFactory
+     */
+    INLINE CLNodeFactory withDisable() const & {
+        CLNodeFactory cpy(*this);
+        cpy.attrs_.merge({{"disabled", val("disabled")}});
+        return cpy;
+    }
+
+    INLINE CLNodeFactory withDisable() && {
+        CLNodeFactory cpy(std::move(*this));
+        cpy.attrs_.merge({{"disabled", val("disabled")}});
+        return cpy;
+    }
+
+    /**
      * @brief The "bound" DOM element field is the one that stores the data and reflects the
      * current state of the associated node.
      *
@@ -889,7 +928,7 @@ class CLNodeFactory {
         map<string, val> attrs = {{"rows", val(rows)}, {"cols", val(cols)}};
         Nc<V> *textArea = withTag("textarea")
                               .withBoundField("value")
-                              .withAttributes(attrs)
+                              .withMergeAttributes(attrs)
                               .withCppVal(txt)
                               .build();
         textArea->refresh();
