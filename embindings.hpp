@@ -43,6 +43,7 @@ EMSCRIPTEN_BINDINGS(clarity) {
 
     class_<CanvasGrid<unsigned char>>("CanvasGrid")
         .function("setValXY", &CanvasGrid<unsigned char>::setValXY, allow_raw_pointers())
+        .function("setCurrentXY", &CanvasGrid<unsigned char>::setCurrentXY, allow_raw_pointers())
         .function("doNothing", &CanvasGrid<unsigned char>::doNothing, allow_raw_pointers());
 
     class_<HybridNode<int>>("HybridNode_i")

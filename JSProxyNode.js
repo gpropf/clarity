@@ -181,21 +181,41 @@ class JSProxyNode {
     }
   }
 
+  /**
+   * Can only be used with a CanvasGrid since it relies on the special vars set up in C++ for that type of node.
+   * 
+   * 
+   * @param {mouse event} ev 
+   */
+  static eventPositionToGridCoords(ev) {
+    let domElement = ev.target;
+    let domrect = domElement.getBoundingClientRect();
+
+    let gw = domElement.gw;
+    let cw = domElement.cw;
+    let gh = domElement.gh;
+    let ch = domElement.ch;
+    
+    var gridDimensions = { w: gw, h: gh };
+    let loc = { x: (ev.x - domrect.x), y: (ev.y - domrect.y) };
+    var locIn = { x: Math.floor(loc.x / cw), y: Math.floor(loc.y / ch) };    
+    var locOut = Util.capCoords(locIn, gridDimensions);
+    return locOut;
+  }
+
+
   static elgCanvasGridAlltypesClick (jsProxyNode) {
     return function(ev) {
-      let domElement = ev.target;
-      let domrect = domElement.getBoundingClientRect();
-  
-      let gw = domElement.gw;
-      let cw = domElement.cw;
-      let gh = domElement.gh;
-      let ch = domElement.ch;
-      
-      var gridDimensions = { w: gw, h: gh };
-      let loc = { x: (ev.x - domrect.x), y: (ev.y - domrect.y) };
-      var locIn = { x: Math.floor(loc.x / cw), y: Math.floor(loc.y / ch) };    
-      var locOut = Util.capCoords(locIn, gridDimensions);
+      let locOut = JSProxyNode.eventPositionToGridCoords(ev);
       jsProxyNode.clarityNode.setValXY(locOut.x, locOut.y);
+      jsProxyNode.nodelog("x: " + locOut.x + ", y: " + locOut.y);
+    }
+  }
+
+  static elgCanvasGridAlltypesHover (jsProxyNode) {
+    return function(ev) {
+      let locOut = JSProxyNode.eventPositionToGridCoords(ev);      
+      jsProxyNode.clarityNode.setCurrentXY(locOut.x, locOut.y);
       jsProxyNode.nodelog("x: " + locOut.x + ", y: " + locOut.y);
     }
   }
@@ -450,7 +470,8 @@ class JSProxyNode {
       "canvas": {
         "NOTYPE":
         {
-          "click": JSProxyNode.elgCanvasGridAlltypesClick
+          "click": JSProxyNode.elgCanvasGridAlltypesClick,
+          "mousemove": JSProxyNode.elgCanvasGridAlltypesHover
         }
       }
     },
@@ -458,7 +479,7 @@ class JSProxyNode {
       "canvas": {
         "NOTYPE":
         {
-          "click": JSProxyNode.elgCanvasGridAlltypesClick
+          "click": JSProxyNode.elgCanvasGridAlltypesClick          
         }
       }
     },    

@@ -88,6 +88,8 @@ class CanvasGrid : public CanvasElement<V> {
     int width_, height_;  //!< Width and Height in screen pixels.
     double scaleFactorH_ = 1.0;
     double scaleFactorV_ = 1.0;
+    int currentX_, currentY_;
+
     int gridWidth_, gridHeight_, pixelWidth_, pixelHeight_, cellWidth_, cellHeight_;
 
     V currentCellVal_ = 0;
@@ -172,13 +174,19 @@ class CanvasGrid : public CanvasElement<V> {
         *(this->cppVal_ + addr) = cellVal;
     }
 
-    void setValXY(int x, int y) {
+    inline void setValXY(int x, int y) {
+        setCurrentXY(x,y);
         setValXYNoDraw(x, y, currentCellVal_);
         drawGrid();
         // V checkVal = getValXY(x, y);
         // this->nodelog("Value at " + clto_str(x) + "," + clto_str(y) + " is " +
         //               clto_str(int(checkVal)));
         // return addr;
+    }
+
+    inline void setCurrentXY(int x, int y) {
+        currentX_ = x;
+        currentY_ = y;
     }
 
     V getValXY(int x, int y) {
@@ -205,14 +213,27 @@ class CanvasGrid : public CanvasElement<V> {
         domElement.set(
             "gridRef",
             const_cast<CanvasGrid *>(this));  // Very bizarre errors when trying to use domElement_.
+
+        // These values are set up here for the JS event handlers to use.
         domElement.set("gw", gridWidth_);
         domElement.set("gh", gridHeight_);
         domElement.set("cw", cellWidth_);
         domElement.set("ch", cellHeight_);
-        ctx.set("fillStyle", "blue");
-        // int width = this->datum_->dataDimensionality_[0];
-        // int height = this->datum_->dataDimensionality_[1];
-        // cout << "pixelWidth_ = " << pixelWidth_ << "\n";
+
+        // Some code from the Matchsticks app to show how to do the fine divider lines.
+        // ------------------------------------------------
+        // ctx.call<void>("beginPath");
+        // ctx.call<void>("moveTo", val(fromPoint_.first), val(fromPoint_.second));
+        // ctx.call<void>("lineTo", val(toPoint_.first), val(toPoint_.second));
+        
+        // string colorStr = stickColor_.toString();
+        // cout << "Color for line is " << colorStr << endl;
+        // ctx.set("strokeStyle", colorStr);
+        // ctx.set("lineWidth", lineWidth_);
+        // ctx.set("lineCap", "round");
+        // ctx.call<void>("stroke");
+        // ------------------------------------------------
+
         int cellCount = 0;
         for (int i = 0; i < gridWidth_; i++) {
             for (int j = 0; j < gridHeight_; j++) {
