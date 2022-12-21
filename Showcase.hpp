@@ -219,7 +219,7 @@ struct Showcase : public PageContent {
                 .withEventListenerGenerator("mousedown",
                                             ClarityNode::JSProxyNode_["elgInputAlltypesMousedown"])
                 .withInitVal(clickme2)
-                .withHoverText("Demonstrates user-provided custom listener generator")
+                .withHoverText("Demonstrates user-provided custom listener generator that installs a 'mousedown' event listener.")
                 .textInput();
 
         childOfMaindivBuilder.br();
