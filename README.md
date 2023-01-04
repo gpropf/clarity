@@ -1,5 +1,12 @@
 # Clarity Web Framework #
 <img src="Clarity_Logo-magnifier-1280x843.png" alt="alt text" title="Clarity Web Framework" width="320" align="right"/>
+
+## Preface ##
+
+As I've developed this library and the example apps that use it I've realized that there are some limitations to my "node centric" approach that can't easily be worked into the existing framework. In a few cases I added some features that are, in my opinion, kludges just to maintain momentum in app development. The `cycleButton()` method in the `CLNodeFactory` class exists because sometimes the "one value / one node" pairing doesn't quite express everything we need to. In the next phase of development I plan to add in a set of classes and tools that are much more "value centric" rather than "node centric" and that express much more of a functional reactive programming style than what I've been doing so far. The existing library and code will remain though and I will continue developing it as needed but the eventual plan is to adopt this new more FRP style in future work.
+
+## Description ##
+
 Clarity is a web development framework written in C++ using Emscripten to compile the code to WebAssembly (wasm). Its purpose is similar to the React or Vue JavaScript frameworks but with the idea that GUI logic will be written as much as possible in C++. It allows you to connect aspects of a data model to web controls in a "reactive" fashion. This means that if the model changes, the web presentation reflects those changes and if the user alters the state of the web controls, the corresponding model elements will update. This is all meant to occur automatically, without the need to explicitly handle web events. 
 
 The name "Clarity" was chosen for its evocative and connotative qualities. We want to evoke the idea of being able to see your underlying C++ data structures clearly and in an up-to-the-minute fashion without needing to constantly press buttons to reload what you've been working on.  I also had existing C++ code in mind as I wrote this. I wanted something that would allow you to put an existing C++ program (say a large finite element simulation) on a website with as little modification to the existing data structures as possible. There is thus a *clean break* between application code and presentation (GUI) code and there should not be any kind of translation layer obscuring the view so to speak. Those of you familiar with the Model-View-Controller software pattern should see how those terms can apply here. The Clarity framework aims to offer what the MVC pattern would call **View** and **Controller** functionality while leaving your **Model** design largely up to you.
@@ -138,6 +145,10 @@ The `TestFramework` class could become a full blown interface builder. The idea 
 ##### Merge Switchboard and Factory? #####
 
 The "switchboard" static map in `ClarityNode` was an early hack that I came up with when I couldn't work out how to store a pointer to the `ClarityNode` that owned each `JSProxyNode` in that `JSProxyNode` even using allow_raw_pointers(). My initial plan had always been to store such a pointer so that things like eventListeners could directly alter the C++ data. I eventually figured it out but the switchboard remains useful for things like the node list method and is now a pretty low level part of the system.  It might be a good idea to keep the switchboard concept alive but have each `CLNF` store a pointer to all the nodes it builds. When we use a factory to create a new node this can potentially send messages to other nodes it has built. The example of adding an option to a select box again comes to mind but this could also be used to update things like the proposed interface builder above.
+
+##### ActiveVector #####
+
+The `ActiveVector` class is an experiment in something along the lines discussed just above. The basic idea is to maintain a set of nodes in sync with a collection of some other objects. The goal is to have something that could, for instance, maintain a set of `<option>` tags in sync with a list of people or cars or whatever. There's a small program called `avtest.cpp` that demonstrates this class. Just do `make avtest` to see what it does.
 
 #### Dynamic CSS
 
