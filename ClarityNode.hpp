@@ -789,11 +789,12 @@ class HybridNode : public ClarityNode {
     void runStateFunction(V *v = nullptr) {
         if (this->stateFunction_) {
             if (v == nullptr) v = this->cppVal_;
-            nodelog("State function IS set.", ClogType::WARNING);
+            nodelog("State function is set.", ClogType::INFO);
             this->stateFunction_(this, v);
-        } else {
-            nodelog("State function is not set.", ClogType::INFO);
-        }
+        } 
+        // else {
+        //     nodelog("State function is not set.", ClogType::INFO);
+        // }
     }
 
     virtual void updateNodeFromDom() {
