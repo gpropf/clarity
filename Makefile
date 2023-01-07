@@ -15,6 +15,8 @@ JSOUT	= clarity_embind.js
 FRAMEWORK_DEPS = JSProxyNode.js Util.js Selectables.js showcase.html Makefile
 CLARITY_OBJS = ClarityNode.o CanvasElement.o Selectables.o clarity.o
 
+JSCORE_COMPILE_COMMANDS = --post-js JSProxyNode.js --post-js Util.js --post-js Selectables.js 
+
 %.o : %.cpp $(FRAMEWORK_DEPS)
 	$(ENV) $(CC) $(CFLAGS) $< -o $@ -c
 
@@ -30,8 +32,15 @@ speedtest-prod: speedtest.o ClarityNode.o Selectables.o clarity.o CanvasElement.
 speedtest: speedtest.o ClarityNode.o Selectables.o clarity.o CanvasElement.o
 	$(ENV) $(CC) $(CFLAGS) -lembind --pre-js js.d/speedtest.js speedtest.o ClarityNode.o Selectables.o CanvasElement.o clarity.o -o $(JSOUT)
 
-showcase: showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-	$(ENV) $(CC) $(CFLAGS) -lembind showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o -o $(JSOUT)
+
+SHOWCASE_OBJS = showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
+
+
+showcase: $(SHOWCASE_OBJS)
+	$(ENV) $(CC) $(CFLAGS) -lembind $(SHOWCASE_OBJS) -o $(JSOUT)
+
+showcase-monolithic: $(SHOWCASE_OBJS)
+	$(ENV) $(CC) $(CFLAGS) -lembind $(JSCORE_COMPILE_COMMANDS) $(SHOWCASE_OBJS) -o clout.js
 
 showcase-prod: CFLAGS = -O3 -std=c++17 
 showcase-prod: ENV	=

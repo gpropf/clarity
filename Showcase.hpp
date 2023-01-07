@@ -15,8 +15,8 @@ using namespace clarity;
  */
 struct Showcase : public PageContent {
     ClarityNode *content(ClarityNode *innerContent = nullptr) {
-        ClarityNode::addJSAuxScript("showcaseAux.js");
-        ClarityNode::runJSAuxScripts();
+        // ClarityNode::addJSAuxScript("showcaseAux.js");
+        // ClarityNode::runJSAuxScripts();
 
         val elgInputAlltypesMouseover = ClarityNode::JSProxyNode_["elgInputAlltypesMouseover"];
 
@@ -209,7 +209,7 @@ struct Showcase : public PageContent {
         childOfMaindivBuilder.br();
 
         // string *clickme = new string("CLICK ME");
-        string clickme2("CLICK ME TOO");
+        string clickme2("Click this field and watch the console");
         // Demonstrates the withEventListenerGenerator method.
         auto *elgDemo_tinp =
             CLNodeFactory<HybridNode, string, double>(childOfMaindivBuilder)
