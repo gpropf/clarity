@@ -215,8 +215,10 @@ The 4 letters at the end of the type actually tell you exactly what's missing. I
 
 #### Important Constants and Definitions ####
 
-`ClarityInstallUrl`: global JS value that tells the system where to look for content including its own boot scripts. In the examples I set this inside a `<script>` tag in the HTML template file.
-`JSAuxUrl`: global JS value that tells the system where to look for auxilliary scripts such as user-defined JS modules containing custom listener generators, etc...
+~~`ClarityInstallUrl`: global JS value that tells the system where to look for content including its own boot scripts. In the examples I set this inside a `<script>` tag in the HTML template file.~~
+~~`JSAuxUrl`: global JS value that tells the system where to look for auxilliary scripts such as user-defined JS modules containing custom listener generators, etc...~~
+
+I've decided to phase out this whole "bootstrap" process in favor of letting people add whatever auxilliary JS they need as `--pre-js` or `--post-js` options. There's no sense in duplicating a feature that Emscripten already includes and I feel that locating and loading the extra JavaScript files was error prone. The goal now is for the core Clarity library to consist of just a JavaScript file and the corresponding WASM file.
 
 #### Known Bugs
 
