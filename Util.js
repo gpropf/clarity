@@ -89,7 +89,38 @@ class Util {
             eval(fnStr);
         }
     }
-}
 
+    /**
+     * This is one of my very imperfect solutions to the problem of how to handle timers. 
+     * It would be nice to just pass a C++ lambda function that encapsulated whatever you wanted to iterate. This 
+     * causes problems with Emscripten so we offer this. The idea is that the `obj` is an Emscripten bound
+     * C++ object with a method called "tick".
+     * 
+     * 
+     * @param {C++ object} obj 
+     * @param {int} intervalMillis 
+     * @returns int
+     */
+    static setIntervalForObjectWithTickMethod(obj, intervalMillis) {
+        //return setTimeout(obj.tick, intervalMillis);
+        return setInterval(() => { obj.tick() }, intervalMillis);
+    }
+
+    /**
+     * Same as above method but allows you to specify the method name. Avoids the use of `eval`
+     * so the method should be reasonably secure and fast.
+     * 
+     * @param {C++ object} obj 
+     * @param {string} objMethodName 
+     * @param {int} intervalMillis 
+     * @returns int     
+     */
+    static setIntervalForObjectWithNamedMethod(obj, objMethodName, intervalMillis) {        
+        var fn = obj[objMethodName];
+        if (typeof fn === "function") {
+            return setInterval(() => { fn.apply(obj) }, intervalMillis);
+        }
+    }
+}
 
 window.Util = Util
