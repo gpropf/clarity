@@ -169,6 +169,14 @@ class CanvasGrid : public CanvasElement<V> {
         drawGrid();
     }
 
+    void clearGridToValue(V v, bool redraw = true) {
+        int gridArrayLength = gridWidth_ * gridHeight_;
+        while (gridArrayLength--) {
+            this->cppVal_[gridArrayLength] = v;
+        }
+        if (redraw) drawGrid();
+    }
+
     inline void setValXYNoDraw(int x, int y, V cellVal) {
         int addr = (y * gridWidth_ + x) * sizeof(V);
         *(this->cppVal_ + addr) = cellVal;
