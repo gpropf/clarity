@@ -89,26 +89,11 @@ class Util {
             eval(fnStr);
         }
     }
-
+    
     /**
-     * This is one of my very imperfect solutions to the problem of how to handle timers. 
-     * It would be nice to just pass a C++ lambda function that encapsulated whatever you wanted to iterate. This 
-     * causes problems with Emscripten so we offer this. The idea is that the `obj` is an Emscripten bound
-     * C++ object with a method called "tick".
-     * 
-     * 
-     * @param {C++ object} obj 
-     * @param {int} intervalMillis 
-     * @returns int
-     */
-    static setIntervalForObjectWithTickMethod(obj, intervalMillis) {
-        //return setTimeout(obj.tick, intervalMillis);
-        return setInterval(() => { obj.tick() }, intervalMillis);
-    }
-
-    /**
-     * Same as above method but allows you to specify the method name. Avoids the use of `eval`
-     * so the method should be reasonably secure and fast.
+     * Wrapper around the `setInterval()` function to facilitate the use
+     * of objects with an iteration method that you provide the name of.
+     * We avoid the use of `eval()` so the method should be reasonably secure and fast.
      * 
      * @param {C++ object} obj 
      * @param {string} objMethodName 
@@ -119,6 +104,21 @@ class Util {
         var fn = obj[objMethodName];
         if (typeof fn === "function") {
             return setInterval(() => { fn.apply(obj) }, intervalMillis);
+        }
+    }
+
+    /**
+     * Same as setIntervalForObjectWithNamedMethod() but for the setTimeout() function.
+     * 
+     * @param {C++ object} obj 
+     * @param {string} objMethodName 
+     * @param {int} intervalMillis 
+     * @returns int     
+     */
+    static setTimeoutForObjectWithNamedMethod(obj, objMethodName, intervalMillis) {        
+        var fn = obj[objMethodName];
+        if (typeof fn === "function") {
+            return setTimeout(() => { fn.apply(obj) }, intervalMillis);
         }
     }
 }
