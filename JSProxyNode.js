@@ -104,7 +104,9 @@ class JSProxyNode {
     return this.id_
   }
 
-  static tagToUrl = { "svg": "http://www.w3.org/2000/svg", "circle": "http://www.w3.org/2000/svg" };
+  static tagToUrl = { "svg": "http://www.w3.org/2000/svg",
+                      "circle": "http://www.w3.org/2000/svg",
+                      "ellipse": "http://www.w3.org/2000/svg"};
 
   // static extraInitCode = {
   //   "canvas": function (domElement) {
