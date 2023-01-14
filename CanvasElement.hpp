@@ -183,7 +183,7 @@ class CanvasGrid : public CanvasElement<V> {
     }
 
     inline void setValXY(int x, int y) {
-        setCurrentXY(x,y);
+        setCurrentXY(x, y);
         setValXYNoDraw(x, y, currentCellVal_);
         drawGrid();
         // V checkVal = getValXY(x, y);
@@ -206,13 +206,27 @@ class CanvasGrid : public CanvasElement<V> {
 
     /**
      * @brief Wrap x,y coordinates in case they go outside the grid. Values are modified in place.
+     * DEPRECATED! Do not use!
      *
      * @param x
      * @param y
      */
-    void wrapCoordiates(int &x, int &y) {
-        x = x % this->gridWidth_;
-        y = y % this->gridHeight_;
+    // void wrapCoordiates(int &x, int &y) {
+    //     x = x % this->gridWidth_;
+    //     y = y % this->gridHeight_;
+    // }
+
+    /**
+     * @brief Better version of mod-in-place method above.
+     *
+     * @param x
+     * @param y
+     * @return pair<int,int>
+     */
+    pair<int, int> wrapCoordiates(int x, int y) {
+        int xp = x % this->gridWidth_;
+        int yp = y % this->gridHeight_;
+        return pair(xp, yp);
     }
 
     void drawGrid() const {
@@ -233,7 +247,7 @@ class CanvasGrid : public CanvasElement<V> {
         // ctx.call<void>("beginPath");
         // ctx.call<void>("moveTo", val(fromPoint_.first), val(fromPoint_.second));
         // ctx.call<void>("lineTo", val(toPoint_.first), val(toPoint_.second));
-        
+
         // string colorStr = stickColor_.toString();
         // cout << "Color for line is " << colorStr << endl;
         // ctx.set("strokeStyle", colorStr);
