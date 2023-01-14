@@ -89,6 +89,7 @@ class CanvasGrid : public CanvasElement<V> {
     double scaleFactorH_ = 1.0;
     double scaleFactorV_ = 1.0;
     int currentX_, currentY_;
+    vector<tuple<int, int, V>> pixelBuffer_;
 
     int gridWidth_, gridHeight_, pixelWidth_, pixelHeight_, cellWidth_, cellHeight_;
 
@@ -177,7 +178,16 @@ class CanvasGrid : public CanvasElement<V> {
         if (redraw) drawGrid();
     }
 
+    /**
+     * @brief Set the pixel at x,y to the value cellVal. Also pushes the pixel onto the pixelBuffer_
+     * stack so it can be easily seen by the canvas owner. This method is also called by `setValXYNoDraw()`.
+     *
+     * @param x
+     * @param y
+     * @param cellVal
+     */
     inline void setValXYNoDraw(int x, int y, V cellVal) {
+        pixelBuffer_.push_back(make_tuple(x,y,cellVal));
         int addr = (y * gridWidth_ + x) * sizeof(V);
         *(this->cppVal_ + addr) = cellVal;
     }
@@ -190,6 +200,14 @@ class CanvasGrid : public CanvasElement<V> {
         // this->nodelog("Value at " + clto_str(x) + "," + clto_str(y) + " is " +
         //               clto_str(int(checkVal)));
         // return addr;
+    }
+
+    tuple<int,int,V> getLatestPixel() {
+        return pixelBuffer_.back();
+    }
+
+    void flushPixelBuffer() {
+        pixelBuffer_.clear();
     }
 
     inline void setCurrentXY(int x, int y) {
