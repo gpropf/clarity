@@ -89,7 +89,6 @@ class CanvasGrid : public CanvasElement<V> {
     double scaleFactorH_ = 1.0;
     double scaleFactorV_ = 1.0;
     int currentX_, currentY_;
-    vector<tuple<int, int, V>> pixelBuffer_;
 
     int gridWidth_, gridHeight_, pixelWidth_, pixelHeight_, cellWidth_, cellHeight_;
 
@@ -99,6 +98,8 @@ class CanvasGrid : public CanvasElement<V> {
         colors;  //!< FIXME: We should not have the colors hardcoded here but this will do for now.
 
    public:
+    vector<tuple<int, int, V>> pixelBuffer_;
+
     inline void setCurrentCellVal(int v) { currentCellVal_ = v; }
 
     inline V *getPtr2CurrentCellVal() { return &currentCellVal_; }
@@ -180,14 +181,15 @@ class CanvasGrid : public CanvasElement<V> {
 
     /**
      * @brief Set the pixel at x,y to the value cellVal. Also pushes the pixel onto the pixelBuffer_
-     * stack so it can be easily seen by the canvas owner. This method is also called by `setValXYNoDraw()`.
+     * stack so it can be easily seen by the canvas owner. This method is also called by
+     * `setValXYNoDraw()`.
      *
      * @param x
      * @param y
      * @param cellVal
      */
     inline void setValXYNoDraw(int x, int y, V cellVal) {
-        pixelBuffer_.push_back(make_tuple(x,y,cellVal));
+        pixelBuffer_.push_back(make_tuple(x, y, cellVal));
         int addr = (y * gridWidth_ + x) * sizeof(V);
         *(this->cppVal_ + addr) = cellVal;
     }
@@ -202,13 +204,9 @@ class CanvasGrid : public CanvasElement<V> {
         // return addr;
     }
 
-    tuple<int,int,V> getLatestPixel() {
-        return pixelBuffer_.back();
-    }
+    tuple<int, int, V> getLatestPixel() { return pixelBuffer_.back(); }
 
-    void flushPixelBuffer() {
-        pixelBuffer_.clear();
-    }
+    void flushPixelBuffer() { pixelBuffer_.clear(); }
 
     inline void setCurrentXY(int x, int y) {
         currentX_ = x;
