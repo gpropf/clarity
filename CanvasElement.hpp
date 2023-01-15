@@ -179,6 +179,12 @@ class CanvasGrid : public CanvasElement<V> {
         if (redraw) drawGrid();
     }
 
+    int calculateGridCellAddress(int x, int y) const {
+        int addr = (y * gridWidth_ + x) * sizeof(V);
+        assert(addr >= 0);
+        return addr;
+    }
+
     /**
      * @brief Set the pixel at x,y to the value cellVal. Also pushes the pixel onto the pixelBuffer_
      * stack so it can be easily seen by the canvas owner. This method is also called by
@@ -190,7 +196,9 @@ class CanvasGrid : public CanvasElement<V> {
      */
     inline void setValXYNoDraw(int x, int y, V cellVal) {
         pixelBuffer_.push_back(make_tuple(x, y, cellVal));
-        int addr = (y * gridWidth_ + x) * sizeof(V);
+        //int addr = (y * gridWidth_ + x) * sizeof(V);
+         int addr = calculateGridCellAddress(x,y);
+         
         *(this->cppVal_ + addr) = cellVal;
     }
 
@@ -214,7 +222,9 @@ class CanvasGrid : public CanvasElement<V> {
     }
 
     V getValXY(int x, int y) {
-        int addr = (y * gridWidth_ + x) * sizeof(V);
+      // int addr = (y * gridWidth_ + x) * sizeof(V);
+      int addr = calculateGridCellAddress(x,y);
+
         V xyVal = *(this->cppVal_ + addr);
         // nodelog("Value at " + clto_str(x) + ", " + clto_str(y) + " is " + clto_str(xyVal));
         return xyVal;
@@ -242,6 +252,10 @@ class CanvasGrid : public CanvasElement<V> {
     pair<int, int> wrapCoordiates(int x, int y) {
         int xp = x % this->gridWidth_;
         int yp = y % this->gridHeight_;
+        if (xp < 0) xp += gridWidth_;
+        if (yp < 0) yp += gridHeight_;
+        assert(xp >= 0);
+        assert(yp >= 0);
         return pair(xp, yp);
     }
 
