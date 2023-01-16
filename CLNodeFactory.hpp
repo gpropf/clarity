@@ -387,7 +387,7 @@ class CLNodeFactory {
     INLINE CLNodeFactory withDisable() && {
         CLNodeFactory cpy(std::move(*this));
         map<string, val> attrs = {{"disabled", val("disabled")}};
-         cpy.attrs_.merge(attrs);
+        cpy.attrs_.merge(attrs);
         return cpy;
     }
 
@@ -869,6 +869,22 @@ class CLNodeFactory {
      */
     INLINE Nc<V> *textInput() {
         map<string, val> inputFieldAttrs = {{"type", val("text")}};
+        attrs_.merge(inputFieldAttrs);
+
+        Nc<V> *inp = withTag("input").withBoundField("value").build();
+        // inp->refreshDOMValueFromModel();
+        // inp->pushValToPeers(inp);
+        inp->refresh();
+        return inp;
+    }
+
+    /**
+     * @brief A hidden input field. Useful as intermediary node.
+     *
+     * @return Nc<V> *
+     */
+    INLINE Nc<V> *hiddenInput() {
+        map<string, val> inputFieldAttrs = {{"type", val("hidden")}};
         attrs_.merge(inputFieldAttrs);
 
         Nc<V> *inp = withTag("input").withBoundField("value").build();
