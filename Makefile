@@ -34,8 +34,6 @@ speedtest: speedtest.o ClarityNode.o Selectables.o clarity.o CanvasElement.o
 
 
 SHOWCASE_OBJS = showcase.o ClarityNode.o CanvasElement.o Selectables.o clarity.o
-
-
 showcase: $(SHOWCASE_OBJS)
 	$(ENV) $(CC) $(CFLAGS) -lembind $(SHOWCASE_OBJS) -o $(JSOUT)
 
