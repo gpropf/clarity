@@ -4,11 +4,16 @@ struct Signal {
 };
 
 template <typename T>
-struct SignalSource {
+struct SignalObject {
 
 };
 
 template <typename T>
-struct SignalSink {
+struct SignalSource: public SignalObject {
+
+};
+
+template <typename T>
+struct SignalSink: public SignalObject {
 
 };
