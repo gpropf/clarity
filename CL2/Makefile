@@ -24,6 +24,7 @@ cl2.a: WebElementBuilder.o Signal.o
 
 signalTest: signalTest.o WebElementBuilder.o
 	$(ENV) $(CC) $(CFLAGS) -lembind signalTest.o -o signalTest.js
+	#$(ENV) $(CC) $(CFLAGS) -lembind --pre-js WebElement.js signalTest.o -o signalTest.js
 # docs: clarity.doxyconfig
 # 	doxygen clarity.doxyconfig
 
@@ -34,6 +35,6 @@ signalTest: signalTest.o WebElementBuilder.o
 # 	rm -f *.o clarity_embind.js
 
 realclean:
-	rm -f *.wasm *.wasm.map *.a signalTest.js
+	rm -f *.o *.wasm *.wasm.map *.a signalTest.js
 
 # all: showcase speedtest docs

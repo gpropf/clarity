@@ -1,8 +1,12 @@
 class WebElement {
-    constructor(tag, id, name) {
+    constructor() {}
+
+    initElement(tag, name, id) {
         this.tag_ = tag;
         this.id_ = id;
         this.name_ = name;
+        this.domElement_ = this.createDOMElementByTagType();
+        document.body.appendChild(this.domElement_); // Fixme
     }
 
     static tagToUrl = {
@@ -25,4 +29,7 @@ class WebElement {
         // }
         return el
     }
+
 }
+
+window.WebElement = WebElement
