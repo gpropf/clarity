@@ -1,3 +1,6 @@
+#ifndef WebElement_hpp
+#define WebElement_hpp
+
 #include <emscripten.h>
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
@@ -9,20 +12,22 @@
 #include <map>
 #include <sstream>
 
+#include "Signal.hpp"
+
 using emscripten::val;
 using std::cout;
 using std::endl;
 
 namespace cl2 {
 
-class WebElementBuilder {
+class WebElement {
     std::string tag_, name_;
     int id_;
     val webElement_;
 
    public:
-    WebElementBuilder(std::string tag, std::string name, int id) : tag_(tag), name_(name), id_(id) {
-        std::cout << "WebElementBuilder CALLED!" << std::endl;
+    WebElement(const std::string& tag, const std::string& name, int id) : tag_(tag), name_(name), id_(id) {
+        std::cout << "WebElement CALLED!" << std::endl;
         val webElement_ = val::global("WebElement").new_();
         webElement_.call<void>("initElement", tag_, name_, id_);
     }
@@ -34,4 +39,11 @@ class WebElementBuilder {
     }
 };
 
+template<typename S>
+class WebElementSignal: public SignalObject<WebElement, S> {
+
+};
+
 }  // namespace cl2
+
+#endif

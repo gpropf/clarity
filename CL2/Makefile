@@ -18,11 +18,11 @@ CFLAGS	= $(DEBUG_CFLAGS)
 	$(ENV) $(CC) $(CFLAGS) $< -o $@ -c
 
 cl2.a: ENV = 
-cl2.a: WebElementBuilder.o Signal.o
+cl2.a: WebElement.o Signal.o
 	rm cl2.a
-	$(ENV) $(AR) -crs cl2.a WebElementBuilder.o Signal.o
+	$(ENV) $(AR) -crs cl2.a WebElement.o Signal.o
 
-signalTest: signalTest.o WebElementBuilder.o
+signalTest: signalTest.o WebElement.o
 	$(ENV) $(CC) $(CFLAGS) -lembind signalTest.o -o signalTest.js
 	#$(ENV) $(CC) $(CFLAGS) -lembind --pre-js WebElement.js signalTest.o -o signalTest.js
 # docs: clarity.doxyconfig
