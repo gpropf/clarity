@@ -25,16 +25,16 @@ struct SignalObject {
 
     void addOutput(SignalObject& sobj) { outputs_.push_back(&sobj); }
 
-    virtual void emit(S& s) {
+    virtual void emit(const S& s) {
         for (auto output : outputs_) {
             // output->accept(s);
             emitOne(output, s);
         }
     }
 
-    virtual void emitOne(SignalObject* sobj, S& s){};
+    virtual void emitOne(SignalObject* sobj, const S& s){};
 
-    virtual void accept(S& s) {
+    virtual void accept(const S& s) {
         cout << "SignalObject::accept() This is wrong!" << endl;
     };
     // T const * obj;

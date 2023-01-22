@@ -44,7 +44,7 @@ template <typename S>
 struct WebElementSignalObject : public SignalObject<S> {
     shared_ptr<WebElement> wptr_;
 
-    virtual void emitOne(SignalObject<S>* sobj, S& s) {
+    virtual void emitOne(SignalObject<S>* sobj, const S& s) {
         cout << "WebElementSignalObject::emitOne() CALLED!" << endl;
         sobj->accept(s);
         cout << "WebElementSignalObject::emitOne() CALLED! END" << endl;
@@ -56,7 +56,7 @@ struct WebElementSignalObject : public SignalObject<S> {
         wptr_->domElement_.call<void>("addEventListener", val("change"), testListenerFn);
     }
 
-    virtual void accept(S& s) {
+    virtual void accept(const S& s) {
         // shared_ptr<val> fn = std::static_pointer_cast<val> (this->obj_);
         // fn(s);
     }
@@ -66,19 +66,27 @@ template <typename S>
 struct ConsoleLoggerSignalObject : public SignalObject<S> {
     shared_ptr<val> fnptr_;
 
-    virtual void emitOne(SignalObject<S>* sobj, S& s) {}
+    virtual void emitOne(SignalObject<S>* sobj, const S& s) {}
 
     ConsoleLoggerSignalObject(val& f) {
         // obj_ = std::static_pointer_cast<void>(make_shared<ConsoleLoggerSignalObject>(f));
         fnptr_ = make_shared<val>(f);
     }
 
-    virtual void accept(S& s) {
+    virtual void accept(const S& s) {
         cout << "ConsoleLoggerSignalObject::accept() CALLED!" << endl;
         val fn = *fnptr_;
         fn(s);
     }
 };
+
+EMSCRIPTEN_BINDINGS(signals) {
+    emscripten::class_<WebElementSignalObject<std::string>>("WebElementSignalObject")
+        .function("emit", &WebElementSignalObject<std::string>::emit, emscripten::allow_raw_pointers());
+}
+
+
+
 
 }  // namespace cl2
 
