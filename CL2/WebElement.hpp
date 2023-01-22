@@ -40,18 +40,25 @@ class WebElement {
     }
 };
 
-template <typename S>
-struct WebElementSignalObject : public SignalObject<WebElement, S> {
-    WebElementSignalObject(WebElement& w) : SignalObject<WebElement, S>(w) {}
+struct WebElementSignalObject : public SignalObject {
+    WebElementSignalObject(WebElement& w) {
+        obj_ = std::static_pointer_cast<void>(make_shared<WebElement>(w));
+    }
+
+    virtual void accept(shared_ptr<void> s) {
+        // shared_ptr<val> fn = std::static_pointer_cast<val> (this->obj_);
+        // fn(s);
+    }
 };
 
-template <typename S>
-struct ConsoleLoggerSignalObject : public SignalObject<val, S> {
-    ConsoleLoggerSignalObject(val& f) : SignalObject<val, S>(f) {}
+struct ConsoleLoggerSignalObject : public SignalObject {
+    ConsoleLoggerSignalObject(val& f) {
+        obj_ = std::static_pointer_cast<void>(make_shared<ConsoleLoggerSignalObject>(f));
+    }
 
-    virtual void accept(S & s) {
-        val fn = *this->obj_;
-        fn(s);
+    virtual void accept(shared_ptr<void> s) {
+        shared_ptr<val> fn = std::static_pointer_cast<val>(this->obj_);
+        // fn(s);
     }
 };
 

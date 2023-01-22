@@ -6,10 +6,10 @@
 int main() {
     std::cout << "HELLO from signalTest.cpp!" << std::endl;
     cl2::WebElement web("input", "webel", 1);
-    cl2::WebElementSignalObject<std::string> ssWeb(web);
+    cl2::WebElementSignalObject ssWeb(web);
     val logFn = val::global("logStuff");
-    cl2::ConsoleLoggerSignalObject<std::string> clso(logFn);
-    ssWeb.addOutput(make_shared<void>(clso));
+    cl2::ConsoleLoggerSignalObject clso(logFn);
+    //ssWeb.addOutput(make_shared<void>(clso));
     web.printStats();
 
     return 0;

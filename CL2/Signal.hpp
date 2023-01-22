@@ -7,47 +7,41 @@
 #include <string>
 #include <vector>
 
-using std::shared_ptr;
 using std::make_shared;
+using std::shared_ptr;
 
 namespace cl2 {
 
 template <typename T>
 struct Signal {};
 
-template <typename T, typename S>
 struct SignalObject {
-    shared_ptr<T> obj_ = nullptr;
-    std::vector<shared_ptr<void>> inputs_;
-    std::vector<shared_ptr<void>> outputs_;
+    shared_ptr<void> obj_;  // = nullptr;
+    std::vector<shared_ptr<SignalObject>> inputs_;
+    std::vector<shared_ptr<SignalObject>> outputs_;
 
-    void addOutput(shared_ptr<void> sobj) {
-        outputs_.push_back(sobj);
-    }
+    void addOutput(SignalObject& sobj) { outputs_.push_back(make_shared<SignalObject>(sobj)); }
 
-    virtual void emit(S & s) {
-        for (auto output: outputs_) {
-            //output->accept(s);
+    virtual void emit(shared_ptr<void> s) {
+        for (auto output : outputs_) {
+            // output->accept(s);
         }
     }
 
-    virtual void accept(S & s) {
-        
-    }
+    virtual void accept(shared_ptr<void> s) {};
     // T const * obj;
-    SignalObject(T& obj) { obj_ = make_shared<T>(obj); }
+    //SignalObject(T& obj) { obj_ = make_shared<T>(obj); }
 };
 
-template <typename T, typename S>
-struct SignalSource : public SignalObject<T, S> {
-    SignalSource(T& obj) : SignalObject<T, S>(obj) {}
-    
-};
+// template <typename T, typename S>
+// struct SignalSource : public SignalObject<T, S> {
+//     SignalSource(T& obj) : SignalObject<T, S>(obj) {}
+// };
 
-template <typename T, typename S>
-struct SignalSink : public SignalObject<T,S> {
-    SignalSink(T& obj) : SignalObject<T, S>(obj) {}
-};
+// template <typename T, typename S>
+// struct SignalSink : public SignalObject<T, S> {
+//     SignalSink(T& obj) : SignalObject<T, S>(obj) {}
+// };
 
 }  // namespace cl2
 
