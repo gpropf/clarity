@@ -32,4 +32,8 @@ class WebElement {
 
 }
 
+function logStuff(stuff) {
+    console.log("This is a simple signal endpoint: " + stuff);
+}
+
 window.WebElement = WebElement

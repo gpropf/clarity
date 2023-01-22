@@ -26,7 +26,8 @@ class WebElement {
     val webElement_;
 
    public:
-    WebElement(const std::string& tag, const std::string& name, int id) : tag_(tag), name_(name), id_(id) {
+    WebElement(const std::string& tag, const std::string& name, int id)
+        : tag_(tag), name_(name), id_(id) {
         std::cout << "WebElement CALLED!" << std::endl;
         val webElement_ = val::global("WebElement").new_();
         webElement_.call<void>("initElement", tag_, name_, id_);
@@ -39,9 +40,19 @@ class WebElement {
     }
 };
 
-template<typename S>
-class WebElementSignal: public SignalObject<WebElement, S> {
+template <typename S>
+struct WebElementSignalObject : public SignalObject<WebElement, S> {
+    WebElementSignalObject(WebElement& w) : SignalObject<WebElement, S>(w) {}
+};
 
+template <typename S>
+struct ConsoleLoggerSignalObject : public SignalObject<val, S> {
+    ConsoleLoggerSignalObject(val& f) : SignalObject<val, S>(f) {}
+
+    virtual void accept(S & s) {
+        val fn = *this->obj_;
+        fn(s);
+    }
 };
 
 }  // namespace cl2
