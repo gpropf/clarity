@@ -40,9 +40,10 @@ class WebElement {
     }
 };
 
-struct WebElementSignalObject : public SignalObject {
+template <typename S>
+struct WebElementSignalObject : public SignalObject<S> {
 
-    virtual void emitOne(SignalObject* sobj, shared_ptr<void> s) {
+    virtual void emitOne(SignalObject<S>* sobj, S& s) {
 
         cout << "WebElementSignalObject::emitOne() CALLED!" << endl;
         sobj->accept(s);
@@ -53,24 +54,25 @@ struct WebElementSignalObject : public SignalObject {
         //obj_ = std::static_pointer_cast<void>(make_shared<WebElement>(w));
     }
 
-    virtual void accept(shared_ptr<void> s) {
+    virtual void accept(S& s) {
         // shared_ptr<val> fn = std::static_pointer_cast<val> (this->obj_);
         // fn(s);
     }
 };
 
-struct ConsoleLoggerSignalObject : public SignalObject {
+template <typename S>
+struct ConsoleLoggerSignalObject : public SignalObject<S> {
 
     shared_ptr<val> fnptr_;
 
-    virtual void emitOne(SignalObject* sobj, shared_ptr<void> s) {}
+    virtual void emitOne(SignalObject<S>* sobj, S& s) {}
 
     ConsoleLoggerSignalObject(val& f) {
         //obj_ = std::static_pointer_cast<void>(make_shared<ConsoleLoggerSignalObject>(f));
         fnptr_ = make_shared<val>(f);
     }
 
-    virtual void accept(shared_ptr<void> s) {
+    virtual void accept(S& s) {
         cout << "ConsoleLoggerSignalObject::accept() CALLED!" << endl;
         val fn = *fnptr_;
         fn(s);

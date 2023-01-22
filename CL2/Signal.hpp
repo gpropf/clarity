@@ -7,16 +7,17 @@
 #include <string>
 #include <vector>
 
-using std::make_shared;
-using std::shared_ptr;
 using std::cout;
 using std::endl;
+using std::make_shared;
+using std::shared_ptr;
 
 namespace cl2 {
 
 template <typename T>
 struct Signal {};
 
+template <typename S>
 struct SignalObject {
     shared_ptr<void> obj_;  // = nullptr;
     std::vector<SignalObject*> inputs_;
@@ -24,20 +25,20 @@ struct SignalObject {
 
     void addOutput(SignalObject& sobj) { outputs_.push_back(&sobj); }
 
-    virtual void emit(shared_ptr<void> s) {
+    virtual void emit(S& s) {
         for (auto output : outputs_) {
-             //output->accept(s);
-             emitOne(output, s);
+            // output->accept(s);
+            emitOne(output, s);
         }
     }
 
-    virtual void emitOne(SignalObject* sobj, shared_ptr<void> s) {};
+    virtual void emitOne(SignalObject* sobj, S& s){};
 
-    virtual void accept(shared_ptr<void> s) {
+    virtual void accept(S& s) {
         cout << "SignalObject::accept() This is wrong!" << endl;
     };
     // T const * obj;
-    //SignalObject(T& obj) { obj_ = make_shared<T>(obj); }
+    // SignalObject(T& obj) { obj_ = make_shared<T>(obj); }
 };
 
 // template <typename T, typename S>
