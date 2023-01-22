@@ -41,8 +41,11 @@ class WebElement {
 };
 
 struct WebElementSignalObject : public SignalObject {
+
+    
+
     WebElementSignalObject(WebElement& w) {
-        obj_ = std::static_pointer_cast<void>(make_shared<WebElement>(w));
+        //obj_ = std::static_pointer_cast<void>(make_shared<WebElement>(w));
     }
 
     virtual void accept(shared_ptr<void> s) {
@@ -52,13 +55,18 @@ struct WebElementSignalObject : public SignalObject {
 };
 
 struct ConsoleLoggerSignalObject : public SignalObject {
+
+    shared_ptr<val> fnptr_;
+
     ConsoleLoggerSignalObject(val& f) {
-        obj_ = std::static_pointer_cast<void>(make_shared<ConsoleLoggerSignalObject>(f));
+        //obj_ = std::static_pointer_cast<void>(make_shared<ConsoleLoggerSignalObject>(f));
+        fnptr_ = make_shared<val>(f);
     }
 
     virtual void accept(shared_ptr<void> s) {
-        shared_ptr<val> fn = std::static_pointer_cast<val>(this->obj_);
-        // fn(s);
+        
+        val fn = *fnptr_;
+        fn(s);
     }
 };
 

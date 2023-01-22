@@ -9,7 +9,7 @@ int main() {
     cl2::WebElementSignalObject ssWeb(web);
     val logFn = val::global("logStuff");
     cl2::ConsoleLoggerSignalObject clso(logFn);
-    //ssWeb.addOutput(make_shared<void>(clso));
+    ssWeb.addOutput(clso);
     web.printStats();
 
     return 0;

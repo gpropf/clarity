@@ -24,9 +24,11 @@ struct SignalObject {
 
     virtual void emit(shared_ptr<void> s) {
         for (auto output : outputs_) {
-            // output->accept(s);
+             output->accept(s);
         }
     }
+
+    virtual void emitOne(shared_ptr<SignalObject> sobj, shared_ptr<void> s) {}
 
     virtual void accept(shared_ptr<void> s) {};
     // T const * obj;
