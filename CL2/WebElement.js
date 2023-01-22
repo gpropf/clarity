@@ -7,6 +7,7 @@ class WebElement {
         this.name_ = name;
         this.domElement_ = this.createDOMElementByTagType();
         document.body.appendChild(this.domElement_); // Fixme
+        return this.domElement_;
     }
 
     static tagToUrl = {
@@ -34,6 +35,10 @@ class WebElement {
 
 function logStuff(stuff) {
     console.log("This is a simple signal endpoint: " + stuff);
+}
+
+function testListenerFn(ev) {
+    console.log("testListenerFn() FIRED!");
 }
 
 window.WebElement = WebElement
