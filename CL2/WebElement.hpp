@@ -50,9 +50,15 @@ struct WebElementSignalObject : public SignalObject<S> {
         cout << "WebElementSignalObject::emitOne() CALLED! END" << endl;
     }
 
-    WebElementSignalObject(WebElement& w) {
-        wptr_ = make_shared<WebElement>(w);
-        val testListenerFn = val::global("testListenerFn");
+    virtual void emit(const S& s) { SignalObject<S>::emit(s); }
+
+    WebElementSignalObject(WebElement& w) { wptr_ = make_shared<WebElement>(w); }
+
+    virtual void finalize() {
+        val elgEmitFn = val::global("elgEmitFn");
+        val testListenerFn = elgEmitFn(*this);
+        // val testListenerFn = val::global("testListenerFn");
+
         wptr_->domElement_.call<void>("addEventListener", val("change"), testListenerFn);
     }
 
@@ -60,6 +66,8 @@ struct WebElementSignalObject : public SignalObject<S> {
         // shared_ptr<val> fn = std::static_pointer_cast<val> (this->obj_);
         // fn(s);
     }
+    
+    virtual ~WebElementSignalObject() { cout << "Destructing WebElementSignalObject\n"; }
 };
 
 template <typename S>
@@ -78,15 +86,27 @@ struct ConsoleLoggerSignalObject : public SignalObject<S> {
         val fn = *fnptr_;
         fn(s);
     }
+
+    virtual ~ConsoleLoggerSignalObject() { cout << "Destructing ConsoleLoggerSignalObject\n"; }
 };
 
-EMSCRIPTEN_BINDINGS(signals) {
+EMSCRIPTEN_BINDINGS(WebElementSignalObject) {
     emscripten::class_<WebElementSignalObject<std::string>>("WebElementSignalObject")
-        .function("emit", &WebElementSignalObject<std::string>::emit, emscripten::allow_raw_pointers());
+        .function("emit", &WebElementSignalObject<std::string>::emit,
+                  emscripten::allow_raw_pointers())
+        .function("accept", &WebElementSignalObject<std::string>::accept,
+                  emscripten::allow_raw_pointers());
+
+    emscripten::class_<ConsoleLoggerSignalObject<std::string>>("ConsoleLoggerSignalObject")
+        .function("emit", &ConsoleLoggerSignalObject<std::string>::emit,
+                  emscripten::allow_raw_pointers())
+        .function("accept", &ConsoleLoggerSignalObject<std::string>::accept,
+                  emscripten::allow_raw_pointers());
+
+    emscripten::class_<SignalObject<std::string>>("SignalObject")
+        .function("emit", &SignalObject<std::string>::emit, emscripten::allow_raw_pointers())
+        .function("accept", &SignalObject<std::string>::accept, emscripten::allow_raw_pointers());
 }
-
-
-
 
 }  // namespace cl2
 

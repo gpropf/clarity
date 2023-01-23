@@ -23,20 +23,28 @@ struct SignalObject {
     std::vector<SignalObject*> inputs_;
     std::vector<SignalObject*> outputs_;
 
-    void addOutput(SignalObject& sobj) { outputs_.push_back(&sobj); }
+    void addOutput(SignalObject* sobj) { outputs_.push_back(sobj); }
 
     virtual void emit(const S& s) {
         for (auto output : outputs_) {
-            // output->accept(s);
-            emitOne(output, s);
+            output->accept(s);
+            //emitOne(output, s);
         }
     }
 
     virtual void emitOne(SignalObject* sobj, const S& s){};
 
-    virtual void accept(const S& s) {
-        cout << "SignalObject::accept() This is wrong!" << endl;
-    };
+    virtual void accept(const S& s) =0 ;
+    // {
+    //     cout << "SignalObject::accept() This is wrong!" << endl;
+    // };
+
+    virtual void finalize() {}
+
+
+    virtual ~SignalObject() {
+         cout << "Destructing SignalObject\n"; 
+    }
     // T const * obj;
     // SignalObject(T& obj) { obj_ = make_shared<T>(obj); }
 };

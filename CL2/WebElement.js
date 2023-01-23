@@ -41,4 +41,10 @@ function testListenerFn(ev) {
     console.log("testListenerFn() FIRED!");
 }
 
+function elgEmitFn(webElementSignalObject) {
+    return function(ev) {
+        webElementSignalObject.emit("text field change event called!");
+    };
+}
+
 window.WebElement = WebElement
