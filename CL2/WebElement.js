@@ -6,6 +6,8 @@ class WebElement {
         this.id_ = id;
         this.name_ = name;
         this.domElement_ = this.createDOMElementByTagType();
+        this.domElement_.id = id;
+        this.domElement_.name = name;
         document.body.appendChild(this.domElement_); // Fixme
         return this.domElement_;
     }
@@ -43,7 +45,8 @@ function testListenerFn(ev) {
 
 function elgEmitFn(webElementSignalObject) {
     return function(ev) {
-        webElementSignalObject.emit("text field change event called!");
+        let text = ev.target.value
+        webElementSignalObject.emit(text);
     };
 }
 
