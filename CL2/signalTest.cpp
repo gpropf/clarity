@@ -7,10 +7,18 @@ int main() {
     cl2::WebElement *web = new cl2::WebElement("input", "webel", 1);
     cl2::WebElementSignalObject<std::string> *ssWeb =
         new cl2::WebElementSignalObject<std::string>(*web);
+
+cl2::WebElement *webRecipient = new cl2::WebElement("input", "webRecipient", 2);
+    cl2::WebElementSignalObject<std::string> *ssWebR =
+        new cl2::WebElementSignalObject<std::string>(*webRecipient);
+
+
     val logFn = val::global("logStuff");
     cl2::ConsoleLoggerSignalObject<std::string> *clso =
         new cl2::ConsoleLoggerSignalObject<std::string>(logFn);
     ssWeb->addOutput(clso);
+    ssWeb->addOutput(ssWebR);
+
     std::string testStr = "Foo string";
     // shared_ptr<std::string> testStrPtr = make_shared<std::string>(testStr);
     // shared_ptr<void> testStrPtrVoid = std::static_pointer_cast<void>(testStrPtr);

@@ -63,6 +63,7 @@ struct WebElementSignalObject : public SignalObject<S> {
     }
 
     virtual void accept(const S& s) {
+        wptr_->domElement_.set("value", val(s));
         // shared_ptr<val> fn = std::static_pointer_cast<val> (this->obj_);
         // fn(s);
     }
