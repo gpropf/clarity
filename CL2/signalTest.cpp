@@ -12,8 +12,8 @@ int main() {
 
     const val logFn = val::global("logStuff");
     auto *clso = new cl2::JSFunctionSignalObject<std::string>(logFn);
-    ssWeb->addOutput(clso);
-    ssWeb->addOutput(ssWebR);
+   // ssWeb->setOutput(clso);
+    ssWeb->setOutput(ssWebR);
 
     // std::string testStr = "Foo";
     // ssWeb->emitOne(clso, testStr);

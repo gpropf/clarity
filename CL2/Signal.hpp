@@ -25,15 +25,22 @@ namespace cl2 {
 template <typename S>
 struct SignalObject {
     // shared_ptr<void> obj_;  // = nullptr;
-    std::vector<SignalObject*> inputs_;
-    std::vector<SignalObject*> outputs_;
+    // std::vector<SignalObject*> inputs_;
+    // std::vector<SignalObject*> outputs_;
 
-    void addOutput(SignalObject* sobj) {
-        outputs_.push_back(sobj);
-        sobj->addInput(this);
+    SignalObject* input_;
+    SignalObject* output_;
+
+    void setOutput(SignalObject* sobj) {
+        //outputs_.push_back(sobj);
+        output_ = sobj;
+        sobj->setInput(this);
     }
 
-    void addInput(SignalObject* sobj) { inputs_.push_back(sobj); }
+    void setInput(SignalObject* sobj) {
+        //inputs_.push_back(sobj);
+        input_ = sobj;
+    }
 
     /**
      * @brief Send the signal to all the outputs.
@@ -41,10 +48,11 @@ struct SignalObject {
      * @param s
      */
     virtual void emit(const S& s) const {
-        for (auto output : outputs_) {
-            output->accept(s);
-            // emitOne(output, s);
-        }
+        // for (auto output : outputs_) {
+        //     output->accept(s);
+        //     // emitOne(output, s);
+        // }
+        output_->accept(s);
     }
 
     virtual void emitOne(SignalObject* sobj, const S& s){};
