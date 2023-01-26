@@ -10,15 +10,23 @@ int main() {
     const auto *webRecipient = new cl2::InputElement("input", "webRecipient", 2);
     auto *ssWebR = new cl2::WebElementSignalObject<std::string>(*webRecipient);
 
+    auto *t1 = new cl2::Tee<std::string>();
+    
+
     const val logFn = val::global("logStuff");
     auto *clso = new cl2::JSFunctionSignalObject<std::string>(logFn);
    // ssWeb->setOutput(clso);
-    ssWeb->setOutput(ssWebR);
+    
+    t1->setOutput(clso);
+    t1->setSecondOutput(ssWebR);
+
+    ssWeb->setOutput(t1);
 
     // std::string testStr = "Foo";
     // ssWeb->emitOne(clso, testStr);
     ssWeb->finalize();
     ssWebR->finalize();
+    t1->finalize();
     // web->printStats();
 
     return 0;

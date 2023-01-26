@@ -23,7 +23,7 @@ namespace cl2 {
  * @tparam S data type of signal, e.g. string, int, double, etc...
  */
 template <typename S>
-struct SignalObject {
+class SignalObject {
     // shared_ptr<void> obj_;  // = nullptr;
     // std::vector<SignalObject*> inputs_;
     // std::vector<SignalObject*> outputs_;
@@ -31,31 +31,26 @@ struct SignalObject {
     SignalObject* input_;
     SignalObject* output_;
 
+   public:
     void setOutput(SignalObject* sobj) {
-        //outputs_.push_back(sobj);
+        // outputs_.push_back(sobj);
         output_ = sobj;
         sobj->setInput(this);
     }
 
     void setInput(SignalObject* sobj) {
-        //inputs_.push_back(sobj);
+        // inputs_.push_back(sobj);
         input_ = sobj;
     }
 
     /**
-     * @brief Send the signal to all the outputs.
+     * @brief Send the signal to the output.
      *
      * @param s
      */
-    virtual void emit(const S& s) const {
-        // for (auto output : outputs_) {
-        //     output->accept(s);
-        //     // emitOne(output, s);
-        // }
+    virtual void emit(const S& s) const {        
         output_->accept(s);
-    }
-
-    virtual void emitOne(SignalObject* sobj, const S& s){};
+    }    
 
     virtual void accept(const S& s) = 0;
 
@@ -71,6 +66,41 @@ struct SignalObject {
     virtual ~SignalObject() {
         // cout << "Destructing SignalObject\n";
     }
+};
+
+template <typename S>
+class Tee: public SignalObject<S> {
+    
+    SignalObject<S> *secondOutput_;
+
+    public:
+
+    // Tee(SignalObject<S> *sIn, SignalObject<S>* sOut1, SignalObject<S>* sOut2) {
+
+    // }
+
+    Tee() {
+
+    }
+
+
+    virtual void emit(const S& s) const {
+        // SignalObject<S>::emit(s);
+        // secondOutput_->accept(s);
+    }
+
+    virtual void accept(const S& s) {
+        SignalObject<S>::emit(s);
+        secondOutput_->accept(s);
+    }
+    
+    void setSecondOutput(SignalObject<S>* sobj) {
+        // outputs_.push_back(sobj);
+        secondOutput_ = sobj;
+        sobj->setInput(this);
+    }
+
+    virtual void finalize() {}
 };
 
 }  // namespace cl2
