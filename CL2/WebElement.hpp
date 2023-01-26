@@ -85,23 +85,23 @@ class WebElementSignalObject : public SignalObject<S> {
  * @tparam S 
  */
 template <typename S>
-class ConsoleLoggerSignalObject : public SignalObject<S> {
+class JSFunctionSignalObject : public SignalObject<S> {
     shared_ptr<val> fnptr_;
 
    public:
     virtual void emitOne(SignalObject<S>* sobj, const S& s) {}
 
-    ConsoleLoggerSignalObject(const val& f) { fnptr_ = make_shared<val>(f); }
+    JSFunctionSignalObject(const val& f) { fnptr_ = make_shared<val>(f); }
 
     virtual void accept(const S& s) {
-        // cout << "ConsoleLoggerSignalObject::accept() CALLED!" << endl;
+        // cout << "JSFunctionSignalObject::accept() CALLED!" << endl;
         val fn = *fnptr_;
         fn(s);
     }
 
     virtual void finalize() {}
 
-    virtual ~ConsoleLoggerSignalObject() {  // cout << "Destroying ConsoleLoggerSignalObject\n";
+    virtual ~JSFunctionSignalObject() {  // cout << "Destroying JSFunctionSignalObject\n";
     }
 };
 
@@ -112,10 +112,10 @@ EMSCRIPTEN_BINDINGS(WebElementSignalObject) {
         .function("accept", &WebElementSignalObject<std::string>::accept,
                   emscripten::allow_raw_pointers());
 
-    emscripten::class_<ConsoleLoggerSignalObject<std::string>>("ConsoleLoggerSignalObject")
-        .function("emit", &ConsoleLoggerSignalObject<std::string>::emit,
+    emscripten::class_<JSFunctionSignalObject<std::string>>("ConsoleLoggerSignalObject")
+        .function("emit", &JSFunctionSignalObject<std::string>::emit,
                   emscripten::allow_raw_pointers())
-        .function("accept", &ConsoleLoggerSignalObject<std::string>::accept,
+        .function("accept", &JSFunctionSignalObject<std::string>::accept,
                   emscripten::allow_raw_pointers());
 
     emscripten::class_<SignalObject<std::string>>("SignalObject")

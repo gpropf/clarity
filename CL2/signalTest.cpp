@@ -11,7 +11,7 @@ int main() {
     auto *ssWebR = new cl2::WebElementSignalObject<std::string>(*webRecipient);
 
     const val logFn = val::global("logStuff");
-    auto *clso = new cl2::ConsoleLoggerSignalObject<std::string>(logFn);
+    auto *clso = new cl2::JSFunctionSignalObject<std::string>(logFn);
     ssWeb->addOutput(clso);
     ssWeb->addOutput(ssWebR);
 
