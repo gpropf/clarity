@@ -20,43 +20,45 @@ using std::endl;
 
 namespace cl2 {
 
+/**
+ * @brief Represents a single web element. Defined as a struct because this is meant to 
+ * 
+ */
 struct WebElement {
     std::string tag_, name_, boundField_;
     int id_;
-    val webElement_, domElement_;
+    val webElement_;
+    val domElement_;
 
-   public:
-    WebElement(const std::string& tag, const std::string& name, const std::string& boundField, int id)
-        : tag_(tag), name_(name), boundField_(boundField), id_(id) {
-        std::cout << "WebElement CALLED!" << std::endl;
+   //public:
+    WebElement(const std::string& tag, const std::string& name, const std::string& boundField,
+               int id)
+        : tag_(tag), name_(name), boundField_(boundField), id_(id) {        
         val webElement_ = val::global("WebElement").new_();
         domElement_ = webElement_.call<val>("initElement", tag_, name_, id_);
     }
-
-    void printStats() const {
-        cout << "Tag is: " << tag_ << endl;
-        cout << "element name is: " << name_ << endl;
-        cout << "id is: " << id_ << endl;
-    }
 };
 
-struct InputElement: public WebElement {
-     InputElement(const std::string& tag, const std::string& name, int id) : WebElement(tag, name, "value", id) {}
+class InputElement : public WebElement {
+   public:
+    InputElement(const std::string& tag, const std::string& name, int id)
+        : WebElement(tag, name, "value", id) {}
 };
 
 template <typename S>
-struct WebElementSignalObject : public SignalObject<S> {
+class WebElementSignalObject : public SignalObject<S> {
     shared_ptr<WebElement> wptr_;
 
+   public:
     virtual void emitOne(SignalObject<S>* sobj, const S& s) {
-        cout << "WebElementSignalObject::emitOne() CALLED!" << endl;
+        // cout << "WebElementSignalObject::emitOne() CALLED!" << endl;
         sobj->accept(s);
-        cout << "WebElementSignalObject::emitOne() CALLED! END" << endl;
+        // cout << "WebElementSignalObject::emitOne() CALLED! END" << endl;
     }
 
     virtual void emit(const S& s) { SignalObject<S>::emit(s); }
 
-    WebElementSignalObject(WebElement& w) { wptr_ = make_shared<WebElement>(w); }
+    WebElementSignalObject(const WebElement& w) { wptr_ = make_shared<WebElement>(w); }
 
     virtual void finalize() {
         val elgEmitFn = val::global("elgEmitFn");
@@ -71,15 +73,16 @@ struct WebElementSignalObject : public SignalObject<S> {
 };
 
 template <typename S>
-struct ConsoleLoggerSignalObject : public SignalObject<S> {
+class ConsoleLoggerSignalObject : public SignalObject<S> {
     shared_ptr<val> fnptr_;
 
+   public:
     virtual void emitOne(SignalObject<S>* sobj, const S& s) {}
 
-    ConsoleLoggerSignalObject(val& f) { fnptr_ = make_shared<val>(f); }
+    ConsoleLoggerSignalObject(const val& f) { fnptr_ = make_shared<val>(f); }
 
     virtual void accept(const S& s) {
-        cout << "ConsoleLoggerSignalObject::accept() CALLED!" << endl;
+        // cout << "ConsoleLoggerSignalObject::accept() CALLED!" << endl;
         val fn = *fnptr_;
         fn(s);
     }
