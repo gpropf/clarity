@@ -21,13 +21,13 @@ using std::endl;
 namespace cl2 {
 
 struct WebElement {
-    std::string tag_, name_;
+    std::string tag_, name_, boundField_;
     int id_;
     val webElement_, domElement_;
 
    public:
-    WebElement(const std::string& tag, const std::string& name, int id)
-        : tag_(tag), name_(name), id_(id) {
+    WebElement(const std::string& tag, const std::string& name, const std::string& boundField, int id)
+        : tag_(tag), name_(name), boundField_(boundField), id_(id) {
         std::cout << "WebElement CALLED!" << std::endl;
         val webElement_ = val::global("WebElement").new_();
         domElement_ = webElement_.call<val>("initElement", tag_, name_, id_);
@@ -38,6 +38,10 @@ struct WebElement {
         cout << "element name is: " << name_ << endl;
         cout << "id is: " << id_ << endl;
     }
+};
+
+struct InputElement: public WebElement {
+     InputElement(const std::string& tag, const std::string& name, int id) : WebElement(tag, name, "value", id) {}
 };
 
 template <typename S>

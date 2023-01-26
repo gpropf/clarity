@@ -14,13 +14,13 @@ using std::shared_ptr;
 
 namespace cl2 {
 
-template <typename T>
-struct Signal {};
+// template <typename T>
+// struct Signal {};
 
 /**
  * @brief Base class representing something that can send or receive signals.
  *
- * @tparam S
+ * @tparam S data type of signal, e.g. string, int, double, etc...
  */
 template <typename S>
 struct SignalObject {
@@ -41,6 +41,13 @@ struct SignalObject {
 
     virtual void accept(const S& s) = 0;
 
+    /**
+     * @brief Sometimes it is necessary to hold off certain tasks until the object is fully set up.
+     * JS event handlers in particular need to see the completed object in order to work properly
+     * when they fire. This method must be called once a `SignalObject` has all of its inputs and
+     * outputs set up.
+     *
+     */
     virtual void finalize() = 0;
 
     virtual ~SignalObject() {
