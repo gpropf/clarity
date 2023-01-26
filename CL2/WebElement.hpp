@@ -21,8 +21,9 @@ using std::endl;
 namespace cl2 {
 
 /**
- * @brief Represents a single web element. Defined as a struct because this is meant to 
- * 
+ * @brief Represents a single web element. Defined as a struct because this is meant to defined
+ * using const.
+ *
  */
 struct WebElement {
     std::string tag_, name_, boundField_;
@@ -30,21 +31,27 @@ struct WebElement {
     val webElement_;
     val domElement_;
 
-   //public:
+    // public:
     WebElement(const std::string& tag, const std::string& name, const std::string& boundField,
                int id)
-        : tag_(tag), name_(name), boundField_(boundField), id_(id) {        
+        : tag_(tag), name_(name), boundField_(boundField), id_(id) {
         val webElement_ = val::global("WebElement").new_();
         domElement_ = webElement_.call<val>("initElement", tag_, name_, id_);
     }
 };
 
-class InputElement : public WebElement {
+struct InputElement : public WebElement {
    public:
     InputElement(const std::string& tag, const std::string& name, int id)
         : WebElement(tag, name, "value", id) {}
 };
 
+
+/**
+ * @brief A `SignalObject` wrapper for a `WebElement`.
+ * 
+ * @tparam S 
+ */
 template <typename S>
 class WebElementSignalObject : public SignalObject<S> {
     shared_ptr<WebElement> wptr_;
@@ -72,6 +79,11 @@ class WebElementSignalObject : public SignalObject<S> {
     }
 };
 
+/**
+ * @brief A `SignalObject` wrapper for a JS function object.
+ * 
+ * @tparam S 
+ */
 template <typename S>
 class ConsoleLoggerSignalObject : public SignalObject<S> {
     shared_ptr<val> fnptr_;

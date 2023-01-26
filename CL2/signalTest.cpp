@@ -4,7 +4,7 @@
 
 int main() {
     // std::cout << "HELLO from signalTest.cpp!" << std::endl;
-    const auto *web = new cl2::InputElement("input", "webel", 1);
+    const auto *web = new cl2::InputElement("input", "webel", 1);    
     auto *ssWeb = new cl2::WebElementSignalObject<std::string>(*web);
 
     const auto *webRecipient = new cl2::InputElement("input", "webRecipient", 2);
