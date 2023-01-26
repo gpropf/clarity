@@ -57,18 +57,13 @@ struct WebElementSignalObject : public SignalObject<S> {
     virtual void finalize() {
         val elgEmitFn = val::global("elgEmitFn");
         val testListenerFn = elgEmitFn(*this);
-        // val testListenerFn = val::global("testListenerFn");
-
         wptr_->domElement_.call<void>("addEventListener", val("change"), testListenerFn);
     }
 
-    virtual void accept(const S& s) {
-        wptr_->domElement_.set("value", val(s));
-        // shared_ptr<val> fn = std::static_pointer_cast<val> (this->obj_);
-        // fn(s);
+    virtual void accept(const S& s) { wptr_->domElement_.set("value", val(s)); }
+
+    virtual ~WebElementSignalObject() {  // cout << "Destroying WebElementSignalObject\n";
     }
-    
-    virtual ~WebElementSignalObject() { cout << "Destructing WebElementSignalObject\n"; }
 };
 
 template <typename S>
@@ -77,10 +72,7 @@ struct ConsoleLoggerSignalObject : public SignalObject<S> {
 
     virtual void emitOne(SignalObject<S>* sobj, const S& s) {}
 
-    ConsoleLoggerSignalObject(val& f) {
-        // obj_ = std::static_pointer_cast<void>(make_shared<ConsoleLoggerSignalObject>(f));
-        fnptr_ = make_shared<val>(f);
-    }
+    ConsoleLoggerSignalObject(val& f) { fnptr_ = make_shared<val>(f); }
 
     virtual void accept(const S& s) {
         cout << "ConsoleLoggerSignalObject::accept() CALLED!" << endl;
@@ -88,7 +80,10 @@ struct ConsoleLoggerSignalObject : public SignalObject<S> {
         fn(s);
     }
 
-    virtual ~ConsoleLoggerSignalObject() { cout << "Destructing ConsoleLoggerSignalObject\n"; }
+    virtual void finalize() {}
+
+    virtual ~ConsoleLoggerSignalObject() {  // cout << "Destroying ConsoleLoggerSignalObject\n";
+    }
 };
 
 EMSCRIPTEN_BINDINGS(WebElementSignalObject) {

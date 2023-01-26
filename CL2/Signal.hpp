@@ -17,6 +17,11 @@ namespace cl2 {
 template <typename T>
 struct Signal {};
 
+/**
+ * @brief Base class representing something that can send or receive signals.
+ *
+ * @tparam S
+ */
 template <typename S>
 struct SignalObject {
     shared_ptr<void> obj_;  // = nullptr;
@@ -28,25 +33,19 @@ struct SignalObject {
     virtual void emit(const S& s) {
         for (auto output : outputs_) {
             output->accept(s);
-            //emitOne(output, s);
+            // emitOne(output, s);
         }
     }
 
     virtual void emitOne(SignalObject* sobj, const S& s){};
 
-    virtual void accept(const S& s) =0 ;
-    // {
-    //     cout << "SignalObject::accept() This is wrong!" << endl;
-    // };
+    virtual void accept(const S& s) = 0;
 
-    virtual void finalize() {}
-
+    virtual void finalize() = 0;
 
     virtual ~SignalObject() {
-         cout << "Destructing SignalObject\n"; 
+        // cout << "Destructing SignalObject\n";
     }
-    // T const * obj;
-    // SignalObject(T& obj) { obj_ = make_shared<T>(obj); }
 };
 
 // template <typename T, typename S>
