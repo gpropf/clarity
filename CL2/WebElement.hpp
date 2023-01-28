@@ -40,17 +40,21 @@ struct WebElement {
     }
 };
 
+/**
+ * @brief Specializing the `WebElement` for input fields. Also a struct because this is intended to
+ * be instantiated const and used as immutable.
+ *
+ */
 struct InputElement : public WebElement {
    public:
     InputElement(const std::string& tag, const std::string& name, int id)
         : WebElement(tag, name, "value", id) {}
 };
 
-
 /**
  * @brief A `SignalObject` wrapper for a `WebElement`.
- * 
- * @tparam S 
+ *
+ * @tparam S
  */
 template <typename S>
 class WebElementSignalObject : public SignalObject<S> {
@@ -81,8 +85,8 @@ class WebElementSignalObject : public SignalObject<S> {
 
 /**
  * @brief A `SignalObject` wrapper for a JS function object.
- * 
- * @tparam S 
+ *
+ * @tparam S
  */
 template <typename S>
 class JSFunctionSignalObject : public SignalObject<S> {

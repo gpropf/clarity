@@ -2,6 +2,7 @@
 #define Signal_hpp
 
 #include <algorithm>
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -24,10 +25,6 @@ namespace cl2 {
  */
 template <typename S>
 class SignalObject {
-    // shared_ptr<void> obj_;  // = nullptr;
-    // std::vector<SignalObject*> inputs_;
-    // std::vector<SignalObject*> outputs_;
-
     SignalObject* input_;
     SignalObject* output_;
 
@@ -48,9 +45,7 @@ class SignalObject {
      *
      * @param s
      */
-    virtual void emit(const S& s) const {        
-        output_->accept(s);
-    }    
+    virtual void emit(const S& s) const { output_->accept(s); }
 
     virtual void accept(const S& s) = 0;
 
@@ -69,20 +64,11 @@ class SignalObject {
 };
 
 template <typename S>
-class Tee: public SignalObject<S> {
-    
-    SignalObject<S> *secondOutput_;
+class Tee : public SignalObject<S> {
+    SignalObject<S>* secondOutput_;
 
-    public:
-
-    // Tee(SignalObject<S> *sIn, SignalObject<S>* sOut1, SignalObject<S>* sOut2) {
-
-    // }
-
-    Tee() {
-
-    }
-
+   public:
+    Tee() {}
 
     virtual void emit(const S& s) const {
         // SignalObject<S>::emit(s);
@@ -93,11 +79,35 @@ class Tee: public SignalObject<S> {
         SignalObject<S>::emit(s);
         secondOutput_->accept(s);
     }
-    
+
     void setSecondOutput(SignalObject<S>* sobj) {
         // outputs_.push_back(sobj);
         secondOutput_ = sobj;
         sobj->setInput(this);
+    }
+
+    virtual void finalize() {}
+};
+
+template <typename S, typename Sout>
+class Transformer : public SignalObject<S> {
+    std::function<Sout(S s)> transformFn_;
+    SignalObject<Sout>* transformedOutput_;
+
+   public:
+    Transformer() {}
+
+    Transformer(std::function<Sout(S s)> transformFn) : transformFn_(transformFn) {}
+
+    virtual void accept(const S& s) {
+        Sout sOut = transformFn_(s);
+        if (transformedOutput_ != nullptr) transformedOutput_->accept(sOut);
+    }
+
+    void setTransformedOutput(SignalObject<Sout>* sobj) {
+        // outputs_.push_back(sobj);
+        transformedOutput_ = sobj;
+        sobj->setInput(this->transformedOutput_);
     }
 
     virtual void finalize() {}
