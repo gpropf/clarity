@@ -1,6 +1,7 @@
 
-#include "Signal.hpp"
-#include "WebElement.hpp"
+#include "SignalPrimitives.hpp"
+#include "WebElements.hpp"
+#include "WebElementSignals.hpp"
 
 int main() {
     // std::cout << "HELLO from signalTest.cpp!" << std::endl;

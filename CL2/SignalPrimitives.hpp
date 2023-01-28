@@ -1,5 +1,5 @@
-#ifndef Signal_hpp
-#define Signal_hpp
+#ifndef SignalPrimitives_hpp
+#define SignalPrimitives_hpp
 
 #include <algorithm>
 #include <functional>
