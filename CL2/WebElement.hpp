@@ -47,8 +47,10 @@ struct WebElement {
  */
 struct InputElement : public WebElement {
    public:
-    InputElement(const std::string& tag, const std::string& name, int id)
-        : WebElement(tag, name, "value", id) {}
+    InputElement(const std::string& tag, const std::string& name, const std::string& type, int id)
+        : WebElement(tag, name, "value", id) {
+            domElement_.set("type", val(type));
+        }
 };
 
 /**

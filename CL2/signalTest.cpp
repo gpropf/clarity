@@ -4,10 +4,10 @@
 
 int main() {
     // std::cout << "HELLO from signalTest.cpp!" << std::endl;
-    const auto *web = new cl2::InputElement("input", "webel", 1);
+    const auto *web = new cl2::InputElement("input", "webel", "text", 1);
     auto *ssWeb = new cl2::WebElementSignalObject<std::string>(*web);
 
-    const auto *webRecipient = new cl2::InputElement("input", "webRecipient", 2);
+    const auto *webRecipient = new cl2::InputElement("input", "webRecipient", "text", 2);
     auto *ssWebR = new cl2::WebElementSignalObject<std::string>(*webRecipient);
 
     auto *t1 = new cl2::Tee<std::string>();
@@ -16,7 +16,7 @@ int main() {
     auto *clso = new cl2::JSFunctionSignalObject<std::string>(logFn);
     // ssWeb->setOutput(clso);
 
-    const auto *numInput = new cl2::InputElement("input", "numInput", 3);
+    const auto *numInput = new cl2::InputElement("input", "numInput", "range", 3);
      auto *numInputWSO = new cl2::WebElementSignalObject<std::string>(*numInput);
 
     auto str2DblFn = [](std::string s) {
