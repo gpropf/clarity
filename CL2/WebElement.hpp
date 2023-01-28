@@ -41,6 +41,15 @@ struct WebElement {
 };
 
 /**
+ * @brief Simple br tag, probably doesn't need a name or id. The logic in the JS code is that
+ * negative ids are not created so you can set the id to a negative to create a tag with no id.
+ * 
+ */
+struct BR: public WebElement {
+    BR(int id = -1, const std::string& name = ""): WebElement("br", name, "", id) {}    
+};
+
+/**
  * @brief Specializing the `WebElement` for input fields. Also a struct because this is intended to
  * be instantiated const and used as immutable.
  *

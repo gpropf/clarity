@@ -1,12 +1,22 @@
 class WebElement {
-    constructor() {}
+    constructor() { }
 
+    /**
+     * This is actually what creates the DOM element. The rule for ids is that
+     * the id is not set if the id argument is negative.
+     * 
+     * @param {str} tag 
+     * @param {str} name 
+     * @param {int} id 
+     * @returns 
+     */
     initElement(tag, name, id) {
         this.tag_ = tag;
         this.id_ = id;
         this.name_ = name;
         this.domElement_ = this.createDOMElementByTagType();
-        this.domElement_.id = id;
+        if (id >= 0)
+            this.domElement_.id = id;
         this.domElement_.name = name;
         document.body.appendChild(this.domElement_); // Fixme
         return this.domElement_;
@@ -44,7 +54,7 @@ function testListenerFn(ev) {
 }
 
 function elgEmitFn(webElementSignalObject) {
-    return function(ev) {
+    return function (ev) {
         let text = ev.target.value
         webElementSignalObject.emit(text);
     };
