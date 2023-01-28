@@ -8,3 +8,6 @@ work_shit/
 *.o
 *.a
 
+# Compiled output files
+#############################
+signalTest.js
