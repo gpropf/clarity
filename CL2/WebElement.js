@@ -18,6 +18,7 @@ class WebElement {
         if (id >= 0)
             this.domElement_.id = id;
         this.domElement_.name = name;
+        this.domElement_.setAttribute("name", name);
         document.body.appendChild(this.domElement_); // Fixme
         return this.domElement_;
     }

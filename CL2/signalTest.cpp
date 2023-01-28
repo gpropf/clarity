@@ -9,7 +9,7 @@ int main() {
 
     const auto *webRecipient = new cl2::InputElement("input", "webRecipient", "text", 2);
 
-    //cl2::BR(100,"br1");
+    // cl2::BR(100,"br1");
     cl2::BR();
 
     auto *ssWebR = new cl2::WebElementSignalObject<std::string>(*webRecipient);
@@ -21,7 +21,14 @@ int main() {
     // ssWeb->setOutput(clso);
 
     const auto *numInput = new cl2::InputElement("input", "numInput", "range", 3);
-     auto *numInputWSO = new cl2::WebElementSignalObject<std::string>(*numInput);
+    auto *numInputWSO = new cl2::WebElementSignalObject<std::string>(*numInput);
+
+    auto bigdiv = cl2::WebElement("div", "bigdiv", "foo", 10000);
+
+    cl2::SVG("svg1", 400, 300, 4, bigdiv.domElement_);
+
+
+
 
     auto str2DblFn = [](std::string s) {
         double d = std::stod(s);
@@ -30,9 +37,9 @@ int main() {
     };
 
     auto *strToNum = new cl2::Transformer<std::string, double>(str2DblFn);
-   
-   numInputWSO->setOutput(strToNum);
-   numInputWSO->finalize();
+
+    numInputWSO->setOutput(strToNum);
+    numInputWSO->finalize();
 
     t1->setOutput(clso);
     t1->setSecondOutput(ssWebR);
