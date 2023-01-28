@@ -70,7 +70,8 @@ struct SVG : public WebElement {
  */
 struct InputElement : public WebElement {
    public:
-    InputElement(const std::string& tag, const std::string& name, const std::string& type, int id, val parentElement = val::null())
+    InputElement(const std::string& tag, const std::string& name, const std::string& type, int id,
+                 val parentElement = val::null())
         : WebElement(tag, name, "value", id, parentElement) {
         domElement_.set("type", val(type));
     }
@@ -102,7 +103,10 @@ class WebElementSignalObject : public SignalObject<S> {
         wptr_->domElement_.call<void>("addEventListener", val("change"), testListenerFn);
     }
 
-    virtual void accept(const S& s) { wptr_->domElement_.set(wptr_->boundField_, val(s)); }
+    virtual void accept(const S& s) {
+        wptr_->domElement_.set(wptr_->boundField_, val(s));
+        wptr_->domElement_.call<void>("setAttribute", val(wptr_->boundField_), val(s));
+    }
 
     virtual ~WebElementSignalObject() {  // cout << "Destroying WebElementSignalObject\n";
     }
