@@ -41,6 +41,16 @@ struct WebElement {
             parentElement.call<void>("appendChild", domElement_);
         }
     }
+
+    void setAttribute(const std::string& attr, const val& value) const {
+        domElement_.call<void>("setAttribute", attr, value);
+    }
+
+    void setAttributes(const std::map<std::string, val>& attrs) const {
+        for (auto [attrName, value] : attrs) {
+            setAttribute(attrName, value);
+        }
+    }
 };
 
 /**
