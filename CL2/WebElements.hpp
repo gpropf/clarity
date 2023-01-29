@@ -26,15 +26,15 @@ namespace cl2 {
  *
  */
 struct WebElement {
-    std::string tag_, name_, boundField_;
+    std::string tag_, name_;
     int id_;
     val webElement_;
     val domElement_;
 
     // public:
-    WebElement(const std::string& tag, const std::string& name, const std::string& boundField,
-               int id, val parentElement = val::null())
-        : tag_(tag), name_(name), boundField_(boundField), id_(id) {
+    WebElement(const std::string& tag, const std::string& name, int id,
+               val parentElement = val::null())
+        : tag_(tag), name_(name), id_(id) {
         val webElement_ = val::global("WebElement").new_();
         domElement_ = webElement_.call<val>("initElement", tag_, name_, id_);
         if (parentElement != val::null()) {
@@ -50,12 +50,12 @@ struct WebElement {
  */
 struct BR : public WebElement {
     BR(const std::string& name = "", int id = -1, val parentElement = val::null())
-        : WebElement("br", name, "", id, parentElement) {}
+        : WebElement("br", name, id, parentElement) {}
 };
 
 struct SVG : public WebElement {
     SVG(const std::string& name, int width, int height, int id, val parentElement = val::null())
-        : WebElement("svg", name, "", id, parentElement) {
+        : WebElement("svg", name, id, parentElement) {
         // domElement_.set("width", val(width));
         // domElement_.set("height", val(height));
         domElement_.call<void>("setAttribute", val("width"), val(width));
@@ -72,7 +72,7 @@ struct InputElement : public WebElement {
    public:
     InputElement(const std::string& tag, const std::string& name, const std::string& type, int id,
                  val parentElement = val::null())
-        : WebElement(tag, name, "value", id, parentElement) {
+        : WebElement(tag, name, id, parentElement) {
         domElement_.set("type", val(type));
     }
 };

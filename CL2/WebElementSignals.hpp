@@ -32,11 +32,11 @@ class WebElementSignalObject : public SignalObject<S> {
     std::string boundField_;
 
    public:
-    virtual void emitOne(SignalObject<S>* sobj, const S& s) {
-        // cout << "WebElementSignalObject::emitOne() CALLED!" << endl;
-        sobj->accept(s);
-        // cout << "WebElementSignalObject::emitOne() CALLED! END" << endl;
-    }
+    // virtual void emitOne(SignalObject<S>* sobj, const S& s) {
+    //     // cout << "WebElementSignalObject::emitOne() CALLED!" << endl;
+    //     sobj->accept(s);
+    //     // cout << "WebElementSignalObject::emitOne() CALLED! END" << endl;
+    // }
 
     virtual void emit(const S& s) { SignalObject<S>::emit(s); }
 
@@ -52,7 +52,7 @@ class WebElementSignalObject : public SignalObject<S> {
     }
 
     virtual void accept(const S& s) {
-        wptr_->domElement_.set(wptr_->boundField_, val(s));
+        wptr_->domElement_.set(boundField_, val(s));
         wptr_->domElement_.call<void>("setAttribute", val(boundField_), val(s));
     }
 

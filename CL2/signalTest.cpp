@@ -21,41 +21,45 @@ int main() {
     auto *clso = new cl2::JSFunctionSignalObject<std::string>(logFn);
     // ssWeb->setOutput(clso);
 
-    const auto *numInput = new cl2::InputElement("input", "numInput", "range", 3);
-    auto *numInputWSO = new cl2::WebElementSignalObject<std::string>(*numInput, "value");
+    const auto circle1CXRangeInput = cl2::InputElement("input", "circle1CXRangeInput", "range", 3);
+    const auto circle1CYRangeInput = cl2::InputElement("input", "circle1CYRangeInput", "range", 4);
+    auto *circle1CXRangeInputWSO = new cl2::WebElementSignalObject<std::string>(circle1CXRangeInput, "value");
+    auto *circle1CYRangeInputWSO = new cl2::WebElementSignalObject<std::string>(circle1CYRangeInput, "value");
 
-    auto bigdiv = cl2::WebElement("div", "bigdiv", "foo", 10000);
+    auto bigdiv = cl2::WebElement("div", "bigdiv", 10000);
 
-    auto svg = cl2::SVG("svg1", 400, 300, 4, bigdiv.domElement_);
+    auto svg = cl2::SVG("svg1", 400, 300, 5, bigdiv.domElement_);
 
-    const auto circle1 = cl2::WebElement("circle", "circle1", "cx", 6, svg.domElement_);
+    const auto circle1 = cl2::WebElement("circle", "circle1", 6, svg.domElement_);
     circle1.domElement_.call<void>("setAttribute", val("r"), val(80));
     circle1.domElement_.call<void>("setAttribute", val("cx"), val(200));
     circle1.domElement_.call<void>("setAttribute", val("cy"), val(100));
     circle1.domElement_.call<void>("setAttribute", val("fill"), val("#ff0000"));
 
 
-    auto *circle1WSO = new cl2::WebElementSignalObject<std::string>(circle1, "cy");
+    auto *circle1CXWSO = new cl2::WebElementSignalObject<std::string>(circle1, "cx");
+    auto *circle1CYWSO = new cl2::WebElementSignalObject<std::string>(circle1, "cy");
 
     auto str2DblFn = [](std::string s) {
         double d = std::stod(s);
-        cout << "Double value of string is " << d << endl;
+        cout << "Value of string as a double is: " << d << endl;
         return d;
     };
 
     auto *strToNum = new cl2::Transformer<std::string, double>(str2DblFn);
 
-    //numInputWSO->setOutput(strToNum);
-    numInputWSO->setOutput(circle1WSO);
-    numInputWSO->finalize();
+    //circle1CXRangeInputWSO->setOutput(strToNum);
+    circle1CXRangeInputWSO->setOutput(circle1CXWSO);
+    circle1CYRangeInputWSO->setOutput(circle1CYWSO);
+    circle1CXRangeInputWSO->finalize();
+    circle1CYRangeInputWSO->finalize();
+
 
     t1->setOutput(clso);
     t1->setSecondOutput(ssWebR);
 
     ssWeb->setOutput(t1);
 
-    // std::string testStr = "Foo";
-    // ssWeb->emitOne(clso, testStr);
     ssWeb->finalize();
     ssWebR->finalize();
     t1->finalize();
