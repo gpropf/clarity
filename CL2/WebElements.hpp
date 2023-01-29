@@ -42,6 +42,15 @@ struct WebElement {
         }
     }
 
+    WebElement(val domElement) {
+        std::string tag_ = domElement["tagName"].as<std::string>();
+        std::transform(tag_.begin(), tag_.end(), tag_.begin(), ::tolower);
+        name_ = domElement.call<val>("getAttribute", val("name")).as<std::string>();
+        //cout << "valname: " << tag_ << endl;
+        id_ = stoi(domElement["id"].as<std::string>());
+        domElement_ = domElement;
+    }
+
     void setAttribute(const std::string& attr, const val& value) const {
         domElement_.call<void>("setAttribute", attr, value);
     }

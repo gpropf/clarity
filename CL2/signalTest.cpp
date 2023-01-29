@@ -4,7 +4,8 @@
 #include "WebElements.hpp"
 
 int main() {
-    // std::cout << "HELLO from signalTest.cpp!" << std::endl;
+    val domEl555 = val::global("document").call<val>("getElementById", val("555"));
+    const auto capturedDiv = cl2::WebElement(domEl555);
     const auto *web = new cl2::InputElement("input", "webel", "text", 1);
     auto *ssWeb = new cl2::WebElementSignalObject<std::string>(*web, "value");
 

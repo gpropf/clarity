@@ -45,6 +45,11 @@ class WebElementSignalObject : public SignalObject<S> {
         boundField_ = boundField;
     }
 
+    WebElementSignalObject(const val domElement, const std::string& boundField) {
+        // wptr_ = make_shared<WebElement>(w);
+        // boundField_ = boundField;
+    }
+
     /**
      * @brief Everything here seems to concern setting up the output so if there isn't one we just
      * return.
