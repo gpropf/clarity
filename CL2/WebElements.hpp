@@ -39,17 +39,17 @@ struct WebElement {
         return domElement_.call<val>("getAttribute", val("name")).as<std::string>();
     }
 
-    WebElement(const std::string& tag, const std::string& name, int id,
-               val parentElement = val::null())
-         {
-        //val webElement_ = val::global("WebElement");
-        val initElement = val::global("WebElement")["initElement"];
-        //domElement_ = webElement_.call<val>("initElement", tag, name, id);
-        domElement_ = initElement(tag, name, id);
-        if (parentElement != val::null()) {
-            parentElement.call<void>("appendChild", domElement_);
-        }
-    }
+    // WebElement(const std::string& tag, const std::string& name, int id,
+    //            val parentElement = val::null())
+    //      {
+    //     //val webElement_ = val::global("WebElement");
+    //     val initElement = val::global("WebElement")["initElement"];
+    //     //domElement_ = webElement_.call<val>("initElement", tag, name, id);
+    //     domElement_ = initElement(tag, name, id);
+    //     if (parentElement != val::null()) {
+    //         parentElement.call<void>("appendChild", domElement_);
+    //     }
+    // }
 
     WebElement(const std::string& tag, const std::string& name, const std::string& id = "",
                val parentElement = val::null())
@@ -97,12 +97,12 @@ struct WebElement {
  *
  */
 struct BR : public WebElement {
-    BR(const std::string& name = "", int id = -1, val parentElement = val::null())
+    BR(const std::string& name = "", const std::string& id = "", val parentElement = val::null())
         : WebElement("br", name, id, parentElement) {}
 };
 
 struct SVG : public WebElement {
-    SVG(const std::string& name, int width, int height, int id, val parentElement = val::null())
+    SVG(const std::string& name, int width, int height, const std::string& id = "", val parentElement = val::null())
         : WebElement("svg", name, id, parentElement) {
         // domElement_.set("width", val(width));
         // domElement_.set("height", val(height));
@@ -112,7 +112,7 @@ struct SVG : public WebElement {
 };
 
 struct Label : public WebElement {
-    Label(const std::string& text, int id, const WebElement& wel, bool swallowForElement = true,
+    Label(const std::string& text, const WebElement& wel, bool swallowForElement = true, const std::string& id = "",
           val parentElement = val::null())
         : WebElement("label", "lbl_" + wel.getName(), id, parentElement) {
         setAttribute("for", wel.getId());
@@ -129,7 +129,7 @@ struct Label : public WebElement {
  */
 struct InputElement : public WebElement {
    public:
-    InputElement(const std::string& tag, const std::string& name, const std::string& type, int id,
+    InputElement(const std::string& tag, const std::string& name, const std::string& type, const std::string& id = "",
                  val parentElement = val::null())
         : WebElement(tag, name, id, parentElement) {
         domElement_.set("type", val(type));

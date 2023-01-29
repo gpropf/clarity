@@ -6,10 +6,10 @@
 int main() {
     val domEl555 = val::global("document").call<val>("getElementById", val("555"));
     const auto capturedDiv = cl2::WebElement(domEl555);
-    const auto *web = new cl2::InputElement("input", "webel", "text", 1);
+    const auto *web = new cl2::InputElement("input", "webel", "text", "1");
     auto *ssWeb = new cl2::WebElementSignalObject<std::string>(*web, "value");
 
-    const auto *webRecipient = new cl2::InputElement("input", "webRecipient", "text", 2);
+    const auto *webRecipient = new cl2::InputElement("input", "webRecipient", "text", "2");
 
     // cl2::BR(100,"br1");
     cl2::BR();
@@ -22,25 +22,25 @@ int main() {
     auto *clso = new cl2::JSFunctionSignalObject<std::string>(logFn);
     // ssWeb->setOutput(clso);
 
-    const auto circle1CXRangeInput = cl2::InputElement("input", "circle1CXRangeInput", "range", 3);
+    const auto circle1CXRangeInput = cl2::InputElement("input", "circle1CXRangeInput", "range", "3");
     
-    const auto circle1CYRangeInput = cl2::InputElement("input", "circle1CYRangeInput", "range", 4);
+    const auto circle1CYRangeInput = cl2::InputElement("input", "circle1CYRangeInput", "range", "4");
 
-    cl2::Label("Circle center X value", 50, circle1CXRangeInput);
+    cl2::Label("Circle center X value", circle1CXRangeInput, true, "50");
     cl2::BR();
-    cl2::Label("Circle center Y value", 50, circle1CYRangeInput);
+    cl2::Label("Circle center Y value", circle1CYRangeInput, true, "51");
 
     auto *circle1CXRangeInputWSO =
         new cl2::WebElementSignalObject<std::string>(circle1CXRangeInput, "value");
     auto *circle1CYRangeInputWSO =
         new cl2::WebElementSignalObject<std::string>(circle1CYRangeInput, "value");
 
-    auto bigdiv = cl2::WebElement("div", "bigdiv", 10000);
+    auto bigdiv = cl2::WebElement("div", "bigdiv");
 
-    auto svg = cl2::SVG("svg1", 400, 300, 5, bigdiv.domElement_);
+    auto svg = cl2::SVG("svg1", 400, 300, "5", bigdiv.domElement_);
     svg.setAttributes({{"viewBox", val("0 0 100 100")}, {"style", val("border: 1px solid black")}});
 
-    const auto circle1 = cl2::WebElement("circle", "circle1", 6, svg.domElement_);
+    const auto circle1 = cl2::WebElement("circle", "circle1", "6", svg.domElement_);
     circle1.domElement_.call<void>("setAttribute", val("r"), val(45));
     circle1.domElement_.call<void>("setAttribute", val("cx"), val(120));
     circle1.domElement_.call<void>("setAttribute", val("cy"), val(100));
