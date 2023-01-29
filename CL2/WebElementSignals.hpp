@@ -45,12 +45,33 @@ class WebElementSignalObject : public SignalObject<S> {
         boundField_ = boundField;
     }
 
+    /**
+     * @brief Everything here seems to concern setting up the output so if there isn't one we just
+     * return.
+     *
+     */
     virtual void finalize() {
+        if (this->getOutput() == nullptr) return;
         val elgEmitFn = val::global("elgEmitFn");
         val testListenerFn = elgEmitFn(*this);
         wptr_->domElement_.call<void>("addEventListener", val("change"), testListenerFn);
+
+        cout << "Getting initial value for id = " << wptr_->id_ << endl;
+        // const S initialVal = wptr_->domElement_.call<val>("getAttribute",
+        // val(boundField_)).as<S>();
+        const S initialVal = wptr_->domElement_[boundField_].as<S>();
+        cout << "Initial value for id = " << wptr_->id_ << " is '" << initialVal << "'" << endl;
+        emit(initialVal);
     }
 
+    /**
+     * @brief It seems to be necessary to call `setAttribute()` for some things while using the
+     * Emscripten `set()` method is needed for others, notably setting the 'value' property of input
+     * fields. I'm not sure if 'value' is the only such exception and calling both methods doesn't
+     * seem to hurt anything but this is clearly a kludge.
+     *
+     * @param s
+     */
     virtual void accept(const S& s) {
         wptr_->domElement_.set(boundField_, val(s));
         wptr_->domElement_.call<void>("setAttribute", val(boundField_), val(s));

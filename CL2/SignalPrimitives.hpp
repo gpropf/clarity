@@ -25,18 +25,21 @@ namespace cl2 {
  */
 template <typename S>
 class SignalObject {
-    SignalObject* input_;
-    SignalObject* output_;
+    // It does seem necessary to set these to nullptr if we want to test for lack of initialization
+    // later.
+    SignalObject* input_ = nullptr;
+    SignalObject* output_ = nullptr;
 
    public:
-    void setOutput(SignalObject* sobj) {
-        // outputs_.push_back(sobj);
+    SignalObject* getOutput() const { return output_; }
+    SignalObject* getInput() const { return input_; }
+
+    void setOutput(SignalObject* sobj) {        
         output_ = sobj;
         sobj->setInput(this);
     }
 
-    void setInput(SignalObject* sobj) {
-        // inputs_.push_back(sobj);
+    void setInput(SignalObject* sobj) {       
         input_ = sobj;
     }
 
@@ -45,7 +48,9 @@ class SignalObject {
      *
      * @param s
      */
-    virtual void emit(const S& s) const { output_->accept(s); }
+    virtual void emit(const S& s) const {
+        if (output_ != nullptr) output_->accept(s);
+    }
 
     virtual void accept(const S& s) = 0;
 
@@ -59,7 +64,7 @@ class SignalObject {
     virtual void finalize() = 0;
 
     virtual ~SignalObject() {
-        // cout << "Destructing SignalObject\n";
+        // cout << "Destroying SignalObject\n";
     }
 };
 
@@ -87,6 +92,10 @@ class Tee : public SignalObject<S> {
     }
 
     virtual void finalize() {}
+
+    virtual ~Tee() {
+        // cout << "Destroying Tee\n";
+    }
 };
 
 template <typename S, typename Sout>
@@ -111,6 +120,10 @@ class Transformer : public SignalObject<S> {
     }
 
     virtual void finalize() {}
+
+    virtual ~Transformer() {
+         // cout << "Destroying Transformer\n";
+    }
 };
 
 }  // namespace cl2
