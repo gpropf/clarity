@@ -29,6 +29,7 @@ namespace cl2 {
 template <typename S>
 class WebElementSignalObject : public SignalObject<S> {
     shared_ptr<WebElement> wptr_;
+    std::string boundField_;
 
    public:
     virtual void emitOne(SignalObject<S>* sobj, const S& s) {
@@ -39,7 +40,10 @@ class WebElementSignalObject : public SignalObject<S> {
 
     virtual void emit(const S& s) { SignalObject<S>::emit(s); }
 
-    WebElementSignalObject(const WebElement& w) { wptr_ = make_shared<WebElement>(w); }
+    WebElementSignalObject(const WebElement& w, const std::string& boundField) {
+        wptr_ = make_shared<WebElement>(w);
+        boundField_ = boundField;
+    }
 
     virtual void finalize() {
         val elgEmitFn = val::global("elgEmitFn");
@@ -49,7 +53,7 @@ class WebElementSignalObject : public SignalObject<S> {
 
     virtual void accept(const S& s) {
         wptr_->domElement_.set(wptr_->boundField_, val(s));
-        wptr_->domElement_.call<void>("setAttribute", val(wptr_->boundField_), val(s));
+        wptr_->domElement_.call<void>("setAttribute", val(boundField_), val(s));
     }
 
     virtual ~WebElementSignalObject() {  // cout << "Destroying WebElementSignalObject\n";

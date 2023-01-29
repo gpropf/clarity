@@ -6,14 +6,14 @@
 int main() {
     // std::cout << "HELLO from signalTest.cpp!" << std::endl;
     const auto *web = new cl2::InputElement("input", "webel", "text", 1);
-    auto *ssWeb = new cl2::WebElementSignalObject<std::string>(*web);
+    auto *ssWeb = new cl2::WebElementSignalObject<std::string>(*web, "value");
 
     const auto *webRecipient = new cl2::InputElement("input", "webRecipient", "text", 2);
 
     // cl2::BR(100,"br1");
     cl2::BR();
 
-    auto *ssWebR = new cl2::WebElementSignalObject<std::string>(*webRecipient);
+    auto *ssWebR = new cl2::WebElementSignalObject<std::string>(*webRecipient, "value");
 
     auto *t1 = new cl2::Tee<std::string>();
 
@@ -22,7 +22,7 @@ int main() {
     // ssWeb->setOutput(clso);
 
     const auto *numInput = new cl2::InputElement("input", "numInput", "range", 3);
-    auto *numInputWSO = new cl2::WebElementSignalObject<std::string>(*numInput);
+    auto *numInputWSO = new cl2::WebElementSignalObject<std::string>(*numInput, "value");
 
     auto bigdiv = cl2::WebElement("div", "bigdiv", "foo", 10000);
 
@@ -35,7 +35,7 @@ int main() {
     circle1.domElement_.call<void>("setAttribute", val("fill"), val("#ff0000"));
 
 
-    auto *circle1WSO = new cl2::WebElementSignalObject<std::string>(circle1);
+    auto *circle1WSO = new cl2::WebElementSignalObject<std::string>(circle1, "cy");
 
     auto str2DblFn = [](std::string s) {
         double d = std::stod(s);
