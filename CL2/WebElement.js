@@ -11,16 +11,16 @@ class WebElement {
      * @returns 
      */
     initElement(tag, name, id) {
-        this.tag_ = tag;
-        this.id_ = id;
-        this.name_ = name;
-        this.domElement_ = this.createDOMElementByTagType();
+        // this.tag_ = tag;
+        // this.id_ = id;
+        // this.name_ = name;
+        var domElement = WebElement.createDOMElementByTagType(tag);
         if (id >= 0)
-            this.domElement_.id = id;
-        this.domElement_.name = name;
-        this.domElement_.setAttribute("name", name);
-        document.body.appendChild(this.domElement_); // Fixme
-        return this.domElement_;
+            domElement.id = id;
+        domElement.name = name;
+        domElement.setAttribute("name", name);
+        document.body.appendChild(domElement); // Fixme
+        return domElement;
     }
 
     static tagToUrl = {
@@ -30,14 +30,14 @@ class WebElement {
     };
 
 
-    createDOMElementByTagType() {
+    static createDOMElementByTagType(tag) {
         var el;
-        if (WebElement.tagToUrl[this.tag_]) {
-            el = document.createElementNS(WebElement.tagToUrl[this.tag_], this.tag_);
+        if (WebElement.tagToUrl[tag]) {
+            el = document.createElementNS(WebElement.tagToUrl[tag], tag);
         }
         else {
-            el = document.createElement(this.tag_);
-        }       
+            el = document.createElement(tag);
+        }
         return el;
     }
 
