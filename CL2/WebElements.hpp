@@ -73,6 +73,15 @@ struct SVG : public WebElement {
     }
 };
 
+struct Label: public WebElement {
+    Label(const std::string& text, int id, const WebElement &wel, bool swallowForElement = true, val parentElement = val::null()) : WebElement("label", "lbl_" + wel.name_ , id, parentElement){
+        setAttribute("for", val(wel.id_));
+        //setAttribute("innerHTML", val(text));
+        domElement_.set("innerHTML", val(text));
+        domElement_.call<void>("appendChild", wel.domElement_);
+    }
+};
+
 /**
  * @brief Specializing the `WebElement` for input fields. Also a struct because this is intended to
  * be instantiated const and used as immutable.

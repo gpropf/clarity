@@ -22,7 +22,13 @@ int main() {
     // ssWeb->setOutput(clso);
 
     const auto circle1CXRangeInput = cl2::InputElement("input", "circle1CXRangeInput", "range", 3);
+    
     const auto circle1CYRangeInput = cl2::InputElement("input", "circle1CYRangeInput", "range", 4);
+
+    cl2::Label("Circle center X value", 50, circle1CXRangeInput);
+    cl2::BR();
+    cl2::Label("Circle center Y value", 50, circle1CYRangeInput);
+
     auto *circle1CXRangeInputWSO =
         new cl2::WebElementSignalObject<std::string>(circle1CXRangeInput, "value");
     auto *circle1CYRangeInputWSO =
