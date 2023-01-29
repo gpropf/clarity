@@ -26,9 +26,9 @@ namespace cl2 {
  *
  */
 struct WebElement {
-    //std::string tag_;  //, name_;
-                       // int id_;
-    //val webElement_;
+    // std::string tag_;  //, name_;
+    //  int id_;
+    // val webElement_;
     val domElement_;
 
     // public:
@@ -52,28 +52,31 @@ struct WebElement {
     // }
 
     WebElement(const std::string& tag, const std::string& name, const std::string& id = "",
-               val parentElement = val::null())
-         {
-        //val webElement_ = val::global("WebElement");
+               val parentElement = val::null()) {
+        // val webElement_ = val::global("WebElement");
         val initElement = val::global("WebElement")["initElement"];
-        //domElement_ = webElement_.call<val>("initElement", tag, name, id);
+        // domElement_ = webElement_.call<val>("initElement", tag, name, id);
 
         if (id == "") {
             domElement_ = initElement(tag, name);
-        }
-        else {
+        } else {
             domElement_ = initElement(tag, name, id);
         }
 
-        
         if (parentElement != val::null()) {
             parentElement.call<void>("appendChild", domElement_);
         }
     }
 
+    /**
+     * @brief This constructor is specifically designed to make use of a pre-existing element such
+     * as from a static HTML page that someone has already laid out.
+     *
+     * @param domElement
+     */
     WebElement(val domElement) {
-        std::string tag_ = domElement["tagName"].as<std::string>();
-        std::transform(tag_.begin(), tag_.end(), tag_.begin(), ::tolower);
+        // std::string tag_ = domElement["tagName"].as<std::string>();
+        // std::transform(tag_.begin(), tag_.end(), tag_.begin(), ::tolower);
         // name_ = domElement.call<val>("getAttribute", val("name")).as<std::string>();
         // cout << "valname: " << tag_ << endl;
         // id_ = stoi(domElement["id"].as<std::string>());
@@ -102,7 +105,8 @@ struct BR : public WebElement {
 };
 
 struct SVG : public WebElement {
-    SVG(const std::string& name, int width, int height, const std::string& id = "", val parentElement = val::null())
+    SVG(const std::string& name, int width, int height, const std::string& id = "",
+        val parentElement = val::null())
         : WebElement("svg", name, id, parentElement) {
         // domElement_.set("width", val(width));
         // domElement_.set("height", val(height));
@@ -112,8 +116,8 @@ struct SVG : public WebElement {
 };
 
 struct Label : public WebElement {
-    Label(const std::string& text, const WebElement& wel, bool swallowForElement = true, const std::string& id = "",
-          val parentElement = val::null())
+    Label(const std::string& text, const WebElement& wel, bool swallowForElement = true,
+          const std::string& id = "", val parentElement = val::null())
         : WebElement("label", "lbl_" + wel.getName(), id, parentElement) {
         setAttribute("for", wel.getId());
         // setAttribute("innerHTML", val(text));
@@ -129,8 +133,8 @@ struct Label : public WebElement {
  */
 struct InputElement : public WebElement {
    public:
-    InputElement(const std::string& tag, const std::string& name, const std::string& type, const std::string& id = "",
-                 val parentElement = val::null())
+    InputElement(const std::string& tag, const std::string& name, const std::string& type,
+                 const std::string& id = "", val parentElement = val::null())
         : WebElement(tag, name, id, parentElement) {
         domElement_.set("type", val(type));
     }
