@@ -26,17 +26,24 @@ namespace cl2 {
  *
  */
 struct WebElement {
-    std::string tag_, name_;
-    int id_;
+    //std::string tag_;  //, name_;
+                       // int id_;
     val webElement_;
     val domElement_;
 
     // public:
+
+    val getId() const { return domElement_["id"]; }
+
+    std::string getName() const {
+        return domElement_.call<val>("getAttribute", val("name")).as<std::string>();
+    }
+
     WebElement(const std::string& tag, const std::string& name, int id,
                val parentElement = val::null())
-        : tag_(tag), name_(name), id_(id) {
+         {
         val webElement_ = val::global("WebElement").new_();
-        domElement_ = webElement_.call<val>("initElement", tag_, name_, id_);
+        domElement_ = webElement_.call<val>("initElement", tag, name, id);
         if (parentElement != val::null()) {
             parentElement.call<void>("appendChild", domElement_);
         }
@@ -45,9 +52,9 @@ struct WebElement {
     WebElement(val domElement) {
         std::string tag_ = domElement["tagName"].as<std::string>();
         std::transform(tag_.begin(), tag_.end(), tag_.begin(), ::tolower);
-        name_ = domElement.call<val>("getAttribute", val("name")).as<std::string>();
-        //cout << "valname: " << tag_ << endl;
-        id_ = stoi(domElement["id"].as<std::string>());
+        // name_ = domElement.call<val>("getAttribute", val("name")).as<std::string>();
+        // cout << "valname: " << tag_ << endl;
+        // id_ = stoi(domElement["id"].as<std::string>());
         domElement_ = domElement;
     }
 
@@ -82,10 +89,12 @@ struct SVG : public WebElement {
     }
 };
 
-struct Label: public WebElement {
-    Label(const std::string& text, int id, const WebElement &wel, bool swallowForElement = true, val parentElement = val::null()) : WebElement("label", "lbl_" + wel.name_ , id, parentElement){
-        setAttribute("for", val(wel.id_));
-        //setAttribute("innerHTML", val(text));
+struct Label : public WebElement {
+    Label(const std::string& text, int id, const WebElement& wel, bool swallowForElement = true,
+          val parentElement = val::null())
+        : WebElement("label", "lbl_" + wel.getName(), id, parentElement) {
+        setAttribute("for", wel.getId());
+        // setAttribute("innerHTML", val(text));
         domElement_.set("innerHTML", val(text));
         domElement_.call<void>("appendChild", wel.domElement_);
     }

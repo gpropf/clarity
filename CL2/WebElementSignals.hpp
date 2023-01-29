@@ -61,11 +61,11 @@ class WebElementSignalObject : public SignalObject<S> {
         val testListenerFn = elgEmitFn(*this);
         wptr_->domElement_.call<void>("addEventListener", val("change"), testListenerFn);
 
-        cout << "Getting initial value for id = " << wptr_->id_ << endl;
+        cout << "Getting initial value for id = " << wptr_->getId().as<std::string>() << endl;
         // const S initialVal = wptr_->domElement_.call<val>("getAttribute",
         // val(boundField_)).as<S>();
         const S initialVal = wptr_->domElement_[boundField_].as<S>();
-        cout << "Initial value for id = " << wptr_->id_ << " is '" << initialVal << "'" << endl;
+        cout << "Initial value for id = " << wptr_->getId().as<std::string>() << " is '" << initialVal << "'" << endl;
         emit(initialVal);
     }
 
