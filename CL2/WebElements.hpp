@@ -51,6 +51,26 @@ struct WebElement {
         }
     }
 
+    WebElement(const std::string& tag, const std::string& name, const std::string& id = "",
+               val parentElement = val::null())
+         {
+        //val webElement_ = val::global("WebElement");
+        val initElement = val::global("WebElement")["initElement"];
+        //domElement_ = webElement_.call<val>("initElement", tag, name, id);
+
+        if (id == "") {
+            domElement_ = initElement(tag, name);
+        }
+        else {
+            domElement_ = initElement(tag, name, id);
+        }
+
+        
+        if (parentElement != val::null()) {
+            parentElement.call<void>("appendChild", domElement_);
+        }
+    }
+
     WebElement(val domElement) {
         std::string tag_ = domElement["tagName"].as<std::string>();
         std::transform(tag_.begin(), tag_.end(), tag_.begin(), ::tolower);

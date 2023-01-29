@@ -10,13 +10,18 @@ class WebElement {
      * @param {int} id 
      * @returns 
      */
-    static initElement(tag, name, id) {
+    static initElement(tag, name, id = null) {
         // this.tag_ = tag;
         // this.id_ = id;
         // this.name_ = name;
         var domElement = WebElement.createDOMElementByTagType(tag);
-        if (id >= 0)
+        if (typeof (id) === 'number') {
+            if (id >= 0)
+                domElement.id = id;
+        }
+        else {
             domElement.id = id;
+        }
         domElement.name = name;
         domElement.setAttribute("name", name);
         document.body.appendChild(domElement); // Fixme
