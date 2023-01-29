@@ -28,14 +28,14 @@ int main() {
 
     auto svg = cl2::SVG("svg1", 400, 300, 4, bigdiv.domElement_);
 
-    const auto *circle1 = new cl2::WebElement("circle", "circle1", "cx", 6, svg.domElement_);
-    circle1->domElement_.call<void>("setAttribute", val("r"), val(80));
-    circle1->domElement_.call<void>("setAttribute", val("cx"), val(200));
-    circle1->domElement_.call<void>("setAttribute", val("cy"), val(100));
-    circle1->domElement_.call<void>("setAttribute", val("fill"), val("#ff0000"));
+    const auto circle1 = cl2::WebElement("circle", "circle1", "cx", 6, svg.domElement_);
+    circle1.domElement_.call<void>("setAttribute", val("r"), val(80));
+    circle1.domElement_.call<void>("setAttribute", val("cx"), val(200));
+    circle1.domElement_.call<void>("setAttribute", val("cy"), val(100));
+    circle1.domElement_.call<void>("setAttribute", val("fill"), val("#ff0000"));
 
 
-    auto *circle1WSO = new cl2::WebElementSignalObject<std::string>(*circle1);
+    auto *circle1WSO = new cl2::WebElementSignalObject<std::string>(circle1);
 
     auto str2DblFn = [](std::string s) {
         double d = std::stod(s);
