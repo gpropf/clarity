@@ -57,7 +57,7 @@ int main() {
 
     auto *strToNum = new cl2::Transformer<std::string, double>(str2DblFn);
 
-    // circle1CXRangeInputWSO->setOutput(strToNum);
+    //circle1CXRangeInputWSO->setOutput(strToNum);
     circle1CXRangeInputWSO->setOutput(circle1CXWSO);
     circle1CYRangeInputWSO->setOutput(circle1CYWSO);
     circle1CXRangeInputWSO->finalize();

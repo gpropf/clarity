@@ -26,42 +26,21 @@ namespace cl2 {
  *
  */
 struct WebElement {
-    // std::string tag_;  //, name_;
-    //  int id_;
-    // val webElement_;
-    val domElement_;
-
-    // public:
+    
+    val domElement_;    
 
     val getId() const { return domElement_["id"]; }
 
     std::string getName() const {
         return domElement_.call<val>("getAttribute", val("name")).as<std::string>();
-    }
-
-    // WebElement(const std::string& tag, const std::string& name, int id,
-    //            val parentElement = val::null())
-    //      {
-    //     //val webElement_ = val::global("WebElement");
-    //     val initElement = val::global("WebElement")["initElement"];
-    //     //domElement_ = webElement_.call<val>("initElement", tag, name, id);
-    //     domElement_ = initElement(tag, name, id);
-    //     if (parentElement != val::null()) {
-    //         parentElement.call<void>("appendChild", domElement_);
-    //     }
-    // }
+    }    
 
     WebElement(const std::string& tag, const std::string& name, const std::string& id = "",
                val parentElement = val::null()) {
-        // val webElement_ = val::global("WebElement");
-        val initElement = val::global("WebElement")["initElement"];
-        // domElement_ = webElement_.call<val>("initElement", tag, name, id);
+        
+        val initElement = val::global("WebElement")["initElement"];       
 
-        if (id == "") {
-            domElement_ = initElement(tag, name);
-        } else {
-            domElement_ = initElement(tag, name, id);
-        }
+        domElement_ = initElement(tag, name, id);
 
         if (parentElement != val::null()) {
             parentElement.call<void>("appendChild", domElement_);
@@ -74,12 +53,7 @@ struct WebElement {
      *
      * @param domElement
      */
-    WebElement(val domElement) {
-        // std::string tag_ = domElement["tagName"].as<std::string>();
-        // std::transform(tag_.begin(), tag_.end(), tag_.begin(), ::tolower);
-        // name_ = domElement.call<val>("getAttribute", val("name")).as<std::string>();
-        // cout << "valname: " << tag_ << endl;
-        // id_ = stoi(domElement["id"].as<std::string>());
+    WebElement(val domElement) {        
         domElement_ = domElement;
     }
 
@@ -108,8 +82,7 @@ struct SVG : public WebElement {
     SVG(const std::string& name, int width, int height, const std::string& id = "",
         val parentElement = val::null())
         : WebElement("svg", name, id, parentElement) {
-        // domElement_.set("width", val(width));
-        // domElement_.set("height", val(height));
+        
         domElement_.call<void>("setAttribute", val("width"), val(width));
         domElement_.call<void>("setAttribute", val("height"), val(height));
     }
@@ -119,8 +92,8 @@ struct Label : public WebElement {
     Label(const std::string& text, const WebElement& wel, bool swallowForElement = true,
           const std::string& id = "", val parentElement = val::null())
         : WebElement("label", "lbl_" + wel.getName(), id, parentElement) {
-        setAttribute("for", wel.getId());
-        // setAttribute("innerHTML", val(text));
+
+        setAttribute("for", wel.getId());        
         domElement_.set("innerHTML", val(text));
         domElement_.call<void>("appendChild", wel.domElement_);
     }

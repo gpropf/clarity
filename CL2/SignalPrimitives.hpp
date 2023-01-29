@@ -34,14 +34,12 @@ class SignalObject {
     SignalObject* getOutput() const { return output_; }
     SignalObject* getInput() const { return input_; }
 
-    void setOutput(SignalObject* sobj) {        
+    void setOutput(SignalObject* sobj) {
         output_ = sobj;
         sobj->setInput(this);
     }
 
-    void setInput(SignalObject* sobj) {       
-        input_ = sobj;
-    }
+    void setInput(SignalObject* sobj) { input_ = sobj; }
 
     /**
      * @brief Send the signal to the output.
@@ -68,6 +66,13 @@ class SignalObject {
     }
 };
 
+/**
+ * @brief Tee simply does roughly what the Linux command of that name does. It duplicates an output.
+ * It acts as a passive conduit so this is why the emit() method does nothing. Essentially until it
+ * performs an accept() operation, it does nothing.
+ *
+ * @tparam S
+ */
 template <typename S>
 class Tee : public SignalObject<S> {
     SignalObject<S>* secondOutput_;
@@ -75,10 +80,7 @@ class Tee : public SignalObject<S> {
    public:
     Tee() {}
 
-    virtual void emit(const S& s) const {
-        // SignalObject<S>::emit(s);
-        // secondOutput_->accept(s);
-    }
+    virtual void emit(const S& s) const {}
 
     virtual void accept(const S& s) {
         SignalObject<S>::emit(s);
@@ -86,7 +88,6 @@ class Tee : public SignalObject<S> {
     }
 
     void setSecondOutput(SignalObject<S>* sobj) {
-        // outputs_.push_back(sobj);
         secondOutput_ = sobj;
         sobj->setInput(this);
     }
@@ -122,7 +123,7 @@ class Transformer : public SignalObject<S> {
     virtual void finalize() {}
 
     virtual ~Transformer() {
-         // cout << "Destroying Transformer\n";
+        // cout << "Destroying Transformer\n";
     }
 };
 

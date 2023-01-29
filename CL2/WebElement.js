@@ -2,28 +2,22 @@ class WebElement {
     constructor() { }
 
     /**
-     * This is actually what creates the DOM element. The rule for ids is that
-     * the id is not set if the id argument is negative.
+     * This is actually what creates the DOM element. It will try not to create empty name and id fields.
      * 
      * @param {str} tag 
      * @param {str} name 
      * @param {int} id 
      * @returns 
      */
-    static initElement(tag, name, id = null) {
-        // this.tag_ = tag;
-        // this.id_ = id;
-        // this.name_ = name;
+    static initElement(tag, name = null, id = null) {
+
         var domElement = WebElement.createDOMElementByTagType(tag);
-        if (typeof (id) === 'number') {
-            if (id >= 0)
-                domElement.id = id;
+
+        if (id && id != "") domElement.id = id;
+        if (name && name != "") {
+            domElement.name = name;
+            domElement.setAttribute("name", name);
         }
-        else {
-            domElement.id = id;
-        }
-        domElement.name = name;
-        domElement.setAttribute("name", name);
         document.body.appendChild(domElement); // Fixme
         return domElement;
     }
