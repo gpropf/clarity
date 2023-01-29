@@ -31,17 +31,14 @@ class WebElement {
 
 
     createDOMElementByTagType() {
-        var el
+        var el;
         if (WebElement.tagToUrl[this.tag_]) {
-            el = document.createElementNS(WebElement.tagToUrl[this.tag_], this.tag_)
+            el = document.createElementNS(WebElement.tagToUrl[this.tag_], this.tag_);
         }
         else {
-            el = document.createElement(this.tag_)
-        }
-        // if (JSProxyNode.extraInitCode[this.tag_]) {
-        //   JSProxyNode.extraInitCode[this.tag_](el);
-        // }
-        return el
+            el = document.createElement(this.tag_);
+        }       
+        return el;
     }
 
 }
@@ -56,7 +53,7 @@ function testListenerFn(ev) {
 
 function elgEmitFn(webElementSignalObject) {
     return function (ev) {
-        let text = ev.target.value
+        let text = ev.target.value;
         webElementSignalObject.emit(text);
     };
 }
