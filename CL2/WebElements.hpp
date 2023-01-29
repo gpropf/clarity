@@ -28,7 +28,7 @@ namespace cl2 {
 struct WebElement {
     //std::string tag_;  //, name_;
                        // int id_;
-    val webElement_;
+    //val webElement_;
     val domElement_;
 
     // public:
@@ -42,8 +42,10 @@ struct WebElement {
     WebElement(const std::string& tag, const std::string& name, int id,
                val parentElement = val::null())
          {
-        val webElement_ = val::global("WebElement").new_();
-        domElement_ = webElement_.call<val>("initElement", tag, name, id);
+        //val webElement_ = val::global("WebElement");
+        val initElement = val::global("WebElement")["initElement"];
+        //domElement_ = webElement_.call<val>("initElement", tag, name, id);
+        domElement_ = initElement(tag, name, id);
         if (parentElement != val::null()) {
             parentElement.call<void>("appendChild", domElement_);
         }

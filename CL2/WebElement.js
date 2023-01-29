@@ -10,7 +10,7 @@ class WebElement {
      * @param {int} id 
      * @returns 
      */
-    initElement(tag, name, id) {
+    static initElement(tag, name, id) {
         // this.tag_ = tag;
         // this.id_ = id;
         // this.name_ = name;
