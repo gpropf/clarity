@@ -57,6 +57,11 @@ struct WebElement {
         domElement_ = domElement;
     }
 
+    WebElement(const std::string &id) {
+        val document = val::global("document");
+        domElement_ = document.call<val>("getElementById", val(id));
+    }
+
     void setAttribute(const std::string& attr, const val& value) const {
         domElement_.call<void>("setAttribute", attr, value);
     }

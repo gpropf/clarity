@@ -20,7 +20,8 @@ int main() {
 
 
     val domEl555 = val::global("document").call<val>("getElementById", val("555"));
-    const auto capturedDiv = cl2::WebElement(domEl555);
+    //const auto capturedDiv = cl2::WebElement(domEl555);
+    const auto capturedDiv = cl2::WebElement("555");
     const auto *sourceTextInput = new cl2::InputElement("input", "sourceTextInput", "text", getStrId());
     auto *sourceTextInputWSO = new cl2::WebElementSignalObject<std::string>(*sourceTextInput, "value");
 
@@ -50,9 +51,9 @@ int main() {
     auto *circle1CYRangeInputWSO =
         new cl2::WebElementSignalObject<std::string>(circle1CYRangeInput, "value");
 
-    auto bigdiv = cl2::WebElement("div", "bigdiv");
+    //auto bigdiv = cl2::WebElement("div", "bigdiv");
 
-    auto svg = cl2::SVG("svg1", 400, 300, getStrId(), bigdiv.domElement_);
+    auto svg = cl2::SVG("svg1", 400, 300, getStrId(), capturedDiv.domElement_);
     svg.setAttributes({{"viewBox", val("0 0 100 100")}, {"style", val("border: 1px solid black")}});
 
     const auto circle1 = cl2::WebElement("circle", "circle1", getStrId(), svg.domElement_);
