@@ -6,21 +6,21 @@
 int main() {
     val domEl555 = val::global("document").call<val>("getElementById", val("555"));
     const auto capturedDiv = cl2::WebElement(domEl555);
-    const auto *web = new cl2::InputElement("input", "webel", "text", "1");
-    auto *ssWeb = new cl2::WebElementSignalObject<std::string>(*web, "value");
+    const auto *sourceTextInput = new cl2::InputElement("input", "sourceTextInput", "text", "1");
+    auto *sourceTextInputWSO = new cl2::WebElementSignalObject<std::string>(*sourceTextInput, "value");
 
-    const auto *webRecipient = new cl2::InputElement("input", "webRecipient", "text", "2");
+    const auto *destTextInput = new cl2::InputElement("input", "destTextInput", "text", "2");
 
     // cl2::BR(100,"br1");
     cl2::BR();
 
-    auto *ssWebR = new cl2::WebElementSignalObject<std::string>(*webRecipient, "value");
+    auto *destTextInputWSO = new cl2::WebElementSignalObject<std::string>(*destTextInput, "value");
 
     auto *t1 = new cl2::Tee<std::string>();
 
     const val logFn = val::global("logStuff");
-    auto *clso = new cl2::JSFunctionSignalObject<std::string>(logFn);
-    // ssWeb->setOutput(clso);
+    auto *consoleLogFSO = new cl2::JSFunctionSignalObject<std::string>(logFn);
+    // sourceTextInputWSO->setOutput(consoleLogFSO);
 
     const auto circle1CXRangeInput = cl2::InputElement("input", "circle1CXRangeInput", "range", "3");
     
@@ -63,15 +63,15 @@ int main() {
     circle1CXRangeInputWSO->finalize();
     circle1CYRangeInputWSO->finalize();
 
-    t1->setOutput(clso);
-    t1->setSecondOutput(ssWebR);
+    t1->setOutput(consoleLogFSO);
+    t1->setSecondOutput(destTextInputWSO);
 
-    ssWeb->setOutput(t1);
+    sourceTextInputWSO->setOutput(t1);
 
-    ssWeb->finalize();
-    ssWebR->finalize();
+    sourceTextInputWSO->finalize();
+    destTextInputWSO->finalize();
     t1->finalize();
-    // web->printStats();
+    // sourceTextInput->printStats();
 
     return 0;
 }
