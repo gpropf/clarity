@@ -127,6 +127,13 @@ class Transformer : public SignalObject<S> {
     }
 };
 
+template <typename S>
+class CppObject: public SignalObject<S> {
+
+};
+
+
+
 }  // namespace cl2
 
 #endif
