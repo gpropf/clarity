@@ -18,6 +18,15 @@ class TicketMachine {
     inline const int getNext() { return ++id_; }
 };
 
+/**
+ * @brief An old fashioned C-style function with a static int that stores state. Produces the same
+ * kind of incrementing count the `TicketMachine` above does. This should actually be all you need
+ * unless the code is parallel.
+ *
+ * @param initVal
+ * @param reset Set to true this causes the `initVal` to be substituted for whatever is in `id_`.
+ * @return int
+ */
 int getId(int initVal = 0, bool reset = false) {
     static int id_ = initVal;
     if (reset) id_ = initVal;
@@ -25,8 +34,15 @@ int getId(int initVal = 0, bool reset = false) {
     return ++id_;
 }
 
+/**
+ * @brief Uses the `getId()` function above but returns the string value of the number.
+ * 
+ * @param initVal Passed through to `getId()`
+ * @param reset Passed through to `getId()`
+ * @return std::string 
+ */
 std::string getStrId(int initVal = 0, bool reset = false) {
-    return std::to_string (getId(initVal,reset));
+    return std::to_string(getId(initVal, reset));
 }
 
 #endif
