@@ -2,14 +2,29 @@
 #include "SignalPrimitives.hpp"
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
+#include "Util.hpp"
 
 int main() {
+
+    //TicketMachine tm;
+    // std::string testidStr = getStrId();
+    // cout << "TEST ID = " << testidStr << endl;
+    // testidStr = getStrId();
+    // cout << "TEST ID = " << testidStr << endl;
+    // testidStr = getStrId();
+    // cout << "TEST ID = " << testidStr << endl;
+
+    // //int testid = getId(100,true);
+    // int testid = getId();
+    // cout << "TEST ID = " << testid << endl;
+
+
     val domEl555 = val::global("document").call<val>("getElementById", val("555"));
     const auto capturedDiv = cl2::WebElement(domEl555);
-    const auto *sourceTextInput = new cl2::InputElement("input", "sourceTextInput", "text", "1");
+    const auto *sourceTextInput = new cl2::InputElement("input", "sourceTextInput", "text", getStrId());
     auto *sourceTextInputWSO = new cl2::WebElementSignalObject<std::string>(*sourceTextInput, "value");
 
-    const auto *destTextInput = new cl2::InputElement("input", "destTextInput", "text", "2");
+    const auto *destTextInput = new cl2::InputElement("input", "destTextInput", "text", getStrId());
 
     // cl2::BR(100,"br1");
     cl2::BR();
@@ -22,13 +37,13 @@ int main() {
     auto *consoleLogFSO = new cl2::JSFunctionSignalObject<std::string>(logFn);
     // sourceTextInputWSO->setOutput(consoleLogFSO);
 
-    const auto circle1CXRangeInput = cl2::InputElement("input", "circle1CXRangeInput", "range", "3");
+    const auto circle1CXRangeInput = cl2::InputElement("input", "circle1CXRangeInput", "range", getStrId());
     
-    const auto circle1CYRangeInput = cl2::InputElement("input", "circle1CYRangeInput", "range", "4");
+    const auto circle1CYRangeInput = cl2::InputElement("input", "circle1CYRangeInput", "range", getStrId());
 
-    cl2::Label("Circle center X value", circle1CXRangeInput, true, "50");
+    cl2::Label("Circle center X value", circle1CXRangeInput, true, getStrId());
     cl2::BR();
-    cl2::Label("Circle center Y value", circle1CYRangeInput, true, "51");
+    cl2::Label("Circle center Y value", circle1CYRangeInput, true, getStrId());
 
     auto *circle1CXRangeInputWSO =
         new cl2::WebElementSignalObject<std::string>(circle1CXRangeInput, "value");
@@ -37,10 +52,10 @@ int main() {
 
     auto bigdiv = cl2::WebElement("div", "bigdiv");
 
-    auto svg = cl2::SVG("svg1", 400, 300, "5", bigdiv.domElement_);
+    auto svg = cl2::SVG("svg1", 400, 300, getStrId(), bigdiv.domElement_);
     svg.setAttributes({{"viewBox", val("0 0 100 100")}, {"style", val("border: 1px solid black")}});
 
-    const auto circle1 = cl2::WebElement("circle", "circle1", "6", svg.domElement_);
+    const auto circle1 = cl2::WebElement("circle", "circle1", getStrId(), svg.domElement_);
     circle1.domElement_.call<void>("setAttribute", val("r"), val(45));
     circle1.domElement_.call<void>("setAttribute", val("cx"), val(120));
     circle1.domElement_.call<void>("setAttribute", val("cy"), val(100));
