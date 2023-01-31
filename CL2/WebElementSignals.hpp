@@ -28,9 +28,10 @@ namespace cl2 {
  */
 template <typename S>
 class WebElementSignalObject : public SignalObject<S> {
-    shared_ptr<WebElement> wptr_;
-    std::string boundField_;
-    bool emitInitialValue_ = true;
+    shared_ptr<WebElement> wptr_; //!< The actual WebElement this acts as a signal wrapper for.
+    std::string boundField_; //!< The field in the domElement that stores whatever signal data we are interested in.
+    bool emitInitialValue_ = true;  //!< In some cases we don't want to emit the initial value but
+                                    //!< the default is to do so.
 
    public:
     // virtual void emitOne(SignalObject<S>* sobj, const S& s) {
