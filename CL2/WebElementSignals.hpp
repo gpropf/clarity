@@ -30,6 +30,7 @@ template <typename S>
 class WebElementSignalObject : public SignalObject<S> {
     shared_ptr<WebElement> wptr_;
     std::string boundField_;
+    bool emitInitialValue_ = true;
 
    public:
     // virtual void emitOne(SignalObject<S>* sobj, const S& s) {
@@ -40,15 +41,17 @@ class WebElementSignalObject : public SignalObject<S> {
 
     virtual void emit(const S& s) { SignalObject<S>::emit(s); }
 
-    WebElementSignalObject(const WebElement& w, const std::string& boundField) {
-        wptr_ = make_shared<WebElement>(w);
-        boundField_ = boundField;
-    }
+    WebElementSignalObject(const WebElement& wptr, const std::string& boundField,
+                           bool emitInitialValue = true)
+        : boundField_(boundField),
+          emitInitialValue_(emitInitialValue),
+          wptr_(make_shared<WebElement>(wptr)) {}
 
-    WebElementSignalObject(const val domElement, const std::string& boundField) {
-        // wptr_ = make_shared<WebElement>(w);
-        // boundField_ = boundField;
-    }
+    // WebElementSignalObject(const val domElement, const std::string& boundField, bool
+    // emitInitialValue_ = true) {
+    //     // wptr_ = make_shared<WebElement>(wptr);
+    //     // boundField_ = boundField;
+    // }
 
     /**
      * @brief Everything here seems to concern setting up the output so if there isn't one we just
@@ -58,14 +61,16 @@ class WebElementSignalObject : public SignalObject<S> {
     virtual void finalize() {
         if (this->getOutput() == nullptr) return;
         val elgEmitFn = val::global("elgEmitFn");
-        val testListenerFn = elgEmitFn(*this);
-        wptr_->domElement_.call<void>("addEventListener", val("change"), testListenerFn);
+        val listenerFn = elgEmitFn(*this);
+        wptr_->domElement_.call<void>("addEventListener", val("change"), listenerFn);
 
+        if (!emitInitialValue_) return;
         cout << "Getting initial value for id = " << wptr_->getId().as<std::string>() << endl;
         // const S initialVal = wptr_->domElement_.call<val>("getAttribute",
         // val(boundField_)).as<S>();
         const S initialVal = wptr_->domElement_[boundField_].as<S>();
-        cout << "Initial value for id = " << wptr_->getId().as<std::string>() << " is '" << initialVal << "'" << endl;
+        cout << "Initial value for id = " << wptr_->getId().as<std::string>() << " is '"
+             << initialVal << "'" << endl;
         emit(initialVal);
     }
 

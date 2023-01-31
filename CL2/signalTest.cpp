@@ -121,6 +121,10 @@ int main() {
     auto *strToNum = new cl2::Transformer<std::string, double>(str2DblFn);
     const auto dblInput = cl2::InputElement("input", "dblInput", "text", getStrId());
     cl2::Label("Enter a floating point number", dblInput, true, getStrId());
+
+    auto *dblInputWSO = new cl2::WebElementSignalObject<std::string>(dblInput, "value", false);
+    dblInputWSO->setOutput(strToNum);
+    dblInputWSO->finalize();
     // circle1CXRangeInputWSO->setOutput(strToNum);
 
     // srcTextInput->printStats();
