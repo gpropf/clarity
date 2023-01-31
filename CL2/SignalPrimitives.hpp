@@ -1,6 +1,11 @@
 #ifndef SignalPrimitives_hpp
 #define SignalPrimitives_hpp
 
+#include <emscripten.h>
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+
+
 #include <algorithm>
 #include <functional>
 #include <iostream>
@@ -127,10 +132,33 @@ class Transformer : public SignalObject<S> {
     }
 };
 
-template <typename S>
-class CppObject: public SignalObject<S> {
+template <typename S, typename ObjT>
+class CppObjectSignalObject : public SignalObject<S> {
+    shared_ptr<ObjT> obj_;
 
+   public:
+    void (ObjT::*setter)(const S& s);
+    S (ObjT::*getter)();
+
+    CppObjectSignalObject(ObjT& obj) { obj_ = make_shared<ObjT>(obj); }
+
+    virtual void finalize() {}
+
+    virtual void emit(const S& s) const { SignalObject<S>::emit(s); }
+
+
+    virtual void accept(const S& s) { (*obj_.*setter)(s); }
+
+    virtual S getSignal() { return (*obj_.*getter)(); }
 };
+
+
+
+
+
+
+
+
 
 
 

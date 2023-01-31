@@ -57,4 +57,13 @@ function elgEmitFn(webElementSignalObject) {
     };
 }
 
+function elgTestObjEmitter(testObjCSO) {
+    return function () {
+        let s = testObjCSO.getSignal();
+        console.log("elgTestObjEmitter generated fn called. Emitting signal: " + s);
+        testObjCSO.emit(s);        
+    };
+}
+
+
 window.WebElement = WebElement

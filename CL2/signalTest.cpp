@@ -1,29 +1,43 @@
 
 #include "SignalPrimitives.hpp"
+#include "Util.hpp"
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
-#include "Util.hpp"
+
+class TestObj {
+    int i_ = 0;
+    double d_ = 0;
+    std::string s_ = "foo";
+
+   public:
+    void setS(const std::string &s) {
+        s_ = s;
+        cout << "TestObj.s_ has been set to: " << s_ << endl;
+    }
+    std::string getS() { return s_; }
+};
 
 int main() {
+    TestObj tobj;
 
-    //TicketMachine tm;
-    // std::string testidStr = getStrId();
-    // cout << "TEST ID = " << testidStr << endl;
-    // testidStr = getStrId();
-    // cout << "TEST ID = " << testidStr << endl;
-    // testidStr = getStrId();
-    // cout << "TEST ID = " << testidStr << endl;
+    auto *testObjCSO = new cl2::CppObjectSignalObject<std::string, TestObj>(tobj);
 
-    // //int testid = getId(100,true);
-    // int testid = getId();
-    // cout << "TEST ID = " << testid << endl;
+    testObjCSO->setter = &TestObj::setS;
+    testObjCSO->getter = &TestObj::getS;
 
+    val testObjEmitter = val::global("elgTestObjEmitter")(val(testObjCSO));
+    
+
+    val setInterval = val::global("setInterval");
+    setInterval(testObjEmitter, val(500));
 
     val domEl555 = val::global("document").call<val>("getElementById", val("555"));
-    //const auto capturedDiv = cl2::WebElement(domEl555);
+    // const auto capturedDiv = cl2::WebElement(domEl555);
     const auto capturedDiv = cl2::WebElement("555");
-    const auto *sourceTextInput = new cl2::InputElement("input", "sourceTextInput", "text", getStrId());
-    auto *sourceTextInputWSO = new cl2::WebElementSignalObject<std::string>(*sourceTextInput, "value");
+    const auto *sourceTextInput =
+        new cl2::InputElement("input", "sourceTextInput", "text", getStrId());
+    auto *sourceTextInputWSO =
+        new cl2::WebElementSignalObject<std::string>(*sourceTextInput, "value");
 
     const auto *destTextInput = new cl2::InputElement("input", "destTextInput", "text", getStrId());
 
@@ -36,11 +50,14 @@ int main() {
 
     const val logFn = val::global("logStuff");
     auto *consoleLogFSO = new cl2::JSFunctionSignalObject<std::string>(logFn);
-    // sourceTextInputWSO->setOutput(consoleLogFSO);
-
-    const auto circle1CXRangeInput = cl2::InputElement("input", "circle1CXRangeInput", "range", getStrId());
+    sourceTextInputWSO->setOutput(consoleLogFSO);
+    //testObjCSO->setOutput(consoleLogFSO);
     
-    const auto circle1CYRangeInput = cl2::InputElement("input", "circle1CYRangeInput", "range", getStrId());
+    const auto circle1CXRangeInput =
+        cl2::InputElement("input", "circle1CXRangeInput", "range", getStrId());
+
+    const auto circle1CYRangeInput =
+        cl2::InputElement("input", "circle1CYRangeInput", "range", getStrId());
 
     cl2::Label("Circle center X value", circle1CXRangeInput, true, getStrId());
     cl2::BR();
@@ -51,7 +68,7 @@ int main() {
     auto *circle1CYRangeInputWSO =
         new cl2::WebElementSignalObject<std::string>(circle1CYRangeInput, "value");
 
-    //auto bigdiv = cl2::WebElement("div", "bigdiv");
+    // auto bigdiv = cl2::WebElement("div", "bigdiv");
 
     auto svg = cl2::SVG("svg1", 400, 300, getStrId(), capturedDiv.domElement_);
     svg.setAttributes({{"viewBox", val("0 0 100 100")}, {"style", val("border: 1px solid black")}});
@@ -73,8 +90,10 @@ int main() {
 
     auto *strToNum = new cl2::Transformer<std::string, double>(str2DblFn);
 
-    //circle1CXRangeInputWSO->setOutput(strToNum);
+    // circle1CXRangeInputWSO->setOutput(strToNum);
     circle1CXRangeInputWSO->setOutput(circle1CXWSO);
+    // circle1CXRangeInputWSO->setOutput(testObjCSO);
+
     circle1CYRangeInputWSO->setOutput(circle1CYWSO);
     circle1CXRangeInputWSO->finalize();
     circle1CYRangeInputWSO->finalize();
@@ -90,4 +109,14 @@ int main() {
     // sourceTextInput->printStats();
 
     return 0;
+}
+
+EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
+    emscripten::class_<cl2::CppObjectSignalObject<std::string, TestObj>>("CppObjectSignalObject")
+        .function("emit", &cl2::CppObjectSignalObject<std::string, TestObj>::emit,
+                  emscripten::allow_raw_pointers())
+        .function("getSignal", &cl2::CppObjectSignalObject<std::string, TestObj>::getSignal,
+                  emscripten::allow_raw_pointers())
+        .function("accept", &cl2::CppObjectSignalObject<std::string, TestObj>::accept,
+                  emscripten::allow_raw_pointers());
 }
