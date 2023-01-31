@@ -42,31 +42,47 @@ int main() {
     // We can also create de-novo elements.
     auto generatedDiv = cl2::WebElement("div", "generatedDiv", getStrId());
 
-    // What you type in the srcTextInput should appear in dstTextInput.
+    // Creating two text fields.
     const auto *srcTextInput = new cl2::InputElement("input", "srcTextInput", "text", getStrId());
     const auto *dstTextInput = new cl2::InputElement("input", "dstTextInput", "text", getStrId());
     cl2::BR();
 
+    // Signal wrappers for the text fields.
     auto *srcTextInputWSO = new cl2::WebElementSignalObject<std::string>(*srcTextInput, "value");
     auto *dstTextInputWSO = new cl2::WebElementSignalObject<std::string>(*dstTextInput, "value");
 
-    auto *t1 = new cl2::Tee<std::string>();
-
+    // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
     const val logFn = val::global("logStuff");
     auto *consoleLogFSO = new cl2::JSFunctionSignalObject<std::string>(logFn);
-    //srcTextInputWSO->setOutput(consoleLogFSO);
-    // testObjCSO->setOutput(consoleLogFSO);
 
+    // A Tee allow us to send an output to two inputs.
+    auto *t1 = new cl2::Tee<std::string>();
+
+    t1->setOutput(consoleLogFSO);
+    t1->setSecondOutput(dstTextInputWSO);
+
+    // Our srcTextInputWSO message will go through the Tee to 2 places.
+    srcTextInputWSO->setOutput(t1);
+
+    srcTextInputWSO->finalize();
+    dstTextInputWSO->finalize();
+    t1->finalize();
+    // srcTextInputWSO->setOutput(consoleLogFSO);
+    //  testObjCSO->setOutput(consoleLogFSO);
+
+    // Now we're going to create an SVG area and a circle within it. We will create range controls
+    // to adjust the size and position of the circle.
     const auto circle1CXRangeInput =
         cl2::InputElement("input", "circle1CXRangeInput", "range", getStrId());
-
     const auto circle1CYRangeInput =
         cl2::InputElement("input", "circle1CYRangeInput", "range", getStrId());
 
+    // Label the controls.
     cl2::Label("Circle center X value", circle1CXRangeInput, true, getStrId());
     cl2::BR();
     cl2::Label("Circle center Y value", circle1CYRangeInput, true, getStrId());
 
+    // Signal wrappers for the controls.
     auto *circle1CXRangeInputWSO =
         new cl2::WebElementSignalObject<std::string>(circle1CXRangeInput, "value");
     auto *circle1CYRangeInputWSO =
@@ -81,9 +97,20 @@ int main() {
     circle1.domElement_.call<void>("setAttribute", val("cy"), val(100));
     circle1.domElement_.call<void>("setAttribute", val("fill"), val("#ff0000"));
 
+    // Now we need signal wrappers to connect to various attributes of the circle.
     auto *circle1CXWSO = new cl2::WebElementSignalObject<std::string>(circle1, "cx");
     auto *circle1CYWSO = new cl2::WebElementSignalObject<std::string>(circle1, "cy");
 
+    // Now the range controls are connected to the circle attributes.
+    circle1CXRangeInputWSO->setOutput(circle1CXWSO);
+    // circle1CXRangeInputWSO->setOutput(testObjCSO);
+    circle1CYRangeInputWSO->setOutput(circle1CYWSO);
+    circle1CXRangeInputWSO->finalize();
+    circle1CYRangeInputWSO->finalize();
+
+    // This is the 'functional' part of FRP. We have a pure function here defined as a C++ lambda.
+    // We will set this up as the core of a Transformer object that takes a string, runs the lambda
+    // on it, and outputs a double.
     auto str2DblFn = [](std::string s) {
         double d = std::stod(s);
         cout << "Value of string as a double is: " << d << endl;
@@ -93,21 +120,7 @@ int main() {
     auto *strToNum = new cl2::Transformer<std::string, double>(str2DblFn);
 
     // circle1CXRangeInputWSO->setOutput(strToNum);
-    circle1CXRangeInputWSO->setOutput(circle1CXWSO);
-    // circle1CXRangeInputWSO->setOutput(testObjCSO);
 
-    circle1CYRangeInputWSO->setOutput(circle1CYWSO);
-    circle1CXRangeInputWSO->finalize();
-    circle1CYRangeInputWSO->finalize();
-
-    t1->setOutput(consoleLogFSO);
-    t1->setSecondOutput(dstTextInputWSO);
-
-    srcTextInputWSO->setOutput(t1);
-
-    srcTextInputWSO->finalize();
-    dstTextInputWSO->finalize();
-    t1->finalize();
     // srcTextInput->printStats();
 
     return 0;
