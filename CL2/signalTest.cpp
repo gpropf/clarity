@@ -26,7 +26,6 @@ int main() {
     testObjCSO->getter = &TestObj::getS;
 
     val testObjEmitter = val::global("elgTestObjEmitter")(val(testObjCSO));
-    
 
     val setInterval = val::global("setInterval");
     setInterval(testObjEmitter, val(500));
@@ -34,6 +33,9 @@ int main() {
     val domEl555 = val::global("document").call<val>("getElementById", val("555"));
     // const auto capturedDiv = cl2::WebElement(domEl555);
     const auto capturedDiv = cl2::WebElement("555");
+
+    auto generatedDiv = cl2::WebElement("div", "generatedDiv", getStrId());
+
     const auto *sourceTextInput =
         new cl2::InputElement("input", "sourceTextInput", "text", getStrId());
     auto *sourceTextInputWSO =
@@ -51,8 +53,8 @@ int main() {
     const val logFn = val::global("logStuff");
     auto *consoleLogFSO = new cl2::JSFunctionSignalObject<std::string>(logFn);
     sourceTextInputWSO->setOutput(consoleLogFSO);
-    //testObjCSO->setOutput(consoleLogFSO);
-    
+    // testObjCSO->setOutput(consoleLogFSO);
+
     const auto circle1CXRangeInput =
         cl2::InputElement("input", "circle1CXRangeInput", "range", getStrId());
 
@@ -68,9 +70,7 @@ int main() {
     auto *circle1CYRangeInputWSO =
         new cl2::WebElementSignalObject<std::string>(circle1CYRangeInput, "value");
 
-    // auto bigdiv = cl2::WebElement("div", "bigdiv");
-
-    auto svg = cl2::SVG("svg1", 400, 300, getStrId(), capturedDiv.domElement_);
+    auto svg = cl2::SVG("svg1", 400, 300, getStrId(), generatedDiv.domElement_);
     svg.setAttributes({{"viewBox", val("0 0 100 100")}, {"style", val("border: 1px solid black")}});
 
     const auto circle1 = cl2::WebElement("circle", "circle1", getStrId(), svg.domElement_);

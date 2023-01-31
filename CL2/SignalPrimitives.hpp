@@ -5,7 +5,6 @@
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 
-
 #include <algorithm>
 #include <functional>
 #include <iostream>
@@ -133,10 +132,10 @@ class Transformer : public SignalObject<S> {
 };
 
 /**
- * @brief A wrapper for any type of C++ class that has getter and setter methods.
- * 
- * @tparam S 
- * @tparam ObjT 
+ * @brief A signal wrapper for any type of C++ class that has getter and setter methods.
+ *
+ * @tparam S
+ * @tparam ObjT
  */
 template <typename S, typename ObjT>
 class CppObjectSignalObject : public SignalObject<S> {
@@ -152,21 +151,16 @@ class CppObjectSignalObject : public SignalObject<S> {
 
     virtual void emit(const S& s) const { SignalObject<S>::emit(s); }
 
-
     virtual void accept(const S& s) { (*obj_.*setter)(s); }
 
+    /**
+     * @brief Pretty much a convenience method to extract a signal from the object using the getter.
+     * Makes it easy to use a timer function to get the value using setInterval() from JS.
+     *
+     * @return S
+     */
     virtual S getSignal() { return (*obj_.*getter)(); }
 };
-
-
-
-
-
-
-
-
-
-
 
 }  // namespace cl2
 
