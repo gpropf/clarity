@@ -122,12 +122,13 @@ int main() {
     const auto dblInput = cl2::InputElement("input", "dblInput", "text", getStrId());
     cl2::Label("Enter a floating point number", dblInput, true, getStrId());
 
+    // We now create a signal wrapper for the input field and connect it to the conversion function.
     auto *dblInputWSO = new cl2::WebElementSignalObject<std::string>(dblInput, "value", false);
     dblInputWSO->setOutput(strToNum);
     dblInputWSO->finalize();
     // circle1CXRangeInputWSO->setOutput(strToNum);
 
-    // srcTextInput->printStats();
+    
 
     return 0;
 }

@@ -145,7 +145,7 @@ class CppObjectSignalObject : public SignalObject<S> {
     void (ObjT::*setter)(const S& s);
     S (ObjT::*getter)();
 
-    CppObjectSignalObject(ObjT& obj) { obj_ = make_shared<ObjT>(obj); }
+    CppObjectSignalObject(ObjT& obj) : obj_(make_shared<ObjT>(obj)) {}
 
     virtual void finalize() {}
 
