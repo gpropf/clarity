@@ -43,13 +43,13 @@ int main() {
     auto generatedDiv = cl2::WebElement("div", "generatedDiv", getStrId());
 
     // Creating two text fields.
-    const auto *srcTextInput = new cl2::InputElement("input", "srcTextInput", "text", getStrId());
-    const auto *dstTextInput = new cl2::InputElement("input", "dstTextInput", "text", getStrId());
+    const auto srcTextInput = cl2::InputElement("input", "srcTextInput", "text", getStrId());
+    const auto dstTextInput = cl2::InputElement("input", "dstTextInput", "text", getStrId());
     cl2::BR();
 
     // Signal wrappers for the text fields.
-    auto *srcTextInputWSO = new cl2::WebElementSignalObject<std::string>(*srcTextInput, "value");
-    auto *dstTextInputWSO = new cl2::WebElementSignalObject<std::string>(*dstTextInput, "value");
+    auto *srcTextInputWSO = new cl2::WebElementSignalObject<std::string>(srcTextInput, "value");
+    auto *dstTextInputWSO = new cl2::WebElementSignalObject<std::string>(dstTextInput, "value");
 
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
     const val logFn = val::global("logStuff");
@@ -81,6 +81,7 @@ int main() {
     cl2::Label("Circle center X value", circle1CXRangeInput, true, getStrId());
     cl2::BR();
     cl2::Label("Circle center Y value", circle1CYRangeInput, true, getStrId());
+    cl2::BR();
 
     // Signal wrappers for the controls.
     auto *circle1CXRangeInputWSO =
@@ -118,7 +119,8 @@ int main() {
     };
 
     auto *strToNum = new cl2::Transformer<std::string, double>(str2DblFn);
-
+    const auto dblInput = cl2::InputElement("input", "dblInput", "text", getStrId());
+    cl2::Label("Enter a floating point number", dblInput, true, getStrId());
     // circle1CXRangeInputWSO->setOutput(strToNum);
 
     // srcTextInput->printStats();
