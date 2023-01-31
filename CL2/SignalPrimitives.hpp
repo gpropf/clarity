@@ -132,6 +132,12 @@ class Transformer : public SignalObject<S> {
     }
 };
 
+/**
+ * @brief A wrapper for any type of C++ class that has getter and setter methods.
+ * 
+ * @tparam S 
+ * @tparam ObjT 
+ */
 template <typename S, typename ObjT>
 class CppObjectSignalObject : public SignalObject<S> {
     shared_ptr<ObjT> obj_;
