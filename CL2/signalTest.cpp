@@ -4,6 +4,11 @@
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
 
+/**
+ * @brief This is a simple do-nothing class meant to test the `CppObjectSignalObject` class' ability
+ * to use getter and setter method pointers to act as initiation points or endpoints for signals.
+ *
+ */
 class TestObj {
     int i_ = 0;
     double d_ = 0;
@@ -18,41 +23,38 @@ class TestObj {
 };
 
 int main() {
+    // We make a test object and then a signal wrapper for it.
     TestObj tobj;
-
     auto *testObjCSO = new cl2::CppObjectSignalObject<std::string, TestObj>(tobj);
-
+    // The signal wrapper needs to know how to set and get the stored value.
     testObjCSO->setter = &TestObj::setS;
     testObjCSO->getter = &TestObj::getS;
 
+    // Now we're going to create a JS timer to read the value and fire the signal every so often.
     val testObjEmitter = val::global("elgTestObjEmitter")(val(testObjCSO));
-
     val setInterval = val::global("setInterval");
     setInterval(testObjEmitter, val(500));
 
-    val domEl555 = val::global("document").call<val>("getElementById", val("555"));
-    // const auto capturedDiv = cl2::WebElement(domEl555);
+    // It's easy to get control of elements that are already present in a static HTML page by
+    // creating a WE from the id.
     const auto capturedDiv = cl2::WebElement("555");
 
+    // We can also create de-novo elements.
     auto generatedDiv = cl2::WebElement("div", "generatedDiv", getStrId());
 
-    const auto *sourceTextInput =
-        new cl2::InputElement("input", "sourceTextInput", "text", getStrId());
-    auto *sourceTextInputWSO =
-        new cl2::WebElementSignalObject<std::string>(*sourceTextInput, "value");
-
-    const auto *destTextInput = new cl2::InputElement("input", "destTextInput", "text", getStrId());
-
-    // cl2::BR(100,"br1");
+    // What you type in the srcTextInput should appear in dstTextInput.
+    const auto *srcTextInput = new cl2::InputElement("input", "srcTextInput", "text", getStrId());
+    const auto *dstTextInput = new cl2::InputElement("input", "dstTextInput", "text", getStrId());
     cl2::BR();
 
-    auto *destTextInputWSO = new cl2::WebElementSignalObject<std::string>(*destTextInput, "value");
+    auto *srcTextInputWSO = new cl2::WebElementSignalObject<std::string>(*srcTextInput, "value");
+    auto *dstTextInputWSO = new cl2::WebElementSignalObject<std::string>(*dstTextInput, "value");
 
     auto *t1 = new cl2::Tee<std::string>();
 
     const val logFn = val::global("logStuff");
     auto *consoleLogFSO = new cl2::JSFunctionSignalObject<std::string>(logFn);
-    sourceTextInputWSO->setOutput(consoleLogFSO);
+    //srcTextInputWSO->setOutput(consoleLogFSO);
     // testObjCSO->setOutput(consoleLogFSO);
 
     const auto circle1CXRangeInput =
@@ -99,14 +101,14 @@ int main() {
     circle1CYRangeInputWSO->finalize();
 
     t1->setOutput(consoleLogFSO);
-    t1->setSecondOutput(destTextInputWSO);
+    t1->setSecondOutput(dstTextInputWSO);
 
-    sourceTextInputWSO->setOutput(t1);
+    srcTextInputWSO->setOutput(t1);
 
-    sourceTextInputWSO->finalize();
-    destTextInputWSO->finalize();
+    srcTextInputWSO->finalize();
+    dstTextInputWSO->finalize();
     t1->finalize();
-    // sourceTextInput->printStats();
+    // srcTextInput->printStats();
 
     return 0;
 }
