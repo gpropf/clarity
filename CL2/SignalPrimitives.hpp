@@ -31,19 +31,19 @@ template <typename S>
 class SignalObject {
     // It does seem necessary to set these to nullptr if we want to test for lack of initialization
     // later.
-    //SignalObject* input_ = nullptr;
+    // SignalObject* input_ = nullptr;
     SignalObject* output_ = nullptr;
 
    public:
     SignalObject* getOutput() const { return output_; }
-    //SignalObject* getInput() const { return input_; }
+    // SignalObject* getInput() const { return input_; }
 
     void setOutput(SignalObject* sobj) {
         output_ = sobj;
-       // sobj->setInput(this);
+        // sobj->setInput(this);
     }
 
-   // void setInput(SignalObject* sobj) { input_ = sobj; }
+    // void setInput(SignalObject* sobj) { input_ = sobj; }
 
     /**
      * @brief Send the signal to the output.
@@ -93,7 +93,7 @@ class Tee : public SignalObject<S> {
 
     void setSecondOutput(SignalObject<S>* sobj) {
         secondOutput_ = sobj;
-       // sobj->setInput(this);
+        // sobj->setInput(this);
     }
 
     virtual void finalize() {}
@@ -121,7 +121,7 @@ class Transformer : public SignalObject<S> {
     void setTransformedOutput(SignalObject<Sout>* sobj) {
         // outputs_.push_back(sobj);
         transformedOutput_ = sobj;
-        //sobj->setInput(this->transformedOutput_);
+        // sobj->setInput(this->transformedOutput_);
     }
 
     virtual void finalize() {}
@@ -131,24 +131,22 @@ class Transformer : public SignalObject<S> {
     }
 };
 
-template <typename S1, typename S2, typename Sout>
-class Merge: public SignalObject<Sout> {
+template <typename inT1, typename inT2, typename outT>
+class Merge : public SignalObject<inT1> {
+    SignalObject<outT>* out_;
+    SignalObject<inT2>* in2_;
 
+    std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
 
+   public:
+    void setInput2(SignalObject<inT2>* in2) {
+        in2_ = in2;
+        // in2_->setOutput()
+    }
 
-
-SignalObject<S1>* s1_;
-SignalObject<S2>* s2_;
-
-    std::function<Sout(S1 s1, S2 s2)> mergeFn_;
-
-    public:
-
-
+    virtual void accept(const inT1& s1) {}
+    // virtual void accept(const inT2& s2) {}
 };
-
-
-
 
 /**
  * @brief A signal wrapper for any type of C++ class that has getter and setter methods.
