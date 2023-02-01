@@ -31,19 +31,19 @@ template <typename S>
 class SignalObject {
     // It does seem necessary to set these to nullptr if we want to test for lack of initialization
     // later.
-    SignalObject* input_ = nullptr;
+    //SignalObject* input_ = nullptr;
     SignalObject* output_ = nullptr;
 
    public:
     SignalObject* getOutput() const { return output_; }
-    SignalObject* getInput() const { return input_; }
+    //SignalObject* getInput() const { return input_; }
 
     void setOutput(SignalObject* sobj) {
         output_ = sobj;
-        sobj->setInput(this);
+       // sobj->setInput(this);
     }
 
-    void setInput(SignalObject* sobj) { input_ = sobj; }
+   // void setInput(SignalObject* sobj) { input_ = sobj; }
 
     /**
      * @brief Send the signal to the output.
@@ -93,7 +93,7 @@ class Tee : public SignalObject<S> {
 
     void setSecondOutput(SignalObject<S>* sobj) {
         secondOutput_ = sobj;
-        sobj->setInput(this);
+       // sobj->setInput(this);
     }
 
     virtual void finalize() {}
@@ -121,7 +121,7 @@ class Transformer : public SignalObject<S> {
     void setTransformedOutput(SignalObject<Sout>* sobj) {
         // outputs_.push_back(sobj);
         transformedOutput_ = sobj;
-        sobj->setInput(this->transformedOutput_);
+        //sobj->setInput(this->transformedOutput_);
     }
 
     virtual void finalize() {}
@@ -132,9 +132,19 @@ class Transformer : public SignalObject<S> {
 };
 
 template <typename S1, typename S2, typename Sout>
-class Merge: public SignalObject<S1> {
+class Merge: public SignalObject<Sout> {
+
+
+
+
+SignalObject<S1>* s1_;
+SignalObject<S2>* s2_;
+
     std::function<Sout(S1 s1, S2 s2)> mergeFn_;
-    
+
+    public:
+
+
 };
 
 
