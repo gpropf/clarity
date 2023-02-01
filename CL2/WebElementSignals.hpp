@@ -36,15 +36,14 @@ class WebElementSignalObject : public SignalObject<S> {
 
     val changeListenerFn_ = val::null();
 
-   public:    
-
+   public:
     virtual void emit(const S& s) { SignalObject<S>::emit(s); }
 
     WebElementSignalObject(const WebElement& wptr, const std::string& boundField,
                            bool emitInitialValue = true)
         : boundField_(boundField),
           emitInitialValue_(emitInitialValue),
-          wptr_(make_shared<WebElement>(wptr)) {}    
+          wptr_(make_shared<WebElement>(wptr)) {}
 
     /**
      * @brief Everything here seems to concern setting up the output so if there isn't one we just
@@ -86,17 +85,18 @@ class WebElementSignalObject : public SignalObject<S> {
 };
 
 /**
- * @brief A `SignalObject` wrapper for a JS function object.
+ * @brief A `SignalObject` wrapper for a JS function object. Note that this is not exactly the
+ * analog of the CppLambda. There is no second output that can have a different type from the normal
+ * one.
  *
  * @tparam S
  */
 template <typename S>
 class JSFunctionSignalObject : public SignalObject<S> {
-    shared_ptr<val> fnptr_;
+    shared_ptr<val> jsFn_;
 
-   public:    
-
-    JSFunctionSignalObject(const val& f) { fnptr_ = make_shared<val>(f); }
+   public:
+    JSFunctionSignalObject(const val& jsFn) { jsFn_ = make_shared<val>(jsFn); }
 
     /**
      * @brief In this class we simply call the stored JS function on the value.
@@ -104,8 +104,12 @@ class JSFunctionSignalObject : public SignalObject<S> {
      * @param s
      */
     virtual void accept(const S& s) {
-        val fn = *fnptr_;
-        fn(s);
+        val fn = *jsFn_;
+        // S sOut = fn(s).template as<S>();
+        val fnOut = fn(s);
+        if (fnOut == val::null()) return;
+        S sOut = fnOut.as<S>();
+        if (this->getOutput() != nullptr) this->getOutput()->accept(sOut);
     }
 
     virtual void finalize() {}

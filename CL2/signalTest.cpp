@@ -51,7 +51,7 @@ int main() {
     auto *srcTextInputWSO = new cl2::WebElementSignalObject<std::string>(srcTextInput, "value");
     auto *dstTextInputWSO = new cl2::WebElementSignalObject<std::string>(dstTextInput, "value");
 
-srcTextInputWSO->finalize();
+    // srcTextInputWSO->finalize();
 
 
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.

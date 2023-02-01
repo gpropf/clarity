@@ -44,6 +44,7 @@ class WebElement {
 
 function logStuff(stuff) {
     console.log("This is a simple signal endpoint: " + stuff);
+    return stuff;
 }
 
 function testListenerFn(ev) {
