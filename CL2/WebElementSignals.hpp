@@ -28,17 +28,13 @@ namespace cl2 {
  */
 template <typename S>
 class WebElementSignalObject : public SignalObject<S> {
-    shared_ptr<WebElement> wptr_; //!< The actual WebElement this acts as a signal wrapper for.
-    std::string boundField_; //!< The field in the domElement that stores whatever signal data we are interested in.
+    shared_ptr<WebElement> wptr_;  //!< The actual WebElement this acts as a signal wrapper for.
+    std::string boundField_;  //!< The field in the domElement that stores whatever signal data we
+                              //!< are interested in.
     bool emitInitialValue_ = true;  //!< In some cases we don't want to emit the initial value but
                                     //!< the default is to do so.
 
-   public:
-    // virtual void emitOne(SignalObject<S>* sobj, const S& s) {
-    //     // cout << "WebElementSignalObject::emitOne() CALLED!" << endl;
-    //     sobj->accept(s);
-    //     // cout << "WebElementSignalObject::emitOne() CALLED! END" << endl;
-    // }
+   public:    
 
     virtual void emit(const S& s) { SignalObject<S>::emit(s); }
 
@@ -46,13 +42,7 @@ class WebElementSignalObject : public SignalObject<S> {
                            bool emitInitialValue = true)
         : boundField_(boundField),
           emitInitialValue_(emitInitialValue),
-          wptr_(make_shared<WebElement>(wptr)) {}
-
-    // WebElementSignalObject(const val domElement, const std::string& boundField, bool
-    // emitInitialValue_ = true) {
-    //     // wptr_ = make_shared<WebElement>(wptr);
-    //     // boundField_ = boundField;
-    // }
+          wptr_(make_shared<WebElement>(wptr)) {}    
 
     /**
      * @brief Everything here seems to concern setting up the output so if there isn't one we just
@@ -101,13 +91,16 @@ template <typename S>
 class JSFunctionSignalObject : public SignalObject<S> {
     shared_ptr<val> fnptr_;
 
-   public:
-    virtual void emitOne(SignalObject<S>* sobj, const S& s) {}
+   public:    
 
     JSFunctionSignalObject(const val& f) { fnptr_ = make_shared<val>(f); }
 
+    /**
+     * @brief In this class we simply call the stored JS function on the value.
+     *
+     * @param s
+     */
     virtual void accept(const S& s) {
-        // cout << "JSFunctionSignalObject::accept() CALLED!" << endl;
         val fn = *fnptr_;
         fn(s);
     }

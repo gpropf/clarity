@@ -31,19 +31,16 @@ template <typename S>
 class SignalObject {
     // It does seem necessary to set these to nullptr if we want to test for lack of initialization
     // later.
-    // SignalObject* input_ = nullptr;
+    
     SignalObject* output_ = nullptr;
 
    public:
     SignalObject* getOutput() const { return output_; }
-    // SignalObject* getInput() const { return input_; }
+    
 
     void setOutput(SignalObject* sobj) {
-        output_ = sobj;
-        // sobj->setInput(this);
-    }
-
-    // void setInput(SignalObject* sobj) { input_ = sobj; }
+        output_ = sobj;        
+    }   
 
     /**
      * @brief Send the signal to the output.
@@ -92,8 +89,7 @@ class Tee : public SignalObject<S> {
     }
 
     void setSecondOutput(SignalObject<S>* sobj) {
-        secondOutput_ = sobj;
-        // sobj->setInput(this);
+        secondOutput_ = sobj;        
     }
 
     virtual void finalize() {}
@@ -118,10 +114,8 @@ class Transformer : public SignalObject<S> {
         if (transformedOutput_ != nullptr) transformedOutput_->accept(sOut);
     }
 
-    void setTransformedOutput(SignalObject<Sout>* sobj) {
-        // outputs_.push_back(sobj);
-        transformedOutput_ = sobj;
-        // sobj->setInput(this->transformedOutput_);
+    void setTransformedOutput(SignalObject<Sout>* sobj) {        
+        transformedOutput_ = sobj;        
     }
 
     virtual void finalize() {}
@@ -140,8 +134,7 @@ class Merge : public SignalObject<inT1> {
 
    public:
     void setInput2(SignalObject<inT2>* in2) {
-        in2_ = in2;
-        // in2_->setOutput()
+        in2_ = in2;        
     }
 
     virtual void accept(const inT1& s1) {}
