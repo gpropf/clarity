@@ -100,17 +100,17 @@ class Tee : public SignalObject<S> {
 };
 
 template <typename S, typename Sout>
-class Transformer : public SignalObject<S> {
-    std::function<Sout(S s)> transformFn_;
+class CppLambda : public SignalObject<S> {
+    std::function<Sout(S s)> lambda_;
     SignalObject<Sout>* transformedOutput_;
 
    public:
-    Transformer() {}
+    CppLambda() {}
 
-    Transformer(std::function<Sout(S s)> transformFn) : transformFn_(transformFn) {}
+    CppLambda(std::function<Sout(S s)> lambda) : lambda_(lambda) {}
 
     virtual void accept(const S& s) {
-        Sout sOut = transformFn_(s);
+        Sout sOut = lambda_(s);
         if (transformedOutput_ != nullptr) transformedOutput_->accept(sOut);
     }
 
@@ -120,8 +120,8 @@ class Transformer : public SignalObject<S> {
 
     virtual void finalize() {}
 
-    virtual ~Transformer() {
-        // cout << "Destroying Transformer\n";
+    virtual ~CppLambda() {
+        // cout << "Destroying CppLambda\n";
     }
 };
 

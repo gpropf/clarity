@@ -114,7 +114,7 @@ srcTextInputWSO->finalize();
     circle1CYRangeInputWSO->finalize();
 
     // This is the 'functional' part of FRP. We have a pure function here defined as a C++ lambda.
-    // We will set this up as the core of a Transformer object that takes a string, runs the lambda
+    // We will set this up as the core of a CppLambda object that takes a string, runs the lambda
     // on it, and outputs a double.
     auto str2DblFn = [](std::string s) {
         double d = std::stod(s);
@@ -122,7 +122,7 @@ srcTextInputWSO->finalize();
         return d;
     };
 
-    auto *strToNumTransformer = new cl2::Transformer<std::string, double>(str2DblFn);
+    auto *strToNumTransformer = new cl2::CppLambda<std::string, double>(str2DblFn);
     const auto dblInput = cl2::InputElement("input", "dblInput", "text", getStrId());
     cl2::Label("Enter a floating point number", dblInput, true, getStrId());
 
