@@ -34,6 +34,8 @@ class WebElementSignalObject : public SignalObject<S> {
     bool emitInitialValue_ = true;  //!< In some cases we don't want to emit the initial value but
                                     //!< the default is to do so.
 
+    val changeListenerFn_ = val::null();
+
    public:    
 
     virtual void emit(const S& s) { SignalObject<S>::emit(s); }
@@ -52,8 +54,9 @@ class WebElementSignalObject : public SignalObject<S> {
     virtual void finalize() {
         if (this->getOutput() == nullptr) return;
         val elgEmitFn = val::global("elgEmitFn");
-        val listenerFn = elgEmitFn(*this);
-        wptr_->domElement_.call<void>("addEventListener", val("change"), listenerFn);
+        wptr_->domElement_.call<void>("removeEventListener", val("change"), changeListenerFn_);
+        changeListenerFn_ = elgEmitFn(*this);
+        wptr_->domElement_.call<void>("addEventListener", val("change"), changeListenerFn_);
 
         if (!emitInitialValue_) return;
         cout << "Getting initial value for id = " << wptr_->getId().as<std::string>() << endl;

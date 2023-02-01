@@ -51,6 +51,9 @@ int main() {
     auto *srcTextInputWSO = new cl2::WebElementSignalObject<std::string>(srcTextInput, "value");
     auto *dstTextInputWSO = new cl2::WebElementSignalObject<std::string>(dstTextInput, "value");
 
+srcTextInputWSO->finalize();
+
+
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
     const val logFn = val::global("logStuff");
     auto *consoleLogFSO = new cl2::JSFunctionSignalObject<std::string>(logFn);
@@ -64,6 +67,7 @@ int main() {
     // Our srcTextInputWSO message will go through the Tee to 2 places.
     srcTextInputWSO->setOutput(t1);
 
+    
     srcTextInputWSO->finalize();
     dstTextInputWSO->finalize();
     t1->finalize();
