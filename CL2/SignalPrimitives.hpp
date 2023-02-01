@@ -131,6 +131,15 @@ class Transformer : public SignalObject<S> {
     }
 };
 
+template <typename S1, typename S2, typename Sout>
+class Merge: public SignalObject<S1> {
+    std::function<Sout(S1 s1, S2 s2)> mergeFn_;
+    
+};
+
+
+
+
 /**
  * @brief A signal wrapper for any type of C++ class that has getter and setter methods.
  *
