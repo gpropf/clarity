@@ -57,7 +57,7 @@ class SignalObject {
      * outputs set up.
      *
      */
-    virtual void finalize() = 0;
+    virtual void update() = 0;
 
     virtual ~SignalObject() {
         // cout << "Destroying SignalObject\n";
@@ -96,7 +96,7 @@ class Tee : public SignalObject<S> {
 
     void setSecondOutput(SignalObject<S>* sobj) { secondOutput_ = sobj; }
 
-    virtual void finalize() {}
+    virtual void update() {}
 
     virtual ~Tee() {
         // cout << "Destroying Tee\n";
@@ -120,7 +120,7 @@ class CppLambda : public SignalObject<S> {
 
     void setTransformedOutput(SignalObject<Sout>* sobj) { transformedOutput_ = sobj; }
 
-    virtual void finalize() {}
+    virtual void update() {}
 
     virtual ~CppLambda() {
         // cout << "Destroying CppLambda\n";
@@ -157,7 +157,7 @@ class CppObjectSignalObject : public StoredSignal<S> {
 
     CppObjectSignalObject(ObjT& obj) : obj_(make_shared<ObjT>(obj)) {}
 
-    virtual void finalize() {}
+    virtual void update() {}
 
     virtual void emit(const S& s) const { SignalObject<S>::emit(s); }
 

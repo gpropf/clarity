@@ -50,7 +50,7 @@ class WebElementSignalObject : public SignalObject<S> {
      * return.
      *
      */
-    virtual void finalize() {
+    virtual void update() {
         if (this->getOutput() == nullptr) return;
         val elgEmitFn = val::global("elgEmitFn");
         wptr_->domElement_.call<void>("removeEventListener", val("change"), changeListenerFn_);
@@ -112,7 +112,7 @@ class JSFunctionSignalObject : public SignalObject<S> {
         if (this->getOutput() != nullptr) this->getOutput()->accept(sOut);
     }
 
-    virtual void finalize() {}
+    virtual void update() {}
 
     virtual ~JSFunctionSignalObject() {  // cout << "Destroying JSFunctionSignalObject\n";
     }
