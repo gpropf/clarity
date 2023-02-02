@@ -31,16 +31,13 @@ template <typename S>
 class SignalObject {
     // It does seem necessary to set these to nullptr if we want to test for lack of initialization
     // later.
-    
+
     SignalObject* output_ = nullptr;
 
    public:
     SignalObject* getOutput() const { return output_; }
-    
 
-    void setOutput(SignalObject* sobj) {
-        output_ = sobj;        
-    }   
+    void setOutput(SignalObject* sobj) { output_ = sobj; }
 
     /**
      * @brief Send the signal to the output.
@@ -67,6 +64,15 @@ class SignalObject {
     }
 };
 
+template <typename S>
+class StoredSignal : public SignalObject<S> {
+    S currentVal_;
+
+   public:
+    virtual void accept(const S& s) { currentVal_ = s; }
+    virtual S getSignal() const = 0;
+};
+
 /**
  * @brief Tee simply does roughly what the Linux command of that name does. It duplicates an output.
  * It acts as a passive conduit so this is why the emit() method does nothing. Essentially until it
@@ -88,9 +94,7 @@ class Tee : public SignalObject<S> {
         secondOutput_->accept(s);
     }
 
-    void setSecondOutput(SignalObject<S>* sobj) {
-        secondOutput_ = sobj;        
-    }
+    void setSecondOutput(SignalObject<S>* sobj) { secondOutput_ = sobj; }
 
     virtual void finalize() {}
 
@@ -114,9 +118,7 @@ class CppLambda : public SignalObject<S> {
         if (transformedOutput_ != nullptr) transformedOutput_->accept(sOut);
     }
 
-    void setTransformedOutput(SignalObject<Sout>* sobj) {        
-        transformedOutput_ = sobj;        
-    }
+    void setTransformedOutput(SignalObject<Sout>* sobj) { transformedOutput_ = sobj; }
 
     virtual void finalize() {}
 
@@ -133,9 +135,7 @@ class Merge : public SignalObject<inT1> {
     std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
 
    public:
-    void setInput2(SignalObject<inT2>* in2) {
-        in2_ = in2;        
-    }
+    void setInput2(SignalObject<inT2>* in2) { in2_ = in2; }
 
     virtual void accept(const inT1& s1) {}
     // virtual void accept(const inT2& s2) {}
@@ -148,7 +148,7 @@ class Merge : public SignalObject<inT1> {
  * @tparam ObjT
  */
 template <typename S, typename ObjT>
-class CppObjectSignalObject : public SignalObject<S> {
+class CppObjectSignalObject : public StoredSignal<S> {
     shared_ptr<ObjT> obj_;
 
    public:
@@ -161,7 +161,10 @@ class CppObjectSignalObject : public SignalObject<S> {
 
     virtual void emit(const S& s) const { SignalObject<S>::emit(s); }
 
-    virtual void accept(const S& s) { (*obj_.*setter)(s); }
+    virtual void accept(const S& s) {
+        StoredSignal<S>::accept(s);
+        (*obj_.*setter)(s);
+    }
 
     /**
      * @brief Pretty much a convenience method to extract a signal from the object using the getter.
@@ -169,7 +172,7 @@ class CppObjectSignalObject : public SignalObject<S> {
      *
      * @return S
      */
-    virtual S getSignal() { return (*obj_.*getter)(); }
+    virtual S getSignal() const { return (*obj_.*getter)(); }
 };
 
 }  // namespace cl2

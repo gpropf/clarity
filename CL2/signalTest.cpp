@@ -53,7 +53,6 @@ int main() {
 
     // srcTextInputWSO->finalize();
 
-
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
     const val logFn = val::global("logStuff");
     auto *consoleLogFSO = new cl2::JSFunctionSignalObject<std::string>(logFn);
@@ -67,7 +66,6 @@ int main() {
     // Our srcTextInputWSO message will go through the Tee to 2 places.
     srcTextInputWSO->setOutput(t1);
 
-    
     srcTextInputWSO->finalize();
     dstTextInputWSO->finalize();
     t1->finalize();
@@ -125,6 +123,7 @@ int main() {
     auto *strToNumTransformer = new cl2::CppLambda<std::string, double>(str2DblFn);
     const auto dblInput = cl2::InputElement("input", "dblInput", "text", getStrId());
     cl2::Label("Enter a floating point number", dblInput, true, getStrId());
+    cl2::BR();
 
     // We now create a signal wrapper for the input field and connect it to the conversion function.
     auto *dblInputWSO = new cl2::WebElementSignalObject<std::string>(dblInput, "value", false);
@@ -132,7 +131,14 @@ int main() {
     dblInputWSO->finalize();
     // circle1CXRangeInputWSO->setOutput(strToNumTransformer);
 
-    
+    const auto testObjValTextInput =
+        cl2::InputElement("input", "testObjValTextInput", "text", getStrId());
+    cl2::Label("Enter a new value for the string stored in the TestObj.", testObjValTextInput, true,
+               getStrId());
+    auto *testObjValTextInputWSO =
+        new cl2::WebElementSignalObject<std::string>(testObjValTextInput, "value");
+    testObjValTextInputWSO->setOutput(testObjCSO);
+    testObjValTextInputWSO->finalize();
 
     return 0;
 }
