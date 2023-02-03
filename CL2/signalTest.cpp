@@ -25,7 +25,7 @@ class TestObj {
 int main() {
     // We make a test object and then a signal wrapper for it.
     TestObj tobj;
-    auto *testObjCSO = new cl2::CppObjectSignalObject<std::string, TestObj>(tobj);
+    auto *testObjCSO = new cl2::CppObjectSignalObject<std::string, TestObj>(tobj, true);
     // The signal wrapper needs to know how to set and get the stored value.
     testObjCSO->setter = &TestObj::setS;
     testObjCSO->getter = &TestObj::getS;
@@ -138,8 +138,10 @@ int main() {
     cl2::Label("Enter a new value for the string stored in the TestObj.", testObjValTextInput, true,
                getStrId());
     auto *testObjValTextInputWSO =
-        new cl2::WebElementSignalObject<std::string>(testObjValTextInput, "value");
+        new cl2::WebElementSignalObject<std::string>(testObjValTextInput, "value", false);
     testObjValTextInputWSO->setOutput(testObjCSO);
+    testObjCSO->setOutput(testObjValTextInputWSO);
+    testObjCSO->update();
     testObjValTextInputWSO->update();
 
     return 0;

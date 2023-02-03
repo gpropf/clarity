@@ -27,7 +27,7 @@ namespace cl2 {
  * @tparam S
  */
 template <typename S>
-class WebElementSignalObject : public SignalObject<S> {
+class WebElementSignalObject : public StoredSignal<S> {
     shared_ptr<WebElement> wptr_;  //!< The actual WebElement this acts as a signal wrapper for.
     std::string boundField_;  //!< The field in the domElement that stores whatever signal data we
                               //!< are interested in.

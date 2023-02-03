@@ -67,8 +67,13 @@ class SignalObject {
 template <typename S>
 class StoredSignal : public SignalObject<S> {
     S currentVal_;
+    const bool emitInitialValue_;  // = false;
 
    public:
+    StoredSignal(bool emitInitialValue = false) : emitInitialValue_(emitInitialValue) {}
+    StoredSignal(S currentVal, bool emitInitialValue = false)
+        : currentVal_(currentVal), emitInitialValue_(emitInitialValue) {}
+    bool emitInitialValue() { return emitInitialValue_; }
     virtual void accept(const S& s) { currentVal_ = s; }
     virtual S getSignal() const { return currentVal_; };
 };
@@ -155,9 +160,14 @@ class CppObjectSignalObject : public StoredSignal<S> {
     void (ObjT::*setter)(const S& s);
     S (ObjT::*getter)();
 
-    CppObjectSignalObject(ObjT& obj) : obj_(make_shared<ObjT>(obj)) {}
+    CppObjectSignalObject(ObjT& obj) : StoredSignal<S>() { obj_ = make_shared<ObjT>(obj); }
+    CppObjectSignalObject(ObjT& obj, bool emitInitialValue) : StoredSignal<S>(emitInitialValue) { obj_ = make_shared<ObjT>(obj); }
 
-    virtual void update() {}
+    virtual void update() {
+        if (this->getOutput() == nullptr) return;
+        if (!StoredSignal<S>::emitInitialValue()) return;
+        emit(getSignal());
+    }
 
     virtual void emit(const S& s) const { SignalObject<S>::emit(s); }
 
