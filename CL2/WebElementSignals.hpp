@@ -31,8 +31,9 @@ class WebElementSignalObject : public StoredSignal<S> {
     shared_ptr<WebElement> wptr_;  //!< The actual WebElement this acts as a signal wrapper for.
     std::string boundField_;  //!< The field in the domElement that stores whatever signal data we
                               //!< are interested in.
-    bool emitInitialValue_ = true;  //!< In some cases we don't want to emit the initial value but
-                                    //!< the default is to do so.
+    // bool emitInitialValue_ = true;  //!< In some cases we don't want to emit the initial value
+    // but
+    //                                 //!< the default is to do so.
 
     val changeListenerFn_ = val::null();
 
@@ -41,9 +42,10 @@ class WebElementSignalObject : public StoredSignal<S> {
 
     WebElementSignalObject(const WebElement& wptr, const std::string& boundField,
                            bool emitInitialValue = true)
-        : boundField_(boundField),
-          emitInitialValue_(emitInitialValue),
-          wptr_(make_shared<WebElement>(wptr)) {}
+        : StoredSignal<S>(emitInitialValue) {
+        boundField_ = boundField;
+        wptr_ = make_shared<WebElement>(wptr);
+    }
 
     /**
      * @brief Everything here seems to concern setting up the output so if there isn't one we just
@@ -57,7 +59,7 @@ class WebElementSignalObject : public StoredSignal<S> {
         changeListenerFn_ = elgEmitFn(*this);
         wptr_->domElement_.call<void>("addEventListener", val("change"), changeListenerFn_);
 
-        if (!emitInitialValue_) return;
+        if (!StoredSignal<S>::emitInitialValue()) return;
         cout << "Getting initial value for id = " << wptr_->getId().as<std::string>() << endl;
         // const S initialVal = wptr_->domElement_.call<val>("getAttribute",
         // val(boundField_)).as<S>();
