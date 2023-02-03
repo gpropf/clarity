@@ -70,7 +70,7 @@ class StoredSignal : public SignalObject<S> {
 
    public:
     virtual void accept(const S& s) { currentVal_ = s; }
-    virtual S getSignal() const = 0;
+    virtual S getSignal() const { return currentVal_; };
 };
 
 /**
