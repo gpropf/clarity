@@ -48,7 +48,7 @@ class SignalObject {
         if (output_ != nullptr) output_->accept(s);
     }
 
-    virtual void accept(const S& s) = 0;
+    virtual bool accept(const S& s) = 0;
 
     /**
      * @brief Sometimes it is necessary to hold off certain tasks until the object is fully set up.
@@ -73,8 +73,12 @@ class StoredSignal : public SignalObject<S> {
     StoredSignal(bool emitInitialValue = false) : emitInitialValue_(emitInitialValue) {}
     StoredSignal(S currentVal, bool emitInitialValue = false)
         : currentVal_(currentVal), emitInitialValue_(emitInitialValue) {}
-    bool emitInitialValue() { return emitInitialValue_; }
-    virtual void accept(const S& s) { currentVal_ = s; }
+    bool emitInitialValue() const { return emitInitialValue_; }
+    virtual bool accept(const S& s) {
+        if (s == currentVal_) return false;
+        currentVal_ = s;
+        return true;
+    }
     virtual S getSignal() const { return currentVal_; };
 };
 
@@ -94,9 +98,9 @@ class Tee : public SignalObject<S> {
 
     virtual void emit(const S& s) const {}
 
-    virtual void accept(const S& s) {
+    virtual bool accept(const S& s) {
         SignalObject<S>::emit(s);
-        secondOutput_->accept(s);
+        return secondOutput_->accept(s);
     }
 
     void setSecondOutput(SignalObject<S>* sobj) { secondOutput_ = sobj; }
@@ -118,9 +122,10 @@ class CppLambda : public SignalObject<S> {
 
     CppLambda(std::function<Sout(S s)> lambda) : lambda_(lambda) {}
 
-    virtual void accept(const S& s) {
+    virtual bool accept(const S& s) {
         Sout sOut = lambda_(s);
-        if (transformedOutput_ != nullptr) transformedOutput_->accept(sOut);
+        if (transformedOutput_ != nullptr) return transformedOutput_->accept(sOut);
+        return false;
     }
 
     void setTransformedOutput(SignalObject<Sout>* sobj) { transformedOutput_ = sobj; }
@@ -142,8 +147,10 @@ class Merge : public SignalObject<inT1> {
    public:
     void setInput2(SignalObject<inT2>* in2) { in2_ = in2; }
 
-    virtual void accept(const inT1& s1) {}
-    // virtual void accept(const inT2& s2) {}
+    virtual bool accept(const inT1& s1) {
+        return true;  // FIXME
+    }
+    // virtual bool accept(const inT2& s2) {}
 };
 
 /**
@@ -161,7 +168,9 @@ class CppObjectSignalObject : public StoredSignal<S> {
     S (ObjT::*getter)();
 
     CppObjectSignalObject(ObjT& obj) : StoredSignal<S>() { obj_ = make_shared<ObjT>(obj); }
-    CppObjectSignalObject(ObjT& obj, bool emitInitialValue) : StoredSignal<S>(emitInitialValue) { obj_ = make_shared<ObjT>(obj); }
+    CppObjectSignalObject(ObjT& obj, bool emitInitialValue) : StoredSignal<S>(emitInitialValue) {
+        obj_ = make_shared<ObjT>(obj);
+    }
 
     virtual void update() {
         if (this->getOutput() == nullptr) return;
@@ -171,9 +180,12 @@ class CppObjectSignalObject : public StoredSignal<S> {
 
     virtual void emit(const S& s) const { SignalObject<S>::emit(s); }
 
-    virtual void accept(const S& s) {
-        StoredSignal<S>::accept(s);
+    virtual bool accept(const S& s) {
+        bool storedSignalAccepts = StoredSignal<S>::accept(s);
+        //StoredSignal<S>::accept(s);
+        if (!storedSignalAccepts) return false;
         (*obj_.*setter)(s);
+        return true;
     }
 
     /**

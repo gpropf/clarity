@@ -77,9 +77,12 @@ class WebElementSignalObject : public StoredSignal<S> {
      *
      * @param s
      */
-    virtual void accept(const S& s) {
+    virtual bool accept(const S& s) {
+        bool storedSignalAccepts = StoredSignal<S>::accept(s);
+        if (!storedSignalAccepts) return false;
         wptr_->domElement_.set(boundField_, val(s));
         wptr_->domElement_.call<void>("setAttribute", val(boundField_), val(s));
+        return true;
     }
 
     virtual ~WebElementSignalObject() {  // cout << "Destroying WebElementSignalObject\n";
@@ -105,13 +108,14 @@ class JSFunctionSignalObject : public SignalObject<S> {
      *
      * @param s
      */
-    virtual void accept(const S& s) {
+    virtual bool accept(const S& s) {
         val fn = *jsFn_;
         // S sOut = fn(s).template as<S>();
         val fnOut = fn(s);
-        if (fnOut == val::null()) return;
+        if (fnOut == val::null()) return false;
         S sOut = fnOut.as<S>();
-        if (this->getOutput() != nullptr) this->getOutput()->accept(sOut);
+        if (this->getOutput() != nullptr) return this->getOutput()->accept(sOut);
+        return false;
     }
 
     virtual void update() {}
