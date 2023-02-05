@@ -37,7 +37,10 @@ class SignalObject {
    public:
     SignalObject* getOutput() const { return output_; }
 
-    void setOutput(SignalObject* sobj) { output_ = sobj; }
+    void setOutput(SignalObject* sobj) {
+        output_ = sobj;
+        update();
+    }
 
     /**
      * @brief Send the signal to the output.

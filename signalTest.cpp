@@ -73,9 +73,9 @@ int main() {
     // Our srcTextInputWSO message will go through the Tee to 2 places.
     srcTextInputWSO->setOutput(t1);
 
-    srcTextInputWSO->update();
-    dstTextInputWSO->update();
-    t1->update();
+    //srcTextInputWSO->update();
+    //dstTextInputWSO->update();
+   // t1->update();
     // srcTextInputWSO->setOutput(consoleLogFSO);
     //  testObjCSO->setOutput(consoleLogFSO);
 
@@ -118,8 +118,8 @@ int main() {
     circle1CXRangeInputWSO->setOutput(circle1CXWSO);
     // circle1CXRangeInputWSO->setOutput(testObjCSO);
     circle1CYRangeInputWSO->setOutput(circle1CYWSO);
-    circle1CXRangeInputWSO->update();
-    circle1CYRangeInputWSO->update();
+    // circle1CXRangeInputWSO->update();
+    // circle1CYRangeInputWSO->update();
 
     // This is the 'functional' part of FRP. We have a pure function here defined as a C++ lambda.
     // We will set this up as the core of a CppLambda object that takes a string, runs the lambda
@@ -138,7 +138,7 @@ int main() {
     // We now create a signal wrapper for the input field and connect it to the conversion function.
     auto *dblInputWSO = new cl2::WebElementSignalObject<std::string>(dblInput, "value", false);
     dblInputWSO->setOutput(strToNumTransformer);
-    dblInputWSO->update();
+    //dblInputWSO->update();
     // circle1CXRangeInputWSO->setOutput(strToNumTransformer);
 
     // Here we're going back to our TestObj and creating a field that will allow the user to update
@@ -149,8 +149,8 @@ int main() {
         new cl2::WebElementSignalObject<std::string>(testObjValTextInput, "value", false);
     testObjValTextInputWSO->setOutput(testObjCSO);
     testObjCSO->setOutput(testObjValTextInputWSO);
-    testObjCSO->update();
-    testObjValTextInputWSO->update();
+    //testObjCSO->update();
+   // testObjValTextInputWSO->update();
 
     return 0;
 }
