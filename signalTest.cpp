@@ -43,22 +43,16 @@ int main() {
     // We can also create de-novo elements.
     auto generatedDiv = cl2::WebElement("div", "generatedDiv", getStrId());
 
+    // We're now using the ElementBuilder factory objects to create our web content.
     cl2::ElementBuilder eb = cl2::ElementBuilder();
-    //eb.textInput("EB_made_this", "This is a text input created by the new ElementBuilder class.");
 
-
-    // Creating two text fields.
-    //const auto srcTextInput = cl2::InputElement("input", "srcTextInput", "text", getStrId());
+    // Creating two text fields.    
     const auto srcTextInput = eb.textInput("srcTextInput", "Source field: type something here and it will appear in the next field.");
     const auto dstTextInput = eb.textInput("dstTextInput", "Destination field: Type something in the field above and it will be copied here.");
-    //const auto dstTextInput = cl2::InputElement("input", "dstTextInput", "text", getStrId());
-    //cl2::BR();
-
+    
     // Signal wrappers for the text fields.
     auto *srcTextInputWSO = new cl2::WebElementSignalObject<std::string>(srcTextInput, "value");
-    auto *dstTextInputWSO = new cl2::WebElementSignalObject<std::string>(dstTextInput, "value");
-
-    // srcTextInputWSO->update();
+    auto *dstTextInputWSO = new cl2::WebElementSignalObject<std::string>(dstTextInput, "value");    
 
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
     const val logFn = val::global("logStuff");
@@ -71,29 +65,12 @@ int main() {
     t1->setSecondOutput(dstTextInputWSO);
 
     // Our srcTextInputWSO message will go through the Tee to 2 places.
-    srcTextInputWSO->setOutput(t1);
-
-    //srcTextInputWSO->update();
-    //dstTextInputWSO->update();
-   // t1->update();
-    // srcTextInputWSO->setOutput(consoleLogFSO);
-    //  testObjCSO->setOutput(consoleLogFSO);
+    srcTextInputWSO->setOutput(t1);    
 
     // Now we're going to create an SVG area and a circle within it. We will create range controls
     // to adjust the size and position of the circle.
     const auto circle1CXRangeInput = eb.rangeInput("circle1CXRangeInput", "Circle center X value");
     const auto circle1CYRangeInput = eb.rangeInput("circle1CYRangeInput", "Circle center Y value");
-        
-    // const auto circle1CXRangeInput =
-    //     cl2::InputElement("input", "circle1CXRangeInput", "range", getStrId());
-    // const auto circle1CYRangeInput =
-    //     cl2::InputElement("input", "circle1CYRangeInput", "range", getStrId());
-
-    // Label the controls.
-    // cl2::Label("Circle center X value", circle1CXRangeInput, true, getStrId());
-    // cl2::BR();
-    // cl2::Label("Circle center Y value", circle1CYRangeInput, true, getStrId());
-    // cl2::BR();
 
     // Signal wrappers for the controls.
     auto *circle1CXRangeInputWSO =
@@ -115,12 +92,9 @@ int main() {
     auto *circle1CYWSO = new cl2::WebElementSignalObject<std::string>(circle1, "cy");
 
     // Now the range controls are connected to the circle attributes.
-    circle1CXRangeInputWSO->setOutput(circle1CXWSO);
-    // circle1CXRangeInputWSO->setOutput(testObjCSO);
+    circle1CXRangeInputWSO->setOutput(circle1CXWSO);    
     circle1CYRangeInputWSO->setOutput(circle1CYWSO);
-    // circle1CXRangeInputWSO->update();
-    // circle1CYRangeInputWSO->update();
-
+    
     // This is the 'functional' part of FRP. We have a pure function here defined as a C++ lambda.
     // We will set this up as the core of a CppLambda object that takes a string, runs the lambda
     // on it, and outputs a double.
@@ -130,17 +104,16 @@ int main() {
         return d;
     };
 
+    // We now place our lambda in the core of the CppLambda signal wrapper.
     auto *strToNumTransformer = new cl2::CppLambda<std::string, double>(str2DblFn);
-
-    const auto dblInput =  eb.textInput("dblInput", "Enter a floating point number");
     
+    // String to convert to a number.
+    const auto dblInput =  eb.textInput("dblInput", "Enter a floating point number");    
 
     // We now create a signal wrapper for the input field and connect it to the conversion function.
     auto *dblInputWSO = new cl2::WebElementSignalObject<std::string>(dblInput, "value", false);
     dblInputWSO->setOutput(strToNumTransformer);
-    //dblInputWSO->update();
-    // circle1CXRangeInputWSO->setOutput(strToNumTransformer);
-
+    
     // Here we're going back to our TestObj and creating a field that will allow the user to update
     // the string value it contains.
     const auto testObjValTextInput = eb.textInput("testObjValTextInput", "Enter a new value for the string stored in the TestObj.");
@@ -149,9 +122,7 @@ int main() {
         new cl2::WebElementSignalObject<std::string>(testObjValTextInput, "value", false);
     testObjValTextInputWSO->setOutput(testObjCSO);
     testObjCSO->setOutput(testObjValTextInputWSO);
-    //testObjCSO->update();
-   // testObjValTextInputWSO->update();
-
+    
     return 0;
 }
 
