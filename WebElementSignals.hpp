@@ -51,14 +51,12 @@ class WebElementSignalObject : public StoredSignal<S> {
      *
      */
     virtual void update() {
-        if (this->getOutput() == nullptr) return;
-        const std::string eventName;
+        if (this->getOutput() == nullptr) return;        
         if (wptr_->domElement_["type"] == val("range")) {eventListenerName_ = "input"; }
         val elgEmitFn = val::global("elgEmitFn");
         wptr_->domElement_.call<void>("removeEventListener", val(eventListenerName_), changeListenerFn_);
         changeListenerFn_ = elgEmitFn(*this);
         wptr_->domElement_.call<void>("addEventListener", val(eventListenerName_), changeListenerFn_);
-
         if (!StoredSignal<S>::emitInitialValue()) return;
         cout << "Getting initial value for id = " << wptr_->getId().as<std::string>() << endl;
         // const S initialVal = wptr_->domElement_.call<val>("getAttribute",
