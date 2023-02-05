@@ -81,16 +81,19 @@ int main() {
 
     // Now we're going to create an SVG area and a circle within it. We will create range controls
     // to adjust the size and position of the circle.
-    const auto circle1CXRangeInput =
-        cl2::InputElement("input", "circle1CXRangeInput", "range", getStrId());
-    const auto circle1CYRangeInput =
-        cl2::InputElement("input", "circle1CYRangeInput", "range", getStrId());
+    const auto circle1CXRangeInput = eb.rangeInput("circle1CXRangeInput", "Circle center X value");
+    const auto circle1CYRangeInput = eb.rangeInput("circle1CYRangeInput", "Circle center Y value");
+        
+    // const auto circle1CXRangeInput =
+    //     cl2::InputElement("input", "circle1CXRangeInput", "range", getStrId());
+    // const auto circle1CYRangeInput =
+    //     cl2::InputElement("input", "circle1CYRangeInput", "range", getStrId());
 
     // Label the controls.
-    cl2::Label("Circle center X value", circle1CXRangeInput, true, getStrId());
-    cl2::BR();
-    cl2::Label("Circle center Y value", circle1CYRangeInput, true, getStrId());
-    cl2::BR();
+    // cl2::Label("Circle center X value", circle1CXRangeInput, true, getStrId());
+    // cl2::BR();
+    // cl2::Label("Circle center Y value", circle1CYRangeInput, true, getStrId());
+    // cl2::BR();
 
     // Signal wrappers for the controls.
     auto *circle1CXRangeInputWSO =
@@ -128,9 +131,9 @@ int main() {
     };
 
     auto *strToNumTransformer = new cl2::CppLambda<std::string, double>(str2DblFn);
-    const auto dblInput = cl2::InputElement("input", "dblInput", "text", getStrId());
-    cl2::Label("Enter a floating point number", dblInput, true, getStrId());
-    cl2::BR();
+
+    const auto dblInput =  eb.textInput("dblInput", "Enter a floating point number");
+    
 
     // We now create a signal wrapper for the input field and connect it to the conversion function.
     auto *dblInputWSO = new cl2::WebElementSignalObject<std::string>(dblInput, "value", false);
@@ -140,10 +143,8 @@ int main() {
 
     // Here we're going back to our TestObj and creating a field that will allow the user to update
     // the string value it contains.
-    const auto testObjValTextInput =
-        cl2::InputElement("input", "testObjValTextInput", "text", getStrId());
-    cl2::Label("Enter a new value for the string stored in the TestObj.", testObjValTextInput, true,
-               getStrId());
+    const auto testObjValTextInput = eb.textInput("testObjValTextInput", "Enter a new value for the string stored in the TestObj.");
+        
     auto *testObjValTextInputWSO =
         new cl2::WebElementSignalObject<std::string>(testObjValTextInput, "value", false);
     testObjValTextInputWSO->setOutput(testObjCSO);
