@@ -52,7 +52,7 @@ int main() {
     const auto srcTextInput = eb.textInput("srcTextInput", "Source field: type something here and it will appear in the next field.");
     const auto dstTextInput = eb.textInput("dstTextInput", "Destination field: Type something in the field above and it will be copied here.");
     //const auto dstTextInput = cl2::InputElement("input", "dstTextInput", "text", getStrId());
-    cl2::BR();
+    //cl2::BR();
 
     // Signal wrappers for the text fields.
     auto *srcTextInputWSO = new cl2::WebElementSignalObject<std::string>(srcTextInput, "value");
