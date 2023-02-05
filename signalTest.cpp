@@ -3,6 +3,7 @@
 #include "Util.hpp"
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
+#include "ElementBuilder.hpp"
 
 /**
  * @brief This is a simple do-nothing class meant to test the `CppObjectSignalObject` class' ability
@@ -42,9 +43,15 @@ int main() {
     // We can also create de-novo elements.
     auto generatedDiv = cl2::WebElement("div", "generatedDiv", getStrId());
 
+    cl2::ElementBuilder eb = cl2::ElementBuilder();
+    //eb.textInput("EB_made_this", "This is a text input created by the new ElementBuilder class.");
+
+
     // Creating two text fields.
-    const auto srcTextInput = cl2::InputElement("input", "srcTextInput", "text", getStrId());
-    const auto dstTextInput = cl2::InputElement("input", "dstTextInput", "text", getStrId());
+    //const auto srcTextInput = cl2::InputElement("input", "srcTextInput", "text", getStrId());
+    const auto srcTextInput = eb.textInput("srcTextInput", "Source field: type something here and it will appear in the next field.");
+    const auto dstTextInput = eb.textInput("dstTextInput", "Destination field: Type something in the field above and it will be copied here.");
+    //const auto dstTextInput = cl2::InputElement("input", "dstTextInput", "text", getStrId());
     cl2::BR();
 
     // Signal wrappers for the text fields.

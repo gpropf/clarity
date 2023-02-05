@@ -15,7 +15,8 @@ class TicketMachine {
    public:
     TicketMachine(int startVal = 0) { id_ = startVal; }
 
-    inline const int getNext() { return ++id_; }
+    int getNext() { return ++id_; }
+    std::string getNextStrId() { return std::to_string(getNext()); }
 };
 
 /**
@@ -36,10 +37,10 @@ int getId(int initVal = 0, bool reset = false) {
 
 /**
  * @brief Uses the `getId()` function above but returns the string value of the number.
- * 
+ *
  * @param initVal Passed through to `getId()`
  * @param reset Passed through to `getId()`
- * @return std::string 
+ * @return std::string
  */
 std::string getStrId(int initVal = 0, bool reset = false) {
     return std::to_string(getId(initVal, reset));

@@ -54,7 +54,9 @@ class SignalObject {
      * @brief Sometimes it is necessary to hold off certain tasks until the object is fully set up.
      * JS event handlers in particular need to see the completed object in order to work properly
      * when they fire. This method must be called once a `SignalObject` has all of its inputs and
-     * outputs set up.
+     * outputs set up. If the object is modified this should be called again. It is meant to be
+     * idempotent so it's important to clean up any event listeners or other things that are set
+     * here on second and subsequent calls.
      *
      */
     virtual void update() = 0;
@@ -182,7 +184,7 @@ class CppObjectSignalObject : public StoredSignal<S> {
 
     virtual bool accept(const S& s) {
         bool storedSignalAccepts = StoredSignal<S>::accept(s);
-        //StoredSignal<S>::accept(s);
+        // StoredSignal<S>::accept(s);
         if (!storedSignalAccepts) return false;
         (*obj_.*setter)(s);
         return true;
