@@ -1,9 +1,9 @@
 
+#include "ElementBuilder.hpp"
 #include "SignalPrimitives.hpp"
 #include "Util.hpp"
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
-#include "ElementBuilder.hpp"
 
 /**
  * @brief This is a simple do-nothing class meant to test the `CppObjectSignalObject` class' ability
@@ -34,7 +34,7 @@ int main() {
     // Now we're going to create a JS timer to read the value and fire the signal every so often.
     val testObjEmitter = val::global("elgTestObjEmitter")(val(testObjCSO));
     val setInterval = val::global("setInterval");
-    setInterval(testObjEmitter, val(500));
+    //setInterval(testObjEmitter, val(500));
 
     // It's easy to get control of elements that are already present in a static HTML page by
     // creating a WE from the id.
@@ -46,13 +46,16 @@ int main() {
     // We're now using the ElementBuilder factory objects to create our web content.
     cl2::ElementBuilder eb = cl2::ElementBuilder();
 
-    // Creating two text fields.    
-    const auto srcTextInput = eb.textInput("srcTextInput", "Source field: type something here and it will appear in the next field.");
-    const auto dstTextInput = eb.textInput("dstTextInput", "Destination field: Type something in the field above and it will be copied here.");
-    
+    // Creating two text fields.
+    const auto srcTextInput = eb.textInput(
+        "srcTextInput", "Source field: type something here and it will appear in the next field.");
+    const auto dstTextInput = eb.textInput(
+        "dstTextInput",
+        "Destination field: Type something in the field above and it will be copied here.");
+
     // Signal wrappers for the text fields.
     auto *srcTextInputWSO = new cl2::WebElementSignalObject<std::string>(srcTextInput, "value");
-    auto *dstTextInputWSO = new cl2::WebElementSignalObject<std::string>(dstTextInput, "value");    
+    auto *dstTextInputWSO = new cl2::WebElementSignalObject<std::string>(dstTextInput, "value");
 
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
     const val logFn = val::global("logStuff");
@@ -65,7 +68,7 @@ int main() {
     t1->setSecondOutput(dstTextInputWSO);
 
     // Our srcTextInputWSO message will go through the Tee to 2 places.
-    srcTextInputWSO->setOutput(t1);    
+    srcTextInputWSO->setOutput(t1);
 
     // Now we're going to create an SVG area and a circle within it. We will create range controls
     // to adjust the size and position of the circle.
@@ -92,9 +95,9 @@ int main() {
     auto *circle1CYWSO = new cl2::WebElementSignalObject<std::string>(circle1, "cy");
 
     // Now the range controls are connected to the circle attributes.
-    circle1CXRangeInputWSO->setOutput(circle1CXWSO);    
+    circle1CXRangeInputWSO->setOutput(circle1CXWSO);
     circle1CYRangeInputWSO->setOutput(circle1CYWSO);
-    
+
     // This is the 'functional' part of FRP. We have a pure function here defined as a C++ lambda.
     // We will set this up as the core of a CppLambda object that takes a string, runs the lambda
     // on it, and outputs a double.
@@ -106,23 +109,41 @@ int main() {
 
     // We now place our lambda in the core of the CppLambda signal wrapper.
     auto *strToNumTransformer = new cl2::CppLambda<std::string, double>(str2DblFn);
-    
+
     // String to convert to a number.
-    const auto dblInput =  eb.textInput("dblInput", "Enter a floating point number");    
+    const auto dblInput = eb.textInput("dblInput", "Enter a floating point number");
 
     // We now create a signal wrapper for the input field and connect it to the conversion function.
     auto *dblInputWSO = new cl2::WebElementSignalObject<std::string>(dblInput, "value", false);
     dblInputWSO->setOutput(strToNumTransformer);
-    
+
     // Here we're going back to our TestObj and creating a field that will allow the user to update
     // the string value it contains.
-    const auto testObjValTextInput = eb.textInput("testObjValTextInput", "Enter a new value for the string stored in the TestObj.");
-        
+    const auto testObjValTextInput = eb.textInput(
+        "testObjValTextInput", "Enter a new value for the string stored in the TestObj.");
+
     auto *testObjValTextInputWSO =
         new cl2::WebElementSignalObject<std::string>(testObjValTextInput, "value", false);
     testObjValTextInputWSO->setOutput(testObjCSO);
     testObjCSO->setOutput(testObjValTextInputWSO);
+
+    auto mergeFn = [](std::string s1, std::string s2) { return s1 + s2; };
+    auto* mergeSignal = new cl2::Merge<std::string, std::string, std::string>(mergeFn);
+
+    const auto m1Input = eb.textInput("m1Input", "Enter the first value");
+    const auto m2Input = eb.textInput("m2Input", "Enter the second value");
+    const auto mergeOut = eb.textInput("mergeOut", "Output of Merge signal goes here");
+    auto *m1InputWSO = new cl2::WebElementSignalObject<std::string>(m1Input, "value", false);
+    auto *m2InputWSO = new cl2::WebElementSignalObject<std::string>(m2Input, "value", false);
+    auto *mergeOutWSO = new cl2::WebElementSignalObject<std::string>(mergeOut, "value", false);
     
+    m1InputWSO->setOutput(mergeSignal);
+    m2InputWSO->setOutput(mergeSignal->getInput2());
+    mergeSignal->setOutput(mergeOutWSO);
+
+    m1InputWSO->update();
+    //mergeSignal->setOutput(consoleLogFSO);
+
     return 0;
 }
 

@@ -75,8 +75,8 @@ class StoredSignal : public SignalObject<S> {
     const bool emitInitialValue_;  // = false;
 
    public:
-    StoredSignal(bool emitInitialValue = false) : emitInitialValue_(emitInitialValue) {}
-    StoredSignal(S currentVal, bool emitInitialValue = false)
+    StoredSignal(bool emitInitialValue) : emitInitialValue_(emitInitialValue) {}
+    StoredSignal(S currentVal, bool emitInitialValue)
         : currentVal_(currentVal), emitInitialValue_(emitInitialValue) {}
     bool emitInitialValue() const { return emitInitialValue_; }
     virtual bool accept(const S& s) {
@@ -84,6 +84,9 @@ class StoredSignal : public SignalObject<S> {
         currentVal_ = s;
         return true;
     }
+
+    virtual void update() {}
+
     virtual S getSignal() const { return currentVal_; };
 };
 
@@ -143,18 +146,33 @@ class CppLambda : public SignalObject<S> {
 };
 
 template <typename inT1, typename inT2, typename outT>
-class Merge : public SignalObject<inT1> {
+class Merge : public StoredSignal<inT1> {
     SignalObject<outT>* out_;
-    SignalObject<inT2>* in2_;
+    StoredSignal<inT2>* in2_ = new StoredSignal<inT2>(false);
 
     std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
 
    public:
-    void setInput2(SignalObject<inT2>* in2) { in2_ = in2; }
+    Merge(std::function<outT(inT1 in1, inT2 in2)> mergeFn) : StoredSignal<inT1>(false) {
+        mergeFn_ = mergeFn;
+    }
+
+    StoredSignal<inT2>* getInput2() const { return in2_; }
+
+    //void setInput2(StoredSignal<inT2>* in2) { in2_ = in2; }
 
     virtual bool accept(const inT1& s1) {
-        return true;  // FIXME
+        bool ssAccepted = StoredSignal<inT1>::accept(s1);
+        if (in2_) {
+            inT2 s2 = in2_->getSignal();
+            outT outputValue = mergeFn_(s1, s2);
+            if (out_) out_->emit(outputValue);
+            return true;
+        }
+        return false;  // FIXME
     }
+
+    virtual void update() {}
     // virtual bool accept(const inT2& s2) {}
 };
 
