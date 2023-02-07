@@ -132,7 +132,7 @@ int main() {
 
     const auto m1Input = eb.textInput("m1Input", "Enter the first value");
     const auto m2Input = eb.textInput("m2Input", "Enter the second value");
-    const auto mergeOut = eb.textInput("mergeOut", "Output of Merge signal goes here");
+    const auto mergeOut = eb.textInput("mergeOut", "Output of merged signals goes here");
     auto *m1InputWSO = new cl2::WebElementSignalObject<std::string>(m1Input, "value", false);
     auto *m2InputWSO = new cl2::WebElementSignalObject<std::string>(m2Input, "value", false);
     auto *mergeOutWSO = new cl2::WebElementSignalObject<std::string>(mergeOut, "value", false);
