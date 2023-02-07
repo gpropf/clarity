@@ -69,16 +69,26 @@ class SignalObject {
     }
 };
 
+/**
+ * @brief This class was motivated by the need to produce a signal on demand instead of strictly in
+ * response to some event as in the case of the base class. This need can be seen in the case of the
+ * `Merge` class in particular where inputs may or may not be present at the same moment. This class
+ * creates, in effect, a buffer for its signal value.
+ *
+ * @tparam S
+ */
 template <typename S>
 class StoredSignal : public SignalObject<S> {
     S currentVal_;
-    const bool emitInitialValue_;  // = false;
+    const bool emitInitialValue_;
 
    public:
     StoredSignal(bool emitInitialValue) : emitInitialValue_(emitInitialValue) {}
     StoredSignal(S currentVal, bool emitInitialValue)
         : currentVal_(currentVal), emitInitialValue_(emitInitialValue) {}
     bool emitInitialValue() const { return emitInitialValue_; }
+    void setCurrentVal(S newVal) { currentVal_ = newVal; }
+    S getCurrentVal() const { return currentVal_; }
     virtual bool accept(const S& s) {
         if (s == currentVal_) return false;
         currentVal_ = s;
@@ -145,11 +155,19 @@ class CppLambda : public SignalObject<S> {
     }
 };
 
+/**
+ * @brief Similar to the `CppLambda` class except has 2 inputs. In practice this is considerably
+ * more complicated than the single input case because it is possible that one of the inputs may not
+ * exist when the other comes in.
+ *
+ * @tparam inT1
+ * @tparam inT2
+ * @tparam outT
+ */
 template <typename inT1, typename inT2, typename outT>
 class Merge : public StoredSignal<outT> {
-    // SignalObject<outT>* out_;
-    StoredSignal<inT2>* in2_;  //
-    StoredSignal<inT1>* in1_;  //
+    StoredSignal<inT2>* in2_;
+    StoredSignal<inT1>* in1_;
 
     std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
 
@@ -167,25 +185,40 @@ class Merge : public StoredSignal<outT> {
         return in1_;
     }
 
-    // void setInput2(StoredSignal<inT2>* in2) { in2_ = in2; }
-
-    virtual bool accept(const outT& sOut) {
-        bool ssAccepted = StoredSignal<outT>::accept(sOut);
+    /**
+     * @brief Check to see if both inputs are initialized and then run the stored lambda, emitting
+     * the result.
+     *
+     * @return true If both inputs exist.
+     * @return false If one of the inputs does not exist.
+     */
+    bool recompute() {
         if (in2_ && in1_) {
             inT2 s2 = in2_->getSignal();
             inT1 s1 = in1_->getSignal();
-            outT outputValue = mergeFn_(s1, s2);
+            this->setCurrentVal(mergeFn_(s1, s2));
             if (this->getOutput()) {
-                this->emit(outputValue);
+                this->emit(this->getCurrentVal());
             }
-            // if (out_) out_->emit(outputValue);
             return true;
         }
-        return false;  // FIXME
+        return false;
+    }
+
+    /**
+     * @brief This is a kludge. We're using the output_ to trigger a recompute operation. Probably
+     * shouldn't really do anything here at all.
+     *
+     * @param sOut
+     * @return true
+     * @return false
+     */
+    virtual bool accept(const outT& sOut) {
+        bool ssAccepted = StoredSignal<outT>::accept(sOut);
+        return recompute();
     }
 
     virtual void update() {}
-    // virtual bool accept(const inT2& s2) {}
 };
 
 /**
