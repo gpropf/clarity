@@ -24,6 +24,10 @@ class ElementBuilder {
         tm_ = TicketMachine(startId);
     }
 
+    void postCall() {
+        if (addBRAfterAllCalls_) BR();
+    }
+
     /**
      * @brief Create a text imput field.
      *
@@ -36,7 +40,7 @@ class ElementBuilder {
             InputElement("input", name, "text", tm_.getNextStrId(), parentDOMElement_);
         const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, tm_.getNextStrId(),
                                 parentDOMElement_);
-        if (addBRAfterAllCalls_) BR();
+        postCall();
         return inp;
     }
 
@@ -52,8 +56,15 @@ class ElementBuilder {
             InputElement("input", name, "range", tm_.getNextStrId(), parentDOMElement_);
         const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, tm_.getNextStrId(),
                                 parentDOMElement_);
-        if (addBRAfterAllCalls_) BR();
+        postCall();
         return inp;
+    }
+
+    Button button(const std::string& displayedText, val onClickFn) {
+        Button btn =
+            Button(displayedText, displayedText, onClickFn, tm_.getNextStrId(), parentDOMElement_);
+        postCall();
+        return btn;
     }
 };
 }  // namespace cl2

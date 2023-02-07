@@ -34,7 +34,7 @@ int main() {
     // Now we're going to create a JS timer to read the value and fire the signal every so often.
     val testObjEmitter = val::global("elgTestObjEmitter")(val(testObjCSO));
     val setInterval = val::global("setInterval");
-    //setInterval(testObjEmitter, val(500));
+    setInterval(testObjEmitter, val(500));
 
     // It's easy to get control of elements that are already present in a static HTML page by
     // creating a WE from the id.
@@ -143,7 +143,7 @@ int main() {
     mergeOutWSO->setOutput(mergeSignal);
 
     val recomputeMergeFn = val::global("elgMergeRecompute")(val(mergeSignal));
-    const auto mergeRecomputeButton = cl2::Button("mergeRecomputeButton", "Recompute", recomputeMergeFn);
+    const auto mergeRecomputeButton = eb.button("Recompute", recomputeMergeFn);
     //m1InputWSO->update();
     //mergeSignal->setOutput(consoleLogFSO);
 
