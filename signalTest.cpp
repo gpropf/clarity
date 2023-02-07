@@ -137,11 +137,12 @@ int main() {
     auto *m2InputWSO = new cl2::WebElementSignalObject<std::string>(m2Input, "value", false);
     auto *mergeOutWSO = new cl2::WebElementSignalObject<std::string>(mergeOut, "value", false);
     
-    m1InputWSO->setOutput(mergeSignal);
+    m1InputWSO->setOutput(mergeSignal->getInput1());
     m2InputWSO->setOutput(mergeSignal->getInput2());
     mergeSignal->setOutput(mergeOutWSO);
+    mergeOutWSO->setOutput(mergeSignal);
 
-    m1InputWSO->update();
+    //m1InputWSO->update();
     //mergeSignal->setOutput(consoleLogFSO);
 
     return 0;

@@ -146,9 +146,10 @@ class CppLambda : public SignalObject<S> {
 };
 
 template <typename inT1, typename inT2, typename outT>
-class Merge : public StoredSignal<inT1> {
-    SignalObject<outT>* out_;
-    StoredSignal<inT2>* in2_ = new StoredSignal<inT2>(false);
+class Merge : public StoredSignal<outT> {
+    // SignalObject<outT>* out_;
+    StoredSignal<inT2>* in2_;  //
+    StoredSignal<inT1>* in1_;  //
 
     std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
 
@@ -157,16 +158,27 @@ class Merge : public StoredSignal<inT1> {
         mergeFn_ = mergeFn;
     }
 
-    StoredSignal<inT2>* getInput2() const { return in2_; }
+    StoredSignal<inT2>* getInput2() {
+        in2_ = new StoredSignal<inT2>(false);
+        return in2_;
+    }
+    StoredSignal<inT1>* getInput1() {
+        in1_ = new StoredSignal<inT1>(false);
+        return in1_;
+    }
 
-    //void setInput2(StoredSignal<inT2>* in2) { in2_ = in2; }
+    // void setInput2(StoredSignal<inT2>* in2) { in2_ = in2; }
 
-    virtual bool accept(const inT1& s1) {
-        bool ssAccepted = StoredSignal<inT1>::accept(s1);
-        if (in2_) {
+    virtual bool accept(const outT& sOut) {
+        bool ssAccepted = StoredSignal<outT>::accept(sOut);
+        if (in2_ && in1_) {
             inT2 s2 = in2_->getSignal();
+            inT1 s1 = in1_->getSignal();
             outT outputValue = mergeFn_(s1, s2);
-            if (out_) out_->emit(outputValue);
+            if (this->getOutput()) {
+                this->emit(outputValue);
+            }
+            // if (out_) out_->emit(outputValue);
             return true;
         }
         return false;  // FIXME
