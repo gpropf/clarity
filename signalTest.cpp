@@ -142,6 +142,8 @@ int main() {
     mergeSignal->setOutput(mergeOutWSO);
     mergeOutWSO->setOutput(mergeSignal);
 
+    val recomputeMergeFn = val::global("elgMergeRecompute")(val(mergeSignal));
+    const auto mergeRecomputeButton = cl2::Button("mergeRecomputeButton", "Recompute", recomputeMergeFn);
     //m1InputWSO->update();
     //mergeSignal->setOutput(consoleLogFSO);
 
@@ -155,5 +157,9 @@ EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
         .function("getSignal", &cl2::CppObjectSignalObject<std::string, TestObj>::getSignal,
                   emscripten::allow_raw_pointers())
         .function("accept", &cl2::CppObjectSignalObject<std::string, TestObj>::accept,
+                  emscripten::allow_raw_pointers());
+
+    emscripten::class_<cl2::Merge<std::string, std::string, std::string>>("Merge")
+        .function("recompute", &cl2::Merge<std::string, std::string, std::string>::recompute,
                   emscripten::allow_raw_pointers());
 }

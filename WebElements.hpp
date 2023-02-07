@@ -26,19 +26,17 @@ namespace cl2 {
  *
  */
 struct WebElement {
-    
-    val domElement_;    
+    val domElement_;
 
     val getId() const { return domElement_["id"]; }
 
     std::string getName() const {
         return domElement_.call<val>("getAttribute", val("name")).as<std::string>();
-    }    
+    }
 
     WebElement(const std::string& tag, const std::string& name, const std::string& id = "",
                val parentElement = val::null()) {
-        
-        val initElement = val::global("WebElement")["initElement"];       
+        val initElement = val::global("WebElement")["initElement"];
 
         domElement_ = initElement(tag, name, id);
 
@@ -53,11 +51,9 @@ struct WebElement {
      *
      * @param domElement
      */
-    WebElement(val domElement) {        
-        domElement_ = domElement;
-    }
+    WebElement(val domElement) { domElement_ = domElement; }
 
-    WebElement(const std::string &id) {
+    WebElement(const std::string& id) {
         val document = val::global("document");
         domElement_ = document.call<val>("getElementById", val(id));
     }
@@ -87,7 +83,6 @@ struct SVG : public WebElement {
     SVG(const std::string& name, int width, int height, const std::string& id = "",
         val parentElement = val::null())
         : WebElement("svg", name, id, parentElement) {
-        
         domElement_.call<void>("setAttribute", val("width"), val(width));
         domElement_.call<void>("setAttribute", val("height"), val(height));
     }
@@ -97,11 +92,18 @@ struct Label : public WebElement {
     Label(const std::string& text, const WebElement& wel, bool swallowForElement = true,
           const std::string& id = "", val parentElement = val::null())
         : WebElement("label", "lbl_" + wel.getName(), id, parentElement) {
-
-        setAttribute("for", wel.getId());        
+        setAttribute("for", wel.getId());
         domElement_.set("innerHTML", val(text));
         domElement_.call<void>("appendChild", wel.domElement_);
     }
+};
+
+struct Button : public WebElement {
+    Button(const std::string& name, const std::string& displayedText, val onClickFn, const std::string& id = "", val parentElement = val::null())
+        : WebElement("button", name, id, parentElement) {
+            this->domElement_.call<void>("addEventListener", val("click"), onClickFn);
+            this->domElement_.set("textContent", val(displayedText));
+        }
 };
 
 /**

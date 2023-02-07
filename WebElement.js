@@ -66,5 +66,13 @@ function elgTestObjEmitter(testObjCSO) {
     };
 }
 
+function elgMergeRecompute(mergeSO) {
+    return function () {
+        //let s = testObjCSO.getSignal();
+        console.log("elgMergeRecompute generated fn called. Recomputing...:");
+        mergeSO.recompute();        
+    };
+}
+
 
 window.WebElement = WebElement
