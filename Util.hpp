@@ -1,7 +1,30 @@
 #ifndef Util_hpp
 #define Util_hpp
 
+#include <emscripten.h>
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+
 #include <string>
+
+using emscripten::val;
+using std::cout;
+using std::endl;
+
+namespace cl2 {
+
+/**
+ * @brief Basic wrapper around the JS function of this name since I anticipate needing this a lot.
+ * Doesn't offer the optional extra params like the actual JS one.
+ *
+ * @param jsFunc The function to call.
+ * @param delay Interval in ms to wait between calls.
+ * @return int The interval id.
+ */
+int setInterval(val jsFunc, int delay) {
+    val setInterval = val::global("setInterval");
+    return setInterval(jsFunc, val(delay)).as<int>();
+}
 
 /**
  * @brief Hands out (presumably) unique int ids with a simply incrementing
@@ -45,5 +68,5 @@ int getId(int initVal = 0, bool reset = false) {
 std::string getStrId(int initVal = 0, bool reset = false) {
     return std::to_string(getId(initVal, reset));
 }
-
+}  // namespace cl2
 #endif
