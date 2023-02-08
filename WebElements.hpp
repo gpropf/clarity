@@ -77,6 +77,9 @@ struct WebElement {
 struct BR : public WebElement {
     BR(const std::string& name = "", const std::string& id = "", val parentElement = val::null())
         : WebElement("br", name, id, parentElement) {}
+
+    BR(val parentElement, const std::string& name = "", const std::string& id = "")
+        : WebElement("br", name, id, parentElement) {}
 };
 
 struct SVG : public WebElement {
@@ -99,11 +102,12 @@ struct Label : public WebElement {
 };
 
 struct Button : public WebElement {
-    Button(const std::string& name, const std::string& displayedText, val onClickFn, const std::string& id = "", val parentElement = val::null())
+    Button(const std::string& name, const std::string& displayedText, val onClickFn,
+           const std::string& id = "", val parentElement = val::null())
         : WebElement("button", name, id, parentElement) {
-            this->domElement_.call<void>("addEventListener", val("click"), onClickFn);
-            this->domElement_.set("textContent", val(displayedText));
-        }
+        this->domElement_.call<void>("addEventListener", val("click"), onClickFn);
+        this->domElement_.set("textContent", val(displayedText));
+    }
 };
 
 /**

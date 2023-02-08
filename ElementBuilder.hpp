@@ -25,7 +25,31 @@ class ElementBuilder {
     }
 
     void postCall() {
-        if (addBRAfterAllCalls_) BR();
+        if (addBRAfterAllCalls_) BR(this->parentDOMElement_);
+    }
+
+    ElementBuilder withParentDOMElement(val parentDOMElement) const & {
+        ElementBuilder cpy(*this);
+        cpy.parentDOMElement_ = parentDOMElement;
+        return cpy;
+    }
+
+    ElementBuilder withParentDOMElement(val parentDOMElement) && {
+        ElementBuilder cpy(std::move( *this));
+        cpy.parentDOMElement_ = parentDOMElement;
+        return cpy;
+    }
+
+    ElementBuilder withParentWebElement(const WebElement& parentElement) const & {
+        ElementBuilder cpy(*this);
+        cpy.parentDOMElement_ = parentElement.domElement_;
+        return cpy;
+    }
+
+    ElementBuilder withParentWebElement(const WebElement& parentElement) && {
+        ElementBuilder cpy(std::move( *this));
+        cpy.parentDOMElement_ = parentElement.domElement_;
+        return cpy;
     }
 
     /**

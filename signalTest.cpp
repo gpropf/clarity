@@ -46,7 +46,8 @@ int main() {
     auto generatedDiv = cl2::WebElement("div", "generatedDiv", getStrId());
 
     // We're now using the ElementBuilder factory objects to create our web content.
-    cl2::ElementBuilder eb = cl2::ElementBuilder();
+    cl2::ElementBuilder eb = cl2::ElementBuilder();//
+    //eb = eb.withParentWebElement(capturedDiv);
 
     // Creating two text fields.
     const auto srcTextInput = eb.textInput(
