@@ -166,8 +166,8 @@ class CppLambda : public SignalObject<S> {
  */
 template <typename inT1, typename inT2, typename outT>
 class Merge : public StoredSignal<outT> {
-    StoredSignal<inT2>* in2_;
-    StoredSignal<inT1>* in1_;
+    StoredSignal<inT2>* in2_ = nullptr;
+    StoredSignal<inT1>* in1_ = nullptr;
 
     std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
 
@@ -177,11 +177,11 @@ class Merge : public StoredSignal<outT> {
     }
 
     StoredSignal<inT2>* getInput2() {
-        in2_ = new StoredSignal<inT2>(false);
+        if (in2_ == nullptr) in2_ = new StoredSignal<inT2>(false);
         return in2_;
     }
     StoredSignal<inT1>* getInput1() {
-        in1_ = new StoredSignal<inT1>(false);
+        if (in1_ == nullptr) in1_ = new StoredSignal<inT1>(false);
         return in1_;
     }
 
