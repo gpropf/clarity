@@ -28,13 +28,13 @@ class TestObj {
 int main() {
     // We make a test object and then a signal wrapper for it.
     TestObj tobj;
-    auto *testObjCSO = new cl2::CppObjectSignalObject<std::string, TestObj>(tobj, true);
+    auto testObjCSO = make_shared<cl2::CppObjectSignalObject<std::string, TestObj>>(tobj, true);
     // The signal wrapper needs to know how to set and get the stored value.
     testObjCSO->setter = &TestObj::setS;
     testObjCSO->getter = &TestObj::getS;
 
     // Now we're going to create a JS timer to read the value and fire the signal every so often.
-    val testObjEmitter = val::global("elgTestObjEmitter")(val(testObjCSO));
+    val testObjEmitter = val::global("elgTestObjEmitter")(val(*testObjCSO));
     //val setInterval = val::global("setInterval");
     setInterval(testObjEmitter, 500);
 
@@ -57,15 +57,15 @@ int main() {
         "Destination field: Type something in the field above and it will be copied here.");
 
     // Signal wrappers for the text fields.
-    auto *srcTextInputWSO = new cl2::WebElementSignalObject<std::string>(srcTextInput, "value");
-    auto *dstTextInputWSO = new cl2::WebElementSignalObject<std::string>(dstTextInput, "value");
+    auto srcTextInputWSO = make_shared<cl2::WebElementSignalObject<std::string>>(srcTextInput, "value");
+    auto dstTextInputWSO = make_shared<cl2::WebElementSignalObject<std::string>>(dstTextInput, "value");
 
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
     const val logFn = val::global("logStuff");
-    auto *consoleLogFSO = new cl2::JSFunctionSignalObject<std::string>(logFn);
+    auto consoleLogFSO = make_shared<cl2::JSFunctionSignalObject<std::string>>(logFn);
 
     // A Tee allow us to send an output to two inputs.
-    auto *t1 = new cl2::Tee<std::string>();
+    auto t1 = make_shared<cl2::Tee<std::string>>();
 
     t1->setOutput(consoleLogFSO);
     t1->setSecondOutput(dstTextInputWSO);
@@ -79,10 +79,10 @@ int main() {
     const auto circle1CYRangeInput = eb.rangeInput("circle1CYRangeInput", "Circle center Y value");
 
     // Signal wrappers for the controls.
-    auto *circle1CXRangeInputWSO =
-        new cl2::WebElementSignalObject<std::string>(circle1CXRangeInput, "value");
-    auto *circle1CYRangeInputWSO =
-        new cl2::WebElementSignalObject<std::string>(circle1CYRangeInput, "value");
+    auto circle1CXRangeInputWSO =
+        make_shared<cl2::WebElementSignalObject<std::string>>(circle1CXRangeInput, "value");
+    auto circle1CYRangeInputWSO =
+        make_shared<cl2::WebElementSignalObject<std::string>>(circle1CYRangeInput, "value");
 
     auto svg = cl2::SVG("svg1", 400, 300, getStrId(), generatedDiv.domElement_);
     svg.setAttributes({{"viewBox", val("0 0 100 100")}, {"style", val("border: 1px solid black")}});
@@ -94,8 +94,8 @@ int main() {
     circle1.domElement_.call<void>("setAttribute", val("fill"), val("#ff0000"));
 
     // Now we need signal wrappers to connect to various attributes of the circle.
-    auto *circle1CXWSO = new cl2::WebElementSignalObject<std::string>(circle1, "cx");
-    auto *circle1CYWSO = new cl2::WebElementSignalObject<std::string>(circle1, "cy");
+    auto circle1CXWSO = make_shared<cl2::WebElementSignalObject<std::string>>(circle1, "cx");
+    auto circle1CYWSO = make_shared<cl2::WebElementSignalObject<std::string>>(circle1, "cy");
 
     // Now the range controls are connected to the circle attributes.
     circle1CXRangeInputWSO->setOutput(circle1CXWSO);
@@ -111,13 +111,13 @@ int main() {
     };
 
     // We now place our lambda in the core of the CppLambda signal wrapper.
-    auto *strToNumTransformer = new cl2::CppLambda<std::string, double>(str2DblFn);
+    auto strToNumTransformer = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
 
     // String to convert to a number.
     const auto dblInput = eb.textInput("dblInput", "Enter a floating point number");
 
     // We now create a signal wrapper for the input field and connect it to the conversion function.
-    auto *dblInputWSO = new cl2::WebElementSignalObject<std::string>(dblInput, "value", false);
+    auto dblInputWSO = make_shared<cl2::WebElementSignalObject<std::string>>(dblInput, "value", false);
     dblInputWSO->setOutput(strToNumTransformer);
 
     // Here we're going back to our TestObj and creating a field that will allow the user to update
@@ -125,27 +125,27 @@ int main() {
     const auto testObjValTextInput = eb.textInput(
         "testObjValTextInput", "Enter a new value for the string stored in the TestObj.");
 
-    auto *testObjValTextInputWSO =
-        new cl2::WebElementSignalObject<std::string>(testObjValTextInput, "value", false);
+    auto testObjValTextInputWSO =
+        make_shared<cl2::WebElementSignalObject<std::string>>(testObjValTextInput, "value", false);
     testObjValTextInputWSO->setOutput(testObjCSO);
     testObjCSO->setOutput(testObjValTextInputWSO);
 
     auto mergeFn = [](std::string s1, std::string s2) { return s1 + s2; };
-    auto* mergeSignal = new cl2::Merge<std::string, std::string, std::string>(mergeFn);
+    auto mergeSignal = make_shared<cl2::Merge<std::string, std::string, std::string>>(mergeFn);
 
     const auto m1Input = eb.textInput("m1Input", "Enter the first value");
     const auto m2Input = eb.textInput("m2Input", "Enter the second value");
     const auto mergeOut = eb.textInput("mergeOut", "Output of merged signals goes here");
-    auto *m1InputWSO = new cl2::WebElementSignalObject<std::string>(m1Input, "value", false);
-    auto *m2InputWSO = new cl2::WebElementSignalObject<std::string>(m2Input, "value", false);
-    auto *mergeOutWSO = new cl2::WebElementSignalObject<std::string>(mergeOut, "value", false);
+    auto m1InputWSO = make_shared<cl2::WebElementSignalObject<std::string>>(m1Input, "value", false);
+    auto m2InputWSO = make_shared<cl2::WebElementSignalObject<std::string>>(m2Input, "value", false);
+    auto mergeOutWSO = make_shared<cl2::WebElementSignalObject<std::string>>(mergeOut, "value", false);
     
     m1InputWSO->setOutput(mergeSignal->getInput1());
     m2InputWSO->setOutput(mergeSignal->getInput2());
     mergeSignal->setOutput(mergeOutWSO);
     mergeOutWSO->setOutput(mergeSignal);
 
-    val recomputeMergeFn = val::global("elgMergeRecompute")(val(mergeSignal));
+    val recomputeMergeFn = val::global("elgMergeRecompute")(val(*mergeSignal));
     const auto mergeRecomputeButton = eb.button("Recompute", recomputeMergeFn);
     //m1InputWSO->update();
     //mergeSignal->setOutput(consoleLogFSO);
@@ -163,6 +163,5 @@ EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
                   emscripten::allow_raw_pointers());
 
     emscripten::class_<cl2::Merge<std::string, std::string, std::string>>("Merge")
-        .function("recompute", &cl2::Merge<std::string, std::string, std::string>::recompute,
-                  emscripten::allow_raw_pointers());
+        .function("recompute", &cl2::Merge<std::string, std::string, std::string>::recompute);
 }
