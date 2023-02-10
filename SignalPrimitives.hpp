@@ -33,6 +33,7 @@ class SignalObject {
     // later.
 
     shared_ptr<SignalObject> output_ = nullptr;
+    shared_ptr<SignalObject> parent_ = nullptr;
 
    public:
     shared_ptr<SignalObject> getOutput() const { return output_; }
@@ -41,6 +42,10 @@ class SignalObject {
         output_ = sobj;
         update();
     }
+
+    shared_ptr<SignalObject> getParent() const { return parent_; }
+
+    void setParent(shared_ptr<SignalObject> parent) { parent_ = parent; }
 
     /**
      * @brief Send the signal to the output.
@@ -52,6 +57,10 @@ class SignalObject {
     }
 
     virtual bool accept(const S& s) = 0;
+
+    virtual void childAccepts(SignalObject* child) {
+        cout << "Child SO at " << child << " has accepted a signal." << endl;
+    }
 
     /**
      * @brief Sometimes it is necessary to hold off certain tasks until the object is fully set up.
@@ -91,7 +100,7 @@ class StoredSignal : public SignalObject<S> {
     bool emitInitialValue() const { return emitInitialValue_; }
 
     void setCurrentVal(S newVal) { currentVal_ = newVal; }
-    
+
     S getCurrentVal() const { return currentVal_; }
 
     /**
@@ -103,6 +112,9 @@ class StoredSignal : public SignalObject<S> {
      * @return false
      */
     virtual bool accept(const S& s) {
+        if (this->getParent() != nullptr) {
+            this->getParent()->childAccepts(this);
+        }
         if (s == currentVal_) return false;
         currentVal_ = s;
         return true;
@@ -178,25 +190,33 @@ class CppLambda : public SignalObject<S> {
  * @tparam outT
  */
 template <typename inT1, typename inT2, typename outT>
-class Merge : public StoredSignal<outT> {
+class Merge : public StoredSignal<outT>,
+              public std::enable_shared_from_this<Merge<inT1, inT2, outT>> {
     shared_ptr<StoredSignal<inT2>> in2_ = nullptr;
     shared_ptr<StoredSignal<inT1>> in1_ = nullptr;
 
     std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
 
    public:
-    Merge(std::function<outT(inT1 in1, inT2 in2)> mergeFn) : StoredSignal<inT1>(false) {
+    Merge(std::function<outT(inT1 in1, inT2 in2)> mergeFn) : StoredSignal<outT>(false) {
         mergeFn_ = mergeFn;
     }
 
     shared_ptr<StoredSignal<inT2>> getInput2() {
         if (in2_ == nullptr) in2_ = make_shared<StoredSignal<inT2>>(false);
+        in2_->setParent(this->shared_from_this());
         return in2_;
     }
     shared_ptr<StoredSignal<inT1>> getInput1() {
         if (in1_ == nullptr) in1_ = make_shared<StoredSignal<inT1>>(false);
+        in1_->setParent(this->shared_from_this());
         return in1_;
     }
+
+    // virtual void childAccepts(SignalObject* child) {
+    //     //if (child == in1_)
+    //     cout << "in1_ has accepted a signal." << endl;
+    // }    
 
     /**
      * @brief Check to see if both inputs are initialized and then run the stored lambda, emitting
