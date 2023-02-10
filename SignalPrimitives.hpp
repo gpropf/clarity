@@ -58,9 +58,20 @@ class SignalObject {
 
     virtual bool accept(const S& s) = 0;
 
-    virtual void childAccepts(SignalObject* child) {
-        cout << "Child SO at " << child << " has accepted a signal." << endl;
-    }
+    // virtual void childAccepts(SignalObject* child) {
+    //     cout << "Child SO at " << child << " has accepted a signal." << endl;
+    // }
+
+    /**
+     * @brief This is a fairly crude message passing system that exists to alert the parent of a
+     * signal that one of its children has done something. Right now we just convert the `this`
+     * pointer of the child to an int so the parent knows which one it was. Eventually, I'll have a
+     * proper message struct with an argument and a little tag to let the parent know what's going
+     * on in detail.
+     *
+     * @param e
+     */
+    virtual void childEvent(int e) { cout << "Child event " << e << endl; }
 
     /**
      * @brief Sometimes it is necessary to hold off certain tasks until the object is fully set up.
@@ -112,11 +123,11 @@ class StoredSignal : public SignalObject<S> {
      * @return false
      */
     virtual bool accept(const S& s) {
-        if (this->getParent() != nullptr) {
-            this->getParent()->childAccepts(this);
-        }
         if (s == currentVal_) return false;
         currentVal_ = s;
+        if (this->getParent() != nullptr) {
+            this->getParent()->childEvent(reinterpret_cast<int>(this));
+        }
         return true;
     }
 
@@ -195,6 +206,9 @@ class Merge : public StoredSignal<outT>,
     shared_ptr<StoredSignal<inT2>> in2_ = nullptr;
     shared_ptr<StoredSignal<inT1>> in1_ = nullptr;
 
+    bool signalPresentOnInput1_ = false;
+    bool signalPresentOnInput2_ = false;
+
     std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
 
    public:
@@ -216,7 +230,28 @@ class Merge : public StoredSignal<outT>,
     // virtual void childAccepts(SignalObject* child) {
     //     //if (child == in1_)
     //     cout << "in1_ has accepted a signal." << endl;
-    // }    
+    // }
+
+    /**
+     * @brief Here we compare the messages from the children to the int value of the raw pointers
+     * extracted from the shared_ptr. I suppose using a hash value would be better but this works
+     * for now. Once both signals are present we recompute() the value.
+     *
+     * @param e
+     */
+    virtual void childEvent(int e) {
+        cout << "Merge: Child event " << e << endl;
+        // if (reinterpret_cast<int>) {}
+        int rawPtrVal = reinterpret_cast<int>(in1_.get());
+        if (rawPtrVal == e) {
+            signalPresentOnInput1_ = true;
+        }
+        rawPtrVal = reinterpret_cast<int>(in2_.get());
+        if (rawPtrVal == e) {
+            signalPresentOnInput2_ = true;
+        }
+        if (signalPresentOnInput1_ && signalPresentOnInput2_) recompute();
+    }
 
     /**
      * @brief Check to see if both inputs are initialized and then run the stored lambda, emitting
