@@ -1,5 +1,5 @@
-#ifndef ElementBuilder_hpp
-#define ElementBuilder_hpp
+#ifndef SignalBuilder_hpp
+#define SignalBuilder_hpp
 
 #include "SignalPrimitives.hpp"
 #include "Util.hpp"
