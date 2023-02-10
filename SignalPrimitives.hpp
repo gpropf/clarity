@@ -32,12 +32,12 @@ class SignalObject {
     // It does seem necessary to set these to nullptr if we want to test for lack of initialization
     // later.
 
-    SignalObject* output_ = nullptr;
+    shared_ptr<SignalObject> output_ = nullptr;
 
    public:
-    SignalObject* getOutput() const { return output_; }
+    shared_ptr<SignalObject> getOutput() const { return output_; }
 
-    void setOutput(SignalObject* sobj) {
+    void setOutput(shared_ptr<SignalObject> sobj) {
         output_ = sobj;
         update();
     }
@@ -118,7 +118,7 @@ class StoredSignal : public SignalObject<S> {
  */
 template <typename S>
 class Tee : public SignalObject<S> {
-    SignalObject<S>* secondOutput_;
+    shared_ptr<SignalObject<S>> secondOutput_ = nullptr;
 
    public:
     Tee() {}
@@ -130,7 +130,7 @@ class Tee : public SignalObject<S> {
         return secondOutput_->accept(s);
     }
 
-    void setSecondOutput(SignalObject<S>* sobj) { secondOutput_ = sobj; }
+    void setSecondOutput(shared_ptr<SignalObject<S>> sobj) { secondOutput_ = sobj; }
 
     virtual void update() {}
 

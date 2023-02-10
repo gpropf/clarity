@@ -36,6 +36,11 @@ signalTest: signalTest.o #WebElement.o Signal.o
 # clean:
 # 	rm -f *.o clarity_embind.js
 
+simpleTest: simpleTest.o #WebElement.o Signal.o 
+	$(ENV) $(CC) $(CFLAGS) -lembind simpleTest.o -o signalTest.js
+
+
+
 realclean:
 	rm -f *.o *.wasm *.wasm.map *.a signalTest.js
 
