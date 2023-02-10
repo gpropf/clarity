@@ -45,8 +45,8 @@ int main() {
     // We can also create de-novo elements.
     auto generatedDiv = cl2::WebElement("div", "generatedDiv", getStrId());
 
-    // We're now using the ElementBuilder factory objects to create our web content.
-    cl2::ElementBuilder eb = cl2::ElementBuilder();//
+    // We're now using the SignalBuilder factory objects to create our web content.
+    cl2::SignalBuilder eb = cl2::SignalBuilder();//
     //eb = eb.withParentWebElement(capturedDiv);
 
     // Creating two text fields.

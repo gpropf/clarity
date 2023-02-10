@@ -8,7 +8,7 @@
 
 namespace cl2 {
 
-class ElementBuilder {
+class SignalBuilder {
     TicketMachine tm_;
     bool labelAllInputs_ = true;
     bool labelsSwallowTheirReferents_ = true;
@@ -16,7 +16,7 @@ class ElementBuilder {
     val parentDOMElement_ = val::null();
 
    public:
-    ElementBuilder(int startId = 0, bool labelAllInputs = true,
+    SignalBuilder(int startId = 0, bool labelAllInputs = true,
                    bool labelsSwallowTheirReferents = true, val parentDOMElement = val::null())
         : labelAllInputs_(labelAllInputs),
           labelsSwallowTheirReferents_(labelsSwallowTheirReferents),
@@ -28,26 +28,26 @@ class ElementBuilder {
         if (addBRAfterAllCalls_) BR(this->parentDOMElement_);
     }
 
-    ElementBuilder withParentDOMElement(val parentDOMElement) const & {
-        ElementBuilder cpy(*this);
+    SignalBuilder withParentDOMElement(val parentDOMElement) const & {
+        SignalBuilder cpy(*this);
         cpy.parentDOMElement_ = parentDOMElement;
         return cpy;
     }
 
-    ElementBuilder withParentDOMElement(val parentDOMElement) && {
-        ElementBuilder cpy(std::move( *this));
+    SignalBuilder withParentDOMElement(val parentDOMElement) && {
+        SignalBuilder cpy(std::move( *this));
         cpy.parentDOMElement_ = parentDOMElement;
         return cpy;
     }
 
-    ElementBuilder withParentWebElement(const WebElement& parentElement) const & {
-        ElementBuilder cpy(*this);
+    SignalBuilder withParentWebElement(const WebElement& parentElement) const & {
+        SignalBuilder cpy(*this);
         cpy.parentDOMElement_ = parentElement.domElement_;
         return cpy;
     }
 
-    ElementBuilder withParentWebElement(const WebElement& parentElement) && {
-        ElementBuilder cpy(std::move( *this));
+    SignalBuilder withParentWebElement(const WebElement& parentElement) && {
+        SignalBuilder cpy(std::move( *this));
         cpy.parentDOMElement_ = parentElement.domElement_;
         return cpy;
     }
