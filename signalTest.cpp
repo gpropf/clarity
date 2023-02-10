@@ -49,13 +49,7 @@ int main() {
     cl2::SignalBuilder sb = cl2::SignalBuilder();  //
     // sb = sb.withParentWebElement(capturedDiv);
 
-    // Creating two text fields.
-    // const auto srcTextInput = sb.textInput(
-    //     "srcTextInput", "Source field: type something here and it will appear in the next
-    //     field.");
-    // const auto dstTextInput = sb.textInput(
-    //     "dstTextInput",
-    //     "Destination field: Type something in the field above and it will be copied here.");
+    
 
     // Signal wrappers for the text fields.
     // auto srcTextInputWSO = make_shared<cl2::WebElementSignalObject<std::string>>(srcTextInput,
@@ -82,15 +76,14 @@ int main() {
 
     // Now we're going to create an SVG area and a circle within it. We will create range controls
     // to adjust the size and position of the circle.
-    const auto circle1CXRangeInput = sb.rangeInput("circle1CXRangeInput", "Circle center X value");
-    const auto circle1CYRangeInput = sb.rangeInput("circle1CYRangeInput", "Circle center Y value");
+    // const auto circle1CXRangeInput = 
+    // const auto circle1CYRangeInput = sb.rangeInput();
 
     // Signal wrappers for the controls.
-    auto circle1CXRangeInputWSO =
-        make_shared<cl2::WebElementSignalObject<std::string>>(circle1CXRangeInput, "value");
-    auto circle1CYRangeInputWSO =
-        make_shared<cl2::WebElementSignalObject<std::string>>(circle1CYRangeInput, "value");
-
+    auto circle1CXRangeInputWSO = sb.rangeInput<std::string>("circle1CXRangeInput", "Circle center X value");
+        //make_shared<cl2::WebElementSignalObject>(circle1CXRangeInput, "value");
+    auto circle1CYRangeInputWSO = sb.rangeInput<std::string>("circle1CYRangeInput", "Circle center Y value");
+        
     auto svg = cl2::SVG("svg1", 400, 300, getStrId(), generatedDiv.domElement_);
     svg.setAttributes({{"viewBox", val("0 0 100 100")}, {"style", val("border: 1px solid black")}});
 
@@ -121,35 +114,35 @@ int main() {
     auto strToNumTransformer = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
 
     // String to convert to a number.
-    const auto dblInput = sb.textInput("dblInput", "Enter a floating point number");
+    const auto dblInputWSO = sb.textInput<std::string>("dblInput", "Enter a floating point number", false);
 
     // We now create a signal wrapper for the input field and connect it to the conversion function.
-    auto dblInputWSO =
-        make_shared<cl2::WebElementSignalObject<std::string>>(dblInput, "value", false);
+    // auto dblInputWSO =
+    //     make_shared<cl2::WebElementSignalObject<std::string>>(dblInput, "value", false);
     dblInputWSO->setOutput(strToNumTransformer);
 
     // Here we're going back to our TestObj and creating a field that will allow the user to update
     // the string value it contains.
-    const auto testObjValTextInput = sb.textInput(
+    const auto testObjValTextInputWSO = sb.textInput<std::string>(
         "testObjValTextInput", "Enter a new value for the string stored in the TestObj.");
 
-    auto testObjValTextInputWSO =
-        make_shared<cl2::WebElementSignalObject<std::string>>(testObjValTextInput, "value", false);
+    // auto testObjValTextInputWSO =
+    //     make_shared<cl2::WebElementSignalObject<std::string>>(testObjValTextInput, "value", false);
     testObjValTextInputWSO->setOutput(testObjCSO);
     testObjCSO->setOutput(testObjValTextInputWSO);
 
     auto mergeFn = [](std::string s1, std::string s2) { return s1 + s2; };
     auto mergeSignal = make_shared<cl2::Merge<std::string, std::string, std::string>>(mergeFn);
 
-    const auto m1Input = sb.textInput("m1Input", "Enter the first value");
-    const auto m2Input = sb.textInput("m2Input", "Enter the second value");
-    const auto mergeOut = sb.textInput("mergeOut", "Output of merged signals goes here");
-    auto m1InputWSO =
-        make_shared<cl2::WebElementSignalObject<std::string>>(m1Input, "value", false);
-    auto m2InputWSO =
-        make_shared<cl2::WebElementSignalObject<std::string>>(m2Input, "value", false);
-    auto mergeOutWSO =
-        make_shared<cl2::WebElementSignalObject<std::string>>(mergeOut, "value", false);
+    const auto m1InputWSO = sb.textInput<std::string>("m1Input", "Enter the first value", false);
+    const auto m2InputWSO = sb.textInput<std::string>("m2Input", "Enter the second value", false);
+    const auto mergeOutWSO = sb.textInput<std::string>("mergeOut", "Output of merged signals goes here", false);
+    // auto m1InputWSO =
+    //     make_shared<cl2::WebElementSignalObject<std::string>>(m1Input, "value", false);
+    // auto m2InputWSO =
+    //     make_shared<cl2::WebElementSignalObject<std::string>>(m2Input, "value", false);
+    // auto mergeOutWSO =
+    //     make_shared<cl2::WebElementSignalObject<std::string>>(mergeOut, "value", false);
 
     m1InputWSO->setOutput(mergeSignal->getInput1());
     m2InputWSO->setOutput(mergeSignal->getInput2());

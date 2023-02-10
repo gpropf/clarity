@@ -17,7 +17,7 @@ class SignalBuilder {
 
    public:
     SignalBuilder(int startId = 0, bool labelAllInputs = true,
-                   bool labelsSwallowTheirReferents = true, val parentDOMElement = val::null())
+                  bool labelsSwallowTheirReferents = true, val parentDOMElement = val::null())
         : labelAllInputs_(labelAllInputs),
           labelsSwallowTheirReferents_(labelsSwallowTheirReferents),
           parentDOMElement_(parentDOMElement) {
@@ -28,26 +28,26 @@ class SignalBuilder {
         if (addBRAfterAllCalls_) BR(this->parentDOMElement_);
     }
 
-    SignalBuilder withParentDOMElement(val parentDOMElement) const & {
+    SignalBuilder withParentDOMElement(val parentDOMElement) const& {
         SignalBuilder cpy(*this);
         cpy.parentDOMElement_ = parentDOMElement;
         return cpy;
     }
 
     SignalBuilder withParentDOMElement(val parentDOMElement) && {
-        SignalBuilder cpy(std::move( *this));
+        SignalBuilder cpy(std::move(*this));
         cpy.parentDOMElement_ = parentDOMElement;
         return cpy;
     }
 
-    SignalBuilder withParentWebElement(const WebElement& parentElement) const & {
+    SignalBuilder withParentWebElement(const WebElement& parentElement) const& {
         SignalBuilder cpy(*this);
         cpy.parentDOMElement_ = parentElement.domElement_;
         return cpy;
     }
 
     SignalBuilder withParentWebElement(const WebElement& parentElement) && {
-        SignalBuilder cpy(std::move( *this));
+        SignalBuilder cpy(std::move(*this));
         cpy.parentDOMElement_ = parentElement.domElement_;
         return cpy;
     }
@@ -69,13 +69,14 @@ class SignalBuilder {
     }
 
     template <typename S>
-    shared_ptr<WebElementSignalObject<S>> textInput(const std::string& name, const std::string& labelText) {
+    shared_ptr<WebElementSignalObject<S>> textInput(const std::string& name,
+                                                    const std::string& labelText,
+                                                    bool emitInitialValue = true) {
         InputElement inp = textInput(name, labelText);
-        shared_ptr<WebElementSignalObject<S>> wso = make_shared<cl2::WebElementSignalObject<S>>(inp, "value");
+        shared_ptr<WebElementSignalObject<S>> wso =
+            make_shared<cl2::WebElementSignalObject<S>>(inp, "value", emitInitialValue);
         return wso;
     }
-
-    
 
     /**
      * @brief Make a range input
@@ -91,6 +92,16 @@ class SignalBuilder {
                                 parentDOMElement_);
         postCall();
         return inp;
+    }
+
+    template <typename S>
+    shared_ptr<WebElementSignalObject<S>> rangeInput(const std::string& name,
+                                                     const std::string& labelText,
+                                                     bool emitInitialValue = true) {
+        InputElement inp = rangeInput(name, labelText);
+        shared_ptr<WebElementSignalObject<S>> wso =
+            make_shared<cl2::WebElementSignalObject<S>>(inp, "value", emitInitialValue);
+        return wso;
     }
 
     Button button(const std::string& displayedText, val onClickFn) {
