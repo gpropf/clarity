@@ -84,10 +84,14 @@ class StoredSignal : public SignalObject<S> {
 
    public:
     StoredSignal(bool emitInitialValue) : emitInitialValue_(emitInitialValue) {}
+
     StoredSignal(S currentVal, bool emitInitialValue)
         : currentVal_(currentVal), emitInitialValue_(emitInitialValue) {}
+
     bool emitInitialValue() const { return emitInitialValue_; }
+
     void setCurrentVal(S newVal) { currentVal_ = newVal; }
+    
     S getCurrentVal() const { return currentVal_; }
 
     /**
@@ -142,7 +146,7 @@ class Tee : public SignalObject<S> {
 template <typename S, typename Sout>
 class CppLambda : public SignalObject<S> {
     std::function<Sout(S s)> lambda_;
-    SignalObject<Sout>* transformedOutput_;
+    shared_ptr<SignalObject<Sout>> transformedOutput_;
 
    public:
     CppLambda() {}
@@ -155,7 +159,7 @@ class CppLambda : public SignalObject<S> {
         return false;
     }
 
-    void setTransformedOutput(SignalObject<Sout>* sobj) { transformedOutput_ = sobj; }
+    void setTransformedOutput(shared_ptr<SignalObject<Sout>> sobj) { transformedOutput_ = sobj; }
 
     virtual void update() {}
 
@@ -175,8 +179,8 @@ class CppLambda : public SignalObject<S> {
  */
 template <typename inT1, typename inT2, typename outT>
 class Merge : public StoredSignal<outT> {
-    StoredSignal<inT2>* in2_ = nullptr;
-    StoredSignal<inT1>* in1_ = nullptr;
+    shared_ptr<StoredSignal<inT2>> in2_ = nullptr;
+    shared_ptr<StoredSignal<inT1>> in1_ = nullptr;
 
     std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
 
@@ -185,12 +189,12 @@ class Merge : public StoredSignal<outT> {
         mergeFn_ = mergeFn;
     }
 
-    StoredSignal<inT2>* getInput2() {
-        if (in2_ == nullptr) in2_ = new StoredSignal<inT2>(false);
+    shared_ptr<StoredSignal<inT2>> getInput2() {
+        if (in2_ == nullptr) in2_ = make_shared<StoredSignal<inT2>>(false);
         return in2_;
     }
-    StoredSignal<inT1>* getInput1() {
-        if (in1_ == nullptr) in1_ = new StoredSignal<inT1>(false);
+    shared_ptr<StoredSignal<inT1>> getInput1() {
+        if (in1_ == nullptr) in1_ = make_shared<StoredSignal<inT1>>(false);
         return in1_;
     }
 
