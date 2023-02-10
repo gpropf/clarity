@@ -46,13 +46,13 @@ int main() {
     auto generatedDiv = cl2::WebElement("div", "generatedDiv", getStrId());
 
     // We're now using the SignalBuilder factory objects to create our web content.
-    cl2::SignalBuilder eb = cl2::SignalBuilder();//
-    //eb = eb.withParentWebElement(capturedDiv);
+    cl2::SignalBuilder sb = cl2::SignalBuilder();//
+    //sb = sb.withParentWebElement(capturedDiv);
 
     // Creating two text fields.
-    const auto srcTextInput = eb.textInput(
+    const auto srcTextInput = sb.textInput(
         "srcTextInput", "Source field: type something here and it will appear in the next field.");
-    const auto dstTextInput = eb.textInput(
+    const auto dstTextInput = sb.textInput(
         "dstTextInput",
         "Destination field: Type something in the field above and it will be copied here.");
 
@@ -75,8 +75,8 @@ int main() {
 
     // Now we're going to create an SVG area and a circle within it. We will create range controls
     // to adjust the size and position of the circle.
-    const auto circle1CXRangeInput = eb.rangeInput("circle1CXRangeInput", "Circle center X value");
-    const auto circle1CYRangeInput = eb.rangeInput("circle1CYRangeInput", "Circle center Y value");
+    const auto circle1CXRangeInput = sb.rangeInput("circle1CXRangeInput", "Circle center X value");
+    const auto circle1CYRangeInput = sb.rangeInput("circle1CYRangeInput", "Circle center Y value");
 
     // Signal wrappers for the controls.
     auto circle1CXRangeInputWSO =
@@ -114,7 +114,7 @@ int main() {
     auto strToNumTransformer = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
 
     // String to convert to a number.
-    const auto dblInput = eb.textInput("dblInput", "Enter a floating point number");
+    const auto dblInput = sb.textInput("dblInput", "Enter a floating point number");
 
     // We now create a signal wrapper for the input field and connect it to the conversion function.
     auto dblInputWSO = make_shared<cl2::WebElementSignalObject<std::string>>(dblInput, "value", false);
@@ -122,7 +122,7 @@ int main() {
 
     // Here we're going back to our TestObj and creating a field that will allow the user to update
     // the string value it contains.
-    const auto testObjValTextInput = eb.textInput(
+    const auto testObjValTextInput = sb.textInput(
         "testObjValTextInput", "Enter a new value for the string stored in the TestObj.");
 
     auto testObjValTextInputWSO =
@@ -133,9 +133,9 @@ int main() {
     auto mergeFn = [](std::string s1, std::string s2) { return s1 + s2; };
     auto mergeSignal = make_shared<cl2::Merge<std::string, std::string, std::string>>(mergeFn);
 
-    const auto m1Input = eb.textInput("m1Input", "Enter the first value");
-    const auto m2Input = eb.textInput("m2Input", "Enter the second value");
-    const auto mergeOut = eb.textInput("mergeOut", "Output of merged signals goes here");
+    const auto m1Input = sb.textInput("m1Input", "Enter the first value");
+    const auto m2Input = sb.textInput("m2Input", "Enter the second value");
+    const auto mergeOut = sb.textInput("mergeOut", "Output of merged signals goes here");
     auto m1InputWSO = make_shared<cl2::WebElementSignalObject<std::string>>(m1Input, "value", false);
     auto m2InputWSO = make_shared<cl2::WebElementSignalObject<std::string>>(m2Input, "value", false);
     auto mergeOutWSO = make_shared<cl2::WebElementSignalObject<std::string>>(mergeOut, "value", false);
@@ -146,7 +146,7 @@ int main() {
     mergeOutWSO->setOutput(mergeSignal);
 
     val recomputeMergeFn = val::global("elgMergeRecompute")(val(*mergeSignal));
-    const auto mergeRecomputeButton = eb.button("Recompute", recomputeMergeFn);
+    const auto mergeRecomputeButton = sb.button("Recompute", recomputeMergeFn);
     //m1InputWSO->update();
     //mergeSignal->setOutput(consoleLogFSO);
 
