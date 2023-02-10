@@ -89,6 +89,15 @@ class StoredSignal : public SignalObject<S> {
     bool emitInitialValue() const { return emitInitialValue_; }
     void setCurrentVal(S newVal) { currentVal_ = newVal; }
     S getCurrentVal() const { return currentVal_; }
+
+    /**
+     * @brief Ignores the signal if the value hasn't changed. Stores the signal value in currentVal_
+     * otherwise.
+     *
+     * @param s
+     * @return true
+     * @return false
+     */
     virtual bool accept(const S& s) {
         if (s == currentVal_) return false;
         currentVal_ = s;
