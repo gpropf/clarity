@@ -29,7 +29,12 @@ class SignalBuilder {
         if (addBRAfterAllCalls_) BR(this->parentDOMElement_);
     }
 
-    void addElementToMap(const WebElement& wel) { elementMap_.insert({wel.getName(), &wel}); }
+    void addElementToMap(const WebElement& wel, const std::string& name) {
+        // std::string name = "foo";//wel.getName();
+        // std::string name = wel.domElement_.call<val>("getAttribute",
+        // val("name")).as<std::string>(); elementMap_[name] = &wel; 
+        elementMap_.insert({name, &wel});
+    }
 
     const WebElement* getElementByName(const std::string& name) {
         if (elementMap_.find(name) != elementMap_.end()) {
@@ -95,7 +100,7 @@ class SignalBuilder {
         const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, tm_.getNextStrId(),
                                 parentDOMElement_);
         postCall();
-        addElementToMap(inp);
+        addElementToMap(inp, name);
         return inp;
     }
 
