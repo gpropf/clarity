@@ -139,7 +139,8 @@ class StoredSignal : public SignalObject<S> {
         if (this->getOutput() == nullptr) return;
         if (!StoredSignal<S>::emitInitialValue()) return;
         //emit(getSignal());
-        StoredSignal<S>::emit(StoredSignal<S>::getSignal());
+        //StoredSignal<S>::emit(StoredSignal<S>::getSignal());
+        this->emit(this->getSignal());
     }
 
     virtual S getSignal() const { return currentVal_; };
