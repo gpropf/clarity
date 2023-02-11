@@ -110,6 +110,28 @@ class SignalBuilder {
         postCall();
         return btn;
     }
+
+    template <typename S>
+    void connect(shared_ptr<SignalObject<S>> s1, shared_ptr<SignalObject<S>> s2) {
+        s1->setOutput(s2);
+    }
+
+    template <typename S>
+    void connect(shared_ptr<Tee<S>> tee, shared_ptr<SignalObject<S>> s1,
+                 shared_ptr<SignalObject<S>> s2) {
+        // s1->setOutput(s2);
+        tee->setOutput(s1);
+        tee->setSecondOutput(s2);
+    }
+
+    template <typename inT1, typename inT2, typename outT>
+    void connect(shared_ptr<SignalObject<inT1>> s1, shared_ptr<SignalObject<inT2>> s2,
+                 shared_ptr<Merge<inT1, inT2, outT>> merge,
+                 shared_ptr<SignalObject<outT>> mergeOut = nullptr) {
+        s1->setOutput(merge->getInput1());
+        s2->setOutput(merge->getInput2());        
+        if (mergeOut != nullptr) merge->setOutput(mergeOut);
+    }
 };
 }  // namespace cl2
 #endif
