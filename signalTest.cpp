@@ -47,14 +47,9 @@ int main() {
 
     // We're now using the SignalBuilder factory objects to create our web content.
     cl2::SignalBuilder sb = cl2::SignalBuilder();  //
-    // sb = sb.withParentWebElement(capturedDiv);
-
-    // Signal wrappers for the text fields.
-    // auto srcTextInputWSO = make_shared<cl2::WebElementSignalObject<std::string>>(srcTextInput,
-    // "value");
+    
     auto srcTextInputWSO = sb.textInput<std::string>(
         "srcTextInput", "Source field: type something here and it will appear in the next field.");
-
     auto dstTextInputWSO = sb.textInput<std::string>(
         "dstTextInput",
         "Dest field: type something in the field above and it will be copied here.");
@@ -66,23 +61,16 @@ int main() {
     // A Tee allow us to send an output to two inputs.
     auto t1 = make_shared<cl2::Tee<std::string>>();
 
-    sb.connect<std::string>(t1, consoleLogFSO, dstTextInputWSO);
-
-    // t1->setOutput(consoleLogFSO);
-    // t1->setSecondOutput(dstTextInputWSO);
-
     // Our srcTextInputWSO message will go through the Tee to 2 places.
+    sb.connect<std::string>(t1, consoleLogFSO, dstTextInputWSO);    
     sb.connect<std::string>(srcTextInputWSO, t1);
 
     // Now we're going to create an SVG area and a circle within it. We will create range controls
     // to adjust the size and position of the circle.
-    // const auto circle1CXRangeInput =
-    // const auto circle1CYRangeInput = sb.rangeInput();
-
+    
     // Signal wrappers for the controls.
     auto circle1CXRangeInputWSO =
-        sb.rangeInput<std::string>("circle1CXRangeInput", "Circle center X value");
-    // make_shared<cl2::WebElementSignalObject>(circle1CXRangeInput, "value");
+        sb.rangeInput<std::string>("circle1CXRangeInput", "Circle center X value");    
     auto circle1CYRangeInputWSO =
         sb.rangeInput<std::string>("circle1CYRangeInput", "Circle center Y value");
 
@@ -119,19 +107,14 @@ int main() {
     const auto dblInputWSO =
         sb.textInput<std::string>("dblInput", "Enter a floating point number", false);
 
-    // We now create a signal wrapper for the input field and connect it to the conversion function.
-    // auto dblInputWSO =
-    //     make_shared<cl2::WebElementSignalObject<std::string>>(dblInput, "value", false);
+    // Connect the input field to the conversion function    
     sb.connect<std::string>(dblInputWSO, strToNumTransformer);
 
     // Here we're going back to our TestObj and creating a field that will allow the user to update
     // the string value it contains.
     const auto testObjValTextInputWSO = sb.textInput<std::string>(
         "testObjValTextInput", "Enter a new value for the string stored in the TestObj.");
-
-    // auto testObjValTextInputWSO =
-    //     make_shared<cl2::WebElementSignalObject<std::string>>(testObjValTextInput, "value",
-    //     false);
+    
     sb.connect<std::string>(testObjValTextInputWSO, testObjCSO);
     sb.connect<std::string>(testObjCSO, testObjValTextInputWSO);
 
@@ -142,25 +125,12 @@ int main() {
     const auto m2InputWSO = sb.textInput<std::string>("m2Input", "Enter the second value", false);
     const auto mergeOutWSO =
         sb.textInput<std::string>("mergeOut", "Output of merged signals goes here", false);
-    // auto m1InputWSO =
-    //     make_shared<cl2::WebElementSignalObject<std::string>>(m1Input, "value", false);
-    // auto m2InputWSO =
-    //     make_shared<cl2::WebElementSignalObject<std::string>>(m2Input, "value", false);
-    // auto mergeOutWSO =
-    //     make_shared<cl2::WebElementSignalObject<std::string>>(mergeOut, "value", false);
-
-    // m1InputWSO->setOutput(mergeSignal->getInput1());
-    // m2InputWSO->setOutput(mergeSignal->getInput2());
-    // mergeSignal->setOutput(mergeOutWSO);
-    // mergeOutWSO->setOutput(mergeSignal);
-
+    
     sb.connect<std::string, std::string, std::string>(m1InputWSO, m2InputWSO, mergeSignal, mergeOutWSO);
 
     val recomputeMergeFn = val::global("elgMergeRecompute")(val(*mergeSignal));
     const auto mergeRecomputeButton = sb.button("Recompute", recomputeMergeFn);
-    // m1InputWSO->update();
-    // mergeSignal->setOutput(consoleLogFSO);
-
+    
     return 0;
 }
 
