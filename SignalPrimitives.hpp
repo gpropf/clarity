@@ -133,7 +133,14 @@ class StoredSignal : public SignalObject<S> {
         return true;
     }
 
-    virtual void update() {}
+    //virtual void update() {}
+
+    virtual void update() {
+        if (this->getOutput() == nullptr) return;
+        if (!StoredSignal<S>::emitInitialValue()) return;
+        //emit(getSignal());
+        StoredSignal<S>::emit(StoredSignal<S>::getSignal());
+    }
 
     virtual S getSignal() const { return currentVal_; };
 };
@@ -291,11 +298,11 @@ class Merge : public StoredSignal<outT>,
         return recompute();
     }
 
-    virtual void update() {
-        if (this->getOutput() == nullptr) return;
-        if (!StoredSignal<outT>::emitInitialValue()) return;
-        StoredSignal<outT>::emit(StoredSignal<outT>::getSignal());
-    }
+    // virtual void update() {
+    //     if (this->getOutput() == nullptr) return;
+    //     if (!StoredSignal<outT>::emitInitialValue()) return;
+    //     StoredSignal<outT>::emit(StoredSignal<outT>::getSignal());
+    // }
 };
 
 /**
@@ -317,11 +324,11 @@ class CppObjectSignalObject : public StoredSignal<S> {
         obj_ = make_shared<ObjT>(obj);
     }
 
-    virtual void update() {
-        if (this->getOutput() == nullptr) return;
-        if (!StoredSignal<S>::emitInitialValue()) return;
-        emit(getSignal());
-    }
+    // virtual void update() {
+    //     if (this->getOutput() == nullptr) return;
+    //     if (!StoredSignal<S>::emitInitialValue()) return;
+    //     emit(getSignal());
+    // }
 
     virtual void emit(const S& s) const { SignalObject<S>::emit(s); }
 
