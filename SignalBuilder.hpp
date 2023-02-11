@@ -14,6 +14,7 @@ class SignalBuilder {
     bool labelsSwallowTheirReferents_ = true;
     bool addBRAfterAllCalls_ = true;
     val parentDOMElement_ = val::null();
+    std::map<const std::string, const WebElement*> elementMap_;
 
    public:
     SignalBuilder(int startId = 0, bool labelAllInputs = true,
@@ -26,6 +27,26 @@ class SignalBuilder {
 
     void postCall() {
         if (addBRAfterAllCalls_) BR(this->parentDOMElement_);
+    }
+
+    void addElementToMap(const WebElement& wel) {
+        elementMap_.insert({wel.getName(), &wel});
+    }
+
+    const WebElement* getElementByName(const std::string& name) {
+        if (elementMap_.find(name)!=elementMap_.end()) {
+            return elementMap_[name];
+        }
+        return nullptr;
+    }
+
+    template <typename S>
+    shared_ptr<WebElementSignalObject<S>> attributeSignal(WebElement& wel,
+                                                          const std::string& attributeName,
+                                                          bool emitInitialValue = true) {
+        shared_ptr<WebElementSignalObject<S>> aso =
+            make_shared<cl2::WebElementSignalObject<S>>(wel, attributeName, emitInitialValue);
+        return aso;
     }
 
     SignalBuilder withParentDOMElement(val parentDOMElement) const& {
@@ -65,6 +86,7 @@ class SignalBuilder {
         const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, tm_.getNextStrId(),
                                 parentDOMElement_);
         postCall();
+        addElementToMap(inp);
         return inp;
     }
 
@@ -109,7 +131,7 @@ class SignalBuilder {
             Button(displayedText, displayedText, onClickFn, tm_.getNextStrId(), parentDOMElement_);
         postCall();
         return btn;
-    }
+    }   
 
     /**
      * @brief Connect the signals from left to right
