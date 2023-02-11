@@ -39,7 +39,7 @@ class SignalBuilder {
     }
 
     template <typename S>
-    shared_ptr<WebElementSignalObject<S>> attributeSignal(WebElement& wel,
+    shared_ptr<WebElementSignalObject<S>> attributeSignal(const WebElement& wel,
                                                           const std::string& attributeName,
                                                           bool emitInitialValue = true) {
         shared_ptr<WebElementSignalObject<S>> aso =
