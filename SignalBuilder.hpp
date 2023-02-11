@@ -32,7 +32,7 @@ class SignalBuilder {
     void addElementToMap(const WebElement& wel, const std::string& name) {
         // std::string name = "foo";//wel.getName();
         // std::string name = wel.domElement_.call<val>("getAttribute",
-        // val("name")).as<std::string>(); elementMap_[name] = &wel; 
+        // val("name")).as<std::string>(); elementMap_[name] = &wel;
         elementMap_.insert({name, &wel});
     }
 
@@ -173,6 +173,20 @@ class SignalBuilder {
         // s1->setOutput(s2);
         tee->setOutput(s1);
         tee->setSecondOutput(s2);
+    }
+
+    template <typename S>
+    void connect(shared_ptr<MultiTee<S>> tee, shared_ptr<SignalObject<S>> s1,
+                 shared_ptr<SignalObject<S>> s2, shared_ptr<SignalObject<S>> s3 = nullptr,
+                 shared_ptr<SignalObject<S>> s4 = nullptr, shared_ptr<SignalObject<S>> s5 = nullptr,
+                 shared_ptr<SignalObject<S>> s6 = nullptr) {
+        // s1->setOutput(s2);
+        tee->setOutput(s1);
+        tee->addOutput(s2);
+        if (s3 != nullptr) tee->addOutput(s3);
+        if (s4 != nullptr) tee->addOutput(s4);
+        if (s5 != nullptr) tee->addOutput(s5);
+        if (s6 != nullptr) tee->addOutput(s6);
     }
 
     /**

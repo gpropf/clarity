@@ -133,13 +133,13 @@ class StoredSignal : public SignalObject<S> {
         return true;
     }
 
-    //virtual void update() {}
+    // virtual void update() {}
 
     virtual void update() {
         if (this->getOutput() == nullptr) return;
         if (!StoredSignal<S>::emitInitialValue()) return;
-        //emit(getSignal());
-        //StoredSignal<S>::emit(StoredSignal<S>::getSignal());
+        // emit(getSignal());
+        // StoredSignal<S>::emit(StoredSignal<S>::getSignal());
         this->emit(this->getSignal());
     }
 
@@ -173,6 +173,34 @@ class Tee : public SignalObject<S> {
 
     virtual ~Tee() {
         // cout << "Destroying Tee\n";
+    }
+};
+
+template <typename S>
+class MultiTee : public SignalObject<S> {
+    std::vector<shared_ptr<SignalObject<S>>> outputs_;
+
+   public:
+    MultiTee() {}
+
+    void addOutput(shared_ptr<SignalObject<S>> output) {
+        outputs_.push_back(output);
+        this->update();
+    }
+
+    virtual bool accept(const S& s) {
+        SignalObject<S>::emit(s);
+        bool allAccepted = true;
+        for (auto output : outputs_) {
+            allAccepted = allAccepted & output->accept(s);
+        }
+        return allAccepted;
+    }
+
+    virtual void update() {}
+
+    virtual ~MultiTee() {
+        // cout << "Destroying MultiTee\n";
     }
 };
 
