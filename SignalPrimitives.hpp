@@ -100,7 +100,7 @@ class SignalObject {
 template <typename S>
 class StoredSignal : public SignalObject<S> {
     S currentVal_;
-    const bool emitInitialValue_;
+    bool emitInitialValue_;
 
    public:
     StoredSignal(bool emitInitialValue) : emitInitialValue_(emitInitialValue) {}
@@ -109,6 +109,8 @@ class StoredSignal : public SignalObject<S> {
         : currentVal_(currentVal), emitInitialValue_(emitInitialValue) {}
 
     bool emitInitialValue() const { return emitInitialValue_; }
+
+    void setEmitInitialValue(bool emitInitialValue) { emitInitialValue_ = emitInitialValue; }
 
     void setCurrentVal(S newVal) { currentVal_ = newVal; }
 
@@ -212,7 +214,8 @@ class Merge : public StoredSignal<outT>,
     std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
 
    public:
-    Merge(std::function<outT(inT1 in1, inT2 in2)> mergeFn) : StoredSignal<outT>(false) {
+    Merge(std::function<outT(inT1 in1, inT2 in2)> mergeFn, bool emitInitialValue = false)
+        : StoredSignal<outT>(emitInitialValue) {
         mergeFn_ = mergeFn;
     }
 
@@ -262,10 +265,12 @@ class Merge : public StoredSignal<outT>,
      */
     bool recompute() {
         if (in2_ && in1_) {
+            cout << "BOTH INPUTS ARE LIVE" << endl;
             inT2 s2 = in2_->getSignal();
             inT1 s1 = in1_->getSignal();
             this->setCurrentVal(mergeFn_(s1, s2));
             if (this->getOutput()) {
+                cout << "MERGE OUTPUT IS LIVE" << endl;
                 this->emit(this->getCurrentVal());
             }
             return true;
@@ -286,7 +291,11 @@ class Merge : public StoredSignal<outT>,
         return recompute();
     }
 
-    virtual void update() {}
+    virtual void update() {
+        if (this->getOutput() == nullptr) return;
+        if (!StoredSignal<outT>::emitInitialValue()) return;
+        StoredSignal<outT>::emit(StoredSignal<outT>::getSignal());
+    }
 };
 
 /**

@@ -38,6 +38,10 @@ class WebElementSignalObject : public StoredSignal<S> {
    public:
     virtual void emit(const S& s) { SignalObject<S>::emit(s); }
 
+    shared_ptr<WebElement> getWebElement() const {
+        return wptr_;
+    }
+
     WebElementSignalObject(const WebElement& wptr, const std::string& boundField,
                            bool emitInitialValue = true)
         : StoredSignal<S>(emitInitialValue) {
