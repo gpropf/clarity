@@ -74,5 +74,17 @@ function elgMergeRecompute(mergeSO) {
     };
 }
 
+/**
+ * 
+ * @param {bound C++ object} obj 
+ * @param {string} objMethodName 
+ * @returns whatever the named method returns
+ */
+function callMethodByName(obj, objMethodName) {        
+    var fn = obj[objMethodName];
+    if (typeof fn === "function") {
+        return fn.apply(obj);
+    }
+}
 
 window.WebElement = WebElement
