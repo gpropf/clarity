@@ -237,6 +237,42 @@ class Tee : public SignalObject<S> {
     }
 };
 
+
+template <typename S>
+class MultiFork : public SignalAcceptor<S> {
+    std::vector<shared_ptr<SignalAcceptor<S>>> outputs_;
+
+   public:
+    MultiFork() {}
+
+    void addOutput(shared_ptr<SignalAcceptor<S>> output) {
+        outputs_.push_back(output);
+        this->update();
+    }
+
+    virtual bool accept(const S& s) {
+        //SignalObject<S>::emit(s);
+        bool allAccepted = true;
+        for (auto output : outputs_) {
+            allAccepted = allAccepted & output->accept(s);
+        }
+        return allAccepted;
+    }
+
+    virtual void update() {}
+
+    virtual ~MultiFork() {
+        // cout << "Destroying MultiFork\n";
+    }
+};
+
+
+
+
+
+
+
+
 template <typename S>
 class MultiTee : public SignalObject<S> {
     std::vector<shared_ptr<SignalObject<S>>> outputs_;
