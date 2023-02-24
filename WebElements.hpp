@@ -30,6 +30,8 @@ struct WebElement {
 
     val getId() const { return domElement_["id"]; }
 
+    val getDomElement() const { return domElement_; }
+
     std::string getName() const {
         return domElement_.call<val>("getAttribute", val("name")).as<std::string>();
     }

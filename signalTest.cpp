@@ -102,10 +102,19 @@ int main() {
 
     // We now place our lambda in the core of the CppLambda signal wrapper.
     auto strToNumTransformer = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
+    auto strToNumTransformerSS = make_shared<cl2::CppLambdaSS<std::string, double>>(str2DblFn);
 
     // String to convert to a number.
     const auto dblInputWSO =
         sb.textInput<std::string>("dblInput", "Enter a floating point number", false);
+
+    
+    InputElement dblInput = InputElement("input", "dblInput", "text", "ss1");
+    val dblInputDE = dblInput.getDomElement();
+    auto dblInputELE = make_shared<EventListenerEmitter<std::string>>(dblInputDE, "change");
+
+    dblInputELE->setOutput(strToNumTransformerSS);
+    dblInputELE->update();
 
     // Connect the input field to the conversion function    
     sb.connect<std::string>(dblInputWSO, strToNumTransformer);
@@ -145,4 +154,8 @@ EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
 
     emscripten::class_<cl2::Merge<std::string, std::string, std::string>>("Merge").function(
         "recompute", &cl2::Merge<std::string, std::string, std::string>::recompute);
+
+    emscripten::class_<cl2::EventListenerEmitter<std::string>>("EventListenerEmitter")
+        .function("emit", &cl2::EventListenerEmitter<std::string>::emit,
+                  emscripten::allow_raw_pointers());
 }

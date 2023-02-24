@@ -38,9 +38,7 @@ class WebElementSignalObject : public StoredSignal<S> {
    public:
     virtual void emit(const S& s) { SignalObject<S>::emit(s); }
 
-    shared_ptr<WebElement> getWebElement() const {
-        return wptr_;
-    }
+    shared_ptr<WebElement> getWebElement() const { return wptr_; }
 
     WebElementSignalObject(const WebElement& wptr, const std::string& boundField,
                            bool emitInitialValue = true)
@@ -55,12 +53,16 @@ class WebElementSignalObject : public StoredSignal<S> {
      *
      */
     virtual void update() {
-        if (this->getOutput() == nullptr) return;        
-        if (wptr_->domElement_["type"] == val("range")) {eventListenerName_ = "input"; }
+        if (this->getOutput() == nullptr) return;
+        if (wptr_->domElement_["type"] == val("range")) {
+            eventListenerName_ = "input";
+        }
         val elgEmitFn = val::global("elgEmitFn");
-        wptr_->domElement_.call<void>("removeEventListener", val(eventListenerName_), changeListenerFn_);
+        wptr_->domElement_.call<void>("removeEventListener", val(eventListenerName_),
+                                      changeListenerFn_);
         changeListenerFn_ = elgEmitFn(*this);
-        wptr_->domElement_.call<void>("addEventListener", val(eventListenerName_), changeListenerFn_);
+        wptr_->domElement_.call<void>("addEventListener", val(eventListenerName_),
+                                      changeListenerFn_);
         if (!StoredSignal<S>::emitInitialValue()) return;
         cout << "Getting initial value for id = " << wptr_->getId().as<std::string>() << endl;
         // const S initialVal = wptr_->domElement_.call<val>("getAttribute",
@@ -88,6 +90,39 @@ class WebElementSignalObject : public StoredSignal<S> {
     }
 
     virtual ~WebElementSignalObject() {  // cout << "Destroying WebElementSignalObject\n";
+    }
+};
+
+/**
+ * @brief A signal originating in an event listener.
+ *
+ * @tparam S data type of signal, e.g. string, int, double, etc...
+ */
+template <typename S>
+class EventListenerEmitter : public SignalEmitter<S> {
+    // shared_ptr<val> eventListener_ = nullptr;
+    val domElement_;
+    std::string eventListenerName_;
+
+   public:
+    // shared_ptr<Signal<S>> getOutput() const { return output_; }
+    EventListenerEmitter(val domElement, const std::string& eventListenerName)
+        : domElement_(domElement), eventListenerName_(eventListenerName) {}
+
+    virtual void update() {
+        val elgEmitFn = val::global("elgEmitFn");
+        val eventListenerFn = elgEmitFn(*this);
+        domElement_.call<void>("removeEventListener", val(eventListenerName_), eventListenerFn);
+        domElement_.call<void>("addEventListener", val(eventListenerName_), eventListenerFn);
+    }
+
+    virtual void emit(const S& s) const {
+        cout << "EventListenerEmitter::emit called!" << endl;
+        SignalEmitter<S>::emit(s);
+    }
+
+    virtual ~EventListenerEmitter() {
+        // cout << "Destroying SignalObject\n";
     }
 };
 

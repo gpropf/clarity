@@ -54,6 +54,7 @@ function testListenerFn(ev) {
 function elgEmitFn(webElementSignalObject) {
     return function (ev) {
         let text = ev.target.value;
+        console.log("elgEmitFn generated fn called. Emitting signal: " + text);
         webElementSignalObject.emit(text);
     };
 }

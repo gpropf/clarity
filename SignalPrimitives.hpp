@@ -89,7 +89,8 @@ class SignalObject : public Signal<S> {
 };
 
 template <typename S>
-class SignalAcceptor; // Forward declaration so we can refer to this class in the SignalEmitter class.
+class SignalAcceptor;  // Forward declaration so we can refer to this class in the SignalEmitter
+                       // class.
 
 /**
  * @brief Base class representing something that can emit signals.
@@ -97,14 +98,14 @@ class SignalAcceptor; // Forward declaration so we can refer to this class in th
  * @tparam S data type of signal, e.g. string, int, double, etc...
  */
 template <typename S>
-class SignalEmitter : public Signal<S> {    
-
+class SignalEmitter : public Signal<S> {
+   protected:
     shared_ptr<SignalAcceptor<S>> output_ = nullptr;
 
    public:
-    shared_ptr<Signal<S>> getOutput() const { return output_; }
+    shared_ptr<SignalAcceptor<S>> getOutput() const { return output_; }
 
-    void setOutput(shared_ptr<Signal<S>> sobj) {
+    void setOutput(shared_ptr<SignalAcceptor<S>> sobj) {
         output_ = sobj;
         this->update();
     }
@@ -115,7 +116,12 @@ class SignalEmitter : public Signal<S> {
      * @param s
      */
     virtual void emit(const S& s) const {
-        if (output_ != nullptr) output_->accept(s);
+        if (output_ != nullptr) {
+            cout << "SignalEmitter::emit called" << endl;
+            output_->accept(s);
+        } else {
+            cout << "SignalEmitter::emit called but OUTPUT NOT SET!" << endl;
+        }
     }
 
     virtual ~SignalEmitter() {
@@ -237,7 +243,11 @@ class Tee : public SignalObject<S> {
     }
 };
 
-
+/**
+ * @brief Uses the new split-style signals
+ *
+ * @tparam S
+ */
 template <typename S>
 class MultiFork : public SignalAcceptor<S> {
     std::vector<shared_ptr<SignalAcceptor<S>>> outputs_;
@@ -251,7 +261,7 @@ class MultiFork : public SignalAcceptor<S> {
     }
 
     virtual bool accept(const S& s) {
-        //SignalObject<S>::emit(s);
+        // SignalObject<S>::emit(s);
         bool allAccepted = true;
         for (auto output : outputs_) {
             allAccepted = allAccepted & output->accept(s);
@@ -265,13 +275,6 @@ class MultiFork : public SignalAcceptor<S> {
         // cout << "Destroying MultiFork\n";
     }
 };
-
-
-
-
-
-
-
 
 template <typename S>
 class MultiTee : public SignalObject<S> {
@@ -323,6 +326,31 @@ class CppLambda : public SignalObject<S> {
 
     virtual ~CppLambda() {
         // cout << "Destroying CppLambda\n";
+    }
+};
+
+template <typename S, typename Sout>
+class CppLambdaSS : public SignalAcceptor<S>, public SignalEmitter<Sout> {
+    std::function<Sout(S s)> lambda_;
+
+   public:
+    CppLambdaSS() {}
+
+    CppLambdaSS(std::function<Sout(S s)> lambda) : lambda_(lambda) {}
+
+    virtual bool accept(const S& s) {
+        Sout sOut = lambda_(s);
+        cout << "OUTPUT of CppLambdaSS: " << sOut << endl;
+        if (this->output_ != nullptr) return this->output_->accept(sOut);
+        return false;
+    }
+
+    // void setTransformedOutput(shared_ptr<SignalObject<Sout>> sobj) { transformedOutput_ = sobj; }
+
+    virtual void update() {}
+
+    virtual ~CppLambdaSS() {
+        // cout << "Destroying CppLambdaSS\n";
     }
 };
 

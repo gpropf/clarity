@@ -147,6 +147,11 @@ class SignalBuilder {
         return btn;
     }
 
+    // template <typename S>
+    // void connect(shared_ptr<SignalObject<S>> s1, shared_ptr<SignalAcceptor<S>> s2) {
+    //     s1->setOutput(s2);
+    // }
+
     /**
      * @brief Connect the signals from left to right
      *
