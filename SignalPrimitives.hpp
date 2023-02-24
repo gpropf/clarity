@@ -38,8 +38,18 @@ class Signal {
     shared_ptr<Signal> getParent() const { return parent_; }
 
     void setParent(shared_ptr<Signal> parent) { parent_ = parent; }
-};
 
+    /**
+     * @brief Sometimes it is necessary to hold off certain tasks until the object is fully set up.
+     * JS event handlers in particular need to see the completed object in order to work properly
+     * when they fire. This method must be called once a `SignalObject` has all of its inputs and
+     * outputs set up. If the object is modified this should be called again. It is meant to be
+     * idempotent so it's important to clean up any event listeners or other things that are set
+     * here on second and subsequent calls.
+     *
+     */
+    virtual void update() = 0;
+};
 
 /**
  * @brief Base class representing something that can send or receive signals.
@@ -59,8 +69,8 @@ class SignalObject : public Signal<S> {
 
     void setOutput(shared_ptr<SignalObject> sobj) {
         output_ = sobj;
-        update();
-    }    
+        this->update();
+    }
 
     /**
      * @brief Send the signal to the output.
@@ -71,27 +81,15 @@ class SignalObject : public Signal<S> {
         if (output_ != nullptr) output_->accept(s);
     }
 
-    virtual bool accept(const S& s) = 0;        
-
-    /**
-     * @brief Sometimes it is necessary to hold off certain tasks until the object is fully set up.
-     * JS event handlers in particular need to see the completed object in order to work properly
-     * when they fire. This method must be called once a `SignalObject` has all of its inputs and
-     * outputs set up. If the object is modified this should be called again. It is meant to be
-     * idempotent so it's important to clean up any event listeners or other things that are set
-     * here on second and subsequent calls.
-     *
-     */
-    virtual void update() = 0;
+    virtual bool accept(const S& s) = 0;
 
     virtual ~SignalObject() {
         // cout << "Destroying SignalObject\n";
     }
 };
 
-
-
-
+template <typename S>
+class SignalAcceptor; // Forward declaration so we can refer to this class in the SignalEmitter class.
 
 /**
  * @brief Base class representing something that can emit signals.
@@ -99,20 +97,17 @@ class SignalObject : public Signal<S> {
  * @tparam S data type of signal, e.g. string, int, double, etc...
  */
 template <typename S>
-class SignalOutput : public Signal<S> {
-    // It does seem necessary to set these to nullptr if we want to test for lack of initialization
-    // later.
+class SignalEmitter : public Signal<S> {    
 
-    shared_ptr<Signal> output_ = nullptr;
-    
+    shared_ptr<SignalAcceptor<S>> output_ = nullptr;
 
    public:
-    shared_ptr<SignalObject> getOutput() const { return output_; }
+    shared_ptr<Signal<S>> getOutput() const { return output_; }
 
-    void setOutput(shared_ptr<Signal> sobj) {
+    void setOutput(shared_ptr<Signal<S>> sobj) {
         output_ = sobj;
-        update();
-    }    
+        this->update();
+    }
 
     /**
      * @brief Send the signal to the output.
@@ -123,20 +118,34 @@ class SignalOutput : public Signal<S> {
         if (output_ != nullptr) output_->accept(s);
     }
 
-    //virtual bool accept(const S& s) = 0;        
+    virtual ~SignalEmitter() {
+        // cout << "Destroying SignalObject\n";
+    }
+};
 
-    /**
-     * @brief Sometimes it is necessary to hold off certain tasks until the object is fully set up.
-     * JS event handlers in particular need to see the completed object in order to work properly
-     * when they fire. This method must be called once a `SignalObject` has all of its inputs and
-     * outputs set up. If the object is modified this should be called again. It is meant to be
-     * idempotent so it's important to clean up any event listeners or other things that are set
-     * here on second and subsequent calls.
-     *
-     */
-    virtual void update() = 0;
+/**
+ * @brief Base class representing something that can emit signals.
+ *
+ * @tparam S data type of signal, e.g. string, int, double, etc...
+ */
+template <typename S>
+class SignalAcceptor : public Signal<S> {
+    // It does seem necessary to set these to nullptr if we want to test for lack of initialization
+    // later.
 
-    virtual ~SignalOutput() {
+    shared_ptr<SignalEmitter<S>> input_ = nullptr;
+
+   public:
+    shared_ptr<Signal<S>> getInput() const { return input_; }
+
+    void setInput(shared_ptr<Signal<S>> sobj) {
+        input_ = sobj;
+        this->update();
+    }
+
+    virtual bool accept(const S& s) = 0;
+
+    virtual ~SignalAcceptor() {
         // cout << "Destroying SignalObject\n";
     }
 };
