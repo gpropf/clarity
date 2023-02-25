@@ -73,12 +73,12 @@ int main() {
         "WSS: MFork Dest field 4.");
 
 auto mfork1 = make_shared<MultiFork<std::string>>();
-    //sb.connect<std::string>(srcTextInputWSS, dstTextInputWSS);
-    sb.connect<std::string>(srcTextInputWSS, mfork1);
+    sb.connect<std::string>(srcTextInputWSS, dstTextInputWSS);
+    sb.connect<std::string>(dstTextInputWSS, mfork1);
     mfork1->addOutput(dstTextInputWSS2);
     mfork1->addOutput(dstTextInputWSS3);
     mfork1->addOutput(dstTextInputWSS4);
-    mfork1->addOutput(dstTextInputWSS);
+    //mfork1->addOutput(dstTextInputWSS);
     
 
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.

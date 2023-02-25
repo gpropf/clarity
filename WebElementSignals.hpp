@@ -146,6 +146,10 @@ class WebElementSignalObjectSS : public SignalAcceptor<S>, public SignalEmitter<
      * fields. I'm not sure if 'value' is the only such exception and calling both methods doesn't
      * seem to hurt anything but this is clearly a kludge.
      *
+     * Setting the bound field does not seem to trigger the event listener that in turn calls the
+     * emit() method, thus we force it here so that a signal is passed on through to the next
+     * link in the chain when a signal comes in.
+     *
      * @param s
      */
     virtual bool accept(const S& s) {
@@ -154,6 +158,8 @@ class WebElementSignalObjectSS : public SignalAcceptor<S>, public SignalEmitter<
         // if (!storedSignalAccepts) return false;
         wptr_->domElement_.set(boundField_, val(s));
         wptr_->domElement_.call<void>("setAttribute", val(boundField_), val(s));
+
+        this->emit(s);
         return true;
     }
 };
