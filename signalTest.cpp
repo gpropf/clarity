@@ -48,11 +48,11 @@ int main() {
     // We're now using the SignalBuilder factory objects to create our web content.
     cl2::SignalBuilder sb = cl2::SignalBuilder();  //
     
-    auto srcTextInputWSO = sb.textInput<std::string>(
-        "srcTextInput", "Source field: type something here and it will appear in the next field.");
-    auto dstTextInputWSO = sb.textInput<std::string>(
-        "dstTextInput",
-        "Dest field: type something in the field above and it will be copied here.");
+    // auto srcTextInputWSO = sb.textInput<std::string>(
+    //     "srcTextInput", "Source field: type something here and it will appear in the next field.");
+    // auto dstTextInputWSO = sb.textInput<std::string>(
+    //     "dstTextInput",
+    //     "Dest field: type something in the field above and it will be copied here.");
 
 
     auto srcTextInputWSS = sb.textInputWSS<std::string>(
@@ -71,17 +71,17 @@ int main() {
     auto t1 = make_shared<cl2::Tee<std::string>>();
 
     // Our srcTextInputWSO message will go through the Tee to 2 places.
-    sb.connect<std::string>(t1, consoleLogFSO, dstTextInputWSO);    
-    sb.connect<std::string>(srcTextInputWSO, t1);
+    // sb.connect<std::string>(t1, consoleLogFSO, dstTextInputWSO);    
+    // sb.connect<std::string>(srcTextInputWSO, t1);
 
     // Now we're going to create an SVG area and a circle within it. We will create range controls
     // to adjust the size and position of the circle.
     
     // Signal wrappers for the controls.
     auto circle1CXRangeInputWSO =
-        sb.rangeInput<std::string>("circle1CXRangeInput", "Circle center X value");    
+        sb.rangeInputWSS<std::string>("circle1CXRangeInput", "Circle center X value");    
     auto circle1CYRangeInputWSO =
-        sb.rangeInput<std::string>("circle1CYRangeInput", "Circle center Y value");
+        sb.rangeInputWSS<std::string>("circle1CYRangeInput", "Circle center Y value");
 
     auto svg = cl2::SVG("svg1", 400, 300, getStrId(), generatedDiv.domElement_);
     svg.setAttributes({{"viewBox", val("0 0 100 100")}, {"style", val("border: 1px solid black")}});
@@ -93,8 +93,8 @@ int main() {
     circle1.domElement_.call<void>("setAttribute", val("fill"), val("#ff0000"));
 
     // Now we need signal wrappers to connect to various attributes of the circle.
-    auto circle1CXWSO = make_shared<cl2::WebElementSignalObject<std::string>>(circle1, "cx");
-    auto circle1CYWSO = make_shared<cl2::WebElementSignalObject<std::string>>(circle1, "cy");
+    auto circle1CXWSO = make_shared<cl2::WebElementSignalObjectSS<std::string>>(circle1, "cx");
+    auto circle1CYWSO = make_shared<cl2::WebElementSignalObjectSS<std::string>>(circle1, "cy");
 
     // Now the range controls are connected to the circle attributes.
     sb.connect<std::string>(circle1CXRangeInputWSO, circle1CXWSO);
@@ -123,7 +123,7 @@ int main() {
     // auto dblInputELE = make_shared<EventListenerEmitter<std::string>>(dblInputDE, "change");
 
     auto dblInputELE =
-        sb.textInputSS<std::string>("dblInput", "Enter a floating point number", false);
+        sb.textInputELE<std::string>("dblInput", "Enter a floating point number", false);
 
     //dblInputELE->setOutput(strToNumTransformerSS);
     //dblInputELE->update();

@@ -115,7 +115,7 @@ class SignalBuilder {
     }
 
     template <typename S>
-    shared_ptr<EventListenerEmitter<S>> textInputSS(const std::string& name,
+    shared_ptr<EventListenerEmitter<S>> textInputELE(const std::string& name,
                                                   const std::string& labelText,
                                                   bool emitInitialValue = true) {
         InputElement inp = textInput(name, labelText);
@@ -165,6 +165,18 @@ class SignalBuilder {
             make_shared<cl2::WebElementSignalObject<S>>(inp, "value", emitInitialValue);
         return wso;
     }
+
+    template <typename S>
+    shared_ptr<WebElementSignalObjectSS<S>> rangeInputWSS(const std::string& name,
+                                                    const std::string& labelText,
+                                                    bool emitInitialValue = true) {
+        InputElement inp = rangeInput(name, labelText);
+        shared_ptr<WebElementSignalObjectSS<S>> wso =
+            make_shared<WebElementSignalObjectSS<S>>(inp, "value", emitInitialValue);
+        return wso;
+    }
+
+
 
     Button button(const std::string& displayedText, val onClickFn) {
         Button btn =
