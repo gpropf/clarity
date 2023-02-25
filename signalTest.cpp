@@ -61,7 +61,25 @@ int main() {
         "dstTextInput",
         "WSS: Dest field: type something in the field above and it will be copied here.");
 
-    sb.connect<std::string>(srcTextInputWSS, dstTextInputWSS);
+
+        auto dstTextInputWSS2 = sb.textInputWSS<std::string>(
+        "dstTextInputWSS2",
+        "WSS: MFork Dest field 2.");
+        auto dstTextInputWSS3 = sb.textInputWSS<std::string>(
+        "dstTextInputWSS3",
+        "WSS: MFork Dest field 3.");
+        auto dstTextInputWSS4 = sb.textInputWSS<std::string>(
+        "dstTextInputWSS4",
+        "WSS: MFork Dest field 4.");
+
+auto mfork1 = make_shared<MultiFork<std::string>>();
+    //sb.connect<std::string>(srcTextInputWSS, dstTextInputWSS);
+    sb.connect<std::string>(srcTextInputWSS, mfork1);
+    mfork1->addOutput(dstTextInputWSS2);
+    mfork1->addOutput(dstTextInputWSS3);
+    mfork1->addOutput(dstTextInputWSS4);
+    mfork1->addOutput(dstTextInputWSS);
+    
 
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
     const val logFn = val::global("logStuff");
@@ -69,6 +87,8 @@ int main() {
 
     // A Tee allow us to send an output to two inputs.
     auto t1 = make_shared<cl2::Tee<std::string>>();
+    
+    
 
     // Our srcTextInputWSO message will go through the Tee to 2 places.
     // sb.connect<std::string>(t1, consoleLogFSO, dstTextInputWSO);    
