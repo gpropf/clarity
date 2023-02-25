@@ -130,6 +130,16 @@ class SignalBuilder {
         return wso;
     }
 
+    template <typename S>
+    shared_ptr<WebElementSignalObjectSS<S>> textInputWSS(const std::string& name,
+                                                    const std::string& labelText,
+                                                    bool emitInitialValue = true) {
+        InputElement inp = textInput(name, labelText);
+        shared_ptr<WebElementSignalObjectSS<S>> wso =
+            make_shared<WebElementSignalObjectSS<S>>(inp, "value", emitInitialValue);
+        return wso;
+    }
+
     /**
      * @brief Make a range input
      *

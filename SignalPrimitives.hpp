@@ -23,6 +23,9 @@ template <typename S>
 class Signal {
     shared_ptr<Signal> parent_ = nullptr;
 
+   protected:
+    S currentValue_;
+
    public:
     /**
      * @brief This is a fairly crude message passing system that exists to alert the parent of a
@@ -77,7 +80,7 @@ class SignalObject : public Signal<S> {
      *
      * @param s
      */
-    virtual void emit(const S& s) const {
+    virtual void emit(const S& s) {
         if (output_ != nullptr) output_->accept(s);
     }
 
@@ -101,6 +104,7 @@ template <typename S>
 class SignalEmitter : public Signal<S> {
    protected:
     shared_ptr<SignalAcceptor<S>> output_ = nullptr;
+    bool emitInitialValue_ = false;
 
    public:
     shared_ptr<SignalAcceptor<S>> getOutput() const { return output_; }
@@ -115,10 +119,12 @@ class SignalEmitter : public Signal<S> {
      *
      * @param s
      */
-    virtual void emit(const S& s) const {
+    virtual void emit(const S& s) {
+        this->currentValue_ = s;
         if (output_ != nullptr) {
             cout << "SignalEmitter::emit called" << endl;
             output_->accept(s);
+
         } else {
             cout << "SignalEmitter::emit called but OUTPUT NOT SET!" << endl;
         }
@@ -138,7 +144,8 @@ template <typename S>
 class SignalAcceptor : public Signal<S> {
     // It does seem necessary to set these to nullptr if we want to test for lack of initialization
     // later.
-
+    
+   protected:
     shared_ptr<SignalEmitter<S>> input_ = nullptr;
 
    public:
@@ -149,7 +156,10 @@ class SignalAcceptor : public Signal<S> {
         this->update();
     }
 
-    virtual bool accept(const S& s) = 0;
+    virtual bool accept(const S& s) {
+        this->currentValue_ = s;
+        return true;
+    }
 
     virtual ~SignalAcceptor() {
         // cout << "Destroying SignalObject\n";
@@ -227,7 +237,7 @@ class Tee : public SignalObject<S> {
    public:
     Tee() {}
 
-    virtual void emit(const S& s) const {}
+    virtual void emit(const S& s) {}
 
     virtual bool accept(const S& s) {
         SignalObject<S>::emit(s);
@@ -484,7 +494,7 @@ class CppObjectSignalObject : public StoredSignal<S> {
     //     emit(getSignal());
     // }
 
-    virtual void emit(const S& s) const { SignalObject<S>::emit(s); }
+    virtual void emit(const S& s) { SignalObject<S>::emit(s); }
 
     virtual bool accept(const S& s) {
         bool storedSignalAccepts = StoredSignal<S>::accept(s);

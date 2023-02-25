@@ -54,6 +54,15 @@ int main() {
         "dstTextInput",
         "Dest field: type something in the field above and it will be copied here.");
 
+
+    auto srcTextInputWSS = sb.textInputWSS<std::string>(
+        "srcTextInput", "WSS: Source field: type something here and it will appear in the next field.");
+    auto dstTextInputWSS = sb.textInputWSS<std::string>(
+        "dstTextInput",
+        "WSS: Dest field: type something in the field above and it will be copied here.");
+
+    sb.connect<std::string>(srcTextInputWSS, dstTextInputWSS);
+
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
     const val logFn = val::global("logStuff");
     auto consoleLogFSO = make_shared<cl2::JSFunctionSignalObject<std::string>>(logFn);
@@ -101,12 +110,12 @@ int main() {
     };
 
     // We now place our lambda in the core of the CppLambda signal wrapper.
-    auto strToNumTransformer = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
+    //auto strToNumTransformer = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
     auto strToNumTransformerSS = make_shared<cl2::CppLambdaSS<std::string, double>>(str2DblFn);
 
     // String to convert to a number.
-    const auto dblInputWSO =
-        sb.textInput<std::string>("dblInput", "Enter a floating point number", false);
+    // const auto dblInputWSO =
+    //     sb.textInput<std::string>("dblInput", "Enter a floating point number", false);
 
     
     // InputElement dblInput = InputElement("input", "dblInput", "text", "ss1");
@@ -121,7 +130,7 @@ int main() {
     sb.connect<std::string>(dblInputELE, strToNumTransformerSS);
 
     // Connect the input field to the conversion function    
-    sb.connect<std::string>(dblInputWSO, strToNumTransformer);
+    //sb.connect<std::string>(dblInputWSO, strToNumTransformer);
 
     // Here we're going back to our TestObj and creating a field that will allow the user to update
     // the string value it contains.
