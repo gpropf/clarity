@@ -109,12 +109,16 @@ int main() {
         sb.textInput<std::string>("dblInput", "Enter a floating point number", false);
 
     
-    InputElement dblInput = InputElement("input", "dblInput", "text", "ss1");
-    val dblInputDE = dblInput.getDomElement();
-    auto dblInputELE = make_shared<EventListenerEmitter<std::string>>(dblInputDE, "change");
+    // InputElement dblInput = InputElement("input", "dblInput", "text", "ss1");
+    // val dblInputDE = dblInput.getDomElement();
+    // auto dblInputELE = make_shared<EventListenerEmitter<std::string>>(dblInputDE, "change");
 
-    dblInputELE->setOutput(strToNumTransformerSS);
-    dblInputELE->update();
+    auto dblInputELE =
+        sb.textInputSS<std::string>("dblInput", "Enter a floating point number", false);
+
+    //dblInputELE->setOutput(strToNumTransformerSS);
+    //dblInputELE->update();
+    sb.connect<std::string>(dblInputELE, strToNumTransformerSS);
 
     // Connect the input field to the conversion function    
     sb.connect<std::string>(dblInputWSO, strToNumTransformer);

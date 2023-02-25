@@ -114,6 +114,22 @@ class SignalBuilder {
         return wso;
     }
 
+    template <typename S>
+    shared_ptr<EventListenerEmitter<S>> textInputSS(const std::string& name,
+                                                  const std::string& labelText,
+                                                  bool emitInitialValue = true) {
+        InputElement inp = textInput(name, labelText);
+
+        // InputElement dblInput = InputElement("input", "dblInput", "text", "ss1");
+        val inpDE = inp.getDomElement();
+        shared_ptr<EventListenerEmitter<S>> wso =
+            make_shared<EventListenerEmitter<std::string>>(inpDE, "change");
+
+        // shared_ptr<EventListenerEmitter<S>> wso =
+        //     make_shared<cl2::EventListenerEmitter<S>>(inp, "value", emitInitialValue);
+        return wso;
+    }
+
     /**
      * @brief Make a range input
      *
@@ -147,10 +163,10 @@ class SignalBuilder {
         return btn;
     }
 
-    // template <typename S>
-    // void connect(shared_ptr<SignalObject<S>> s1, shared_ptr<SignalAcceptor<S>> s2) {
-    //     s1->setOutput(s2);
-    // }
+    template <typename S>
+    void connect(shared_ptr<SignalEmitter<S>> s1, shared_ptr<SignalAcceptor<S>> s2) {
+        s1->setOutput(s2);
+    }
 
     /**
      * @brief Connect the signals from left to right
