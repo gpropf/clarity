@@ -144,7 +144,7 @@ template <typename S>
 class SignalAcceptor : public Signal<S> {
     // It does seem necessary to set these to nullptr if we want to test for lack of initialization
     // later.
-    
+
    protected:
     shared_ptr<SignalEmitter<S>> input_ = nullptr;
 
@@ -511,6 +511,29 @@ class CppObjectSignalObject : public StoredSignal<S> {
      * @return S
      */
     virtual S getSignal() const { return (*obj_.*getter)(); }
+};
+
+template <typename S, typename ObjT>
+class ObjectAcceptor : public SignalAcceptor<S> {
+    shared_ptr<ObjT> obj_;
+   void (ObjT::*signalAcceptorMethod_)(const S& s);
+
+   public:
+    ObjectAcceptor(shared_ptr<ObjT> obj) { obj_ = obj; }
+    //ObjectAcceptor(ObjT& obj) { obj_(obj); }
+    //ObjectAcceptor() {  }
+
+    void setSignalAcceptorMethod(void (ObjT::*signalAcceptorMethod)(const S& s)) {
+        signalAcceptorMethod_ = signalAcceptorMethod;
+    }
+
+    virtual bool accept(const S& s) {
+        SignalAcceptor<S>::accept(s);
+       (*obj_.*signalAcceptorMethod_)(s);
+       return true;
+    }
+
+    virtual void update() {}
 };
 
 }  // namespace cl2

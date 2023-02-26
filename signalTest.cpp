@@ -22,12 +22,19 @@ class TestObj {
         s_ = s;
         cout << "TestObj.s_ has been set to: " << s_ << endl;
     }
+
+void signalAcceptorTestMethod(const std::string &s) {
+        s_ = s;
+        cout << "TestObj::signalAcceptorTestMethod(): " << s_ << endl;
+    }
+
     std::string getS() { return s_; }
 };
 
 int main() {
     // We make a test object and then a signal wrapper for it.
     TestObj tobj;
+    auto tobjSptr = make_shared<TestObj>();
     auto testObjCSO = make_shared<cl2::CppObjectSignalObject<std::string, TestObj>>(tobj, true);
     // The signal wrapper needs to know how to set and get the stored value.
     testObjCSO->setter = &TestObj::setS;
@@ -47,39 +54,39 @@ int main() {
 
     // We're now using the SignalBuilder factory objects to create our web content.
     cl2::SignalBuilder sb = cl2::SignalBuilder();  //
-    
+
     // auto srcTextInputWSO = sb.textInput<std::string>(
-    //     "srcTextInput", "Source field: type something here and it will appear in the next field.");
+    //     "srcTextInput", "Source field: type something here and it will appear in the next
+    //     field.");
     // auto dstTextInputWSO = sb.textInput<std::string>(
     //     "dstTextInput",
     //     "Dest field: type something in the field above and it will be copied here.");
 
-
     auto srcTextInputWSS = sb.textInputWSS<std::string>(
-        "srcTextInput", "WSS: Source field: type something here and it will appear in the next field.");
+        "srcTextInput",
+        "WSS: Source field: type something here and it will appear in the next field.");
     auto dstTextInputWSS = sb.textInputWSS<std::string>(
         "dstTextInput",
         "WSS: Dest field: type something in the field above and it will be copied here.");
 
+    auto dstTextInputWSS2 =
+        sb.textInputWSS<std::string>("dstTextInputWSS2", "WSS: MFork Dest field 2.");
+    auto dstTextInputWSS3 =
+        sb.textInputWSS<std::string>("dstTextInputWSS3", "WSS: MFork Dest field 3.");
+    auto dstTextInputWSS4 =
+        sb.textInputWSS<std::string>("dstTextInputWSS4", "WSS: MFork Dest field 4.");
 
-        auto dstTextInputWSS2 = sb.textInputWSS<std::string>(
-        "dstTextInputWSS2",
-        "WSS: MFork Dest field 2.");
-        auto dstTextInputWSS3 = sb.textInputWSS<std::string>(
-        "dstTextInputWSS3",
-        "WSS: MFork Dest field 3.");
-        auto dstTextInputWSS4 = sb.textInputWSS<std::string>(
-        "dstTextInputWSS4",
-        "WSS: MFork Dest field 4.");
-
-auto mfork1 = make_shared<MultiFork<std::string>>();
+    auto mfork1 = make_shared<MultiFork<std::string>>();
     sb.connect<std::string>(srcTextInputWSS, dstTextInputWSS);
     sb.connect<std::string>(dstTextInputWSS, mfork1);
     mfork1->addOutput(dstTextInputWSS2);
     mfork1->addOutput(dstTextInputWSS3);
     mfork1->addOutput(dstTextInputWSS4);
-    //mfork1->addOutput(dstTextInputWSS);
-    
+    // mfork1->addOutput(dstTextInputWSS);
+
+    auto objectAcceptor = make_shared<ObjectAcceptor<std::string, TestObj>>(tobjSptr);
+    objectAcceptor->setSignalAcceptorMethod(&TestObj::signalAcceptorTestMethod);
+    mfork1->addOutput(objectAcceptor);
 
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
     const val logFn = val::global("logStuff");
@@ -87,19 +94,17 @@ auto mfork1 = make_shared<MultiFork<std::string>>();
 
     // A Tee allow us to send an output to two inputs.
     auto t1 = make_shared<cl2::Tee<std::string>>();
-    
-    
 
     // Our srcTextInputWSO message will go through the Tee to 2 places.
-    // sb.connect<std::string>(t1, consoleLogFSO, dstTextInputWSO);    
+    // sb.connect<std::string>(t1, consoleLogFSO, dstTextInputWSO);
     // sb.connect<std::string>(srcTextInputWSO, t1);
 
     // Now we're going to create an SVG area and a circle within it. We will create range controls
     // to adjust the size and position of the circle.
-    
+
     // Signal wrappers for the controls.
     auto circle1CXRangeInputWSO =
-        sb.rangeInputWSS<std::string>("circle1CXRangeInput", "Circle center X value");    
+        sb.rangeInputWSS<std::string>("circle1CXRangeInput", "Circle center X value");
     auto circle1CYRangeInputWSO =
         sb.rangeInputWSS<std::string>("circle1CYRangeInput", "Circle center Y value");
 
@@ -130,14 +135,13 @@ auto mfork1 = make_shared<MultiFork<std::string>>();
     };
 
     // We now place our lambda in the core of the CppLambda signal wrapper.
-    //auto strToNumTransformer = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
+    // auto strToNumTransformer = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
     auto strToNumTransformerSS = make_shared<cl2::CppLambdaSS<std::string, double>>(str2DblFn);
 
     // String to convert to a number.
     // const auto dblInputWSO =
     //     sb.textInput<std::string>("dblInput", "Enter a floating point number", false);
 
-    
     // InputElement dblInput = InputElement("input", "dblInput", "text", "ss1");
     // val dblInputDE = dblInput.getDomElement();
     // auto dblInputELE = make_shared<EventListenerEmitter<std::string>>(dblInputDE, "change");
@@ -145,18 +149,18 @@ auto mfork1 = make_shared<MultiFork<std::string>>();
     auto dblInputELE =
         sb.textInputELE<std::string>("dblInput", "Enter a floating point number", false);
 
-    //dblInputELE->setOutput(strToNumTransformerSS);
-    //dblInputELE->update();
+    // dblInputELE->setOutput(strToNumTransformerSS);
+    // dblInputELE->update();
     sb.connect<std::string>(dblInputELE, strToNumTransformerSS);
 
-    // Connect the input field to the conversion function    
-    //sb.connect<std::string>(dblInputWSO, strToNumTransformer);
+    // Connect the input field to the conversion function
+    // sb.connect<std::string>(dblInputWSO, strToNumTransformer);
 
     // Here we're going back to our TestObj and creating a field that will allow the user to update
     // the string value it contains.
     const auto testObjValTextInputWSO = sb.textInput<std::string>(
         "testObjValTextInput", "Enter a new value for the string stored in the TestObj.");
-    
+
     sb.connect<std::string>(testObjValTextInputWSO, testObjCSO);
     sb.connect<std::string>(testObjCSO, testObjValTextInputWSO);
 
@@ -167,12 +171,13 @@ auto mfork1 = make_shared<MultiFork<std::string>>();
     const auto m2InputWSO = sb.textInput<std::string>("m2Input", "Enter the second value", false);
     const auto mergeOutWSO =
         sb.textInput<std::string>("mergeOut", "Output of merged signals goes here", false);
-    
-    sb.connect<std::string, std::string, std::string>(m1InputWSO, m2InputWSO, mergeSignal, mergeOutWSO);
+
+    sb.connect<std::string, std::string, std::string>(m1InputWSO, m2InputWSO, mergeSignal,
+                                                      mergeOutWSO);
 
     val recomputeMergeFn = val::global("elgMergeRecompute")(val(*mergeSignal));
     const auto mergeRecomputeButton = sb.button("Recompute", recomputeMergeFn);
-    
+
     return 0;
 }
 
