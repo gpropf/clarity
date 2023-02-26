@@ -29,6 +29,11 @@ class TestObj {
         cout << "TestObj::signalAcceptorTestMethod(): " << s_ << endl;
     }
 
+    void mouseAcceptorTestMethod(const std::pair<int, int> &mouseLocation) {
+        
+        cout << "TestObj::mouseAcceptorTestMethod(): x = " << mouseLocation.first << ", y = " << mouseLocation.second << endl;
+    }
+
     std::string getS() { return s_; }
 };
 
@@ -113,10 +118,15 @@ int main() {
     svg.setAttributes({{"viewBox", val("0 0 100 100")}, {"style", val("border: 1px solid black")}});
 
     auto mouseSignal = make_shared<MouseSignal<std::pair<int, int>>>(svg, "click");
-    auto svgMouseClickOutput =
-        sb.textInputWSS<std::pair<int, int>>("svgMouseClickOutput", "SVG Mouse click location.");
 
-    sb.connect<std::pair<int, int>>(mouseSignal, svgMouseClickOutput);
+auto svgMouseClickAcceptor = make_shared<ObjectAcceptor<std::pair<int, int>, TestObj>>(tobjSptr);
+    svgMouseClickAcceptor->setSignalAcceptorMethod(&TestObj::mouseAcceptorTestMethod);
+
+
+    // auto svgMouseClickOutput =
+    //     sb.textInputWSS<std::pair<int, int>>("svgMouseClickOutput", "SVG Mouse click location.");
+
+    sb.connect<std::pair<int, int>>(mouseSignal, svgMouseClickAcceptor);
 
     const auto circle1 = cl2::WebElement("circle", "circle1", getStrId(), svg.domElement_);
     circle1.domElement_.call<void>("setAttribute", val("r"), val(45));
