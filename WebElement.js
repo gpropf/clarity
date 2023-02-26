@@ -59,6 +59,16 @@ function elgEmitFn(webElementSignalObject) {
     };
 }
 
+function elgMouseSignal(mouseSignal) {
+    return function (ev) {
+        //let text = ev.target.value;
+        var loc = mouseSignal.packagePair(ev.clientX, ev.clientY);
+        
+        console.log("elgMouseSignal generated fn called. Emitting signal: " + loc);
+        mouseSignal.emit(loc);
+    };
+}
+
 function elgTestObjEmitter(testObjCSO) {
     return function () {
         let s = testObjCSO.getSignal();

@@ -39,6 +39,10 @@ class MouseSignal : public SignalEmitter<S> {
         wptr_ = make_shared<WebElement>(wptr);
     }
 
+    std::pair<int,int> packagePair(int x, int y) {
+        return std::pair(x,y);
+    }
+
     /**
      * @brief Everything here seems to concern setting up the output so if there isn't one we just
      * return.
@@ -47,7 +51,7 @@ class MouseSignal : public SignalEmitter<S> {
     virtual void update() {
         if (this->output_ == nullptr) return;
         
-        val elgEmitFn = val::global("elgEmitFn");
+        val elgEmitFn = val::global("elgMouseSignal");
         wptr_->domElement_.call<void>("removeEventListener", val(eventListenerName_),
                                       eventListenerFn_);
         eventListenerFn_ = elgEmitFn(*this);

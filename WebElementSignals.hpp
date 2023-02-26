@@ -135,8 +135,8 @@ class WebElementSignalObjectSS : public SignalAcceptor<S>, public SignalEmitter<
         // const S initialVal = wptr_->domElement_.call<val>("getAttribute",
         // val(boundField_)).as<S>();
         const S initialVal = wptr_->domElement_[boundField_].as<S>();
-        cout << "Initial value for id = " << wptr_->getId().as<std::string>() << " is '"
-             << initialVal << "'" << endl;
+        // cout << "Initial value for id = " << wptr_->getId().as<std::string>() << " is '"
+        //      << initialVal << "'" << endl;
         this->emit(initialVal);
     }
 

@@ -24,7 +24,7 @@ class TestObj {
         cout << "TestObj.s_ has been set to: " << s_ << endl;
     }
 
-void signalAcceptorTestMethod(const std::string &s) {
+    void signalAcceptorTestMethod(const std::string &s) {
         s_ = s;
         cout << "TestObj::signalAcceptorTestMethod(): " << s_ << endl;
     }
@@ -112,6 +112,12 @@ int main() {
     auto svg = cl2::SVG("svg1", 400, 300, getStrId(), generatedDiv.domElement_);
     svg.setAttributes({{"viewBox", val("0 0 100 100")}, {"style", val("border: 1px solid black")}});
 
+    auto mouseSignal = make_shared<MouseSignal<std::pair<int, int>>>(svg, "click");
+    auto svgMouseClickOutput =
+        sb.textInputWSS<std::pair<int, int>>("svgMouseClickOutput", "SVG Mouse click location.");
+
+    sb.connect<std::pair<int, int>>(mouseSignal, svgMouseClickOutput);
+
     const auto circle1 = cl2::WebElement("circle", "circle1", getStrId(), svg.domElement_);
     circle1.domElement_.call<void>("setAttribute", val("r"), val(45));
     circle1.domElement_.call<void>("setAttribute", val("cx"), val(120));
@@ -197,4 +203,13 @@ EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
     emscripten::class_<cl2::EventListenerEmitter<std::string>>("EventListenerEmitter")
         .function("emit", &cl2::EventListenerEmitter<std::string>::emit,
                   emscripten::allow_raw_pointers());
+
+    emscripten::class_<std::pair<int, int>>("pair");
+
+    emscripten::class_<MouseSignal<std::pair<int, int>>>("MouseSignal")
+        .function("emit", &MouseSignal<std::pair<int, int>>::emit, emscripten::allow_raw_pointers())
+        .function("packagePair", &MouseSignal<std::pair<int, int>>::packagePair,
+                  emscripten::allow_raw_pointers());
+
+    
 }
