@@ -28,20 +28,19 @@ class MouseSignal : public SignalEmitter<S> {
     std::string eventListenerName_ = "";
 
     val eventListenerFn_ = val::null();
+    bool coordsUseViewBox_ = false;
 
    public:
     virtual void emit(const S& s) { SignalEmitter<S>::emit(s); }
 
     MouseSignal(const WebElement& wptr, const std::string& eventListenerName,
-                bool emitInitialValue = true)
-        : eventListenerName_(eventListenerName) {
+                bool coordsUseViewBox = false, bool emitInitialValue = true)
+        : eventListenerName_(eventListenerName), coordsUseViewBox_(coordsUseViewBox) {
         this->emitInitialValue_ = emitInitialValue;
         wptr_ = make_shared<WebElement>(wptr);
     }
 
-    std::pair<int,int> packagePair(int x, int y) {
-        return std::pair(x,y);
-    }
+    static std::pair<int, int> packagePairInt(int x, int y) { return std::pair(x, y); }
 
     /**
      * @brief Everything here seems to concern setting up the output so if there isn't one we just
@@ -50,11 +49,16 @@ class MouseSignal : public SignalEmitter<S> {
      */
     virtual void update() {
         if (this->output_ == nullptr) return;
-        
-        val elgEmitFn = val::global("elgMouseSignal");
+        val elgEmitFn;
+        if (coordsUseViewBox_) {
+            elgEmitFn = val::global("elgMouseSignalDouble");
+        } else {
+            elgEmitFn = val::global("elgMouseSignalInt");
+        }
+
         wptr_->domElement_.call<void>("removeEventListener", val(eventListenerName_),
                                       eventListenerFn_);
-        eventListenerFn_ = elgEmitFn(*this);
+        eventListenerFn_ = elgEmitFn(*this, wptr_->domElement_);
         wptr_->domElement_.call<void>("addEventListener", val(eventListenerName_),
                                       eventListenerFn_);
         if (!this->emitInitialValue_) return;
@@ -67,6 +71,15 @@ class MouseSignal : public SignalEmitter<S> {
         // this->emit(initialVal);
     }
 };
+
+EMSCRIPTEN_BINDINGS(Signals) {
+    emscripten::class_<std::pair<int, int>>("pair");
+
+    emscripten::class_<MouseSignal<std::pair<int, int>>>("MouseSignal")
+        .function("emit", &MouseSignal<std::pair<int, int>>::emit, emscripten::allow_raw_pointers())
+        .class_function("packagePairInt", &MouseSignal<std::pair<int, int>>::packagePairInt,
+                        emscripten::allow_raw_pointers());
+}
 
 }  // namespace cl2
 #endif

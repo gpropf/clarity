@@ -59,12 +59,27 @@ function elgEmitFn(webElementSignalObject) {
     };
 }
 
-function elgMouseSignal(mouseSignal) {
+function elgMouseSignalInt(mouseSignal, domElement) {
     return function (ev) {
         //let text = ev.target.value;
-        var loc = mouseSignal.packagePair(ev.clientX, ev.clientY);
+        var boundingBox = ev.target.getBoundingClientRect();
+        console.log("boundingBox: ", boundingBox);
+        //var viewBox = domElement.getAttribute("viewBox");
+        var viewBox = domElement.viewBox;
+        console.log("viewBox: ", viewBox);
+        console.log("viewBox.baseVal: ", viewBox.baseVal.width);
+
+        let relX = ev.clientX - boundingBox.x;
+        let relY = ev.clientY - boundingBox.y;
+        let ratioX = relX / boundingBox.width;
+        let ratioY = relY / boundingBox.height;
+        let vbX = viewBox.baseVal.width * ratioX + viewBox.baseVal.x;
+        let vbY = viewBox.baseVal.height * ratioY + viewBox.baseVal.y;
+        console.log("viewBox click location (x,y): ", vbX, vbY);
+
+        var loc = Module.MouseSignal.packagePairInt(relX,relY);
         
-        console.log("elgMouseSignal generated fn called. Emitting signal: " + loc);
+        console.log("elgMouseSignalInt generated fn called. Emitting signal: " + loc);
         mouseSignal.emit(loc);
     };
 }

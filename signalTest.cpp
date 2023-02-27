@@ -115,7 +115,7 @@ int main() {
         sb.rangeInputWSS<std::string>("circle1CYRangeInput", "Circle center Y value");
 
     auto svg = cl2::SVG("svg1", 400, 300, getStrId(), generatedDiv.domElement_);
-    svg.setAttributes({{"viewBox", val("0 0 100 100")}, {"style", val("border: 1px solid black")}});
+    svg.setAttributes({{"viewBox", val("20 20 60 60")}, {"style", val("border: 1px solid black")}});
 
     auto mouseSignal = make_shared<MouseSignal<std::pair<int, int>>>(svg, "click");
 
@@ -214,12 +214,7 @@ EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
         .function("emit", &cl2::EventListenerEmitter<std::string>::emit,
                   emscripten::allow_raw_pointers());
 
-    emscripten::class_<std::pair<int, int>>("pair");
-
-    emscripten::class_<MouseSignal<std::pair<int, int>>>("MouseSignal")
-        .function("emit", &MouseSignal<std::pair<int, int>>::emit, emscripten::allow_raw_pointers())
-        .function("packagePair", &MouseSignal<std::pair<int, int>>::packagePair,
-                  emscripten::allow_raw_pointers());
+    
 
     
 }
