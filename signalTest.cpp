@@ -30,8 +30,8 @@ class TestObj {
     }
 
     void mouseAcceptorTestMethod(const std::pair<double, double> &mouseLocation) {
-        
-        cout << "TestObj::mouseAcceptorTestMethod(): x = " << mouseLocation.first << ", y = " << mouseLocation.second << endl;
+        cout << "TestObj::mouseAcceptorTestMethod(): x = " << mouseLocation.first
+             << ", y = " << mouseLocation.second << endl;
     }
 
     std::string getS() { return s_; }
@@ -115,16 +115,18 @@ int main() {
         sb.rangeInputWSS<std::string>("circle1CYRangeInput", "Circle center Y value");
 
     auto svg = cl2::SVG("svg1", 400, 300, getStrId(), generatedDiv.domElement_);
-    svg.setAttributes({{"viewBox", val("20 20 60 60")}, {"style", val("border: 1px solid black")}});
+    svg.setAttributes({{"viewBox", val("10 15 100 100")}, {"style", val("border: 1px solid black")}});
+    // svg.setAttributes({{"style", val("border: 1px solid black")}});
 
     auto mouseSignal = make_shared<MouseSignal<std::pair<double, double>>>(svg, "click");
 
-auto svgMouseClickAcceptor = make_shared<ObjectAcceptor<std::pair<double, double>, TestObj>>(tobjSptr);
+    auto svgMouseClickAcceptor =
+        make_shared<ObjectAcceptor<std::pair<double, double>, TestObj>>(tobjSptr);
     svgMouseClickAcceptor->setSignalAcceptorMethod(&TestObj::mouseAcceptorTestMethod);
 
-
     // auto svgMouseClickOutput =
-    //     sb.textInputWSS<std::pair<double, double>>("svgMouseClickOutput", "SVG Mouse click location.");
+    //     sb.textInputWSS<std::pair<double, double>>("svgMouseClickOutput", "SVG Mouse click
+    //     location.");
 
     sb.connect<std::pair<double, double>>(mouseSignal, svgMouseClickAcceptor);
 
@@ -213,8 +215,4 @@ EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
     emscripten::class_<cl2::EventListenerEmitter<std::string>>("EventListenerEmitter")
         .function("emit", &cl2::EventListenerEmitter<std::string>::emit,
                   emscripten::allow_raw_pointers());
-
-    
-
-    
 }

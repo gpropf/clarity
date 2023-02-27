@@ -62,24 +62,30 @@ function elgEmitFn(webElementSignalObject) {
 function elgMouseSignal(mouseSignal, domElement) {
     return function (ev) {
         //let text = ev.target.value;
-        var boundingBox = ev.target.getBoundingClientRect();
+        var boundingBox = domElement.getBoundingClientRect();
         console.log("boundingBox: ", boundingBox);
         //var viewBox = domElement.getAttribute("viewBox");
-        var viewBox = domElement.viewBox;
-        console.log("viewBox: ", viewBox);
-        console.log("viewBox.baseVal: ", viewBox.baseVal.width);
-
         let relX = ev.clientX - boundingBox.x;
         let relY = ev.clientY - boundingBox.y;
-        let ratioX = relX / boundingBox.width;
-        let ratioY = relY / boundingBox.height;
-        let vbX = viewBox.baseVal.width * ratioX + viewBox.baseVal.x;
-        let vbY = viewBox.baseVal.height * ratioY + viewBox.baseVal.y;
-        console.log("viewBox click location (x,y): ", vbX, vbY);
 
-        var loc = Module.MouseSignal.packageCoordPair(vbX,vbY);
         
-        console.log("elgMouseSignal generated fn called. Emitting signal: " + loc);
+        var viewBoxAttr = domElement.getAttribute("viewBox");
+        console.log("viewBox: ", viewBoxAttr);
+        var loc;
+        if (viewBoxAttr == null) {
+            loc = Module.MouseSignal.packageCoordPair(relX, relY);
+        }
+        else {
+            var viewBox = domElement.viewBox;
+            console.log("viewBox.baseVal.width: ", viewBox.baseVal.width);
+            let ratioX = relX / boundingBox.width;
+            let ratioY = relY / boundingBox.height;
+            let vbX = viewBox.baseVal.width * ratioX + viewBox.baseVal.x;
+            let vbY = viewBox.baseVal.height * ratioY + viewBox.baseVal.y;
+            loc = Module.MouseSignal.packageCoordPair(vbX, vbY);
+            console.log("viewBox click location (x,y): ", vbX, vbY);
+        }
+        //console.log("elgMouseSignal generated fn called. Emitting signal: " + loc);
         mouseSignal.emit(loc);
     };
 }
@@ -88,7 +94,7 @@ function elgTestObjEmitter(testObjCSO) {
     return function () {
         let s = testObjCSO.getSignal();
         console.log("elgTestObjEmitter generated fn called. Emitting signal: " + s);
-        testObjCSO.emit(s);        
+        testObjCSO.emit(s);
     };
 }
 
@@ -96,7 +102,7 @@ function elgMergeRecompute(mergeSO) {
     return function () {
         //let s = testObjCSO.getSignal();
         console.log("elgMergeRecompute generated fn called. Recomputing...:");
-        mergeSO.recompute();        
+        mergeSO.recompute();
     };
 }
 
@@ -106,7 +112,7 @@ function elgMergeRecompute(mergeSO) {
  * @param {string} objMethodName 
  * @returns whatever the named method returns
  */
-function callMethodByName(obj, objMethodName) {        
+function callMethodByName(obj, objMethodName) {
     var fn = obj[objMethodName];
     if (typeof fn === "function") {
         return fn.apply(obj);
