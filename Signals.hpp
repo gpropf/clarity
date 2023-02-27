@@ -42,6 +42,8 @@ class MouseSignal : public SignalEmitter<S> {
 
     static std::pair<int, int> packagePairInt(int x, int y) { return std::pair(x, y); }
 
+    static std::pair<double, double> packageCoordPair(double x, double y) { return std::pair(x, y); }
+
     /**
      * @brief Everything here seems to concern setting up the output so if there isn't one we just
      * return.
@@ -53,7 +55,7 @@ class MouseSignal : public SignalEmitter<S> {
         if (coordsUseViewBox_) {
             elgEmitFn = val::global("elgMouseSignalDouble");
         } else {
-            elgEmitFn = val::global("elgMouseSignalInt");
+            elgEmitFn = val::global("elgMouseSignal");
         }
 
         wptr_->domElement_.call<void>("removeEventListener", val(eventListenerName_),
@@ -73,11 +75,11 @@ class MouseSignal : public SignalEmitter<S> {
 };
 
 EMSCRIPTEN_BINDINGS(Signals) {
-    emscripten::class_<std::pair<int, int>>("pair");
+    emscripten::class_<std::pair<double, double>>("pair");
 
-    emscripten::class_<MouseSignal<std::pair<int, int>>>("MouseSignal")
-        .function("emit", &MouseSignal<std::pair<int, int>>::emit, emscripten::allow_raw_pointers())
-        .class_function("packagePairInt", &MouseSignal<std::pair<int, int>>::packagePairInt,
+    emscripten::class_<MouseSignal<std::pair<double, double>>>("MouseSignal")
+        .function("emit", &MouseSignal<std::pair<double, double>>::emit, emscripten::allow_raw_pointers())
+        .class_function("packageCoordPair", &MouseSignal<std::pair<double, double>>::packageCoordPair,
                         emscripten::allow_raw_pointers());
 }
 
