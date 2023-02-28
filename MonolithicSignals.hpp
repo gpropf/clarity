@@ -13,6 +13,9 @@
 #include <string>
 #include <vector>
 
+#include "WebElements.hpp"
+
+
 using std::cout;
 using std::endl;
 using std::make_shared;
@@ -355,6 +358,115 @@ class CppObjectSignalObject : public StoredSignal<S> {
      * @return S
      */
     virtual S getSignal() const { return (*obj_.*getter)(); }
+};
+
+
+/**
+ * @brief A `SignalObject` wrapper for a `WebElement`.
+ *
+ * @tparam S
+ */
+template <typename S>
+class WebElementSignalObject : public StoredSignal<S> {
+    shared_ptr<WebElement> wptr_;  //!< The actual WebElement this acts as a signal wrapper for.
+    std::string boundField_;  //!< The field in the domElement that stores whatever signal data we
+                              //!< are interested in.
+    std::string eventListenerName_ = "change";
+
+    val eventListenerFn_ = val::null();
+
+   public:
+    virtual void emit(const S& s) { SignalObject<S>::emit(s); }
+
+    shared_ptr<WebElement> getWebElement() const { return wptr_; }
+
+    WebElementSignalObject(const WebElement& wptr, const std::string& boundField,
+                           bool emitInitialValue = true)
+        : StoredSignal<S>(emitInitialValue) {
+        boundField_ = boundField;
+        wptr_ = make_shared<WebElement>(wptr);
+    }
+
+    /**
+     * @brief Everything here seems to concern setting up the output so if there isn't one we just
+     * return.
+     *
+     */
+    virtual void update() {
+        if (this->getOutput() == nullptr) return;
+        if (wptr_->domElement_["type"] == val("range")) {
+            eventListenerName_ = "input";
+        }
+        val elgEmitFn = val::global("elgEmitFn");
+        wptr_->domElement_.call<void>("removeEventListener", val(eventListenerName_),
+                                      eventListenerFn_);
+        eventListenerFn_ = elgEmitFn(*this);
+        wptr_->domElement_.call<void>("addEventListener", val(eventListenerName_),
+                                      eventListenerFn_);
+        if (!StoredSignal<S>::emitInitialValue()) return;
+        cout << "Getting initial value for id = " << wptr_->getId().as<std::string>() << endl;
+        // const S initialVal = wptr_->domElement_.call<val>("getAttribute",
+        // val(boundField_)).as<S>();
+        const S initialVal = wptr_->domElement_[boundField_].as<S>();
+        cout << "Initial value for id = " << wptr_->getId().as<std::string>() << " is '"
+             << initialVal << "'" << endl;
+        emit(initialVal);
+    }
+
+    /**
+     * @brief It seems to be necessary to call `setAttribute()` for some things while using the
+     * Emscripten `set()` method is needed for others, notably setting the 'value' property of input
+     * fields. I'm not sure if 'value' is the only such exception and calling both methods doesn't
+     * seem to hurt anything but this is clearly a kludge.
+     *
+     * @param s
+     */
+    virtual bool accept(const S& s) {
+        bool storedSignalAccepts = StoredSignal<S>::accept(s);
+        if (!storedSignalAccepts) return false;
+        wptr_->domElement_.set(boundField_, val(s));
+        wptr_->domElement_.call<void>("setAttribute", val(boundField_), val(s));
+        return true;
+    }
+
+    virtual ~WebElementSignalObject() {  // cout << "Destroying WebElementSignalObject\n";
+    }
+};
+
+
+/**
+ * @brief A `SignalObject` wrapper for a JS function object. Note that this is not exactly the
+ * analog of the CppLambda. There is no second output that can have a different type from the normal
+ * one.
+ *
+ * @tparam S
+ */
+template <typename S>
+class JSFunctionSignalObject : public SignalObject<S> {
+    shared_ptr<val> jsFn_;
+
+   public:
+    JSFunctionSignalObject(const val& jsFn) { jsFn_ = make_shared<val>(jsFn); }
+
+    /**
+     * @brief In this class we simply call the stored JS function on the value.
+     *
+     * @param s
+     */
+    virtual bool accept(const S& s) {
+        val fn = *jsFn_;
+        // S sOut = fn(s).template as<S>();
+        val fnOut = fn(s);
+        if (fnOut == val::null()) return false;
+        S sOut = fnOut.as<S>();
+        if (this->getOutput() != nullptr) return this->getOutput()->accept(sOut);
+        return false;
+    }
+
+    virtual void update() {}
+
+    virtual ~JSFunctionSignalObject() {  // cout << "Destroying JSFunctionSignalObject\n";
+    }
 };
 
 
