@@ -61,6 +61,197 @@ class SignalObject : public Signal<S> {
 
 
 
+template <typename S, typename Sout>
+class CppLambda : public SignalObject<S> {
+    std::function<Sout(S s)> lambda_;
+    shared_ptr<SignalObject<Sout>> transformedOutput_;
+
+   public:
+    CppLambda() {}
+
+    CppLambda(std::function<Sout(S s)> lambda) : lambda_(lambda) {}
+
+    virtual bool accept(const S& s) {
+        Sout sOut = lambda_(s);
+        if (transformedOutput_ != nullptr) return transformedOutput_->accept(sOut);
+        return false;
+    }
+
+    void setTransformedOutput(shared_ptr<SignalObject<Sout>> sobj) { transformedOutput_ = sobj; }
+
+    virtual void update() {}
+
+    virtual ~CppLambda() {
+        // cout << "Destroying CppLambda\n";
+    }
+};
+
+
+/**
+ * @brief This class was motivated by the need to produce a signal on demand instead of strictly in
+ * response to some event as in the case of the base class. This need can be seen in the case of the
+ * `Merge` class in particular where inputs may or may not be present at the same moment. This class
+ * creates, in effect, a buffer for its signal value.
+ *
+ * @tparam S
+ */
+template <typename S>
+class StoredSignal : public SignalObject<S> {
+    S currentVal_;
+    bool emitInitialValue_;
+
+   public:
+    StoredSignal(bool emitInitialValue) : emitInitialValue_(emitInitialValue) {}
+
+    StoredSignal(S currentVal, bool emitInitialValue)
+        : currentVal_(currentVal), emitInitialValue_(emitInitialValue) {}
+
+    bool emitInitialValue() const { return emitInitialValue_; }
+
+    void setEmitInitialValue(bool emitInitialValue) { emitInitialValue_ = emitInitialValue; }
+
+    void setCurrentVal(S newVal) { currentVal_ = newVal; }
+
+    S getCurrentVal() const { return currentVal_; }
+
+    /**
+     * @brief Ignores the signal if the value hasn't changed. Stores the signal value in currentVal_
+     * otherwise.
+     *
+     * @param s
+     * @return true
+     * @return false
+     */
+    virtual bool accept(const S& s) {
+        if (s == currentVal_) return false;
+        currentVal_ = s;
+        if (this->getParent() != nullptr) {
+            this->getParent()->childEvent(reinterpret_cast<int>(this));
+        }
+        return true;
+    }
+
+    // virtual void update() {}
+
+    virtual void update() {
+        if (this->getOutput() == nullptr) return;
+        if (!StoredSignal<S>::emitInitialValue()) return;
+        // emit(getSignal());
+        // StoredSignal<S>::emit(StoredSignal<S>::getSignal());
+        this->emit(this->getSignal());
+    }
+
+    virtual S getSignal() const { return currentVal_; };
+};
+
+
+
+/**
+ * @brief Similar to the `CppLambda` class except has 2 inputs. In practice this is considerably
+ * more complicated than the single input case because it is possible that one of the inputs may not
+ * exist when the other comes in.
+ *
+ * @tparam inT1
+ * @tparam inT2
+ * @tparam outT
+ */
+template <typename inT1, typename inT2, typename outT>
+class Merge : public StoredSignal<outT>,
+              public std::enable_shared_from_this<Merge<inT1, inT2, outT>> {
+    shared_ptr<StoredSignal<inT2>> in2_ = nullptr;
+    shared_ptr<StoredSignal<inT1>> in1_ = nullptr;
+
+    bool signalPresentOnInput1_ = false;
+    bool signalPresentOnInput2_ = false;
+
+    std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
+
+   public:
+    Merge(std::function<outT(inT1 in1, inT2 in2)> mergeFn, bool emitInitialValue = false)
+        : StoredSignal<outT>(emitInitialValue) {
+        mergeFn_ = mergeFn;
+    }
+
+    shared_ptr<StoredSignal<inT2>> getInput2() {
+        if (in2_ == nullptr) in2_ = make_shared<StoredSignal<inT2>>(false);
+        in2_->setParent(this->shared_from_this());
+        return in2_;
+    }
+    shared_ptr<StoredSignal<inT1>> getInput1() {
+        if (in1_ == nullptr) in1_ = make_shared<StoredSignal<inT1>>(false);
+        in1_->setParent(this->shared_from_this());
+        return in1_;
+    }
+
+    // virtual void childAccepts(SignalObject* child) {
+    //     //if (child == in1_)
+    //     cout << "in1_ has accepted a signal." << endl;
+    // }
+
+    /**
+     * @brief Here we compare the messages from the children to the int value of the raw pointers
+     * extracted from the shared_ptr. I suppose using a hash value would be better but this works
+     * for now. Once both signals are present we recompute() the value.
+     *
+     * @param e
+     */
+    virtual void childEvent(int e) {
+        cout << "Merge: Child event " << e << endl;
+        // if (reinterpret_cast<int>) {}
+        int rawPtrVal = reinterpret_cast<int>(in1_.get());
+        if (rawPtrVal == e) {
+            signalPresentOnInput1_ = true;
+        }
+        rawPtrVal = reinterpret_cast<int>(in2_.get());
+        if (rawPtrVal == e) {
+            signalPresentOnInput2_ = true;
+        }
+        if (signalPresentOnInput1_ && signalPresentOnInput2_) recompute();
+    }
+
+    /**
+     * @brief Check to see if both inputs are initialized and then run the stored lambda, emitting
+     * the result.
+     *
+     * @return true If both inputs exist.
+     * @return false If one of the inputs does not exist.
+     */
+    bool recompute() {
+        if (in2_ && in1_) {
+            cout << "BOTH INPUTS ARE LIVE" << endl;
+            inT2 s2 = in2_->getSignal();
+            inT1 s1 = in1_->getSignal();
+            this->setCurrentVal(mergeFn_(s1, s2));
+            if (this->getOutput()) {
+                cout << "MERGE OUTPUT IS LIVE" << endl;
+                this->emit(this->getCurrentVal());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * @brief This is a kludge. We're using the output_ to trigger a recompute operation. Probably
+     * shouldn't really do anything here at all.
+     *
+     * @param sOut
+     * @return true
+     * @return false
+     */
+    virtual bool accept(const outT& sOut) {
+        bool ssAccepted = StoredSignal<outT>::accept(sOut);
+        return recompute();
+    }
+
+    // virtual void update() {
+    //     if (this->getOutput() == nullptr) return;
+    //     if (!StoredSignal<outT>::emitInitialValue()) return;
+    //     StoredSignal<outT>::emit(StoredSignal<outT>::getSignal());
+    // }
+};
+
+
 
 
 
