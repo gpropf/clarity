@@ -1,7 +1,13 @@
 
+
+
 #include "SignalBuilder.hpp"
+#include "Signal.hpp"
 #include "SignalPrimitives.hpp"
 #include "Signals.hpp"
+
+#include "MonolithicSignals.hpp"
+
 #include "Util.hpp"
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
