@@ -22,37 +22,6 @@ using std::shared_ptr;
 
 namespace cl2 {
 
-
-/**
- * @brief Tee simply does roughly what the Linux command of that name does. It duplicates an output.
- * It acts as a passive conduit so this is why the emit() method does nothing. Essentially until it
- * performs an accept() operation, it does nothing.
- *
- * @tparam S
- */
-template <typename S>
-class Tee : public SignalObject<S> {
-    shared_ptr<SignalObject<S>> secondOutput_ = nullptr;
-
-   public:
-    Tee() {}
-
-    virtual void emit(const S& s) {}
-
-    virtual bool accept(const S& s) {
-        SignalObject<S>::emit(s);
-        return secondOutput_->accept(s);
-    }
-
-    void setSecondOutput(shared_ptr<SignalObject<S>> sobj) { secondOutput_ = sobj; }
-
-    virtual void update() {}
-
-    virtual ~Tee() {
-        // cout << "Destroying Tee\n";
-    }
-};
-
 /**
  * @brief Uses the new split-style signals
  *
@@ -83,34 +52,6 @@ class MultiFork : public SignalAcceptor<S> {
 
     virtual ~MultiFork() {
         // cout << "Destroying MultiFork\n";
-    }
-};
-
-template <typename S>
-class MultiTee : public SignalObject<S> {
-    std::vector<shared_ptr<SignalObject<S>>> outputs_;
-
-   public:
-    MultiTee() {}
-
-    void addOutput(shared_ptr<SignalObject<S>> output) {
-        outputs_.push_back(output);
-        this->update();
-    }
-
-    virtual bool accept(const S& s) {
-        SignalObject<S>::emit(s);
-        bool allAccepted = true;
-        for (auto output : outputs_) {
-            allAccepted = allAccepted & output->accept(s);
-        }
-        return allAccepted;
-    }
-
-    virtual void update() {}
-
-    virtual ~MultiTee() {
-        // cout << "Destroying MultiTee\n";
     }
 };
 
