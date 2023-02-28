@@ -80,51 +80,6 @@ class CppLambdaSS : public SignalAcceptor<S>, public SignalEmitter<Sout> {
     }
 };
 
-
-/**
- * @brief A signal wrapper for any type of C++ class that has getter and setter methods.
- *
- * @tparam S
- * @tparam ObjT
- */
-template <typename S, typename ObjT>
-class CppObjectSignalObject : public StoredSignal<S> {
-    shared_ptr<ObjT> obj_;
-
-   public:
-    void (ObjT::*setter)(const S& s);
-    S (ObjT::*getter)();
-
-    CppObjectSignalObject(ObjT& obj) : StoredSignal<S>() { obj_ = make_shared<ObjT>(obj); }
-    CppObjectSignalObject(ObjT& obj, bool emitInitialValue) : StoredSignal<S>(emitInitialValue) {
-        obj_ = make_shared<ObjT>(obj);
-    }
-
-    // virtual void update() {
-    //     if (this->getOutput() == nullptr) return;
-    //     if (!StoredSignal<S>::emitInitialValue()) return;
-    //     emit(getSignal());
-    // }
-
-    virtual void emit(const S& s) { SignalObject<S>::emit(s); }
-
-    virtual bool accept(const S& s) {
-        bool storedSignalAccepts = StoredSignal<S>::accept(s);
-        // StoredSignal<S>::accept(s);
-        if (!storedSignalAccepts) return false;
-        (*obj_.*setter)(s);
-        return true;
-    }
-
-    /**
-     * @brief Pretty much a convenience method to extract a signal from the object using the getter.
-     * Makes it easy to use a timer function to get the value using setInterval() from JS.
-     *
-     * @return S
-     */
-    virtual S getSignal() const { return (*obj_.*getter)(); }
-};
-
 template <typename S, typename ObjT>
 class ObjectAcceptor : public SignalAcceptor<S> {
     shared_ptr<ObjT> obj_;
