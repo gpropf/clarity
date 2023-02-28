@@ -107,6 +107,28 @@ class ObjectAcceptor : public SignalAcceptor<S> {
     }
 };
 
+
+template <typename S, typename ObjT>
+class ObjectEmitter : public SignalEmitter<S> {
+    shared_ptr<ObjT> obj_;
+   const S (ObjT::*signalEmitterMethod_)();
+
+   public:
+    ObjectEmitter(shared_ptr<ObjT> obj) { obj_ = obj; }
+    //ObjectAcceptor(ObjT& obj) { obj_(obj); }
+    //ObjectAcceptor() {  }
+
+    void setSignalEmitterMethod(const S (ObjT::*signalEmitterMethod)()) {
+        signalEmitterMethod_ = signalEmitterMethod;
+    }    
+
+    virtual void update() {}
+
+    virtual ~ObjectEmitter() {
+        // cout << "Destroying ObjectAcceptor\n";
+    }
+};
+
 }  // namespace cl2
 
 #endif
