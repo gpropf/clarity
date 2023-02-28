@@ -54,6 +54,10 @@ class Signal {
      *
      */
     virtual void update() = 0;
+
+    virtual ~Signal() {
+        // cout << "Destroying Signal\n";
+    }
 };
 
 
