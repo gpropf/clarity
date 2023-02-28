@@ -101,6 +101,10 @@ class ObjectAcceptor : public SignalAcceptor<S> {
     }
 
     virtual void update() {}
+
+    virtual ~ObjectAcceptor() {
+        // cout << "Destroying ObjectAcceptor\n";
+    }
 };
 
 }  // namespace cl2

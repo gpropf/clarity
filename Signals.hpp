@@ -72,6 +72,8 @@ class MouseSignal : public SignalEmitter<S> {
         //      << initialVal << "'" << endl;
         // this->emit(initialVal);
     }
+
+    virtual ~MouseSignal() {}
 };
 
 EMSCRIPTEN_BINDINGS(Signals) {

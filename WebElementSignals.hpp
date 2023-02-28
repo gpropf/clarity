@@ -90,6 +90,8 @@ class WebElementSignalObjectSS : public SignalAcceptor<S>, public SignalEmitter<
         this->emit(s);
         return true;
     }
+
+    virtual ~WebElementSignalObjectSS() {}
 };
 
 /**
