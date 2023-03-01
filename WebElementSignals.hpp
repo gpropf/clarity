@@ -1,12 +1,13 @@
 /**
  * @file WebElementSignals.hpp
  * @author Greg Propf (gpropf@gmail.com)
- * @brief The signal classes that have an HTML element (or JS event listener at least) at their core.
+ * @brief The signal classes that have an HTML element (or JS event listener at least) at their
+ * core.
  * @version 0.1
  * @date 2023-03-01
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #ifndef WebElement_hpp
@@ -138,29 +139,45 @@ class EventListenerEmitter : public SignalEmitter<S> {
     }
 };
 
-
+/**
+ * @brief This class is a bit special because it's essentially fixed in its template parameter. It
+ * will emit a pair of doubles that represents the mouse position during a mouse event. The specific
+ * event can be different. It may be a click, mouseover, mousedown, etc... but the tparam is going
+ * to reflect the location where this happened. This is also why we can include the
+ * EMSCRIPTEN_BINDINGS block. The specifics of the bindings are not contingent on any particular use
+ * of the class.
+ *
+ * @tparam S
+ */
 template <typename S>
 class MouseSignal : public SignalEmitter<S> {
     shared_ptr<WebElement> wptr_;  //!< The actual WebElement this acts as a signal wrapper for.
-
-    std::string eventListenerName_ = "";
-
+    std::string eventListenerName_ = "";  //!< i.e. 'click', 'mousedown', 'mouseover', etc...
     val eventListenerFn_ = val::null();
-    bool coordsUseViewBox_ = false;
+    //bool coordsUseViewBox_ = false;
 
    public:
     virtual void emit(const S& s) { SignalEmitter<S>::emit(s); }
 
     MouseSignal(const WebElement& wptr, const std::string& eventListenerName,
                 bool coordsUseViewBox = false, bool emitInitialValue = true)
-        : eventListenerName_(eventListenerName), coordsUseViewBox_(coordsUseViewBox) {
+        : eventListenerName_(eventListenerName) {
         this->emitInitialValue_ = emitInitialValue;
         wptr_ = make_shared<WebElement>(wptr);
     }
 
     static std::pair<int, int> packagePairInt(int x, int y) { return std::pair(x, y); }
 
-    static std::pair<double, double> packageCoordPair(double x, double y) { return std::pair(x, y); }
+    /**
+     * @brief I created this so I can call it from JS to make the needed type for the emit method.
+     *
+     * @param x
+     * @param y
+     * @return std::pair<double, double>
+     */
+    static std::pair<double, double> packageCoordPair(double x, double y) {
+        return std::pair(x, y);
+    }
 
     /**
      * @brief Everything here seems to concern setting up the output so if there isn't one we just
@@ -169,19 +186,13 @@ class MouseSignal : public SignalEmitter<S> {
      */
     virtual void update() {
         if (this->output_ == nullptr) return;
-        val elgEmitFn;
-        if (coordsUseViewBox_) {
-            elgEmitFn = val::global("elgMouseSignalDouble");
-        } else {
-            elgEmitFn = val::global("elgMouseSignal");
-        }
-
+        val elgEmitFn = val::global("elgMouseSignal");
         wptr_->domElement_.call<void>("removeEventListener", val(eventListenerName_),
                                       eventListenerFn_);
         eventListenerFn_ = elgEmitFn(*this, wptr_->domElement_);
         wptr_->domElement_.call<void>("addEventListener", val(eventListenerName_),
                                       eventListenerFn_);
-        if (!this->emitInitialValue_) return;
+        // if (!this->emitInitialValue_) return;
         // cout << "Getting initial value for id = " << wptr_->getId().as<std::string>() << endl;
         // // const S initialVal = wptr_->domElement_.call<val>("getAttribute",
         // // val(boundField_)).as<S>();
@@ -198,11 +209,12 @@ EMSCRIPTEN_BINDINGS(MouseSignal) {
     emscripten::class_<std::pair<double, double>>("pair");
 
     emscripten::class_<MouseSignal<std::pair<double, double>>>("MouseSignal")
-        .function("emit", &MouseSignal<std::pair<double, double>>::emit, emscripten::allow_raw_pointers())
-        .class_function("packageCoordPair", &MouseSignal<std::pair<double, double>>::packageCoordPair,
+        .function("emit", &MouseSignal<std::pair<double, double>>::emit,
+                  emscripten::allow_raw_pointers())
+        .class_function("packageCoordPair",
+                        &MouseSignal<std::pair<double, double>>::packageCoordPair,
                         emscripten::allow_raw_pointers());
 }
-
 
 }  // namespace cl2
 
