@@ -1,13 +1,10 @@
 
 
-
-#include "SignalBuilder.hpp"
+#include "MonolithicSignals.hpp"
 #include "Signal.hpp"
+#include "SignalBuilder.hpp"
 #include "SignalPrimitives.hpp"
 #include "Signals.hpp"
-
-#include "MonolithicSignals.hpp"
-
 #include "Util.hpp"
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
@@ -36,7 +33,6 @@ class TestObj {
     }
 
     const std::string signalEmitterTestMethod() {
-        
         cout << "TestObj::signalEmitterTestMethod(): " << s_ << endl;
         return s_;
     }
@@ -61,13 +57,12 @@ int main() {
     // Now we're going to create a JS timer to read the value and fire the signal every so often.
     val testObjEmitter = val::global("elgTestObjEmitter")(val(*testObjCSO));
     // val setInterval = val::global("setInterval");
-    //setInterval(testObjEmitter, 500);
-
+    // setInterval(testObjEmitter, 500);
 
     auto objectEmitter = make_shared<ObjectEmitter<std::string, TestObj>>(tobjSptr);
     objectEmitter->setSignalEmitterMethod(&TestObj::signalEmitterTestMethod);
     val jsEmitterFn = val::global("elgObjEmitter")(val(*objectEmitter));
-    setInterval(jsEmitterFn, 500);
+    //setInterval(jsEmitterFn, 500);
 
     // It's easy to get control of elements that are already present in a static HTML page by
     // creating a WE from the id.
@@ -77,14 +72,12 @@ int main() {
     auto generatedDiv = cl2::WebElement("div", "generatedDiv", getStrId());
 
     // We're now using the SignalBuilder factory objects to create our web content.
-    cl2::SignalBuilder sb = cl2::SignalBuilder();  //
+    cl2::SignalBuilder sb = cl2::SignalBuilder();
 
-    // auto srcTextInputWSO = sb.textInput<std::string>(
-    //     "srcTextInput", "Source field: type something here and it will appear in the next
-    //     field.");
-    // auto dstTextInputWSO = sb.textInput<std::string>(
-    //     "dstTextInput",
-    //     "Dest field: type something in the field above and it will be copied here.");
+    auto objectEmitterTextInput = sb.textInputWSS<std::string>(
+        "objectEmitterTextInput", "Enter a new value for the string (s_) stored in the TestObj.");
+
+    sb.connect<std::string>(objectEmitter, objectEmitterTextInput);
 
     auto srcTextInputWSS = sb.textInputWSS<std::string>(
         "srcTextInput",
@@ -133,7 +126,8 @@ int main() {
         sb.rangeInputWSS<std::string>("circle1CYRangeInput", "Circle center Y value");
 
     auto svg = cl2::SVG("svg1", 400, 300, getStrId(), generatedDiv.domElement_);
-    svg.setAttributes({{"viewBox", val("10 15 100 100")}, {"style", val("border: 1px solid black")}});
+    svg.setAttributes(
+        {{"viewBox", val("10 15 100 100")}, {"style", val("border: 1px solid black")}});
     // svg.setAttributes({{"style", val("border: 1px solid black")}});
 
     auto mouseSignal = make_shared<MouseSignal<std::pair<double, double>>>(svg, "click");
@@ -141,10 +135,6 @@ int main() {
     auto svgMouseClickAcceptor =
         make_shared<ObjectAcceptor<std::pair<double, double>, TestObj>>(tobjSptr);
     svgMouseClickAcceptor->setSignalAcceptorMethod(&TestObj::mouseAcceptorTestMethod);
-
-    // auto svgMouseClickOutput =
-    //     sb.textInputWSS<std::pair<double, double>>("svgMouseClickOutput", "SVG Mouse click
-    //     location.");
 
     sb.connect<std::pair<double, double>>(mouseSignal, svgMouseClickAcceptor);
 
@@ -175,20 +165,13 @@ int main() {
     // auto strToNumTransformer = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
     auto strToNumTransformerSS = make_shared<cl2::CppLambdaSS<std::string, double>>(str2DblFn);
 
-    // String to convert to a number.
-    // const auto dblInputWSO =
-    //     sb.textInput<std::string>("dblInput", "Enter a floating point number", false);
+    // auto dblInputELE =
+    //     sb.textInputELE<std::string>("dblInput", "Enter a floating point number", false);
 
-    // InputElement dblInput = InputElement("input", "dblInput", "text", "ss1");
-    // val dblInputDE = dblInput.getDomElement();
-    // auto dblInputELE = make_shared<EventListenerEmitter<std::string>>(dblInputDE, "change");
+    auto dblInputWSS =
+        sb.textInputWSS<std::string>("dblInput", "Enter a floating point number", false);
 
-    auto dblInputELE =
-        sb.textInputELE<std::string>("dblInput", "Enter a floating point number", false);
-
-    // dblInputELE->setOutput(strToNumTransformerSS);
-    // dblInputELE->update();
-    sb.connect<std::string>(dblInputELE, strToNumTransformerSS);
+    sb.connect<std::string>(dblInputWSS, strToNumTransformerSS);
 
     // Connect the input field to the conversion function
     // sb.connect<std::string>(dblInputWSO, strToNumTransformer);

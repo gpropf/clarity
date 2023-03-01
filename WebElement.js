@@ -99,9 +99,9 @@ function elgTestObjEmitter(testObjCSO) {
 }
 
 function elgObjEmitter(objEmitter) {
-    return function () {
-        let s = objEmitter.emit();
-        console.log("elgObjEmitter generated fn called. Emitting signal: " + s);       
+    return function () {        
+        console.log("elgObjEmitter generated fn called. Originating signal.");  
+        objEmitter.emit();     
     };
 }
 

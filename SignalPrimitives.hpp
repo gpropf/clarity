@@ -114,7 +114,9 @@ class ObjectEmitter : public SignalEmitter<S> {
     const S (ObjT::*signalEmitterMethod_)();
 
    public:
-    ObjectEmitter(shared_ptr<ObjT> obj) { obj_ = obj; }
+    ObjectEmitter(shared_ptr<ObjT> obj, bool emitInitialValue = true) :obj_(obj) {
+        this->emitInitialValue_ = emitInitialValue;
+    }
     // ObjectAcceptor(ObjT& obj) { obj_(obj); }
     // ObjectAcceptor() {  }
 
@@ -127,7 +129,12 @@ class ObjectEmitter : public SignalEmitter<S> {
         SignalEmitter<S>::emit(newSignal);
     }
 
-    virtual void update() {}
+    virtual void update() {
+        if (this->emitInitialValue_) {
+            cout << "emitInitialValue_ set, emitting initial value!" << endl;
+            this->emit();
+        }
+    }
 
     virtual ~ObjectEmitter() {
         // cout << "Destroying ObjectAcceptor\n";

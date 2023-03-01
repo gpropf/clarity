@@ -77,6 +77,7 @@ class SignalEmitter : public Signal<S> {
     shared_ptr<SignalAcceptor<S>> getOutput() const { return output_; }
 
     void setOutput(shared_ptr<SignalAcceptor<S>> sobj) {
+        cout << "SignalEmitter::setOutput()" << endl;
         output_ = sobj;
         this->update();
     }
