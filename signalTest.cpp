@@ -238,3 +238,27 @@ EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
         .function("emit", &cl2::ObjectEmitter<std::string, TestObj>::emit,
                   emscripten::allow_raw_pointers());
 }
+
+EMSCRIPTEN_BINDINGS(WebElementSignalObject) {
+    emscripten::class_<WebElementSignalObject<std::string>>("WebElementSignalObject")
+        .function("emit", &WebElementSignalObject<std::string>::emit,
+                  emscripten::allow_raw_pointers())
+        .function("accept", &WebElementSignalObject<std::string>::accept,
+                  emscripten::allow_raw_pointers());
+
+    emscripten::class_<WebElementSignalObjectSS<std::string>>("WebElementSignalObjectSS")
+        .function("emit", &WebElementSignalObjectSS<std::string>::emit,
+                  emscripten::allow_raw_pointers())
+        .function("accept", &WebElementSignalObjectSS<std::string>::accept,
+                  emscripten::allow_raw_pointers());
+
+    emscripten::class_<JSFunctionSignalObject<std::string>>("ConsoleLoggerSignalObject")
+        .function("emit", &JSFunctionSignalObject<std::string>::emit,
+                  emscripten::allow_raw_pointers())
+        .function("accept", &JSFunctionSignalObject<std::string>::accept,
+                  emscripten::allow_raw_pointers());
+
+    emscripten::class_<SignalObject<std::string>>("SignalObject")
+        .function("emit", &SignalObject<std::string>::emit, emscripten::allow_raw_pointers())
+        .function("accept", &SignalObject<std::string>::accept, emscripten::allow_raw_pointers());
+}
