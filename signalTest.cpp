@@ -79,6 +79,10 @@ int main() {
 
     sb.connect<std::string>(objectEmitter, objectEmitterTextInput);
 
+    auto objectAcceptor = make_shared<ObjectAcceptor<std::string, TestObj>>(tobjSptr);
+    objectAcceptor->setSignalAcceptorMethod(&TestObj::signalAcceptorTestMethod);
+    sb.connect<std::string>(objectEmitterTextInput, objectAcceptor);
+
     auto srcTextInputWSS = sb.textInputWSS<std::string>(
         "srcTextInput",
         "WSS: Source field: type something here and it will appear in the next field.");
@@ -101,9 +105,8 @@ int main() {
     mfork1->addOutput(dstTextInputWSS4);
     // mfork1->addOutput(dstTextInputWSS);
 
-    auto objectAcceptor = make_shared<ObjectAcceptor<std::string, TestObj>>(tobjSptr);
-    objectAcceptor->setSignalAcceptorMethod(&TestObj::signalAcceptorTestMethod);
-    mfork1->addOutput(objectAcceptor);
+    
+    //mfork1->addOutput(objectAcceptor);
 
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
     const val logFn = val::global("logStuff");

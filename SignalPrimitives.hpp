@@ -1,3 +1,14 @@
+/**
+ * @file SignalPrimitives.hpp
+ * @author Greg Propf (gpropf@gmail.com)
+ * @brief Somewhat more complex but still basic signal machinery based on the new "split-style" signals.
+ * @version 0.1
+ * @date 2023-03-01
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #ifndef SignalPrimitives_hpp
 #define SignalPrimitives_hpp
 

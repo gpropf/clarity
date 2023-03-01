@@ -1,3 +1,14 @@
+/**
+ * @file Signal.hpp
+ * @author Greg Propf (gpropf@gmail.com)
+ * @brief The basic Signal template classes: Signal, SignalEmitter, SignalAcceptor.
+ * @version 0.1
+ * @date 2023-03-01
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #ifndef Signal_hpp
 #define Signal_hpp
 

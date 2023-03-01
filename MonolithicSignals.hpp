@@ -1,3 +1,14 @@
+/**
+ * @file MonolithicSignals.hpp
+ * @author Greg Propf (gpropf@gmail.com)
+ * @brief Deprecated classes based on the original "monolithic" style signals.
+ * @version 0.1
+ * @date 2023-03-01
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #ifndef MonolithicSignals_hpp
 #define MonolithicSignals_hpp
 

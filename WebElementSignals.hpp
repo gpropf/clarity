@@ -1,3 +1,14 @@
+/**
+ * @file WebElementSignals.hpp
+ * @author Greg Propf (gpropf@gmail.com)
+ * @brief The signal classes that have an HTML element (or JS event listener at least) at their core.
+ * @version 0.1
+ * @date 2023-03-01
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #ifndef WebElement_hpp
 #define WebElement_hpp
 
