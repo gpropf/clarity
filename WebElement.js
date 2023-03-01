@@ -98,6 +98,13 @@ function elgTestObjEmitter(testObjCSO) {
     };
 }
 
+function elgObjEmitter(objEmitter) {
+    return function () {
+        let s = objEmitter.emit();
+        console.log("elgObjEmitter generated fn called. Emitting signal: " + s);       
+    };
+}
+
 function elgMergeRecompute(mergeSO) {
     return function () {
         //let s = testObjCSO.getSignal();

@@ -19,8 +19,6 @@ using std::shared_ptr;
 
 namespace cl2 {
 
-
-
 template <typename S>
 class Signal {
     shared_ptr<Signal> parent_ = nullptr;
@@ -59,8 +57,6 @@ class Signal {
         // cout << "Destroying Signal\n";
     }
 };
-
-
 
 template <typename S>
 class SignalAcceptor;  // Forward declaration so we can refer to this class in the SignalEmitter
@@ -101,6 +97,14 @@ class SignalEmitter : public Signal<S> {
         }
     }
 
+    /**
+     * @brief This form of the method is for those emitters that can generate their own signals. I
+     * added this when I realized that the ObjectEmitter should be able to do that. Most subclasses
+     * of this one won't need or want to override this method.
+     *
+     */
+    virtual void emit() {}
+
     virtual ~SignalEmitter() {
         // cout << "Destroying SignalObject\n";
     }
@@ -137,58 +141,6 @@ class SignalAcceptor : public Signal<S> {
     }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}  // namespace cl2
 
 #endif
-
-
-
-
-

@@ -35,6 +35,12 @@ class TestObj {
         cout << "TestObj::signalAcceptorTestMethod(): " << s_ << endl;
     }
 
+    const std::string signalEmitterTestMethod() {
+        
+        cout << "TestObj::signalEmitterTestMethod(): " << s_ << endl;
+        return s_;
+    }
+
     void mouseAcceptorTestMethod(const std::pair<double, double> &mouseLocation) {
         cout << "TestObj::mouseAcceptorTestMethod(): x = " << mouseLocation.first
              << ", y = " << mouseLocation.second << endl;
@@ -55,7 +61,13 @@ int main() {
     // Now we're going to create a JS timer to read the value and fire the signal every so often.
     val testObjEmitter = val::global("elgTestObjEmitter")(val(*testObjCSO));
     // val setInterval = val::global("setInterval");
-    setInterval(testObjEmitter, 500);
+    //setInterval(testObjEmitter, 500);
+
+
+    auto objectEmitter = make_shared<ObjectEmitter<std::string, TestObj>>(tobjSptr);
+    objectEmitter->setSignalEmitterMethod(&TestObj::signalEmitterTestMethod);
+    val jsEmitterFn = val::global("elgObjEmitter")(val(*objectEmitter));
+    setInterval(jsEmitterFn, 500);
 
     // It's easy to get control of elements that are already present in a static HTML page by
     // creating a WE from the id.
@@ -220,5 +232,9 @@ EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
 
     emscripten::class_<cl2::EventListenerEmitter<std::string>>("EventListenerEmitter")
         .function("emit", &cl2::EventListenerEmitter<std::string>::emit,
+                  emscripten::allow_raw_pointers());
+
+    emscripten::class_<cl2::ObjectEmitter<std::string, TestObj>>("ObjectEmitter")
+        .function("emit", &cl2::ObjectEmitter<std::string, TestObj>::emit,
                   emscripten::allow_raw_pointers());
 }

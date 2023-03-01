@@ -122,12 +122,24 @@ class ObjectEmitter : public SignalEmitter<S> {
         signalEmitterMethod_ = signalEmitterMethod;
     }
 
+    virtual void emit() {
+        const S newSignal = (*obj_.*signalEmitterMethod_)();
+        SignalEmitter<S>::emit(newSignal);
+    }
+
     virtual void update() {}
 
     virtual ~ObjectEmitter() {
         // cout << "Destroying ObjectAcceptor\n";
     }
 };
+
+
+
+
+
+
+
 
 }  // namespace cl2
 
