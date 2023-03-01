@@ -4,7 +4,6 @@
 #include "Signal.hpp"
 #include "SignalBuilder.hpp"
 #include "SignalPrimitives.hpp"
-#include "Signals.hpp"
 #include "Util.hpp"
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
