@@ -154,7 +154,7 @@ class MouseSignal : public SignalEmitter<S> {
     shared_ptr<WebElement> wptr_;  //!< The actual WebElement this acts as a signal wrapper for.
     std::string eventListenerName_ = "";  //!< i.e. 'click', 'mousedown', 'mouseover', etc...
     val eventListenerFn_ = val::null();
-    //bool coordsUseViewBox_ = false;
+    // bool coordsUseViewBox_ = false;
 
    public:
     virtual void emit(const S& s) { SignalEmitter<S>::emit(s); }
@@ -166,10 +166,10 @@ class MouseSignal : public SignalEmitter<S> {
         wptr_ = make_shared<WebElement>(wptr);
     }
 
-    static std::pair<int, int> packagePairInt(int x, int y) { return std::pair(x, y); }
-
     /**
      * @brief I created this so I can call it from JS to make the needed type for the emit method.
+     * There's probably a better way to do this but I just needed a quick way to make sure that I
+     * was sending out a C++ pair of doubles.
      *
      * @param x
      * @param y
