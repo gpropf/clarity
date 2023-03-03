@@ -67,6 +67,8 @@ class Signal {
     virtual ~Signal() {
         // cout << "Destroying Signal\n";
     }
+
+    virtual S getCurrentValue() const { return currentValue_; };
 };
 
 template <typename S>

@@ -153,6 +153,94 @@ class ObjectEmitter : public SignalEmitter<S> {
 };
 
 
+/**
+ * @brief Similar to the `CppLambda` class except has 2 inputs. In practice this is considerably
+ * more complicated than the single input case because it is possible that one of the inputs may not
+ * exist when the other comes in.
+ *
+ * @tparam inT1
+ * @tparam inT2
+ * @tparam outT
+ */
+template <typename inT1, typename inT2, typename outT>
+class MergeSS : public SignalEmitter<outT>,
+              public std::enable_shared_from_this<MergeSS<inT1, inT2, outT>> {
+    shared_ptr<SignalAcceptor<inT2>> in2_ = nullptr;
+    shared_ptr<SignalAcceptor<inT1>> in1_ = nullptr;
+
+    bool signalPresentOnInput1_ = false;
+    bool signalPresentOnInput2_ = false;
+
+    std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
+
+   public:
+    MergeSS(std::function<outT(inT1 in1, inT2 in2)> mergeFn, bool emitInitialValue = false)
+        : SignalEmitter<outT>(emitInitialValue) {
+        mergeFn_ = mergeFn;
+    }
+
+    shared_ptr<SignalAcceptor<inT2>> getInput2() {
+        if (in2_ == nullptr) in2_ = make_shared<SignalAcceptor<inT2>>(false);
+        in2_->setParent(this->shared_from_this());
+        return in2_;
+    }
+    shared_ptr<SignalAcceptor<inT1>> getInput1() {
+        if (in1_ == nullptr) in1_ = make_shared<SignalAcceptor<inT1>>(false);
+        in1_->setParent(this->shared_from_this());
+        return in1_;
+    }    
+
+    /**
+     * @brief Here we compare the messages from the children to the int value of the raw pointers
+     * extracted from the shared_ptr. I suppose using a hash value would be better but this works
+     * for now. Once both signals are present we recompute() the value.
+     *
+     * @param e
+     */
+    virtual void childEvent(int e) {
+        cout << "MergeSS: Child event " << e << endl;
+        // if (reinterpret_cast<int>) {}
+        int rawPtrVal = reinterpret_cast<int>(in1_.get());
+        if (rawPtrVal == e) {
+            signalPresentOnInput1_ = true;
+        }
+        rawPtrVal = reinterpret_cast<int>(in2_.get());
+        if (rawPtrVal == e) {
+            signalPresentOnInput2_ = true;
+        }
+        if (signalPresentOnInput1_ && signalPresentOnInput2_) recompute();
+    }
+
+    /**
+     * @brief Check to see if both inputs are initialized and then run the stored lambda, emitting
+     * the result.
+     *
+     * @return true If both inputs exist.
+     * @return false If one of the inputs does not exist.
+     */
+    bool recompute() {
+        if (in2_ && in1_) {
+            cout << "BOTH INPUTS ARE LIVE" << endl;
+            inT2 s2 = in2_->getCurrentValue();
+            inT1 s1 = in1_->getCurrentValue();
+            this->setCurrentVal(mergeFn_(s1, s2));
+            if (this->getOutput()) {
+                cout << "MERGE OUTPUT IS LIVE" << endl;
+                this->emit(this->getCurrentValue());
+            }
+            return true;
+        }
+        return false;
+    }    
+
+    virtual void update() {
+        if (this->getOutput() == nullptr) return;
+        // if (!SignalEmitter<outT>::emitInitialValue()) return;
+        // SignalEmitter<outT>::emit(SignalEmitter<outT>::getCurrentValue());
+    }
+};
+
+
 
 
 
