@@ -1,3 +1,14 @@
+/**
+ * @file Clarity.js
+ * @author Greg Propf (gpropf@gmail.com)
+ * @brief This is the library of basic JavaScript functions needed by the Clarity framework.
+ * @version 0.1
+ * @date 2023-03-01
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 class WebElement {
     constructor() { }
 
