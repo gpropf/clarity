@@ -180,12 +180,12 @@ class MergeSS : public SignalEmitter<outT>,
     }
 
     shared_ptr<SignalAcceptor<inT2>> getInput2() {
-        if (in2_ == nullptr) in2_ = make_shared<SignalAcceptor<inT2>>(false);
+        if (in2_ == nullptr) in2_ = make_shared<SignalAcceptor<inT2>>();
         in2_->setParent(this->shared_from_this());
         return in2_;
     }
     shared_ptr<SignalAcceptor<inT1>> getInput1() {
-        if (in1_ == nullptr) in1_ = make_shared<SignalAcceptor<inT1>>(false);
+        if (in1_ == nullptr) in1_ = make_shared<SignalAcceptor<inT1>>();
         in1_->setParent(this->shared_from_this());
         return in1_;
     }    
@@ -223,7 +223,7 @@ class MergeSS : public SignalEmitter<outT>,
             cout << "BOTH INPUTS ARE LIVE" << endl;
             inT2 s2 = in2_->getCurrentValue();
             inT1 s1 = in1_->getCurrentValue();
-            this->setCurrentVal(mergeFn_(s1, s2));
+            this->currentValue_ = mergeFn_(s1, s2);
             if (this->getOutput()) {
                 cout << "MERGE OUTPUT IS LIVE" << endl;
                 this->emit(this->getCurrentValue());

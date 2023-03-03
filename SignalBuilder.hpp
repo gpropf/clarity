@@ -116,8 +116,8 @@ class SignalBuilder {
 
     template <typename S>
     shared_ptr<EventListenerEmitter<S>> textInputELE(const std::string& name,
-                                                  const std::string& labelText,
-                                                  bool emitInitialValue = true) {
+                                                     const std::string& labelText,
+                                                     bool emitInitialValue = true) {
         InputElement inp = textInput(name, labelText);
 
         // InputElement dblInput = InputElement("input", "dblInput", "text", "ss1");
@@ -132,8 +132,8 @@ class SignalBuilder {
 
     template <typename S>
     shared_ptr<WebElementSignalObjectSS<S>> textInputWSS(const std::string& name,
-                                                    const std::string& labelText,
-                                                    bool emitInitialValue = true) {
+                                                         const std::string& labelText,
+                                                         bool emitInitialValue = true) {
         InputElement inp = textInput(name, labelText);
         shared_ptr<WebElementSignalObjectSS<S>> wso =
             make_shared<WebElementSignalObjectSS<S>>(inp, "value", emitInitialValue);
@@ -168,15 +168,13 @@ class SignalBuilder {
 
     template <typename S>
     shared_ptr<WebElementSignalObjectSS<S>> rangeInputWSS(const std::string& name,
-                                                    const std::string& labelText,
-                                                    bool emitInitialValue = true) {
+                                                          const std::string& labelText,
+                                                          bool emitInitialValue = true) {
         InputElement inp = rangeInput(name, labelText);
         shared_ptr<WebElementSignalObjectSS<S>> wso =
             make_shared<WebElementSignalObjectSS<S>>(inp, "value", emitInitialValue);
         return wso;
     }
-
-
 
     Button button(const std::string& displayedText, val onClickFn) {
         Button btn =
@@ -243,10 +241,30 @@ class SignalBuilder {
      * @param merge
      * @param mergeOut
      */
+    // template <typename inT1, typename inT2, typename outT>
+    // void connect(shared_ptr<SignalObject<inT1>> s1, shared_ptr<SignalObject<inT2>> s2,
+    //              shared_ptr<Merge<inT1, inT2, outT>> merge,
+    //              shared_ptr<SignalObject<outT>> mergeOut = nullptr) {
+    //     s1->setOutput(merge->getInput1());
+    //     s2->setOutput(merge->getInput2());
+    //     if (mergeOut != nullptr) merge->setOutput(mergeOut);
+    // }
+
+    /**
+     * @brief Connect the two inputs to the Merge and then connect the Merge to the optional output.
+     *
+     * @tparam inT1
+     * @tparam inT2
+     * @tparam outT
+     * @param s1
+     * @param s2
+     * @param merge
+     * @param mergeOut
+     */
     template <typename inT1, typename inT2, typename outT>
-    void connect(shared_ptr<SignalObject<inT1>> s1, shared_ptr<SignalObject<inT2>> s2,
-                 shared_ptr<Merge<inT1, inT2, outT>> merge,
-                 shared_ptr<SignalObject<outT>> mergeOut = nullptr) {
+    void connect(shared_ptr<SignalEmitter<inT1>> s1, shared_ptr<SignalEmitter<inT2>> s2,
+                 shared_ptr<MergeSS<inT1, inT2, outT>> merge,
+                 shared_ptr<SignalAcceptor<outT>> mergeOut = nullptr) {
         s1->setOutput(merge->getInput1());
         s2->setOutput(merge->getInput2());
         if (mergeOut != nullptr) merge->setOutput(mergeOut);

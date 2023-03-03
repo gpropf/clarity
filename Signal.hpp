@@ -4,9 +4,9 @@
  * @brief The basic Signal template classes: Signal, SignalEmitter, SignalAcceptor.
  * @version 0.1
  * @date 2023-03-01
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #ifndef Signal_hpp
@@ -87,6 +87,11 @@ class SignalEmitter : public Signal<S> {
     bool emitInitialValue_ = false;
 
    public:
+    virtual void update() {}
+
+    SignalEmitter() {}
+    SignalEmitter(bool emitInitialValue) : emitInitialValue_(emitInitialValue) {}
+
     shared_ptr<SignalAcceptor<S>> getOutput() const { return output_; }
 
     void setOutput(shared_ptr<SignalAcceptor<S>> sobj) {
@@ -138,6 +143,8 @@ class SignalAcceptor : public Signal<S> {
     shared_ptr<SignalEmitter<S>> input_ = nullptr;
 
    public:
+    virtual void update() {}
+
     shared_ptr<Signal<S>> getInput() const { return input_; }
 
     void setInput(shared_ptr<Signal<S>> sobj) {
@@ -145,8 +152,25 @@ class SignalAcceptor : public Signal<S> {
         this->update();
     }
 
+    // virtual bool accept(const S& s) {
+    //     this->currentValue_ = s;
+    //     return true;
+    // }
+
+    /**
+     * @brief Ignores the signal if the value hasn't changed. Stores the signal value in currentVal_
+     * otherwise.
+     *
+     * @param s
+     * @return true
+     * @return false
+     */
     virtual bool accept(const S& s) {
+        if (s == this->currentValue_) return false;
         this->currentValue_ = s;
+        if (this->getParent() != nullptr) {
+            this->getParent()->childEvent(reinterpret_cast<int>(this));
+        }
         return true;
     }
 
