@@ -182,11 +182,11 @@ int main() {
 
     // Here we're going back to our TestObj and creating a field that will allow the user to update
     // the string value it contains.
-    const auto testObjValTextInputWSO = sb.textInput<std::string>(
-        "testObjValTextInput", "Enter a new value for the string stored in the TestObj.");
+    // const auto testObjValTextInputWSO = sb.textInput<std::string>(
+    //     "testObjValTextInput", "Enter a new value for the string stored in the TestObj.");
 
-    sb.connect<std::string>(testObjValTextInputWSO, testObjCSO);
-    sb.connect<std::string>(testObjCSO, testObjValTextInputWSO);
+    // sb.connect<std::string>(testObjValTextInputWSO, testObjCSO);
+    // sb.connect<std::string>(testObjCSO, testObjValTextInputWSO);
 
     auto mergeFn = [](std::string s1, std::string s2) { return s1 + s2; };
     auto mergeSignal = make_shared<MergeSS<std::string, std::string, std::string>>(mergeFn);
