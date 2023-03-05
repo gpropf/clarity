@@ -8,6 +8,8 @@
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
 
+#include "GridControl.hpp"
+
 using namespace cl2;
 
 /**
