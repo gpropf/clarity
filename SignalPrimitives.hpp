@@ -122,31 +122,31 @@ class ObjectAcceptor : public SignalAcceptor<S> {
     }
 };
 
-template <typename S, typename ObjT>
-class RawPointerObjectAcceptor : public SignalAcceptor<S> {
-    ObjT * obj_;
-    void (ObjT::*signalAcceptorMethod_)(const S& s);
+// template <typename S, typename ObjT>
+// class RawPointerObjectAcceptor : public SignalAcceptor<S> {
+//     ObjT * obj_;
+//     void (ObjT::*signalAcceptorMethod_)(const S& s);
 
-   public:
-    RawPointerObjectAcceptor(ObjT &obj) { obj_ = &obj; }
+//    public:
+//     RawPointerObjectAcceptor(ObjT &obj) { obj_ = &obj; }
     
 
-    void setSignalAcceptorMethod(void (ObjT::*signalAcceptorMethod)(const S& s)) {
-        signalAcceptorMethod_ = signalAcceptorMethod;
-    }
+//     void setSignalAcceptorMethod(void (ObjT::*signalAcceptorMethod)(const S& s)) {
+//         signalAcceptorMethod_ = signalAcceptorMethod;
+//     }
 
-    virtual bool accept(const S& s) {
-        SignalAcceptor<S>::accept(s);
-        (*obj_.*signalAcceptorMethod_)(s);
-        return true;
-    }
+//     virtual bool accept(const S& s) {
+//         SignalAcceptor<S>::accept(s);
+//         (*obj_.*signalAcceptorMethod_)(s);
+//         return true;
+//     }
 
-    virtual void update() {}
+//     virtual void update() {}
 
-    virtual ~RawPointerObjectAcceptor() {
-        // cout << "Destroying ObjectAcceptor\n";
-    }
-};
+//     virtual ~RawPointerObjectAcceptor() {
+//         // cout << "Destroying ObjectAcceptor\n";
+//     }
+// };
 
 
 template <typename S, typename ObjT>

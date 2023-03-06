@@ -213,10 +213,15 @@ int main() {
 
     auto gridControl = make_shared<GridControl<unsigned char>>(300,200, 600,400, sb);
     
+
+    const auto selectOutput = sb.textInputWSS<std::string>("selectOutput", "Output of select box appears here.", false);
     auto select1 = Select("select1", getStrId());
     auto option1 = Option("1", "Foo", select1.getDomElement());
+    auto option2 = Option("2", "Bar", select1.getDomElement());
+    auto option3 = Option("3", "Baz", select1.getDomElement());
 
     auto selectEmitter = make_shared<SelectEmitter<std::string>>(select1.getDomElement());
+    selectEmitter->setOutput(selectOutput);
     return 0;
 }
 

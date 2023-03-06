@@ -114,6 +114,7 @@ class WebElementSignalObjectSS : public SignalAcceptor<S>, public SignalEmitter<
 template <typename S>
 class EventListenerEmitter : public SignalEmitter<S> {
     // shared_ptr<val> eventListener_ = nullptr;
+   protected:
     val domElement_;
     std::string eventListenerName_;
     std::string eventListenerGeneratorName_;
@@ -154,10 +155,11 @@ class SelectEmitter : public EventListenerEmitter<S> {
 
    public:
     // shared_ptr<Signal<S>> getOutput() const { return output_; }
-    SelectEmitter(val domElement) {
-        this->domElement_ = domElement;
-        this->eventListenerName_ = "change";
-        this->eventListenerGeneratorName_ = "elgSelectEmitFn";
+    SelectEmitter(val domElement) : EventListenerEmitter<S>(domElement, "change",
+                         "elgSelectEmitFn"){
+        // this->domElement_ = domElement;
+        // this->eventListenerName_ = "change";
+        // this->eventListenerGeneratorName_ = "elgSelectEmitFn";
     }
 
     virtual void update() { EventListenerEmitter<S>::update(); }
