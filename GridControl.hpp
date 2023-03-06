@@ -52,6 +52,12 @@ class GridControl {
         //mouseClickSignal_->setOutput(svgMouseClickAcceptor_);
     }
 
+    void connectSelfToMouse(shared_ptr<GridControl> sharedThis) {
+        //mouseClickSignal_->setOutput(sharedThis);
+        svgMouseClickAcceptor_->setObjectPointer(sharedThis);
+        mouseClickSignal_->setOutput(svgMouseClickAcceptor_);
+    }
+
     /**
      * @brief Better version of mod-in-place method above.
      *
