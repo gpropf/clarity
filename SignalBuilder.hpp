@@ -177,17 +177,7 @@ class SignalBuilder {
         postCall();
         addElementToMap(inp, name);
         return inp;
-    }
-
-    // template <typename S>
-    // shared_ptr<WebElementSignalObject<S>> textInput(const std::string& name,
-    //                                                 const std::string& labelText,
-    //                                                 bool emitInitialValue = true) {
-    //     InputElement inp = textInput(name, labelText);
-    //     shared_ptr<WebElementSignalObject<S>> wso =
-    //         make_shared<cl2::WebElementSignalObject<S>>(inp, "value", emitInitialValue);
-    //     return wso;
-    // }
+    }    
 
     /**
      * @brief Creates a text input signal emitter using an `EventListenerEmitter`
@@ -202,15 +192,10 @@ class SignalBuilder {
     shared_ptr<EventListenerEmitter<S>> textInputELE(const std::string& name,
                                                      const std::string& labelText,
                                                      bool emitInitialValue = true) {
-        InputElement inp = textInput(name, labelText);
-
-        // InputElement dblInput = InputElement("input", "dblInput", "text", "ss1");
+        InputElement inp = textInput(name, labelText);        
         val inpDE = inp.getDomElement();
         shared_ptr<EventListenerEmitter<S>> wso =
             make_shared<EventListenerEmitter<std::string>>(inpDE, "change");
-
-        // shared_ptr<EventListenerEmitter<S>> wso =
-        //     make_shared<cl2::EventListenerEmitter<S>>(inp, "value", emitInitialValue);
         return wso;
     }
 
@@ -247,17 +232,7 @@ class SignalBuilder {
                                 parentDOMElement_);
         postCall();
         return inp;
-    }
-
-    // template <typename S>
-    // shared_ptr<WebElementSignalObject<S>> rangeInput(const std::string& name,
-    //                                                  const std::string& labelText,
-    //                                                  bool emitInitialValue = true) {
-    //     InputElement inp = rangeInput(name, labelText);
-    //     shared_ptr<WebElementSignalObject<S>> wso =
-    //         make_shared<cl2::WebElementSignalObject<S>>(inp, "value", emitInitialValue);
-    //     return wso;
-    // }
+    }    
 
     /**
      * @brief Creates a "two-sided" range field signal. It can be used as an emitter or acceptor.
@@ -302,69 +277,7 @@ class SignalBuilder {
     template <typename S>
     void connect(shared_ptr<SignalEmitter<S>> s1, shared_ptr<SignalAcceptor<S>> s2) {
         s1->setOutput(s2);
-    }
-
-    // /**
-    //  * @brief Connect the signals from left to right
-    //  *
-    //  * @tparam S
-    //  * @param s1
-    //  * @param s2
-    //  */
-    // template <typename S>
-    // void connect(shared_ptr<SignalObject<S>> s1, shared_ptr<SignalObject<S>> s2) {
-    //     s1->setOutput(s2);
-    // }
-
-    // /**
-    //  * @brief Connect the Tee with the two outputs
-    //  *
-    //  * @tparam S
-    //  * @param tee
-    //  * @param s1
-    //  * @param s2
-    //  */
-    // template <typename S>
-    // void connect(shared_ptr<Tee<S>> tee, shared_ptr<SignalObject<S>> s1,
-    //              shared_ptr<SignalObject<S>> s2) {
-    //     // s1->setOutput(s2);
-    //     tee->setOutput(s1);
-    //     tee->setSecondOutput(s2);
-    // }
-
-    // template <typename S>
-    // void connect(shared_ptr<MultiTee<S>> tee, shared_ptr<SignalObject<S>> s1,
-    //              shared_ptr<SignalObject<S>> s2, shared_ptr<SignalObject<S>> s3 = nullptr,
-    //              shared_ptr<SignalObject<S>> s4 = nullptr, shared_ptr<SignalObject<S>> s5 =
-    //              nullptr, shared_ptr<SignalObject<S>> s6 = nullptr) {
-    //     // s1->setOutput(s2);
-    //     tee->setOutput(s1);
-    //     tee->addOutput(s2);
-    //     if (s3 != nullptr) tee->addOutput(s3);
-    //     if (s4 != nullptr) tee->addOutput(s4);
-    //     if (s5 != nullptr) tee->addOutput(s5);
-    //     if (s6 != nullptr) tee->addOutput(s6);
-    // }
-
-    /**
-     * @brief Connect the two inputs to the Merge and then connect the Merge to the optional output.
-     *
-     * @tparam inT1
-     * @tparam inT2
-     * @tparam outT
-     * @param s1
-     * @param s2
-     * @param merge
-     * @param mergeOut
-     */
-    // template <typename inT1, typename inT2, typename outT>
-    // void connect(shared_ptr<SignalObject<inT1>> s1, shared_ptr<SignalObject<inT2>> s2,
-    //              shared_ptr<Merge<inT1, inT2, outT>> merge,
-    //              shared_ptr<SignalObject<outT>> mergeOut = nullptr) {
-    //     s1->setOutput(merge->getInput1());
-    //     s2->setOutput(merge->getInput2());
-    //     if (mergeOut != nullptr) merge->setOutput(mergeOut);
-    // }
+    }      
 
     /**
      * @brief Connect the two inputs to the Merge and then connect the Merge to the optional output.
