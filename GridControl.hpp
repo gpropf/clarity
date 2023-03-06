@@ -48,6 +48,8 @@ class GridControl {  //: public std::enable_shared_from_this<GridControl<PixelT>
                                            std::to_string(gridHeight_))},
                            {"style", val("border: 2px solid blue")}});
 
+        pixels_ = new PixelT[gridWidth_ * gridHeight_];
+
         auto colorInput = sb.textInputWSS<std::string>("colorInput", "Enter a number", false);
 
         mouseClickSignal_ = make_shared<MouseSignal<std::pair<double, double>>>(svg, "click");
@@ -87,7 +89,10 @@ class GridControl {  //: public std::enable_shared_from_this<GridControl<PixelT>
     }
 
     void setCurrentColor(const std::string &c) {
-        cout << "GridControl::mouseAcceptorTestMethod(): c = " << c << endl;
+        int nc = stoi(c);
+        // PixelT *newColor = new PixelT(c);
+        this->currentColor_ = nc;
+        cout << "GridControl::mouseAcceptorTestMethod(): c = " << this->currentColor_ << endl;
     }
 };
 }  // namespace cl2
