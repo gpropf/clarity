@@ -202,7 +202,7 @@ int main() {
     val recomputeMergeFn = val::global("elgMergeRecompute")(val(*mergeSignal));
     const auto mergeRecomputeButton = sb.button("Recompute", recomputeMergeFn);
 
-    auto gridControl = make_shared<GridControl<unsigned char>>(300,200, 600,400);
+    auto gridControl = make_shared<GridControl<unsigned char>>(300,200, 600,400, sb);
     
 
     return 0;
