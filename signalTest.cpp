@@ -202,6 +202,10 @@ int main() {
     val recomputeMergeFn = val::global("elgMergeRecompute")(val(*mergeSignal));
     const auto mergeRecomputeButton = sb.button("Recompute", recomputeMergeFn);
 
+    auto gridControl = GridControl<unsigned char>(300,200, 600,400);
+
+
+
     return 0;
 }
 
