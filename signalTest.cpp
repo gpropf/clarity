@@ -1,4 +1,13 @@
-
+/**
+ * @file signalTest.cpp
+ * @author Greg Propf (gpropf@gmail.com)
+ * @brief A test program to try out and debug the library.
+ * @version 0.1
+ * @date 2023-03-01
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 
 #include "MonolithicSignals.hpp"
 #include "Signal.hpp"
