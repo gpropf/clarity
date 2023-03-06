@@ -71,6 +71,21 @@ struct WebElement {
     }
 };
 
+struct Select : public WebElement {
+Select(const std::string& name, const std::string& id = "",
+               val parentElement = val::null()) : WebElement("select", name, id, parentElement) {}
+
+};
+
+struct Option : public WebElement {
+    Option(const std::string& value, const std::string& label, val parentElement = val::null())
+        : WebElement("option", "", "", parentElement) {
+            domElement_.set("value", val(value));
+            domElement_.set("label", val(label));
+
+        }
+};
+
 /**
  * @brief Simple br tag, probably doesn't need a name or id. The logic in the JS code is that
  * negative ids are not created so you can set the id to a negative to create a tag with no id.

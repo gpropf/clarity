@@ -204,7 +204,8 @@ int main() {
 
     auto gridControl = make_shared<GridControl<unsigned char>>(300,200, 600,400, sb);
     
-
+    auto select1 = Select("select1", getStrId());
+    auto option1 = Option("1", "Foo", select1.getDomElement());
     return 0;
 }
 
