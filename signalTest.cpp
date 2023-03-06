@@ -215,6 +215,8 @@ int main() {
     
     auto select1 = Select("select1", getStrId());
     auto option1 = Option("1", "Foo", select1.getDomElement());
+
+    auto selectEmitter = make_shared<SelectEmitter<std::string>>(select1.getDomElement());
     return 0;
 }
 
