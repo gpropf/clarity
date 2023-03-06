@@ -116,14 +116,18 @@ class EventListenerEmitter : public SignalEmitter<S> {
     // shared_ptr<val> eventListener_ = nullptr;
     val domElement_;
     std::string eventListenerName_;
+    std::string eventListenerGeneratorName_;
 
    public:
     // shared_ptr<Signal<S>> getOutput() const { return output_; }
-    EventListenerEmitter(val domElement, const std::string& eventListenerName)
-        : domElement_(domElement), eventListenerName_(eventListenerName) {}
+    EventListenerEmitter(val domElement, const std::string& eventListenerName,
+                         const std::string& eventListenerGeneratorName)
+        : domElement_(domElement),
+          eventListenerName_(eventListenerName),
+          eventListenerGeneratorName_(eventListenerGeneratorName) {}
 
     virtual void update() {
-        val elgEmitFn = val::global("elgEmitFn");
+        val elgEmitFn = val::global(this->eventListenerGeneratorName_.c_str());
         val eventListenerFn = elgEmitFn(*this);
         domElement_.call<void>("removeEventListener", val(eventListenerName_), eventListenerFn);
         domElement_.call<void>("addEventListener", val(eventListenerName_), eventListenerFn);
@@ -135,6 +139,35 @@ class EventListenerEmitter : public SignalEmitter<S> {
     }
 
     virtual ~EventListenerEmitter() {
+        // cout << "Destroying SignalObject\n";
+    }
+};
+
+/**
+ * @brief A signal originating in an event listener.
+ *
+ * @tparam S data type of signal, e.g. string, int, double, etc...
+ */
+template <typename S>
+class SelectEmitter : public EventListenerEmitter<S> {
+    // shared_ptr<val> eventListener_ = nullptr;
+
+   public:
+    // shared_ptr<Signal<S>> getOutput() const { return output_; }
+    SelectEmitter(val domElement) {
+        this->domElement_ = domElement;
+        this->eventListenerName_ = "change";
+        this->eventListenerGeneratorName_ = "elgSelectEmitFn";
+    }
+
+    virtual void update() { EventListenerEmitter<S>::update(); }
+
+    virtual void emit(const S& s) {
+        cout << "SelectEmitter::emit called!" << endl;
+        EventListenerEmitter<S>::emit(s);
+    }
+
+    virtual ~SelectEmitter() {
         // cout << "Destroying SignalObject\n";
     }
 };

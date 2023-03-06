@@ -70,6 +70,14 @@ function elgEmitFn(webElementSignalObject) {
     };
 }
 
+function elgSelectEmitFn(SelectEmitter) {
+    return function (ev) {
+        let text = ev.target.value;
+        console.log("elgSelectEmitFn generated fn called. Emitting signal: " + text);
+        SelectEmitter.emit(text);
+    };
+}
+
 function elgMouseSignal(mouseSignal, domElement) {
     return function (ev) {
         //let text = ev.target.value;
