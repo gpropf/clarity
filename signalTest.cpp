@@ -203,8 +203,7 @@ int main() {
     const auto mergeRecomputeButton = sb.button("Recompute", recomputeMergeFn);
 
     auto gridControl = make_shared<GridControl<unsigned char>>(300,200, 600,400);
-    gridControl->connectSelfToMouse(gridControl);
-
+    
 
     return 0;
 }

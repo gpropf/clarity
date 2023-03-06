@@ -15,7 +15,7 @@
 namespace cl2 {
 
 template <typename PixelT>
-class GridControl {
+class GridControl { //: public std::enable_shared_from_this<GridControl<PixelT>> {
     int gridWidth_, gridHeight_;
     PixelT *pixels_;
     shared_ptr<MouseSignal<std::pair<double, double>>> mouseClickSignal_ = nullptr;
@@ -49,14 +49,11 @@ class GridControl {
         //svgMouseClickAcceptor_ = new RawPointerObjectAcceptor<std::pair<double, double>, GridControl<PixelT>>>();
         svgMouseClickAcceptor_ = make_shared<ObjectAcceptor<std::pair<double, double>, GridControl>>();
         svgMouseClickAcceptor_->setSignalAcceptorMethod(&GridControl::mouseAcceptorTestMethod);
-        //mouseClickSignal_->setOutput(svgMouseClickAcceptor_);
-    }
-
-    void connectSelfToMouse(shared_ptr<GridControl> sharedThis) {
-        //mouseClickSignal_->setOutput(sharedThis);
-        svgMouseClickAcceptor_->setObjectPointer(sharedThis);
+        
+        
+       // svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
         mouseClickSignal_->setOutput(svgMouseClickAcceptor_);
-    }
+    }    
 
     /**
      * @brief Better version of mod-in-place method above.
