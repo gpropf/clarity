@@ -58,7 +58,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
         auto colorInput = sb.textInputWSS<std::string>("colorInput", "Enter a number", false);
 
-        mouseClickSignal_ = make_shared<MouseSignal<std::pair<double, double>>>(svg, "mouseover");
+        mouseClickSignal_ = make_shared<MouseSignal<std::pair<double, double>>>(svg, "click");
         // svgMouseClickAcceptor_ = new RawPointerObjectAcceptor<std::pair<double, double>,
         // GridControl<PixelT>>>();
         svgMouseClickAcceptor_ =
@@ -106,8 +106,10 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         val svgDOMElement = document.call<val>("getElementById", val(svgid_));
         int floorX = floor(mouseLocation.first);
         int floorY = floor(mouseLocation.second);
-        auto rect1 = Rect("", floorX, floorY, 1, 1, "#ffaa99", "", true,
-                          svgid_ + "_" + std::to_string(floorX) + ":" + std::to_string(floorY), svgDOMElement);
+        //std::string cursorSquareId = svgid_ + "_" + std::to_string(floorX) + ":" + std::to_string(floorY);
+        std::string cursorSquareId = "cursorSquareId";
+        auto rect1 = Rect("", floorX, floorY, 1, 1, "#ff34aa", "", true,
+                          cursorSquareId, svgDOMElement);
     }
 
     void setCurrentColor(const std::string &c) {
