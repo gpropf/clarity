@@ -21,7 +21,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     std::string id_;
     std::string svgid_;
     PixelT *pixels_;
-    PixelT currentColor_;
+    PixelT currentColor_ = 0;
+    std::map<PixelT, std::string> colorPallete_;
     shared_ptr<MouseSignal<std::pair<double, double>>> mouseClickSignal_ = nullptr;
     shared_ptr<ObjectAcceptor<std::pair<double, double>, GridControl<PixelT>>>
         svgMouseClickAcceptor_ = nullptr;
@@ -42,6 +43,10 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     //     svgMouseClickAcceptor->setSignalAcceptorMethod(&TestObj::mouseAcceptorTestMethod);
 
     //     sb.connect<std::pair<double, double>>(mouseSignal, svgMouseClickAcceptor);
+
+    void addColorToPallete(PixelT colorValue, const std::string &colorString) {
+        colorPallete_[colorValue] = colorString;
+    }
 
     GridControl(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight, SignalBuilder &sb,
                 const std::string &id = "", val parentDOMElement = val::null())
@@ -77,7 +82,10 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
      * the constructor but it seems to cause an exception due to the use of shared_from_this().
      *
      */
-    void finalize() { this->svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this()); }
+    void finalize() {
+        this->svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
+        this->newColorAcceptor_->setObjectPointer(this->shared_from_this());
+    }
 
     /**
      * @brief Better version of mod-in-place method above.
@@ -106,17 +114,21 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         val svgDOMElement = document.call<val>("getElementById", val(svgid_));
         int floorX = floor(mouseLocation.first);
         int floorY = floor(mouseLocation.second);
-        //std::string cursorSquareId = svgid_ + "_" + std::to_string(floorX) + ":" + std::to_string(floorY);
+        // std::string cursorSquareId = svgid_ + "_" + std::to_string(floorX) + ":" +
+        // std::to_string(floorY);
         std::string cursorSquareId = "cursorSquareId";
-        auto rect1 = Rect("", floorX, floorY, 1, 1, "#ff34aa", "", true,
-                          cursorSquareId, svgDOMElement);
+        std::string colorString = this->colorPallete_[this->currentColor_];
+        cout << "Current Color: " << this->currentColor_ << endl;
+        auto rect1 =
+            Rect("", floorX, floorY, 1, 1, colorString, "", true, cursorSquareId, svgDOMElement);
     }
 
     void setCurrentColor(const std::string &c) {
         int nc = stoi(c);
         // PixelT *newColor = new PixelT(c);
         this->currentColor_ = nc;
-        cout << "GridControl::mouseAcceptorTestMethod(): c = " << this->currentColor_ << endl;
+        cout << "GridControl::setCurrentColor(): c = " << this->currentColor_ << endl;
+       // this->svgMouseClickAcceptor_->update();
     }
 };
 }  // namespace cl2
