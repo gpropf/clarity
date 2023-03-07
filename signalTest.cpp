@@ -158,7 +158,7 @@ int main() {
     circle1.domElement_.call<void>("setAttribute", val("fill"), val("#ff0000"));
 
 
-    auto rect1 = Rect("rect1", 23, 31, 40, 50, "#ffaa99", "blue", getStrId(), svg.getDomElement());
+    auto rect1 = Rect("rect1", 23, 31, 40, 50, "#ffaa99", "blue", true, getStrId(), svg.getDomElement());
 
     // Now we need signal wrappers to connect to various attributes of the circle.
     auto circle1CXWSO = make_shared<cl2::WebElementSignalObjectSS<std::string>>(circle1, "cx");

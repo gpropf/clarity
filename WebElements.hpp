@@ -9,7 +9,6 @@
  *
  */
 
-
 #ifndef WebElements_hpp
 #define WebElements_hpp
 
@@ -84,18 +83,16 @@ struct WebElement {
 };
 
 struct Select : public WebElement {
-Select(const std::string& name, const std::string& id = "",
-               val parentElement = val::null()) : WebElement("select", name, id, parentElement) {}
-
+    Select(const std::string& name, const std::string& id = "", val parentElement = val::null())
+        : WebElement("select", name, id, parentElement) {}
 };
 
 struct Option : public WebElement {
     Option(const std::string& value, const std::string& label, val parentElement = val::null())
         : WebElement("option", "", "", parentElement) {
-            domElement_.set("value", val(value));
-            domElement_.set("label", val(label));
-
-        }
+        domElement_.set("value", val(value));
+        domElement_.set("label", val(label));
+    }
 };
 
 /**
@@ -121,18 +118,21 @@ struct SVG : public WebElement {
 };
 
 struct Rect : public WebElement {
-    Rect(const std::string& name, int x, int y, int width, int height, const std::string& fill, const std::string& stroke, const std::string& id = "",
-         val parentElement = val::null())
+    Rect(const std::string& name, double x, double y, double width, double height,
+         const std::string& fill, const std::string& stroke = "", bool preventDuplicateIds = true,
+         const std::string& id = "", val parentElement = val::null())
         : WebElement("rect", name, id, parentElement) {
-        val document = val::global("document");
-        val oldElement = document.call<val>("getElementById", val(id));
-        oldElement.call<void>("remove");
+        if (preventDuplicateIds) {
+            val document = val::global("document");
+            val oldElement = document.call<val>("getElementById", val(id));
+            oldElement.call<void>("remove");
+        }
         domElement_.call<void>("setAttribute", val("x"), val(x));
         domElement_.call<void>("setAttribute", val("y"), val(y));
         domElement_.call<void>("setAttribute", val("width"), val(width));
         domElement_.call<void>("setAttribute", val("height"), val(height));
         domElement_.call<void>("setAttribute", val("fill"), val(fill));
-        domElement_.call<void>("setAttribute", val("stroke"), val(stroke));
+        if (stroke != "") domElement_.call<void>("setAttribute", val("stroke"), val(stroke));
         parentElement.call<void>("appendChild", domElement_);
     }
 };
