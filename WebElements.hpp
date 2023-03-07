@@ -120,6 +120,23 @@ struct SVG : public WebElement {
     }
 };
 
+struct Rect : public WebElement {
+    Rect(const std::string& name, int x, int y, int width, int height, const std::string& fill, const std::string& stroke, const std::string& id = "",
+         val parentElement = val::null())
+        : WebElement("rect", name, id, parentElement) {
+        val document = val::global("document");
+        val oldElement = document.call<val>("getElementById", val(id));
+        oldElement.call<void>("remove");
+        domElement_.call<void>("setAttribute", val("x"), val(x));
+        domElement_.call<void>("setAttribute", val("y"), val(y));
+        domElement_.call<void>("setAttribute", val("width"), val(width));
+        domElement_.call<void>("setAttribute", val("height"), val(height));
+        domElement_.call<void>("setAttribute", val("fill"), val(fill));
+        domElement_.call<void>("setAttribute", val("stroke"), val(stroke));
+        parentElement.call<void>("appendChild", domElement_);
+    }
+};
+
 struct Label : public WebElement {
     Label(const std::string& text, const WebElement& wel, bool swallowForElement = true,
           const std::string& id = "", val parentElement = val::null())

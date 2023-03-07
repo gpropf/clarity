@@ -36,7 +36,8 @@ class WebElement {
     static tagToUrl = {
         "svg": "http://www.w3.org/2000/svg",
         "circle": "http://www.w3.org/2000/svg",
-        "ellipse": "http://www.w3.org/2000/svg"
+        "ellipse": "http://www.w3.org/2000/svg",
+        "rect": "http://www.w3.org/2000/svg"
     };
 
 
