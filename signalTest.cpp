@@ -214,8 +214,9 @@ int main() {
     val recomputeMergeFn = val::global("elgMergeRecompute")(val(*mergeSignal));
     const auto mergeRecomputeButton = sb.button("Recompute", recomputeMergeFn);
 
-    auto gridControl = make_shared<GridControl<unsigned char>>(300,200, 600,400, sb);
-    
+    auto gridControl = make_shared<GridControl<unsigned char>>(60,40, 600,400, sb, "gc1");
+    //svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
+    gridControl->finalize();
 
     const auto selectOutput = sb.textInputWSS<std::string>("selectOutput", "Output of select box appears here.", false);
     auto select1 = Select("select1", getStrId());
