@@ -35,6 +35,12 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         return addr;
     }
 
+    int calculateGridCellIndex(int x, int y) const {
+        int addr = (y * gridWidth_ + x);
+        assert(addr >= 0);
+        return addr;
+    }
+
    public:
     // auto mouseSignal = make_shared<MouseSignal<std::pair<double, double>>>(svg, "click");
 
@@ -60,6 +66,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                            {"style", val("border: 2px solid blue")}});
 
         pixels_ = new PixelT[gridWidth_ * gridHeight_];
+        initPixels();
 
         auto colorInput = sb.textInputWSS<std::string>("colorInput", "Enter a number", false);
 
@@ -104,6 +111,21 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         return std::pair(xp, yp);
     }
 
+    void initPixels() {
+        int totalPixels = gridHeight_ * gridWidth_;
+        while (totalPixels--) {
+            pixels_[totalPixels] = 0;
+        }
+    }
+
+    void printNonZeroPixels() {
+        int totalPixels = gridHeight_ * gridWidth_;
+        while (totalPixels--) {
+            PixelT p = pixels_[totalPixels];
+            if (p > 0) cout << "Pixel " << totalPixels << " is " << p << endl;
+        }
+    }
+
     void mouseAcceptorTestMethod(const std::pair<double, double> &mouseLocation) {
         cout << "GridControl::mouseAcceptorTestMethod(): x = " << mouseLocation.first
              << ", y = " << mouseLocation.second << endl;
@@ -121,6 +143,9 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         cout << "Current Color: " << this->currentColor_ << endl;
         auto rect1 =
             Rect("", floorX, floorY, 1, 1, colorString, "", true, cursorSquareId, svgDOMElement);
+
+        pixels_[calculateGridCellIndex(floorX, floorY)] = this->currentColor_;
+        printNonZeroPixels();
     }
 
     void setCurrentColor(const std::string &c) {
@@ -128,7 +153,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         // PixelT *newColor = new PixelT(c);
         this->currentColor_ = nc;
         cout << "GridControl::setCurrentColor(): c = " << this->currentColor_ << endl;
-       // this->svgMouseClickAcceptor_->update();
+        // this->svgMouseClickAcceptor_->update();
     }
 };
 }  // namespace cl2
