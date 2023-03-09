@@ -116,6 +116,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         while (totalPixels--) {
             pixels_[totalPixels] = 0;
         }
+        this->redraw();
     }
 
     void printNonZeroPixels() {
@@ -123,6 +124,21 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         while (totalPixels--) {
             PixelT p = pixels_[totalPixels];
             if (p > 0) cout << "Pixel " << totalPixels << " is " << p << endl;
+        }
+    }
+
+    void redraw() {
+        
+        val document = val::global("document");
+        val svgDOMElement = document.call<val>("getElementById", val(svgid_));
+        
+        for (int i = 0; i < this->gridWidth_; i++) {
+            for (int j = 0; j < this->gridHeight_; j++) {
+                int idx = calculateGridCellIndex(i, j);
+                std::string colorString = this->colorPallete_[this->pixels_[idx]];
+                //std::string colorString = "#ffff00";
+                auto rect1 = Rect("", i, j, 1, 1, colorString, "", false, "", svgDOMElement);
+            }
         }
     }
 
@@ -142,7 +158,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         std::string colorString = this->colorPallete_[this->currentColor_];
         cout << "Current Color: " << this->currentColor_ << endl;
         auto rect1 =
-            Rect("", floorX, floorY, 1, 1, colorString, "", true, cursorSquareId, svgDOMElement);
+            Rect("", floorX, floorY, 1, 1, colorString, "", false, cursorSquareId, svgDOMElement);
 
         pixels_[calculateGridCellIndex(floorX, floorY)] = this->currentColor_;
         printNonZeroPixels();
