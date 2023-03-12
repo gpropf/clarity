@@ -137,7 +137,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                 int idx = calculateGridCellIndex(i, j);
                 std::string colorString = this->colorPallete_[this->pixels_[idx]];
                 //std::string colorString = "#ffff00";
-                auto rect1 = Rect("", i, j, 1, 1, colorString, "", false, "", svgDOMElement);
+                auto rect1 = Rect("", i, j, 1, 1, colorString, "teal", 0.1, false, "", svgDOMElement);
             }
         }
     }
@@ -158,7 +158,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         std::string colorString = this->colorPallete_[this->currentColor_];
         cout << "Current Color: " << this->currentColor_ << endl;
         auto rect1 =
-            Rect("", floorX, floorY, 1, 1, colorString, "", false, cursorSquareId, svgDOMElement);
+            Rect("", floorX, floorY, 1, 1, colorString, "purple", 0.1, false, cursorSquareId, svgDOMElement);
 
         pixels_[calculateGridCellIndex(floorX, floorY)] = this->currentColor_;
         printNonZeroPixels();

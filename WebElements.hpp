@@ -119,7 +119,7 @@ struct SVG : public WebElement {
 
 struct Rect : public WebElement {
     Rect(const std::string& name, double x, double y, double width, double height,
-         const std::string& fill, const std::string& stroke = "", bool preventDuplicateIds = true,
+         const std::string& fill, const std::string& stroke = "", double strokeWidth = 0.5, bool preventDuplicateIds = true,
          const std::string& id = "", val parentElement = val::null())
         : WebElement("rect", name, id, parentElement) {
         if (preventDuplicateIds) {
@@ -132,7 +132,10 @@ struct Rect : public WebElement {
         domElement_.call<void>("setAttribute", val("width"), val(width));
         domElement_.call<void>("setAttribute", val("height"), val(height));
         domElement_.call<void>("setAttribute", val("fill"), val(fill));
-        if (stroke != "") domElement_.call<void>("setAttribute", val("stroke"), val(stroke));
+        if (stroke != "") {
+            domElement_.call<void>("setAttribute", val("stroke"), val(stroke));
+            domElement_.call<void>("setAttribute", val("stroke-width"), val(strokeWidth));
+        }
         parentElement.call<void>("appendChild", domElement_);
     }
 };
