@@ -23,7 +23,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     PixelT *pixels_;
     PixelT currentColor_ = 0;
     std::map<PixelT, std::string> colorPallete_;
-    std::function<std::string(PixelT)> pixel2String_ = [](PixelT p) { return std::to_string(p);};
+    std::function<std::string(PixelT)> pixel2String_ = [](PixelT p) { return std::to_string(p); };
     shared_ptr<MouseSignal<std::pair<double, double>>> mouseClickSignal_ = nullptr;
     shared_ptr<ObjectAcceptor<std::pair<double, double>, GridControl<PixelT>>>
         svgMouseClickAcceptor_ = nullptr;
@@ -89,8 +89,6 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         colorEmitter_ = make_shared<ObjectEmitter<PixelT, GridControl>>();
         colorEmitter_->setSignalEmitterMethod(&GridControl::getCurrentColor);
 
-        
-
         pixel2StringConverter_ = make_shared<cl2::CppLambdaSS<PixelT, std::string>>(pixel2String_);
         colorEmitter_->setOutput(pixel2StringConverter_);
         pixel2StringConverter_->setOutput(colorInput);
@@ -108,7 +106,10 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         this->svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
         this->newColorAcceptor_->setObjectPointer(this->shared_from_this());
         this->colorEmitter_->setObjectPointer(this->shared_from_this());
-        colorEmitter_->setOutput(pixel2StringConverter_);
+        // colorEmitter_->setOutput(pixel2StringConverter_);
+        this->colorEmitter_->update();
+        this->svgMouseClickAcceptor_->update();
+        this->newColorAcceptor_->update();
     }
 
     /**
