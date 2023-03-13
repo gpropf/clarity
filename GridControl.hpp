@@ -55,8 +55,9 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         colorPallete_[colorValue] = colorString;
     }
 
-    GridControl(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight, const SignalBuilder &sb,
-                const std::string &id = "", val parentDOMElement = val::null())
+    GridControl(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight,
+                const SignalBuilder &sb, const std::string &id = "",
+                val parentDOMElement = val::null())
         : gridWidth_(gridWidth), gridHeight_(gridHeight) {
         id_ = id;
         svgid_ = this->id_ + "-svg";
@@ -84,8 +85,11 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         newColorAcceptor_->setSignalAcceptorMethod(&GridControl::setCurrentColor);
 
         colorEmitter_ = make_shared<ObjectEmitter<PixelT, GridControl>>();
-        colorEmitter_->setSignalEmitterMethod (&GridControl::getCurrentColor);
-        //colorEmitter_->setOutput(colorInput);
+        colorEmitter_->setSignalEmitterMethod(&GridControl::getCurrentColor);
+
+        auto pixel2String = [](PixelT p) { std::string pStr = std::to_string(p); };
+
+        // colorEmitter_->setOutput(colorInput);
         colorInput->setOutput(newColorAcceptor_);
 
         mouseClickSignal_->setOutput(svgMouseClickAcceptor_);
@@ -136,16 +140,16 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     }
 
     void redraw() {
-        
         val document = val::global("document");
         val svgDOMElement = document.call<val>("getElementById", val(svgid_));
-        
+
         for (int i = 0; i < this->gridWidth_; i++) {
             for (int j = 0; j < this->gridHeight_; j++) {
                 int idx = calculateGridCellIndex(i, j);
                 std::string colorString = this->colorPallete_[this->pixels_[idx]];
-                //std::string colorString = "#ffff00";
-                auto rect1 = Rect("", i, j, 1, 1, colorString, "teal", 0.1, false, "", svgDOMElement);
+                // std::string colorString = "#ffff00";
+                auto rect1 =
+                    Rect("", i, j, 1, 1, colorString, "teal", 0.1, false, "", svgDOMElement);
             }
         }
     }
@@ -165,8 +169,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         std::string cursorSquareId = "cursorSquareId";
         std::string colorString = this->colorPallete_[this->currentColor_];
         cout << "Current Color: " << this->currentColor_ << endl;
-        auto rect1 =
-            Rect("", floorX, floorY, 1, 1, colorString, "purple", 0.1, false, cursorSquareId, svgDOMElement);
+        auto rect1 = Rect("", floorX, floorY, 1, 1, colorString, "purple", 0.1, false,
+                          cursorSquareId, svgDOMElement);
 
         pixels_[calculateGridCellIndex(floorX, floorY)] = this->currentColor_;
         printNonZeroPixels();
@@ -180,9 +184,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         // this->svgMouseClickAcceptor_->update();
     }
 
-    PixelT getCurrentColor() {
-        return this->currentColor_;
-    }
+    PixelT getCurrentColor() { return this->currentColor_; }
 };
 }  // namespace cl2
 #endif
