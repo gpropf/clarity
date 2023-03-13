@@ -42,7 +42,7 @@ class TestObj {
         cout << "TestObj::signalAcceptorTestMethod(): " << s_ << endl;
     }
 
-    const std::string signalEmitterTestMethod() {
+    std::string signalEmitterTestMethod() {
         cout << "TestObj::signalEmitterTestMethod(): " << s_ << endl;
         return s_;
     }
@@ -83,6 +83,7 @@ int main() {
 
     // We're now using the SignalBuilder factory objects to create our web content.
     cl2::SignalBuilder sb = cl2::SignalBuilder();
+    
 
     auto objectEmitterTextInput = sb.textInputWSS<std::string>(
         "objectEmitterTextInput", "Enter a new value for the string (s_) stored in the TestObj.");
@@ -213,7 +214,8 @@ int main() {
 
     val recomputeMergeFn = val::global("elgMergeRecompute")(val(*mergeSignal));
     const auto mergeRecomputeButton = sb.button("Recompute", recomputeMergeFn);
-
+    
+    //sb = sb.withAttributes({{"class", val("small_width")}});
     auto gridControl = make_shared<GridControl<int>>(15,10, 600,400, sb, "gc1");
     //svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
     

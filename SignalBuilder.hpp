@@ -32,6 +32,8 @@ class SignalBuilder {
     val parentDOMElement_ = val::null();
     std::map<const std::string, const WebElement*>
         elementMap_;  //!< a map of elements we've created so we can re-use them.
+    std::map<std::string, val> attrs_;
+    bool attrsResetAfterSingleUse_ = true;
 
    public:
     SignalBuilder(int startId = 0, bool labelAllInputs = true,
@@ -46,7 +48,10 @@ class SignalBuilder {
      * @brief Do this after each method call.
      *
      */
-    void postCall() {
+    void postCall(const WebElement& wel) {
+        wel.setAttributes(attrs_);
+        if (attrsResetAfterSingleUse_) attrs_ = {};
+
         if (addBRAfterAllCalls_) BR(this->parentDOMElement_);
     }
 
@@ -115,6 +120,36 @@ class SignalBuilder {
     }
 
     /**
+     * @brief Create future elements with the provided attributes.
+     *
+     * @param attrs
+     * @param attrsResetAfterSingleUse
+     * @return SignalBuilder
+     */
+    SignalBuilder withAttributes(const std::map<std::string, val>& attrs,
+                                 bool attrsResetAfterSingleUse = true) const& {
+        SignalBuilder cpy(*this);
+        cpy.attrs_ = attrs;
+        cpy.attrsResetAfterSingleUse_ = attrsResetAfterSingleUse;
+        return cpy;
+    }
+
+    /**
+     * @brief Create future elements with the provided attributes. (r-value version)
+     *
+     * @param attrs
+     * @param attrsResetAfterSingleUse
+     * @return SignalBuilder
+     */
+    SignalBuilder withAttributes(const std::map<std::string, val>& attrs,
+                                 bool attrsResetAfterSingleUse = true) && {
+        SignalBuilder cpy(std::move(*this));
+        cpy.attrs_ = attrs;
+        cpy.attrsResetAfterSingleUse_ = attrsResetAfterSingleUse;
+        return cpy;
+    }
+
+    /**
      * @brief Create future elements as children of the provided DOM element.
      *
      * @param parentDOMElement
@@ -174,10 +209,10 @@ class SignalBuilder {
             InputElement("input", name, "text", tm_.getNextStrId(), parentDOMElement_);
         const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, tm_.getNextStrId(),
                                 parentDOMElement_);
-        postCall();
+        postCall(inp);
         addElementToMap(inp, name);
         return inp;
-    }    
+    }
 
     /**
      * @brief Creates a text input signal emitter using an `EventListenerEmitter`
@@ -192,7 +227,7 @@ class SignalBuilder {
     shared_ptr<EventListenerEmitter<S>> textInputELE(const std::string& name,
                                                      const std::string& labelText,
                                                      bool emitInitialValue = true) {
-        InputElement inp = textInput(name, labelText);        
+        InputElement inp = textInput(name, labelText);
         val inpDE = inp.getDomElement();
         shared_ptr<EventListenerEmitter<S>> wso =
             make_shared<EventListenerEmitter<std::string>>(inpDE, "change");
@@ -215,6 +250,7 @@ class SignalBuilder {
         InputElement inp = textInput(name, labelText);
         shared_ptr<WebElementSignalObjectSS<S>> wso =
             make_shared<WebElementSignalObjectSS<S>>(inp, "value", emitInitialValue);
+
         return wso;
     }
 
@@ -230,9 +266,9 @@ class SignalBuilder {
             InputElement("input", name, "range", tm_.getNextStrId(), parentDOMElement_);
         const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, tm_.getNextStrId(),
                                 parentDOMElement_);
-        postCall();
+        postCall(inp);
         return inp;
-    }    
+    }
 
     /**
      * @brief Creates a "two-sided" range field signal. It can be used as an emitter or acceptor.
@@ -263,7 +299,7 @@ class SignalBuilder {
     Button button(const std::string& displayedText, val onClickFn) {
         Button btn =
             Button(displayedText, displayedText, onClickFn, tm_.getNextStrId(), parentDOMElement_);
-        postCall();
+        postCall(btn);
         return btn;
     }
 
@@ -277,7 +313,7 @@ class SignalBuilder {
     template <typename S>
     void connect(shared_ptr<SignalEmitter<S>> s1, shared_ptr<SignalAcceptor<S>> s2) {
         s1->setOutput(s2);
-    }      
+    }
 
     /**
      * @brief Connect the two inputs to the Merge and then connect the Merge to the optional output.

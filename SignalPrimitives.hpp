@@ -1,12 +1,13 @@
 /**
  * @file SignalPrimitives.hpp
  * @author Greg Propf (gpropf@gmail.com)
- * @brief Somewhat more complex but still basic signal machinery based on the new "split-style" signals.
+ * @brief Somewhat more complex but still basic signal machinery based on the new "split-style"
+ * signals.
  * @version 0.1
  * @date 2023-03-01
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 
 #ifndef SignalPrimitives_hpp
@@ -23,9 +24,8 @@
 #include <string>
 #include <vector>
 
-
-#include "Signal.hpp"
 #include "MonolithicSignals.hpp"
+#include "Signal.hpp"
 
 using std::cout;
 using std::endl;
@@ -99,7 +99,7 @@ class ObjectAcceptor : public SignalAcceptor<S> {
 
    public:
     ObjectAcceptor(shared_ptr<ObjT> obj) { obj_ = obj; }
-    ObjectAcceptor() { }
+    ObjectAcceptor() {}
     // ObjectAcceptor(ObjT& obj) { obj_(obj); }
     // ObjectAcceptor() {  }
 
@@ -129,7 +129,6 @@ class ObjectAcceptor : public SignalAcceptor<S> {
 
 //    public:
 //     RawPointerObjectAcceptor(ObjT &obj) { obj_ = &obj; }
-    
 
 //     void setSignalAcceptorMethod(void (ObjT::*signalAcceptorMethod)(const S& s)) {
 //         signalAcceptorMethod_ = signalAcceptorMethod;
@@ -148,21 +147,25 @@ class ObjectAcceptor : public SignalAcceptor<S> {
 //     }
 // };
 
-
 template <typename S, typename ObjT>
 class ObjectEmitter : public SignalEmitter<S> {
     shared_ptr<ObjT> obj_;
-    const S (ObjT::*signalEmitterMethod_)();
+    S (ObjT::*signalEmitterMethod_)();
 
    public:
-    ObjectEmitter(shared_ptr<ObjT> obj, bool emitInitialValue = true) :obj_(obj) {
+    ObjectEmitter(shared_ptr<ObjT> obj, bool emitInitialValue = true) : obj_(obj) {
         this->emitInitialValue_ = emitInitialValue;
     }
     // ObjectAcceptor(ObjT& obj) { obj_(obj); }
-    // ObjectAcceptor() {  }
+    ObjectEmitter() {}
 
-    void setSignalEmitterMethod(const S (ObjT::*signalEmitterMethod)()) {
+    void setSignalEmitterMethod(S (ObjT::*signalEmitterMethod)()) {
         signalEmitterMethod_ = signalEmitterMethod;
+    }
+
+    void setObjectPointer(shared_ptr<ObjT> obj, bool emitInitialValue = true) {
+        obj_ = obj;
+        this->emitInitialValue_ = emitInitialValue;
     }
 
     virtual void emit() {
@@ -182,7 +185,6 @@ class ObjectEmitter : public SignalEmitter<S> {
     }
 };
 
-
 /**
  * @brief Similar to the `CppLambda` class except has 2 inputs. In practice this is considerably
  * more complicated than the single input case because it is possible that one of the inputs may not
@@ -194,7 +196,7 @@ class ObjectEmitter : public SignalEmitter<S> {
  */
 template <typename inT1, typename inT2, typename outT>
 class MergeSS : public SignalEmitter<outT>,
-              public std::enable_shared_from_this<MergeSS<inT1, inT2, outT>> {
+                public std::enable_shared_from_this<MergeSS<inT1, inT2, outT>> {
     shared_ptr<SignalAcceptor<inT2>> in2_ = nullptr;
     shared_ptr<SignalAcceptor<inT1>> in1_ = nullptr;
 
@@ -218,7 +220,7 @@ class MergeSS : public SignalEmitter<outT>,
         if (in1_ == nullptr) in1_ = make_shared<SignalAcceptor<inT1>>();
         in1_->setParent(this->shared_from_this());
         return in1_;
-    }    
+    }
 
     /**
      * @brief Here we compare the messages from the children to the int value of the raw pointers
@@ -261,7 +263,7 @@ class MergeSS : public SignalEmitter<outT>,
             return true;
         }
         return false;
-    }    
+    }
 
     virtual void update() {
         if (this->getOutput() == nullptr) return;
@@ -269,13 +271,6 @@ class MergeSS : public SignalEmitter<outT>,
         // SignalEmitter<outT>::emit(SignalEmitter<outT>::getCurrentValue());
     }
 };
-
-
-
-
-
-
-
 
 }  // namespace cl2
 

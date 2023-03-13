@@ -1,0 +1,33 @@
+/**
+ * @file clarity.css
+ * @author Greg Propf (gpropf@gmail.com)
+ * @brief Just some basic styles. Nothing fancy here.
+ * @version 0.1
+ * @date 2023-03-12
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
+
+
+.medium_width{
+    width: 100px;
+ }
+ .small_width{
+     width: 50px;
+ }
+
+.red {
+  background-color: red;
+}
+
+.green {
+  background-color: green;
+}
+
+.blue {
+  background-color: blue;
+}
+
+              
