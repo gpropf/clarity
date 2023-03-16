@@ -89,14 +89,14 @@ class SignalBuilder {
      * @param emitInitialValue
      * @return shared_ptr<WebElementSignalObject<S>>
      */
-    template <typename S>
-    shared_ptr<WebElementSignalObject<S>> attributeSignal(const WebElement& wel,
-                                                          const std::string& attributeName,
-                                                          bool emitInitialValue = true) {
-        shared_ptr<WebElementSignalObject<S>> aso =
-            make_shared<cl2::WebElementSignalObject<S>>(wel, attributeName, emitInitialValue);
-        return aso;
-    }
+    // template <typename S>
+    // shared_ptr<WebElementSignalObject<S>> attributeSignal(const WebElement& wel,
+    //                                                       const std::string& attributeName,
+    //                                                       bool emitInitialValue = true) {
+    //     shared_ptr<WebElementSignalObject<S>> aso =
+    //         make_shared<cl2::WebElementSignalObject<S>>(wel, attributeName, emitInitialValue);
+    //     return aso;
+    // }
 
     /**
      * @brief Creates a `WebElementSignalObject` that represents the specified attribute of a
@@ -108,16 +108,16 @@ class SignalBuilder {
      * @param emitInitialValue
      * @return shared_ptr<WebElementSignalObject<S>>
      */
-    template <typename S>
-    shared_ptr<WebElementSignalObject<S>> attributeSignal(const std::string& elementName,
-                                                          const std::string& attributeName,
-                                                          bool emitInitialValue = true) {
-        const WebElement* welptr = getElementByName(elementName);
-        if (welptr != nullptr) {
-            return attributeSignal<S>(*welptr, attributeName, emitInitialValue);
-        }
-        return nullptr;
-    }
+    // template <typename S>
+    // shared_ptr<WebElementSignalObject<S>> attributeSignal(const std::string& elementName,
+    //                                                       const std::string& attributeName,
+    //                                                       bool emitInitialValue = true) {
+    //     const WebElement* welptr = getElementByName(elementName);
+    //     if (welptr != nullptr) {
+    //         return attributeSignal<S>(*welptr, attributeName, emitInitialValue);
+    //     }
+    //     return nullptr;
+    // }
 
     /**
      * @brief Create future elements with the provided attributes.

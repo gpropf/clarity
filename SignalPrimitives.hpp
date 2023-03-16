@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-#include "MonolithicSignals.hpp"
+//#include "MonolithicSignals.hpp"
 #include "Signal.hpp"
 
 using std::cout;

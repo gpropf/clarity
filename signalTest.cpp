@@ -9,7 +9,7 @@
  *
  */
 
-#include "MonolithicSignals.hpp"
+//#include "MonolithicSignals.hpp"
 #include "Signal.hpp"
 #include "SignalBuilder.hpp"
 #include "SignalPrimitives.hpp"
@@ -59,13 +59,13 @@ int main() {
     // We make a test object and then a signal wrapper for it.
     TestObj tobj;
     auto tobjSptr = make_shared<TestObj>();
-    auto testObjCSO = make_shared<cl2::CppObjectSignalObject<std::string, TestObj>>(tobj, true);
+    // auto testObjCSO = make_shared<cl2::CppObjectSignalObject<std::string, TestObj>>(tobj, true);
     // The signal wrapper needs to know how to set and get the stored value.
-    testObjCSO->setter = &TestObj::setS;
-    testObjCSO->getter = &TestObj::getS;
+    // testObjCSO->setter = &TestObj::setS;
+    // testObjCSO->getter = &TestObj::getS;
 
     // Now we're going to create a JS timer to read the value and fire the signal every so often.
-    val testObjEmitter = val::global("elgTestObjEmitter")(val(*testObjCSO));
+    // val testObjEmitter = val::global("elgTestObjEmitter")(val(*testObjCSO));
     // val setInterval = val::global("setInterval");
     // setInterval(testObjEmitter, 500);
 
@@ -121,10 +121,10 @@ int main() {
 
     // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
     const val logFn = val::global("logStuff");
-    auto consoleLogFSO = make_shared<cl2::JSFunctionSignalObject<std::string>>(logFn);
+    // auto consoleLogFSO = make_shared<cl2::JSFunctionSignalObject<std::string>>(logFn);
 
     // A Tee allow us to send an output to two inputs.
-    auto t1 = make_shared<cl2::Tee<std::string>>();
+    // auto t1 = make_shared<cl2::Tee<std::string>>();
 
     // Our srcTextInputWSO message will go through the Tee to 2 places.
     // sb.connect<std::string>(t1, consoleLogFSO, dstTextInputWSO);
@@ -237,13 +237,13 @@ int main() {
 }
 
 EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
-    emscripten::class_<cl2::CppObjectSignalObject<std::string, TestObj>>("CppObjectSignalObject")
-        .function("emit", &cl2::CppObjectSignalObject<std::string, TestObj>::emit,
-                  emscripten::allow_raw_pointers())
-        .function("getSignal", &cl2::CppObjectSignalObject<std::string, TestObj>::getSignal,
-                  emscripten::allow_raw_pointers())
-        .function("accept", &cl2::CppObjectSignalObject<std::string, TestObj>::accept,
-                  emscripten::allow_raw_pointers());
+    // emscripten::class_<cl2::CppObjectSignalObject<std::string, TestObj>>("CppObjectSignalObject")
+    //     .function("emit", &cl2::CppObjectSignalObject<std::string, TestObj>::emit,
+    //               emscripten::allow_raw_pointers())
+    //     .function("getSignal", &cl2::CppObjectSignalObject<std::string, TestObj>::getSignal,
+    //               emscripten::allow_raw_pointers())
+    //     .function("accept", &cl2::CppObjectSignalObject<std::string, TestObj>::accept,
+    //               emscripten::allow_raw_pointers());
 
     emscripten::class_<cl2::Merge<std::string, std::string, std::string>>("Merge").function(
         "recompute", &cl2::Merge<std::string, std::string, std::string>::recompute);
@@ -258,11 +258,11 @@ EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
 }
 
 EMSCRIPTEN_BINDINGS(WebElementSignalObject) {
-    emscripten::class_<WebElementSignalObject<std::string>>("WebElementSignalObject")
-        .function("emit", &WebElementSignalObject<std::string>::emit,
-                  emscripten::allow_raw_pointers())
-        .function("accept", &WebElementSignalObject<std::string>::accept,
-                  emscripten::allow_raw_pointers());
+    // emscripten::class_<WebElementSignalObject<std::string>>("WebElementSignalObject")
+    //     .function("emit", &WebElementSignalObject<std::string>::emit,
+    //               emscripten::allow_raw_pointers())
+    //     .function("accept", &WebElementSignalObject<std::string>::accept,
+    //               emscripten::allow_raw_pointers());
 
     emscripten::class_<WebElementSignal<std::string>>("WebElementSignal")
         .function("emit", &WebElementSignal<std::string>::emit,
@@ -270,13 +270,7 @@ EMSCRIPTEN_BINDINGS(WebElementSignalObject) {
         .function("accept", &WebElementSignal<std::string>::accept,
                   emscripten::allow_raw_pointers());
 
-    emscripten::class_<JSFunctionSignalObject<std::string>>("ConsoleLoggerSignalObject")
-        .function("emit", &JSFunctionSignalObject<std::string>::emit,
-                  emscripten::allow_raw_pointers())
-        .function("accept", &JSFunctionSignalObject<std::string>::accept,
-                  emscripten::allow_raw_pointers());
+  
 
-    emscripten::class_<SignalObject<std::string>>("SignalObject")
-        .function("emit", &SignalObject<std::string>::emit, emscripten::allow_raw_pointers())
-        .function("accept", &SignalObject<std::string>::accept, emscripten::allow_raw_pointers());
+    
 }
