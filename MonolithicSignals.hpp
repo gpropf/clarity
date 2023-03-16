@@ -104,7 +104,7 @@ class CppLambdaM : public SignalObject<S> {
 /**
  * @brief This class was motivated by the need to produce a signal on demand instead of strictly in
  * response to some event as in the case of the base class. This need can be seen in the case of the
- * `Merge` class in particular where inputs may or may not be present at the same moment. This class
+ * `MergeM` class in particular where inputs may or may not be present at the same moment. This class
  * creates, in effect, a buffer for its signal value.
  *
  * @tparam S
@@ -170,8 +170,8 @@ class StoredSignal : public SignalObject<S> {
  * @tparam outT
  */
 template <typename inT1, typename inT2, typename outT>
-class Merge : public StoredSignal<outT>,
-              public std::enable_shared_from_this<Merge<inT1, inT2, outT>> {
+class MergeM : public StoredSignal<outT>,
+              public std::enable_shared_from_this<MergeM<inT1, inT2, outT>> {
     shared_ptr<StoredSignal<inT2>> in2_ = nullptr;
     shared_ptr<StoredSignal<inT1>> in1_ = nullptr;
 
@@ -181,7 +181,7 @@ class Merge : public StoredSignal<outT>,
     std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
 
    public:
-    Merge(std::function<outT(inT1 in1, inT2 in2)> mergeFn, bool emitInitialValue = false)
+    MergeM(std::function<outT(inT1 in1, inT2 in2)> mergeFn, bool emitInitialValue = false)
         : StoredSignal<outT>(emitInitialValue) {
         mergeFn_ = mergeFn;
     }
@@ -210,7 +210,7 @@ class Merge : public StoredSignal<outT>,
      * @param e
      */
     virtual void childEvent(int e) {
-        cout << "Merge: Child event " << e << endl;
+        cout << "MergeM: Child event " << e << endl;
         // if (reinterpret_cast<int>) {}
         int rawPtrVal = reinterpret_cast<int>(in1_.get());
         if (rawPtrVal == e) {
