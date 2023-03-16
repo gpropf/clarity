@@ -12,6 +12,15 @@
 #ifndef GridControl_hpp
 #define GridControl_hpp
 
+#include "Signal.hpp"
+#include "SignalBuilder.hpp"
+#include "SignalPrimitives.hpp"
+#include "Util.hpp"
+#include "WebElementSignals.hpp"
+#include "WebElements.hpp"
+
+
+
 namespace cl2 {
 
 template <typename PixelT>

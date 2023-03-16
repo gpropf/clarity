@@ -9,14 +9,14 @@
  *
  */
 
-//#include "MonolithicSignals.hpp"
+// #include "MonolithicSignals.hpp"
+
 #include "Signal.hpp"
 #include "SignalBuilder.hpp"
 #include "SignalPrimitives.hpp"
 #include "Util.hpp"
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
-
 #include "GridControl.hpp"
 
 using namespace cl2;
@@ -47,6 +47,11 @@ class TestObj {
         return s_;
     }
 
+    /**
+     * @brief We're also using the TestObj class to test the MouseSignal class.
+     *
+     * @param mouseLocation
+     */
     void mouseAcceptorTestMethod(const std::pair<double, double> &mouseLocation) {
         cout << "TestObj::mouseAcceptorTestMethod(): x = " << mouseLocation.first
              << ", y = " << mouseLocation.second << endl;
@@ -59,10 +64,6 @@ int main() {
     // We make a test object and then a signal wrapper for it.
     TestObj tobj;
     auto tobjSptr = make_shared<TestObj>();
-    // auto testObjCSO = make_shared<cl2::CppObjectSignalObject<std::string, TestObj>>(tobj, true);
-    // The signal wrapper needs to know how to set and get the stored value.
-    // testObjCSO->setter = &TestObj::setS;
-    // testObjCSO->getter = &TestObj::getS;
 
     // Now we're going to create a JS timer to read the value and fire the signal every so often.
     // val testObjEmitter = val::global("elgTestObjEmitter")(val(*testObjCSO));
@@ -72,7 +73,7 @@ int main() {
     auto objectEmitter = make_shared<ObjectEmitter<std::string, TestObj>>(tobjSptr);
     objectEmitter->setSignalEmitterMethod(&TestObj::signalEmitterTestMethod);
     val jsEmitterFn = val::global("elgObjEmitter")(val(*objectEmitter));
-    //setInterval(jsEmitterFn, 500);
+    // setInterval(jsEmitterFn, 500);
 
     // It's easy to get control of elements that are already present in a static HTML page by
     // creating a WE from the id.
@@ -83,7 +84,6 @@ int main() {
 
     // We're now using the SignalBuilder factory objects to create our web content.
     cl2::SignalBuilder sb = cl2::SignalBuilder();
-    
 
     auto objectEmitterTextInput = sb.textInputWSS<std::string>(
         "objectEmitterTextInput", "Enter a new value for the string (s_) stored in the TestObj.");
@@ -115,20 +115,7 @@ int main() {
     mfork1->addOutput(dstTextInputWSS3);
     mfork1->addOutput(dstTextInputWSS4);
     // mfork1->addOutput(dstTextInputWSS);
-
-    
-    //mfork1->addOutput(objectAcceptor);
-
-    // We create a JS function to use as an endpoint for a JSFunctionSignalObject.
-    const val logFn = val::global("logStuff");
-    // auto consoleLogFSO = make_shared<cl2::JSFunctionSignalObject<std::string>>(logFn);
-
-    // A Tee allow us to send an output to two inputs.
-    // auto t1 = make_shared<cl2::Tee<std::string>>();
-
-    // Our srcTextInputWSO message will go through the Tee to 2 places.
-    // sb.connect<std::string>(t1, consoleLogFSO, dstTextInputWSO);
-    // sb.connect<std::string>(srcTextInputWSO, t1);
+    // mfork1->addOutput(objectAcceptor);
 
     // Now we're going to create an SVG area and a circle within it. We will create range controls
     // to adjust the size and position of the circle.
@@ -158,8 +145,8 @@ int main() {
     circle1.domElement_.call<void>("setAttribute", val("cy"), val(100));
     circle1.domElement_.call<void>("setAttribute", val("fill"), val("#ff0000"));
 
-
-    auto rect1 = Rect("rect1", 23, 31, 40, 50, "#ffaa99", "blue", 3.5, true, getStrId(), svg.getDomElement());
+    auto rect1 = Rect("rect1", 23, 31, 40, 50, "#ffaa99", "blue", 3.5, true, getStrId(),
+                      svg.getDomElement());
 
     // Now we need signal wrappers to connect to various attributes of the circle.
     auto circle1CXWSO = make_shared<cl2::WebElementSignal<std::string>>(circle1, "cx");
@@ -190,22 +177,12 @@ int main() {
 
     sb.connect<std::string>(dblInputWSS, strToNumTransformerSS);
 
-    // Connect the input field to the conversion function
-    // sb.connect<std::string>(dblInputWSO, strToNumTransformer);
-
-    // Here we're going back to our TestObj and creating a field that will allow the user to update
-    // the string value it contains.
-    // const auto testObjValTextInputWSO = sb.textInput<std::string>(
-    //     "testObjValTextInput", "Enter a new value for the string stored in the TestObj.");
-
-    // sb.connect<std::string>(testObjValTextInputWSO, testObjCSO);
-    // sb.connect<std::string>(testObjCSO, testObjValTextInputWSO);
-
     auto mergeFn = [](std::string s1, std::string s2) { return s1 + s2; };
     auto mergeSignal = make_shared<Merge<std::string, std::string, std::string>>(mergeFn);
 
     const auto m1InputWSO = sb.textInputWSS<std::string>("m1Input", "Enter the first value", false);
-    const auto m2InputWSO = sb.textInputWSS<std::string>("m2Input", "Enter the second value", false);
+    const auto m2InputWSO =
+        sb.textInputWSS<std::string>("m2Input", "Enter the second value", false);
     const auto mergeOutWSO =
         sb.textInputWSS<std::string>("mergeOut", "Output of merged signals goes here", false);
 
@@ -214,18 +191,19 @@ int main() {
 
     val recomputeMergeFn = val::global("elgMergeRecompute")(val(*mergeSignal));
     const auto mergeRecomputeButton = sb.button("Recompute", recomputeMergeFn);
-    
-    //sb = sb.withAttributes({{"class", val("small_width")}});
-    auto gridControl = make_shared<GridControl<int>>(15,10, 600,400, sb, "gc1");
-    //svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
-    
+
+    // sb = sb.withAttributes({{"class", val("small_width")}});
+    auto gridControl = make_shared<GridControl<int>>(15, 10, 600, 400, sb, "gc1");
+    // svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
+
     gridControl->addColorToPallete(0, "#000000");
     gridControl->addColorToPallete(1, "#ff0000");
     gridControl->addColorToPallete(2, "#00ff00");
     gridControl->addColorToPallete(3, "#0000ff");
     gridControl->finalize();
 
-    const auto selectOutput = sb.textInputWSS<std::string>("selectOutput", "Output of select box appears here.", false);
+    const auto selectOutput =
+        sb.textInputWSS<std::string>("selectOutput", "Output of select box appears here.", false);
     auto select1 = Select("select1", getStrId());
     auto option1 = Option("1", "Foo", select1.getDomElement());
     auto option2 = Option("2", "Bar", select1.getDomElement());
@@ -265,12 +243,7 @@ EMSCRIPTEN_BINDINGS(WebElementSignalObject) {
     //               emscripten::allow_raw_pointers());
 
     emscripten::class_<WebElementSignal<std::string>>("WebElementSignal")
-        .function("emit", &WebElementSignal<std::string>::emit,
-                  emscripten::allow_raw_pointers())
+        .function("emit", &WebElementSignal<std::string>::emit, emscripten::allow_raw_pointers())
         .function("accept", &WebElementSignal<std::string>::accept,
                   emscripten::allow_raw_pointers());
-
-  
-
-    
 }
