@@ -34,7 +34,7 @@ using std::endl;
 namespace cl2 {
 
 template <typename S>
-class WebElementSignalObjectSS : public SignalAcceptor<S>, public SignalEmitter<S> {
+class WebElementSignal : public SignalAcceptor<S>, public SignalEmitter<S> {
     shared_ptr<WebElement> wptr_;  //!< The actual WebElement this acts as a signal wrapper for.
     std::string boundField_;  //!< The field in the domElement that stores whatever signal data we
                               //!< are interested in.
@@ -45,7 +45,7 @@ class WebElementSignalObjectSS : public SignalAcceptor<S>, public SignalEmitter<
    public:
     virtual void emit(const S& s) { SignalEmitter<S>::emit(s); }
 
-    WebElementSignalObjectSS(const WebElement& wptr, const std::string& boundField,
+    WebElementSignal(const WebElement& wptr, const std::string& boundField,
                              bool emitInitialValue = true) {
         boundField_ = boundField;
         this->emitInitialValue_ = emitInitialValue;
@@ -103,7 +103,7 @@ class WebElementSignalObjectSS : public SignalAcceptor<S>, public SignalEmitter<
         return true;
     }
 
-    virtual ~WebElementSignalObjectSS() {}
+    virtual ~WebElementSignal() {}
 };
 
 /**

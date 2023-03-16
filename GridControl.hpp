@@ -29,7 +29,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         svgMouseClickAcceptor_ = nullptr;
     shared_ptr<ObjectAcceptor<std::string, GridControl<PixelT>>> newColorAcceptor_ = nullptr;
     shared_ptr<ObjectEmitter<PixelT, GridControl<PixelT>>> colorEmitter_ = nullptr;
-    shared_ptr<CppLambdaSS<PixelT, std::string>> pixel2StringConverter_ = nullptr;
+    shared_ptr<CppLambda<PixelT, std::string>> pixel2StringConverter_ = nullptr;
 
    protected:
     int calculateGridCellAddress(int x, int y) const {
@@ -89,7 +89,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         colorEmitter_ = make_shared<ObjectEmitter<PixelT, GridControl>>();
         colorEmitter_->setSignalEmitterMethod(&GridControl::getCurrentColor);
 
-        pixel2StringConverter_ = make_shared<cl2::CppLambdaSS<PixelT, std::string>>(pixel2String_);
+        pixel2StringConverter_ = make_shared<cl2::CppLambda<PixelT, std::string>>(pixel2String_);
         colorEmitter_->setOutput(pixel2StringConverter_);
         pixel2StringConverter_->setOutput(colorInput);
         colorInput->setOutput(newColorAcceptor_);

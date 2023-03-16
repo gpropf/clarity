@@ -76,14 +76,14 @@ class SignalObject : public Signal<S> {
 
 
 template <typename S, typename Sout>
-class CppLambda : public SignalObject<S> {
+class CppLambdaM : public SignalObject<S> {
     std::function<Sout(S s)> lambda_;
     shared_ptr<SignalObject<Sout>> transformedOutput_;
 
    public:
-    CppLambda() {}
+    CppLambdaM() {}
 
-    CppLambda(std::function<Sout(S s)> lambda) : lambda_(lambda) {}
+    CppLambdaM(std::function<Sout(S s)> lambda) : lambda_(lambda) {}
 
     virtual bool accept(const S& s) {
         Sout sOut = lambda_(s);
@@ -95,8 +95,8 @@ class CppLambda : public SignalObject<S> {
 
     virtual void update() {}
 
-    virtual ~CppLambda() {
-        // cout << "Destroying CppLambda\n";
+    virtual ~CppLambdaM() {
+        // cout << "Destroying CppLambdaM\n";
     }
 };
 
@@ -161,7 +161,7 @@ class StoredSignal : public SignalObject<S> {
 
 
 /**
- * @brief Similar to the `CppLambda` class except has 2 inputs. In practice this is considerably
+ * @brief Similar to the `CppLambdaM` class except has 2 inputs. In practice this is considerably
  * more complicated than the single input case because it is possible that one of the inputs may not
  * exist when the other comes in.
  *
@@ -447,7 +447,7 @@ class WebElementSignalObject : public StoredSignal<S> {
 
 /**
  * @brief A `SignalObject` wrapper for a JS function object. Note that this is not exactly the
- * analog of the CppLambda. There is no second output that can have a different type from the normal
+ * analog of the CppLambdaM. There is no second output that can have a different type from the normal
  * one.
  *
  * @tparam S

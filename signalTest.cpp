@@ -162,8 +162,8 @@ int main() {
     auto rect1 = Rect("rect1", 23, 31, 40, 50, "#ffaa99", "blue", 3.5, true, getStrId(), svg.getDomElement());
 
     // Now we need signal wrappers to connect to various attributes of the circle.
-    auto circle1CXWSO = make_shared<cl2::WebElementSignalObjectSS<std::string>>(circle1, "cx");
-    auto circle1CYWSO = make_shared<cl2::WebElementSignalObjectSS<std::string>>(circle1, "cy");
+    auto circle1CXWSO = make_shared<cl2::WebElementSignal<std::string>>(circle1, "cx");
+    auto circle1CYWSO = make_shared<cl2::WebElementSignal<std::string>>(circle1, "cy");
 
     // Now the range controls are connected to the circle attributes.
     sb.connect<std::string>(circle1CXRangeInputWSO, circle1CXWSO);
@@ -180,7 +180,7 @@ int main() {
 
     // We now place our lambda in the core of the CppLambda signal wrapper.
     // auto strToNumTransformer = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
-    auto strToNumTransformerSS = make_shared<cl2::CppLambdaSS<std::string, double>>(str2DblFn);
+    auto strToNumTransformerSS = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
 
     // auto dblInputELE =
     //     sb.textInputELE<std::string>("dblInput", "Enter a floating point number", false);
@@ -264,10 +264,10 @@ EMSCRIPTEN_BINDINGS(WebElementSignalObject) {
         .function("accept", &WebElementSignalObject<std::string>::accept,
                   emscripten::allow_raw_pointers());
 
-    emscripten::class_<WebElementSignalObjectSS<std::string>>("WebElementSignalObjectSS")
-        .function("emit", &WebElementSignalObjectSS<std::string>::emit,
+    emscripten::class_<WebElementSignal<std::string>>("WebElementSignal")
+        .function("emit", &WebElementSignal<std::string>::emit,
                   emscripten::allow_raw_pointers())
-        .function("accept", &WebElementSignalObjectSS<std::string>::accept,
+        .function("accept", &WebElementSignal<std::string>::accept,
                   emscripten::allow_raw_pointers());
 
     emscripten::class_<JSFunctionSignalObject<std::string>>("ConsoleLoggerSignalObject")

@@ -241,15 +241,15 @@ class SignalBuilder {
      * @param name
      * @param labelText
      * @param emitInitialValue
-     * @return shared_ptr<WebElementSignalObjectSS<S>>
+     * @return shared_ptr<WebElementSignal<S>>
      */
     template <typename S>
-    shared_ptr<WebElementSignalObjectSS<S>> textInputWSS(const std::string& name,
+    shared_ptr<WebElementSignal<S>> textInputWSS(const std::string& name,
                                                          const std::string& labelText,
                                                          bool emitInitialValue = true) {
         InputElement inp = textInput(name, labelText);
-        shared_ptr<WebElementSignalObjectSS<S>> wso =
-            make_shared<WebElementSignalObjectSS<S>>(inp, "value", emitInitialValue);
+        shared_ptr<WebElementSignal<S>> wso =
+            make_shared<WebElementSignal<S>>(inp, "value", emitInitialValue);
 
         return wso;
     }
@@ -277,15 +277,15 @@ class SignalBuilder {
      * @param name
      * @param labelText
      * @param emitInitialValue
-     * @return shared_ptr<WebElementSignalObjectSS<S>>
+     * @return shared_ptr<WebElementSignal<S>>
      */
     template <typename S>
-    shared_ptr<WebElementSignalObjectSS<S>> rangeInputWSS(const std::string& name,
+    shared_ptr<WebElementSignal<S>> rangeInputWSS(const std::string& name,
                                                           const std::string& labelText,
                                                           bool emitInitialValue = true) {
         InputElement inp = rangeInput(name, labelText);
-        shared_ptr<WebElementSignalObjectSS<S>> wso =
-            make_shared<WebElementSignalObjectSS<S>>(inp, "value", emitInitialValue);
+        shared_ptr<WebElementSignal<S>> wso =
+            make_shared<WebElementSignal<S>>(inp, "value", emitInitialValue);
         return wso;
     }
 

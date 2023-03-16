@@ -68,17 +68,17 @@ class MultiFork : public SignalAcceptor<S> {
 };
 
 template <typename S, typename Sout>
-class CppLambdaSS : public SignalAcceptor<S>, public SignalEmitter<Sout> {
+class CppLambda : public SignalAcceptor<S>, public SignalEmitter<Sout> {
     std::function<Sout(S s)> lambda_;
 
    public:
-    CppLambdaSS() {}
+    CppLambda() {}
 
-    CppLambdaSS(std::function<Sout(S s)> lambda) : lambda_(lambda) {}
+    CppLambda(std::function<Sout(S s)> lambda) : lambda_(lambda) {}
 
     virtual bool accept(const S& s) {
         Sout sOut = lambda_(s);
-        cout << "OUTPUT of CppLambdaSS: " << sOut << endl;
+        cout << "OUTPUT of CppLambda: " << sOut << endl;
         if (this->output_ != nullptr) return this->output_->accept(sOut);
         return false;
     }
@@ -87,8 +87,8 @@ class CppLambdaSS : public SignalAcceptor<S>, public SignalEmitter<Sout> {
 
     virtual void update() {}
 
-    virtual ~CppLambdaSS() {
-        // cout << "Destroying CppLambdaSS\n";
+    virtual ~CppLambda() {
+        // cout << "Destroying CppLambda\n";
     }
 };
 
