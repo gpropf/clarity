@@ -202,7 +202,7 @@ int main() {
     // sb.connect<std::string>(testObjCSO, testObjValTextInputWSO);
 
     auto mergeFn = [](std::string s1, std::string s2) { return s1 + s2; };
-    auto mergeSignal = make_shared<MergeSS<std::string, std::string, std::string>>(mergeFn);
+    auto mergeSignal = make_shared<Merge<std::string, std::string, std::string>>(mergeFn);
 
     const auto m1InputWSO = sb.textInputWSS<std::string>("m1Input", "Enter the first value", false);
     const auto m2InputWSO = sb.textInputWSS<std::string>("m2Input", "Enter the second value", false);
@@ -245,8 +245,8 @@ EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
         .function("accept", &cl2::CppObjectSignalObject<std::string, TestObj>::accept,
                   emscripten::allow_raw_pointers());
 
-    emscripten::class_<cl2::MergeSS<std::string, std::string, std::string>>("Merge").function(
-        "recompute", &cl2::MergeSS<std::string, std::string, std::string>::recompute);
+    emscripten::class_<cl2::Merge<std::string, std::string, std::string>>("Merge").function(
+        "recompute", &cl2::Merge<std::string, std::string, std::string>::recompute);
 
     emscripten::class_<cl2::EventListenerEmitter<std::string>>("EventListenerEmitter")
         .function("emit", &cl2::EventListenerEmitter<std::string>::emit,

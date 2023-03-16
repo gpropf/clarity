@@ -195,8 +195,8 @@ class ObjectEmitter : public SignalEmitter<S> {
  * @tparam outT
  */
 template <typename inT1, typename inT2, typename outT>
-class MergeSS : public SignalEmitter<outT>,
-                public std::enable_shared_from_this<MergeSS<inT1, inT2, outT>> {
+class Merge : public SignalEmitter<outT>,
+                public std::enable_shared_from_this<Merge<inT1, inT2, outT>> {
     shared_ptr<SignalAcceptor<inT2>> in2_ = nullptr;
     shared_ptr<SignalAcceptor<inT1>> in1_ = nullptr;
 
@@ -206,7 +206,7 @@ class MergeSS : public SignalEmitter<outT>,
     std::function<outT(inT1 in1, inT2 in2)> mergeFn_;
 
    public:
-    MergeSS(std::function<outT(inT1 in1, inT2 in2)> mergeFn, bool emitInitialValue = false)
+    Merge(std::function<outT(inT1 in1, inT2 in2)> mergeFn, bool emitInitialValue = false)
         : SignalEmitter<outT>(emitInitialValue) {
         mergeFn_ = mergeFn;
     }
@@ -230,7 +230,7 @@ class MergeSS : public SignalEmitter<outT>,
      * @param e
      */
     virtual void childEvent(int e) {
-        cout << "MergeSS: Child event " << e << endl;
+        cout << "Merge: Child event " << e << endl;
         // if (reinterpret_cast<int>) {}
         int rawPtrVal = reinterpret_cast<int>(in1_.get());
         if (rawPtrVal == e) {

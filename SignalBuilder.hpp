@@ -328,7 +328,7 @@ class SignalBuilder {
      */
     template <typename inT1, typename inT2, typename outT>
     void connect(shared_ptr<SignalEmitter<inT1>> s1, shared_ptr<SignalEmitter<inT2>> s2,
-                 shared_ptr<MergeSS<inT1, inT2, outT>> merge,
+                 shared_ptr<Merge<inT1, inT2, outT>> merge,
                  shared_ptr<SignalAcceptor<outT>> mergeOut = nullptr) {
         s1->setOutput(merge->getInput1());
         s2->setOutput(merge->getInput2());
