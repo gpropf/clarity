@@ -11,7 +11,17 @@ Clarity is a web development framework written in C++ using Emscripten to compil
 
 The name "Clarity" was chosen for its evocative and connotative qualities. We want to evoke the idea of being able to see your underlying C++ data structures clearly and in an up-to-the-minute fashion without needing to constantly press buttons to reload what you've been working on.  I also had existing C++ code in mind as I wrote this. I wanted something that would allow you to put an existing C++ program (say a large finite element simulation) on a website with as little modification to the existing data structures as possible. Thus we have a *clean break* between application code and presentation (GUI) code and there should not be any kind of translation layer obscuring the view so to speak. Those of you familiar with the Model-View-Controller software pattern should see how those terms can apply here. The Clarity framework aims to offer what the MVC pattern would call **View** and **Controller** functionality while leaving your **Model** design largely up to you.
 
-The new central primitive is the `Signal<S>` class. Immediately descended from that are a pair of classes called `SignalAcceptor<S>` and `SignalEmitter<S>`. Signals originate from a class descended from `SignalEmitter<S>` and terminate at a class descended from `SignalAcceptor<S>`. The template parameter `S` is the signal type and reflects the type of data we are dealing with at a given point. There is a `CppLambda<S>` class that can be used to convert from one signal type to another or just run a (pure) function on the signal data.
+## Design ##
+
+There are basically 3 (three) components to the current Clarity system. Each component is exemplified by a class from which others are derived to express more complex behavior. There is a class called `WebElement` that represents an HTML tag. A number of classes are derived from this such as `InputElement`, `Label`, etc... whose names are fairly self-explanatory. The signals that move through the system are all derived from the `Signal<S>` class. The `SignalBuilder` class is a signal and HTML element factory that also acts as a connection helper facilitating the process of plugging the output of one signal into the input of another. One can think of `SignalBuilder` as a worker whose building materials are the `WebElement` and `Signal` classes.
+
+### Signals ###
+
+The new central primitive is the `Signal<S>` class. Immediately descended from that are a pair of classes called `SignalAcceptor<S>` and `SignalEmitter<S>`. Signals originate from a class descended from `SignalEmitter<S>` and terminate at a class descended from `SignalAcceptor<S>`. The template parameter `S` is the signal type and reflects the type of data we are dealing with at a given point. There is a `CppLambda<S>` class that can be used to convert from one signal type to another or just run a (pure) function on the signal data. 
+
+Signal classes act as interfaces between HTML elements or C++ objects and the signal pipeline. `WebElementSignal` for instance is a wrapper around a `WebElement` such as an SVG area or input element. Creating a `WebElementSignal` automatically sets up event listeners that are triggered as the user performs actions with the wrapped HTML element. These listeners inject user input into the signal pipeline or modify the wrapped HTML in response to signals coming through it.
+
+There is also a pair of classes `ObjectAcceptor<S>` and `ObjectEmitter<S>` that are descended from `SignalAcceptor<S>` and `SignalEmitter<S>` respectively. These classes essentially perform the task of interfacing the signal pipeline with arbitrary C++ classes.
 
 ## Getting Started ##
 
