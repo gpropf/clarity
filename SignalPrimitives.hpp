@@ -24,7 +24,7 @@
 #include <string>
 #include <vector>
 
-//#include "MonolithicSignals.hpp"
+// #include "MonolithicSignals.hpp"
 #include "Signal.hpp"
 
 using std::cout;
@@ -76,10 +76,21 @@ class CppLambda : public SignalAcceptor<S>, public SignalEmitter<Sout> {
 
     CppLambda(std::function<Sout(S s)> lambda) : lambda_(lambda) {}
 
+    void printState() {
+        cout << "SignalAcceptor::currentValue_: " << SignalAcceptor<S>::getCurrentValue()
+             << ", SignalEmitter::currentValue_: " << SignalEmitter<Sout>::getCurrentValue()
+             << endl;
+    }
+
     virtual bool accept(const S& s) {
+        SignalAcceptor<S>::accept(s);
+        printState();
         Sout sOut = lambda_(s);
         cout << "OUTPUT of CppLambda: " << sOut << endl;
-        if (this->output_ != nullptr) return this->output_->accept(sOut);
+
+        this->emit(sOut);
+        printState();
+        // if (this->output_ != nullptr) return this->output_->accept(sOut);
         return false;
     }
 
@@ -196,7 +207,7 @@ class ObjectEmitter : public SignalEmitter<S> {
  */
 template <typename inT1, typename inT2, typename outT>
 class Merge : public SignalEmitter<outT>,
-                public std::enable_shared_from_this<Merge<inT1, inT2, outT>> {
+              public std::enable_shared_from_this<Merge<inT1, inT2, outT>> {
     shared_ptr<SignalAcceptor<inT2>> in2_ = nullptr;
     shared_ptr<SignalAcceptor<inT1>> in1_ = nullptr;
 
