@@ -13,7 +13,7 @@ CFLAGS	= $(DEBUG_CFLAGS)
 
 
 pixelreactor: pixelreactor/pixelreactor.o
-	$(ENV) $(CC) $(CFLAGS) -lembind pixelreactor.o -o pixelreactor.js
+	$(ENV) $(CC) $(CFLAGS) -lembind pixelreactor/pixelreactor.o -o pixelreactor.js
 
 
 # simpleTest: simpleTest.o #WebElement.o Signal.o 

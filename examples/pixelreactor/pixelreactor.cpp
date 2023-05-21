@@ -19,7 +19,7 @@ int main() {
         TestFramework testFramework;
         testFramework.content(pixelreactor.content());
     #else
-        pixelreactor.content();
+        //pixelreactor.content();
     #endif
     return 0;
 }

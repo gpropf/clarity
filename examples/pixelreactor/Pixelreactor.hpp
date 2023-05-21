@@ -4,6 +4,21 @@
 #include <set>
 #include <utility>
 
+/**
+ * @brief My own stringification function once I saw that to_string() wasn't always working.
+ *
+ * @tparam T
+ * @param v
+ * @return std::string
+ */
+template <typename T>
+std::string clto_str(const T &v) {
+    std::ostringstream os;
+    os << v;
+    return os.str();
+}
+
+
 
 template <typename V>
 struct RotationMatrix2D {
@@ -379,14 +394,14 @@ class Beaker {
         reactionRule->initPixelListMap();
         this->reactionRules_.push_back(reactionRule);
 
-        CLNodeFactory<BeakerNode, Beaker<V>, int> beakerBuilder("div", "rr");
+        // CLNodeFactory<BeakerNode, Beaker<V>, int> beakerBuilder("div", "rr");
 
-        BeakerNode<Beaker<V>> *bn = beakerBuilder.withChildrenOf(beakerNode_->reactionRulesDiv_)
-                                        .withTag("div")
-                                        .withName("reactionRule")
-                                        .withCppVal(reactionRule)
-                                        .build();
-        beakerNode_->refresh();
+        // BeakerNode<Beaker<V>> *bn = beakerBuilder.withChildrenOf(beakerNode_->reactionRulesDiv_)
+        //                                 .withTag("div")
+        //                                 .withName("reactionRule")
+        //                                 .withCppVal(reactionRule)
+        //                                 .build();
+        // beakerNode_->refresh();
     }
 
     Beaker<unsigned char> *findRuleByName(const std::string &ruleName) {
@@ -404,10 +419,10 @@ class Beaker {
     }
 
     void initPixelListMap() {
-        map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap0;
-        map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap90;
-        map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap180;
-        map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap270;
+        std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap0;
+        std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap90;
+        std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap180;
+        std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap270;
 
         rotationToPixelListsMap_[0] = valueToCoordinateMap0;
         rotationToPixelListsMap_[90] = valueToCoordinateMap90;
@@ -432,7 +447,7 @@ class Beaker {
      * @return std::vector<std::pair<V, std::vector<gridCoordinatePairT>>>
      */
     std::vector<std::pair<V, std::vector<gridCoordinatePairT>>> sortPixelList(
-        map<V, std::vector<gridCoordinatePairT>> &m) {
+        std::map<V, std::vector<gridCoordinatePairT>> &m) {
         std::vector<std::pair<V, std::vector<gridCoordinatePairT>>> vectorOfPairs;
         for (const auto &[pixelVal, coordinates] : m) {
             vectorOfPairs.push_back(std::pair(pixelVal, coordinates));
@@ -454,11 +469,11 @@ class Beaker {
         std::vector<gridCoordinatesValueTripletT> pixels;
         for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
             for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
-                V pixelVal = this->beakerNode_->beakerCanvas_->getValXY(i, j);
+                //V pixelVal = this->beakerNode_->beakerCanvas_->getValXY(i, j);
                 gridCoordinatePairT xy = std::pair(i, j);
                 gridCoordinatesValueTripletT xyv;
                 if (this->isReactionRule_) {
-                    addPixelToRotationMaps(xy, pixelVal);
+                    //addPixelToRotationMaps(xy, pixelVal);
                 }
             }
         }
@@ -488,7 +503,7 @@ class Beaker {
         }
     }
 
-    void printPixelMap(map<V, std::vector<gridCoordinatePairT>> &m) {
+    void printPixelMap(std::map<V, std::vector<gridCoordinatePairT>> &m) {
         cout << "PPM() rule name: " << name_ << endl;
         for (auto [pixelVal, gridCoordinates] : m) {
             cout << "PPM() For pixelVal " << int(pixelVal) << endl;
@@ -548,8 +563,8 @@ class Beaker {
     }
 
     std::vector<gridCoordinatePairT> generatePotentialMatchCoordinates(
-        tuple<gridCoordinateT, gridCoordinateT, V> &newPixel,
-        map<V, std::vector<gridCoordinatePairT>> &valueToPixelLocationsMap) const {
+        std::tuple<gridCoordinateT, gridCoordinateT, V> &newPixel,
+        std::map<V, std::vector<gridCoordinatePairT>> &valueToPixelLocationsMap) const {
         auto [npx, npy, npVal] = newPixel;
         std::vector<gridCoordinatePairT> coordinatesVector = valueToPixelLocationsMap[npVal];
         std::vector<gridCoordinatePairT> potentialMatchCoordinates;
@@ -598,7 +613,7 @@ class Beaker {
 
     void clearGrid() {
         cout << "clearGrid()" << endl;
-        this->beakerNode_->beakerCanvas_->clearGridToValue(0);
+        //this->beakerNode_->beakerCanvas_->clearGridToValue(0);
     }
 
     void laydownMatchPixels2(Beaker<V> &reactionRule, gridCoordinatePairT matchCoordiates,
@@ -627,7 +642,7 @@ class Beaker {
 
     void updateGrid() {
         clean_ = false;
-        this->beakerNode_->beakerCanvas_->flushPixelBuffer();
+        //this->beakerNode_->beakerCanvas_->flushPixelBuffer();
         for (const auto &[key, value] : this->successionMap_) {
             auto [px, py] = key;
             std::vector<valuePriorityPairT> vpStack = value;
@@ -635,7 +650,7 @@ class Beaker {
             if (!vpStack.empty()) {
                 sortValuePriorityStack(vpStack);
                 auto [val, pri] = vpStack.back();
-                this->beakerNode_->beakerCanvas_->setValXYNoDraw(px, py, val);
+                //this->beakerNode_->beakerCanvas_->setValXYNoDraw(px, py, val);
             }
         }
     }
@@ -657,8 +672,8 @@ class Beaker {
     void makeDirty() {
         clean_ = false;
         cout << "BEAKER IS DIRTY!" << endl;
-        auto [x, y, pixelVal] = this->beakerNode_->beakerCanvas_->getLatestPixel();
-        cout << "LATEST PIXEL: " << x << ", " << y << " : " << int(pixelVal) << endl;
+        // auto [x, y, pixelVal] = this->beakerNode_->beakerCanvas_->getLatestPixel();
+        // cout << "LATEST PIXEL: " << x << ", " << y << " : " << int(pixelVal) << endl;
     }
 
     /**
@@ -694,37 +709,37 @@ class Beaker {
     }
 
     void multiMatch(Beaker<V> &reactionRule, RotationMatrix2D<gridCoordinateT> *rm) {
-        set<gridCoordinatePairT> uniqueMatchLocations;
-        for (auto [x, y, pixelVal] : this->beakerNode_->beakerCanvas_->pixelBuffer_) {
-            cout << "NEW PIXEL: " << x << ", " << y << " : " << int(pixelVal) << endl;
-            auto newPixel = make_tuple(x, y, pixelVal);            
-            auto valueToPixelLocationsMap = reactionRule.rotationToPixelListsMap_[rm->angle_];
-            auto potentialMatchCoordinates =
-                generatePotentialMatchCoordinates(newPixel, valueToPixelLocationsMap);
+        std::set<gridCoordinatePairT> uniqueMatchLocations;
+        // for (auto [x, y, pixelVal] : this->beakerNode_->beakerCanvas_->pixelBuffer_) {
+        //     cout << "NEW PIXEL: " << x << ", " << y << " : " << int(pixelVal) << endl;
+        //     auto newPixel = make_tuple(x, y, pixelVal);            
+        //     auto valueToPixelLocationsMap = reactionRule.rotationToPixelListsMap_[rm->angle_];
+        //     auto potentialMatchCoordinates =
+        //         generatePotentialMatchCoordinates(newPixel, valueToPixelLocationsMap);
 
-            cout << "For new pixel: " << x << ", " << y << " : " << int(pixelVal) << " There were "
-                 << potentialMatchCoordinates.size() << " potential match locations:" << endl;
-            for (auto pmCoords : potentialMatchCoordinates) {
-                cout << "\t" << pmCoords.first << ", " << pmCoords.second << endl;
-            }
+        //     cout << "For new pixel: " << x << ", " << y << " : " << int(pixelVal) << " There were "
+        //          << potentialMatchCoordinates.size() << " potential match locations:" << endl;
+        //     for (auto pmCoords : potentialMatchCoordinates) {
+        //         cout << "\t" << pmCoords.first << ", " << pmCoords.second << endl;
+        //     }
 
-            for (auto pmCoords : potentialMatchCoordinates) {
-                bool mbr = matchesAtByRotation(reactionRule, rm, pmCoords);
-                auto [i, j] = pmCoords;
+        //     for (auto pmCoords : potentialMatchCoordinates) {
+        //         bool mbr = matchesAtByRotation(reactionRule, rm, pmCoords);
+        //         auto [i, j] = pmCoords;
 
-                if (mbr) {
-                    uniqueMatchLocations.emplace(pmCoords);
-                    cout << "Using matchesAtByRotation() there is a match at " << i << ", " << j
-                         << " for " << rm->angle_ << " degrees rotatation." << endl;                    
-                }
-            }
-        }
-        for (auto umc : uniqueMatchLocations) {
-            auto [ux, uy] = umc;
-            cout << "For rotation " << rm->angle_ << " there is a unique match at: " << ux << ", "
-                 << uy << endl;
-            laydownMatchPixels2(reactionRule, umc, rm);
-        }
+        //         if (mbr) {
+        //             uniqueMatchLocations.emplace(pmCoords);
+        //             cout << "Using matchesAtByRotation() there is a match at " << i << ", " << j
+        //                  << " for " << rm->angle_ << " degrees rotatation." << endl;                    
+        //         }
+        //     }
+        // }
+        // for (auto umc : uniqueMatchLocations) {
+        //     auto [ux, uy] = umc;
+        //     cout << "For rotation " << rm->angle_ << " there is a unique match at: " << ux << ", "
+        //          << uy << endl;
+        //     laydownMatchPixels2(reactionRule, umc, rm);
+        // }
     }
 
     /**
@@ -733,7 +748,7 @@ class Beaker {
      */
     void iterate() {
         this->update();
-        this->beakerNode_->nodelog("ITERATING...");
+        //this->beakerNode_->nodelog("ITERATING...");
         this->iterationCount_++;
         for (auto reactionRule : reactionRules_) {
             if (reactionRule->successor_ == reactionRule) {
@@ -747,7 +762,7 @@ class Beaker {
             multiMatch(*reactionRule, r270__);
         }
 
-        this->beakerNode_->refresh();        
+        //this->beakerNode_->refresh();        
 
         for (const auto &[key, value] : this->successionMap_) {
             auto [px, py] = key;
@@ -758,7 +773,7 @@ class Beaker {
             }
         }
         updateGrid();
-        this->beakerNode_->beakerCanvas_->drawGrid();
+        //this->beakerNode_->beakerCanvas_->drawGrid();
     }
 
     static void makeNewReactionRule_st(Beaker *b) { b->makeNewReactionRule(); }
@@ -781,12 +796,12 @@ class Beaker {
 
     int playMode_ = 0;
 
-    map<gridCoordinatePairT, std::vector<valuePriorityPairT>> successionMap_;
+    std::map<gridCoordinatePairT, std::vector<valuePriorityPairT>> successionMap_;
 
     int iterationCount_ =
         0;  //!< Counter that advances every time the rules are applied to the grid.
-    BeakerNode<Beaker<V>> *beakerNode_;  //!< Pointer back to containing BN so that BN->refresh()
-                                         //!< can be called when this updates.
+    // BeakerNode<Beaker<V>> *beakerNode_;  //!< Pointer back to containing BN so that BN->refresh()
+    //                                      //!< can be called when this updates.
 
     std::vector<Beaker *> reactionRules_;
 
@@ -806,68 +821,68 @@ class Beaker {
     // std::vector<gridCoordinatesValueTripletT> newPixelList_;
     // std::vector<gridCoordinatesValueTripletT> backgroundPixelList_;
 
-    typedef map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMapT;
+    typedef std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMapT;
 
-    map<int, valueToCoordinateMapT> rotationToPixelListsMap_;
-    map<int, std::vector<std::pair<V, std::vector<gridCoordinatePairT>>>> rotationToSortedPixelListsMap_;
+    std::map<int, valueToCoordinateMapT> rotationToPixelListsMap_;
+    std::map<int, std::vector<std::pair<V, std::vector<gridCoordinatePairT>>>> rotationToSortedPixelListsMap_;
     // template <typename U>
     //friend class BeakerNode<Beaker<V>>;
 };
 
 EMSCRIPTEN_BINDINGS(PixelReactor) {
-    class_<HybridNode<Beaker<unsigned char>::priorityT>>("HybridNode_priorityT")
-        .function("updateNodeFromDom",
-                  &HybridNode<Beaker<unsigned char>::priorityT>::updateNodeFromDom,
-                  allow_raw_pointers());
+    // class_<HybridNode<Beaker<unsigned char>::priorityT>>("HybridNode_priorityT")
+    //     .function("updateNodeFromDom",
+    //               &HybridNode<Beaker<unsigned char>::priorityT>::updateNodeFromDom,
+    //               emscripten::allow_raw_pointers());
 
-    class_<BeakerNode<Beaker<unsigned char>>>("BeakerNode_h")
-        .function("tick", &BeakerNode<Beaker<unsigned char>>::tick, allow_raw_pointers());
+    // class_<BeakerNode<Beaker<unsigned char>>>("BeakerNode_h")
+    //     .function("tick", &BeakerNode<Beaker<unsigned char>>::tick, allow_raw_pointers());
 
-    class_<Beaker<unsigned char>>("Beaker")
-        .function("toggleClean", &Beaker<unsigned char>::toggleClean, allow_raw_pointers())
-        .function("clearGrid", &Beaker<unsigned char>::clearGrid, allow_raw_pointers())
-        .function("makeDirty", &Beaker<unsigned char>::makeDirty, allow_raw_pointers())
-        .function("iterate", &Beaker<unsigned char>::iterate, allow_raw_pointers())
-        .function("makePixelList", &Beaker<unsigned char>::makePixelList, allow_raw_pointers())
+    emscripten::class_<Beaker<unsigned char>>("Beaker")
+        .function("toggleClean", &Beaker<unsigned char>::toggleClean, emscripten::allow_raw_pointers())
+        .function("clearGrid", &Beaker<unsigned char>::clearGrid, emscripten::allow_raw_pointers())
+        .function("makeDirty", &Beaker<unsigned char>::makeDirty, emscripten::allow_raw_pointers())
+        .function("iterate", &Beaker<unsigned char>::iterate, emscripten::allow_raw_pointers())
+        .function("makePixelList", &Beaker<unsigned char>::makePixelList, emscripten::allow_raw_pointers())
         .function("makeNewReactionRule", &Beaker<unsigned char>::makeNewReactionRule,
-                  allow_raw_pointers());
+                  emscripten::allow_raw_pointers());
 
-    register_std::vector<Beaker<unsigned char>::gridCoordinatesValueTripletT>(
+    emscripten::register_vector<Beaker<unsigned char>::gridCoordinatesValueTripletT>(
         "std::vector<gridCoordinatesValueTripletT>");
     // .class_function("makeNewReactionRule_st", &Beaker<unsigned char>::makeNewReactionRule_st,
-    //                 allow_raw_pointers());
+    //                 emscripten::allow_raw_pointers());
 }
 
 /**
  * @brief The Pixelreactor app from the old ClojureScript site redone in C++.
  *
  */
-struct PixelReactor : public PageContent {
+struct PixelReactor {
     int *ruleFrameWidth = new int(5);
     int *ruleFrameHeight = new int(3);
 
-    ClarityNode *content(ClarityNode *innerContent = nullptr) {
-        CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");
+//     ClarityNode *content(ClarityNode *innerContent = nullptr) {
+//         CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");
 
-#ifdef USETF
-        auto *maindiv = builder.build();
-#else
-        auto *maindiv = builder.withAttachmentId("hookid")
-                            .withAttachmentMode(clarity::ClarityNode::AttachmentMode::REPLACE_ID)
-                            .build();
-#endif
+// #ifdef USETF
+//         auto *maindiv = builder.build();
+// #else
+//         auto *maindiv = builder.withAttachmentId("hookid")
+//                             .withAttachmentMode(clarity::ClarityNode::AttachmentMode::REPLACE_ID)
+//                             .build();
+// #endif
 
-        CLNodeFactory<BeakerNode, Beaker<unsigned char>, int> beakerBuilder(
-            builder.withChildrenOf(maindiv));
+//         CLNodeFactory<BeakerNode, Beaker<unsigned char>, int> beakerBuilder(
+//             builder.withChildrenOf(maindiv));
 
-        Beaker<unsigned char> *b = new Beaker<unsigned char>(60, 40, 600, 400, "Beaker");
+//         Beaker<unsigned char> *b = new Beaker<unsigned char>(60, 40, 600, 400, "Beaker");
 
-        BeakerNode<Beaker<unsigned char>> *bn =
-            beakerBuilder.withTag("div").withName("mainBeaker").withCppVal(b).build();
+//         BeakerNode<Beaker<unsigned char>> *bn =
+//             beakerBuilder.withTag("div").withName("mainBeaker").withCppVal(b).build();
 
-        cout << "Setup complete!" << endl;
-        return maindiv;
-    }
+//         cout << "Setup complete!" << endl;
+//         return maindiv;
+//     }
 };
 
 #endif
