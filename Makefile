@@ -26,9 +26,7 @@ cl2.a: WebElement.o Signal.o
 
 signalTest: signalTest.o #WebElement.o Signal.o 
 	$(ENV) $(CC) $(CFLAGS) -lembind signalTest.o -o signalTest.js
-	#$(ENV) $(CC) $(CFLAGS) -lembind --pre-js Clarity.js signalTest.o -o signalTest.js
-# docs: clarity.doxyconfig
-# 	doxygen clarity.doxyconfig
+	
 
 # docsclean:
 # 	rm -rf html latex

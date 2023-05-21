@@ -32,7 +32,12 @@ using std::cout;
 using std::endl;
 
 namespace cl2 {
-
+/**
+ * @brief A signal that originates or ends in a web element. This type may also act as a conduit or
+ * passthru due to inheriting both emitter and acceptor capabilities.
+ *
+ * @tparam S
+ */
 template <typename S>
 class WebElementSignal : public SignalAcceptor<S>, public SignalEmitter<S> {
     shared_ptr<WebElement> wptr_;  //!< The actual WebElement this acts as a signal wrapper for.
@@ -46,7 +51,7 @@ class WebElementSignal : public SignalAcceptor<S>, public SignalEmitter<S> {
     virtual void emit(const S& s) { SignalEmitter<S>::emit(s); }
 
     WebElementSignal(const WebElement& wptr, const std::string& boundField,
-                             bool emitInitialValue = true) {
+                     bool emitInitialValue = true) {
         boundField_ = boundField;
         this->emitInitialValue_ = emitInitialValue;
         wptr_ = make_shared<WebElement>(wptr);
@@ -115,23 +120,27 @@ template <typename S>
 class EventListenerEmitter : public SignalEmitter<S> {
     // shared_ptr<val> eventListener_ = nullptr;
    protected:
-    val domElement_;
+    val domElement_, eventListenerFn_;
     std::string eventListenerName_;
     std::string eventListenerGeneratorName_;
+
 
    public:
     // shared_ptr<Signal<S>> getOutput() const { return output_; }
     EventListenerEmitter(val domElement, const std::string& eventListenerName,
-                         const std::string& eventListenerGeneratorName)
+                         const std::string& eventListenerGeneratorName,
+                         bool emitInitialValue = false)
         : domElement_(domElement),
           eventListenerName_(eventListenerName),
-          eventListenerGeneratorName_(eventListenerGeneratorName) {}
+          eventListenerGeneratorName_(eventListenerGeneratorName) {
+        SignalEmitter(emitInitialValue);
+    }
 
     virtual void update() {
         val elgEmitFn = val::global(this->eventListenerGeneratorName_.c_str());
-        val eventListenerFn = elgEmitFn(*this);
-        domElement_.call<void>("removeEventListener", val(eventListenerName_), eventListenerFn);
-        domElement_.call<void>("addEventListener", val(eventListenerName_), eventListenerFn);
+        eventListenerFn_ = elgEmitFn(*this);
+        domElement_.call<void>("removeEventListener", val(eventListenerName_), eventListenerFn_);
+        domElement_.call<void>("addEventListener", val(eventListenerName_), eventListenerFn_);
     }
 
     virtual void emit(const S& s) {
@@ -140,7 +149,7 @@ class EventListenerEmitter : public SignalEmitter<S> {
     }
 
     virtual ~EventListenerEmitter() {
-        // cout << "Destroying SignalObject\n";
+        // cout << "Destroying EventListenerEmitter\n";
     }
 };
 
@@ -155,8 +164,8 @@ class SelectEmitter : public EventListenerEmitter<S> {
 
    public:
     // shared_ptr<Signal<S>> getOutput() const { return output_; }
-    SelectEmitter(val domElement) : EventListenerEmitter<S>(domElement, "change",
-                         "elgSelectEmitFn"){
+    SelectEmitter(val domElement)
+        : EventListenerEmitter<S>(domElement, "change", "elgSelectEmitFn") {
         // this->domElement_ = domElement;
         // this->eventListenerName_ = "change";
         // this->eventListenerGeneratorName_ = "elgSelectEmitFn";
