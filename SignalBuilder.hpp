@@ -245,8 +245,8 @@ class SignalBuilder {
      */
     template <typename S>
     shared_ptr<WebElementSignal<S>> textInputWSS(const std::string& name,
-                                                         const std::string& labelText,
-                                                         bool emitInitialValue = true) {
+                                                 const std::string& labelText,
+                                                 bool emitInitialValue = true) {
         InputElement inp = textInput(name, labelText);
         shared_ptr<WebElementSignal<S>> wso =
             make_shared<WebElementSignal<S>>(inp, "value", emitInitialValue);
@@ -281,11 +281,23 @@ class SignalBuilder {
      */
     template <typename S>
     shared_ptr<WebElementSignal<S>> rangeInputWSS(const std::string& name,
-                                                          const std::string& labelText,
-                                                          bool emitInitialValue = true) {
+                                                  const std::string& labelText,
+                                                  bool emitInitialValue = true) {
         InputElement inp = rangeInput(name, labelText);
         shared_ptr<WebElementSignal<S>> wso =
             make_shared<WebElementSignal<S>>(inp, "value", emitInitialValue);
+        return wso;
+    }
+
+    template <typename S>
+    shared_ptr<WebElementSignal<S>> selectBoxWSS(const std::string& name,
+                                                 const std::string& labelText,
+                                                 bool emitInitialValue = true) {
+        // InputElement inp = textInput(name, labelText);
+        auto selectElement = Select(name, getStrId());
+        shared_ptr<WebElementSignal<S>> wso =
+            make_shared<WebElementSignal<S>>(selectElement, "value", emitInitialValue);
+
         return wso;
     }
 

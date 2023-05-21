@@ -49,6 +49,7 @@ class WebElementSignal : public SignalAcceptor<S>, public SignalEmitter<S> {
 
    public:
     virtual void emit(const S& s) { SignalEmitter<S>::emit(s); }
+    shared_ptr<WebElement> getWebElement() { return wptr_; }
 
     WebElementSignal(const WebElement& wptr, const std::string& boundField,
                      bool emitInitialValue = true) {
@@ -124,16 +125,21 @@ class EventListenerEmitter : public SignalEmitter<S> {
     std::string eventListenerName_;
     std::string eventListenerGeneratorName_;
 
-
    public:
     // shared_ptr<Signal<S>> getOutput() const { return output_; }
     EventListenerEmitter(val domElement, const std::string& eventListenerName,
                          const std::string& eventListenerGeneratorName,
                          bool emitInitialValue = false)
-        : domElement_(domElement),
-          eventListenerName_(eventListenerName),
-          eventListenerGeneratorName_(eventListenerGeneratorName) {
-        SignalEmitter(emitInitialValue);
+        : SignalEmitter<S>(emitInitialValue)
+
+    //   domElement_(domElement),
+    //   eventListenerName_(eventListenerName),
+    //   eventListenerGeneratorName_(eventListenerGeneratorName)
+    // SignalEmitter<S>::SignalEmitter(emitInitialValue);
+    {
+        domElement_ = domElement;
+        eventListenerName_ = eventListenerName;
+        eventListenerGeneratorName_ = eventListenerGeneratorName;
     }
 
     virtual void update() {
@@ -153,35 +159,35 @@ class EventListenerEmitter : public SignalEmitter<S> {
     }
 };
 
-/**
- * @brief A signal originating in an event listener.
- *
- * @tparam S data type of signal, e.g. string, int, double, etc...
- */
-template <typename S>
-class SelectEmitter : public EventListenerEmitter<S> {
-    // shared_ptr<val> eventListener_ = nullptr;
+// /**
+//  * @brief A signal originating in an event listener.
+//  *
+//  * @tparam S data type of signal, e.g. string, int, double, etc...
+//  */
+// template <typename S>
+// class SelectEmitter : public EventListenerEmitter<S> {
+//     // shared_ptr<val> eventListener_ = nullptr;
 
-   public:
-    // shared_ptr<Signal<S>> getOutput() const { return output_; }
-    SelectEmitter(val domElement)
-        : EventListenerEmitter<S>(domElement, "change", "elgSelectEmitFn") {
-        // this->domElement_ = domElement;
-        // this->eventListenerName_ = "change";
-        // this->eventListenerGeneratorName_ = "elgSelectEmitFn";
-    }
+//    public:
+//     // shared_ptr<Signal<S>> getOutput() const { return output_; }
+//     SelectEmitter(val domElement)
+//         : EventListenerEmitter<S>(domElement, "change", "elgSelectEmitFn") {
+//         // this->domElement_ = domElement;
+//         // this->eventListenerName_ = "change";
+//         // this->eventListenerGeneratorName_ = "elgSelectEmitFn";
+//     }
 
-    virtual void update() { EventListenerEmitter<S>::update(); }
+//     virtual void update() { EventListenerEmitter<S>::update(); }
 
-    virtual void emit(const S& s) {
-        cout << "SelectEmitter::emit called!" << endl;
-        EventListenerEmitter<S>::emit(s);
-    }
+//     virtual void emit(const S& s) {
+//         cout << "SelectEmitter::emit called!" << endl;
+//         EventListenerEmitter<S>::emit(s);
+//     }
 
-    virtual ~SelectEmitter() {
-        // cout << "Destroying SignalObject\n";
-    }
-};
+//     virtual ~SelectEmitter() {
+//         // cout << "Destroying SignalObject\n";
+//     }
+// };
 
 /**
  * @brief This class is a bit special because it's essentially fixed in its template parameter. It

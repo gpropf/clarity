@@ -202,15 +202,25 @@ int main() {
     gridControl->addColorToPallete(3, "#0000ff");
     gridControl->finalize();
 
-    const auto selectOutput =
-        sb.textInputWSS<std::string>("selectOutput", "Output of select box appears here.", false);
-    auto select1 = Select("select1", getStrId());
-    auto option1 = Option("1", "Foo", select1.getDomElement());
-    auto option2 = Option("2", "Bar", select1.getDomElement());
-    auto option3 = Option("3", "Baz", select1.getDomElement());
+    // const auto selectOutput =
+    //     sb.textInputWSS<std::string>("selectOutput", "Output of select box appears here.",
+    //     false);
+    // auto select1 = Select("select1", getStrId());
+    // auto option1 = Option("1", "Foo", select1.getDomElement());
+    // auto option2 = Option("2", "Bar", select1.getDomElement());
+    // auto option3 = Option("3", "Baz", select1.getDomElement());
 
-    auto selectEmitter = make_shared<SelectEmitter<std::string>>(select1.getDomElement());
-    selectEmitter->setOutput(selectOutput);
+    // auto selectEmitter = make_shared<SelectEmitter<std::string>>(select1.getDomElement());
+    // selectEmitter->setOutput(selectOutput);
+
+    const auto selectOutputWSS =
+        sb.textInputWSS<std::string>("selectOutputWSS", "Output of selectWSS appears here.", false);
+    auto selectWSS = sb.selectBoxWSS<std::string>("wssSelector", "This is a WSS Selector", true);
+    val selectWSSDomElement = selectWSS->getWebElement()->getDomElement();
+    auto option1wss = Option("10", "FOO", selectWSSDomElement);
+    auto option2wss = Option("20", "BOO", selectWSSDomElement);
+    auto option3wss = Option("30", "TOO", selectWSSDomElement);
+    selectWSS->setOutput(selectOutputWSS);
     return 0;
 }
 
