@@ -20,5 +20,5 @@ pixelreactor: pixelreactor/pixelreactor.o
 # 	$(ENV) $(CC) $(CFLAGS) -lembind simpleTest.o -o signalTest.js
 
 
-realclean:
-	rm -f *.o *.wasm *.wasm.map *.a signalTest.js
+clean:
+	rm -f *.o *.wasm *.wasm.map *.a pixelreactor.js
