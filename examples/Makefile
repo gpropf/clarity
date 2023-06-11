@@ -3,7 +3,7 @@
 # pixelreactor:
 # 	$(MAKE) -C pixelreactor
 
-EXAMPLES = pixelreactor
+EXAMPLES = pixelreactor matchsticks
 
 .PHONY: examples $(EXAMPLES)
 
