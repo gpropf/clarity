@@ -15,6 +15,7 @@ using namespace cl2;
 
 int main() {
     PixelReactor pixelreactor;
+    cout << "Hello from Pixelreactor! We should probably do some initialization stuff here." << endl;
     #ifdef USETF
         TestFramework testFramework;
         testFramework.content(pixelreactor.content());

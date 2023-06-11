@@ -861,6 +861,10 @@ struct PixelReactor {
     int *ruleFrameWidth = new int(5);
     int *ruleFrameHeight = new int(3);
 
+
+    PixelReactor(int defaultRuleframeWidth = 5, int defaultRuleframeHeight = 3) {
+        cout << "I'm a Pixelreactor. I need to be redone completely!" << endl;
+    }
 //     ClarityNode *content(ClarityNode *innerContent = nullptr) {
 //         CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");
 
