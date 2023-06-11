@@ -8,17 +8,10 @@ CFLAGS	= $(DEBUG_CFLAGS)
 %.o : %.cpp
 	$(ENV) $(CC) $(CFLAGS) $< -o $@ -c
 
-# %.o : %.hpp
-# 	$(ENV) $(CC) $(CFLAGS) $< -o $@ -c
-
 
 matchsticks: matchsticks.o
 	$(ENV) $(CC) $(CFLAGS) -lembind matchsticks.o -o matchsticks.js
 
 
-# simpleTest: simpleTest.o #WebElement.o Signal.o 
-# 	$(ENV) $(CC) $(CFLAGS) -lembind simpleTest.o -o signalTest.js
-
-
 clean:	
-	rm -f *.o *.wasm *.wasm.map *.a pixelreactor.js
+	rm -f *.o *.wasm *.wasm.map *.a matchsticks.js
