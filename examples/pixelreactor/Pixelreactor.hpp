@@ -4,6 +4,16 @@
 #include <set>
 #include <utility>
 
+#include "GridControl.hpp"
+#include "Signal.hpp"
+#include "SignalBuilder.hpp"
+#include "SignalPrimitives.hpp"
+#include "Util.hpp"
+#include "WebElementSignals.hpp"
+#include "WebElements.hpp"
+
+using namespace cl2;
+
 /**
  * @brief My own stringification function once I saw that to_string() wasn't always working.
  *
@@ -17,8 +27,6 @@ std::string clto_str(const T &v) {
     os << v;
     return os.str();
 }
-
-
 
 template <typename V>
 struct RotationMatrix2D {
@@ -46,10 +54,10 @@ class Beaker;
  * @tparam V This 'V' is actually the Beaker objects themselves. So the `cppVal_` member of this
  * kind of node points to a Beaker.
  */
-//template <class B>
-// class BeakerNode {
-//    private:
-//     // ClarityNode *iterationCounter_;
+// template <class B>
+//  class BeakerNode {
+//     private:
+//      // ClarityNode *iterationCounter_;
 
 //    public:
 //     BeakerNode(const std::string &name, const std::string &tag, bool useExistingDOMElement,
@@ -59,10 +67,11 @@ class Beaker;
 
 //     inline void tick() {
 //         if (this->cppVal_->playMode_ == 0) {
-//             if (this->playPauseButton_ != nullptr) this->playPauseButton_->setDOMVal(val("Play"));
-//             return;
+//             if (this->playPauseButton_ != nullptr)
+//             this->playPauseButton_->setDOMVal(val("Play")); return;
 //         } else {
-//             if (this->playPauseButton_ != nullptr) this->playPauseButton_->setDOMVal(val("Pause"));
+//             if (this->playPauseButton_ != nullptr)
+//             this->playPauseButton_->setDOMVal(val("Pause"));
 //         }
 
 //         this->cppVal_->iterate();
@@ -74,8 +83,10 @@ class Beaker;
 //     }
 
 //     /**
-//      * @brief In any node representing a complex object a call to HybridNode::refresh() is mandatory
-//      * as that is the only way child nodes representing values within the complex structure can be
+//      * @brief In any node representing a complex object a call to HybridNode::refresh() is
+//      mandatory
+//      * as that is the only way child nodes representing values within the complex structure can
+//      be
 //      * updated when the object state changes.
 //      *
 //      */
@@ -85,10 +96,13 @@ class Beaker;
 //     }
 
 //     /**
-//      * @brief This overload of `finalize()` shows that in the case of complex data types with many
+//      * @brief This overload of `finalize()` shows that in the case of complex data types with
+//      many
 //      * subcomponents the finalize method is reponsible for setting up the nodes responsible for
-//      * manipulating them. This is also where essential things like the pointer in the model object
-//      * that points back to the GUI node are set up. This pointer is what allows the model object to
+//      * manipulating them. This is also where essential things like the pointer in the model
+//      object
+//      * that points back to the GUI node are set up. This pointer is what allows the model object
+//      to
 //      * automatically update the interface when its internal state changes.
 //      *
 //      */
@@ -97,7 +111,8 @@ class Beaker;
 //         // val ghostUrl = val::global("ghostUrl");
 //         // this->nodelog(clto_str("Ghost Url: ") + ghostUrl.as<string>());
 //         this->jsProxyNode_.set("clarityNode", this);
-//         // This pointer allows the Beaker to see its BeakerNode and automatically update it when it
+//         // This pointer allows the Beaker to see its BeakerNode and automatically update it when
+//         it
 //         // changes state.
 //         this->cppVal_->beakerNode_ = this;
 
@@ -150,15 +165,18 @@ class Beaker;
 //                     hn->setCppVal(v->substr(0, pos));
 //                     hn->refresh();
 //                     cout << "Successor:" << succName << endl;
-//                     auto successorBeaker = this->cppVal_->parentBeaker_->findRuleByName(succName);
-//                     if (successorBeaker != nullptr) {
+//                     auto successorBeaker =
+//                     this->cppVal_->parentBeaker_->findRuleByName(succName); if (successorBeaker
+//                     != nullptr) {
 //                         this->cppVal_->successor_ = successorBeaker;
 //                         this->successorNameTextInput_->setCppValPtr(&successorBeaker->name_);
 //                         this->successorNameTextInput_->refresh();
-//                         cout << "this->cppVal_->successor_: " << this->cppVal_->successor_ << endl;
+//                         cout << "this->cppVal_->successor_: " << this->cppVal_->successor_ <<
+//                         endl;
 //                     }
 //                 }
-//                 // if (*v != hn->getCppVal()) this->cppVal_->parentBeaker_->beakerNode_->refresh();
+//                 // if (*v != hn->getCppVal())
+//                 this->cppVal_->parentBeaker_->beakerNode_->refresh();
 //             };
 
 //             beakerNameTextInput_ = stringBuilder.withName("beakerName")
@@ -194,9 +212,8 @@ class Beaker;
 
 //             stringBuilder
 //                 .withHoverText(
-//                     "To set the rule's successor, just type ':' after the rule name, followed by "
-//                     "the name of the rule "
-//                     "you want as sucessor and hit enter.")
+//                     "To set the rule's successor, just type ':' after the rule name, followed by
+//                     " "the name of the rule " "you want as sucessor and hit enter.")
 //                 .labelGivenNode(beakerNameTextInput_, "Reaction Rule Name");
 
 //             // stringBuilder.br();
@@ -222,7 +239,8 @@ class Beaker;
 //             // val beakerIterate = val::global("beakerIterate")(this->cppVal_);
 //             // val::global().call<void>("setInterval", beakerIterate, 500);
 
-//             // val beakerIterate = val::global("callMethodByName")(this->cppVal_, val("iterate"));
+//             // val beakerIterate = val::global("callMethodByName")(this->cppVal_,
+//             val("iterate"));
 //             // val beakerIterate =
 //             //     val::global("Util")["callMethodByName"](this->cppVal_, val("iterate"));
 
@@ -230,10 +248,11 @@ class Beaker;
 
 //             HybridNode<string>
 //                 *cmdarea;  // Declaring this before creating it so the label can be created first
-//                            // and will thus be above the textarea. Obviously need an option for this
+//                            // and will thus be above the textarea. Obviously need an option for
+//                            this
 //                            // in the label() method.
-//             CLNodeFactory<HybridNode, std::string, double> textBuilder(builder.withChildrenOf(this));
-//             textBuilder.br();
+//             CLNodeFactory<HybridNode, std::string, double>
+//             textBuilder(builder.withChildrenOf(this)); textBuilder.br();
 
 //             std::string *cmdarea_text =
 //                 new string("You type commands here. This feature not currently available.");
@@ -257,8 +276,8 @@ class Beaker;
 
 //             auto *beakerGridHeightTextInput = intBuilder.withName("beakerGridHeightTextInput")
 //                                                   .withCppVal(&this->cppVal_->gridHeight_)
-//                                                   .withAttributes({{"class", val("small_width")}})
-//                                                   .textInput();
+//                                                   .withAttributes({{"class",
+//                                                   val("small_width")}}) .textInput();
 
 //             auto *beakerGridHeightLabel =
 //                 intBuilder.label(beakerGridHeightTextInput, "Beaker grid height.", true);
@@ -284,14 +303,17 @@ class Beaker;
 //             textBuilder.br();
 
 //             val beakerIterateEL =
-//                 val::global("Util")["callMethodByName"](this->cppVal_, val("iterate"), val(true));
+//                 val::global("Util")["callMethodByName"](this->cppVal_, val("iterate"),
+//                 val(true));
 //             auto *iterate_btn =
 //                 intBuilder.button("iterate_btn", "Iterate the reaction", beakerIterateEL);
 
 //             val clearGridEL =
-//                 val::global("Util")["callMethodByName"](this->cppVal_, val("clearGrid"), val(true));
+//                 val::global("Util")["callMethodByName"](this->cppVal_, val("clearGrid"),
+//                 val(true));
 
-//             auto *clearGridButton = intBuilder.button("clearGridButton", "Clear Grid", clearGridEL);
+//             auto *clearGridButton = intBuilder.button("clearGridButton", "Clear Grid",
+//             clearGridEL);
 
 //             auto *newReactionRule_btn = intBuilder.button(
 //                 "newReactionRule_btn", "Make reaction rule", makeNewReactionRuleEL);
@@ -300,8 +322,8 @@ class Beaker;
 
 //             auto *iterationCounter =
 //                 intBuilder
-//                     .withAttributes({{"class", val("small_width")}, {"disabled", val("disabled")}})
-//                     .withCppVal(&this->cppVal_->iterationCount_)
+//                     .withAttributes({{"class", val("small_width")}, {"disabled",
+//                     val("disabled")}}) .withCppVal(&this->cppVal_->iterationCount_)
 //                     .withName("iterationCounter")
 //                     .textInput();
 
@@ -368,9 +390,10 @@ class Beaker {
                   //!< errors about forward template definitions. The small space and time savings
                   //!< wasn't worth it.
 
-    Beaker(int gridWidth, int gridHeight, int gridPixelWidth, int gridPixelHeight,
-           const std::string &name = "", bool isReactionRule = false)
-        : gridWidth_(gridWidth),
+    Beaker(cl2::SignalBuilder &signalBuilder, int gridWidth, int gridHeight, int gridPixelWidth,
+           int gridPixelHeight, const std::string &name = "", bool isReactionRule = false)
+        : signalBuilder_(signalBuilder),
+          gridWidth_(gridWidth),
           gridHeight_(gridHeight),
           gridPixelWidth_(gridPixelWidth),
           gridPixelHeight_(gridPixelHeight),
@@ -379,6 +402,20 @@ class Beaker {
         // if (!isReactionRule_)
         //     successionGrid_ = new std::vector<valuePriorityPairT>[gridWidth * gridHeight];
         initStandardRotationMatrices();
+        cout << "Beaker created!" << endl;
+
+        // svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
+
+auto dblInputWSS =
+        signalBuilder_.textInputWSS<std::string>("dblInput", "Enter a floating point number", false);
+
+
+        //auto gridControl = make_shared<GridControl<int>>(15, 10, 600, 400, signalBuilder_, "gc1");
+        // gridControl->addColorToPallete(0, "#000000");
+        // gridControl->addColorToPallete(1, "#ff0000");
+        // gridControl->addColorToPallete(2, "#00ff00");
+        // gridControl->addColorToPallete(3, "#0000ff");
+        // gridControl->finalize();
     }
 
     /**
@@ -387,8 +424,9 @@ class Beaker {
      *
      */
     void makeNewReactionRule() {
-        Beaker *reactionRule = new Beaker(this->ruleGridWidth_, this->ruleGridHeight_, 150, 150,
-                                          "rule-" + clto_str(++this->ruleCount_), true);
+        Beaker *reactionRule =
+            new Beaker(this->signalBuilder_, this->ruleGridWidth_, this->ruleGridHeight_, 150, 150,
+                       "rule-" + clto_str(++this->ruleCount_), true);
 
         reactionRule->parentBeaker_ = this;
         reactionRule->initPixelListMap();
@@ -469,11 +507,11 @@ class Beaker {
         std::vector<gridCoordinatesValueTripletT> pixels;
         for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
             for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
-                //V pixelVal = this->beakerNode_->beakerCanvas_->getValXY(i, j);
+                // V pixelVal = this->beakerNode_->beakerCanvas_->getValXY(i, j);
                 gridCoordinatePairT xy = std::pair(i, j);
                 gridCoordinatesValueTripletT xyv;
                 if (this->isReactionRule_) {
-                    //addPixelToRotationMaps(xy, pixelVal);
+                    // addPixelToRotationMaps(xy, pixelVal);
                 }
             }
         }
@@ -513,8 +551,8 @@ class Beaker {
         }
     }
 
-    bool matchList2(std::vector<gridCoordinatePairT> &rulePixelList, gridCoordinatePairT matchCoordiates,
-                    V pixelVal) {
+    bool matchList2(std::vector<gridCoordinatePairT> &rulePixelList,
+                    gridCoordinatePairT matchCoordiates, V pixelVal) {
         auto [mx, my] = matchCoordiates;
 
         // auto rulePixelListSize = rulePixelList.size();
@@ -613,7 +651,7 @@ class Beaker {
 
     void clearGrid() {
         cout << "clearGrid()" << endl;
-        //this->beakerNode_->beakerCanvas_->clearGridToValue(0);
+        // this->beakerNode_->beakerCanvas_->clearGridToValue(0);
     }
 
     void laydownMatchPixels2(Beaker<V> &reactionRule, gridCoordinatePairT matchCoordiates,
@@ -642,7 +680,7 @@ class Beaker {
 
     void updateGrid() {
         clean_ = false;
-        //this->beakerNode_->beakerCanvas_->flushPixelBuffer();
+        // this->beakerNode_->beakerCanvas_->flushPixelBuffer();
         for (const auto &[key, value] : this->successionMap_) {
             auto [px, py] = key;
             std::vector<valuePriorityPairT> vpStack = value;
@@ -650,7 +688,7 @@ class Beaker {
             if (!vpStack.empty()) {
                 sortValuePriorityStack(vpStack);
                 auto [val, pri] = vpStack.back();
-                //this->beakerNode_->beakerCanvas_->setValXYNoDraw(px, py, val);
+                // this->beakerNode_->beakerCanvas_->setValXYNoDraw(px, py, val);
             }
         }
     }
@@ -712,12 +750,13 @@ class Beaker {
         std::set<gridCoordinatePairT> uniqueMatchLocations;
         // for (auto [x, y, pixelVal] : this->beakerNode_->beakerCanvas_->pixelBuffer_) {
         //     cout << "NEW PIXEL: " << x << ", " << y << " : " << int(pixelVal) << endl;
-        //     auto newPixel = make_tuple(x, y, pixelVal);            
+        //     auto newPixel = make_tuple(x, y, pixelVal);
         //     auto valueToPixelLocationsMap = reactionRule.rotationToPixelListsMap_[rm->angle_];
         //     auto potentialMatchCoordinates =
         //         generatePotentialMatchCoordinates(newPixel, valueToPixelLocationsMap);
 
-        //     cout << "For new pixel: " << x << ", " << y << " : " << int(pixelVal) << " There were "
+        //     cout << "For new pixel: " << x << ", " << y << " : " << int(pixelVal) << " There were
+        //     "
         //          << potentialMatchCoordinates.size() << " potential match locations:" << endl;
         //     for (auto pmCoords : potentialMatchCoordinates) {
         //         cout << "\t" << pmCoords.first << ", " << pmCoords.second << endl;
@@ -730,13 +769,14 @@ class Beaker {
         //         if (mbr) {
         //             uniqueMatchLocations.emplace(pmCoords);
         //             cout << "Using matchesAtByRotation() there is a match at " << i << ", " << j
-        //                  << " for " << rm->angle_ << " degrees rotatation." << endl;                    
+        //                  << " for " << rm->angle_ << " degrees rotatation." << endl;
         //         }
         //     }
         // }
         // for (auto umc : uniqueMatchLocations) {
         //     auto [ux, uy] = umc;
-        //     cout << "For rotation " << rm->angle_ << " there is a unique match at: " << ux << ", "
+        //     cout << "For rotation " << rm->angle_ << " there is a unique match at: " << ux << ",
+        //     "
         //          << uy << endl;
         //     laydownMatchPixels2(reactionRule, umc, rm);
         // }
@@ -748,7 +788,7 @@ class Beaker {
      */
     void iterate() {
         this->update();
-        //this->beakerNode_->nodelog("ITERATING...");
+        // this->beakerNode_->nodelog("ITERATING...");
         this->iterationCount_++;
         for (auto reactionRule : reactionRules_) {
             if (reactionRule->successor_ == reactionRule) {
@@ -762,7 +802,7 @@ class Beaker {
             multiMatch(*reactionRule, r270__);
         }
 
-        //this->beakerNode_->refresh();        
+        // this->beakerNode_->refresh();
 
         for (const auto &[key, value] : this->successionMap_) {
             auto [px, py] = key;
@@ -773,12 +813,13 @@ class Beaker {
             }
         }
         updateGrid();
-        //this->beakerNode_->beakerCanvas_->drawGrid();
+        // this->beakerNode_->beakerCanvas_->drawGrid();
     }
 
     static void makeNewReactionRule_st(Beaker *b) { b->makeNewReactionRule(); }
 
    protected:
+    cl2::SignalBuilder &signalBuilder_;
     std::string name_;
     bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
                                    //!< for an enclosing Beaker.
@@ -824,9 +865,10 @@ class Beaker {
     typedef std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMapT;
 
     std::map<int, valueToCoordinateMapT> rotationToPixelListsMap_;
-    std::map<int, std::vector<std::pair<V, std::vector<gridCoordinatePairT>>>> rotationToSortedPixelListsMap_;
+    std::map<int, std::vector<std::pair<V, std::vector<gridCoordinatePairT>>>>
+        rotationToSortedPixelListsMap_;
     // template <typename U>
-    //friend class BeakerNode<Beaker<V>>;
+    // friend class BeakerNode<Beaker<V>>;
 };
 
 EMSCRIPTEN_BINDINGS(PixelReactor) {
@@ -839,19 +881,28 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
     //     .function("tick", &BeakerNode<Beaker<unsigned char>>::tick, allow_raw_pointers());
 
     emscripten::class_<Beaker<unsigned char>>("Beaker")
-        .function("toggleClean", &Beaker<unsigned char>::toggleClean, emscripten::allow_raw_pointers())
+        .function("toggleClean", &Beaker<unsigned char>::toggleClean,
+                  emscripten::allow_raw_pointers())
         .function("clearGrid", &Beaker<unsigned char>::clearGrid, emscripten::allow_raw_pointers())
         .function("makeDirty", &Beaker<unsigned char>::makeDirty, emscripten::allow_raw_pointers())
         .function("iterate", &Beaker<unsigned char>::iterate, emscripten::allow_raw_pointers())
-        .function("makePixelList", &Beaker<unsigned char>::makePixelList, emscripten::allow_raw_pointers())
+        .function("makePixelList", &Beaker<unsigned char>::makePixelList,
+                  emscripten::allow_raw_pointers())
         .function("makeNewReactionRule", &Beaker<unsigned char>::makeNewReactionRule,
                   emscripten::allow_raw_pointers());
+
+    emscripten::class_<SignalBuilder>("SignalBuilder"); 
+    emscripten::class_<GridControl<int>>("GridControl");
 
     emscripten::register_vector<Beaker<unsigned char>::gridCoordinatesValueTripletT>(
         "std::vector<gridCoordinatesValueTripletT>");
     // .class_function("makeNewReactionRule_st", &Beaker<unsigned char>::makeNewReactionRule_st,
     //                 emscripten::allow_raw_pointers());
 }
+
+// EMSCRIPTEN_BINDINGS(SignalBuilder) { 
+//     emscripten::class_<SignalBuilder>("SignalBuilder"); 
+// }
 
 /**
  * @brief The Pixelreactor app from the old ClojureScript site redone in C++.
@@ -861,32 +912,31 @@ struct PixelReactor {
     int *ruleFrameWidth = new int(5);
     int *ruleFrameHeight = new int(3);
 
-
     PixelReactor(int defaultRuleframeWidth = 5, int defaultRuleframeHeight = 3) {
-        cout << "I'm a Pixelreactor. I need to be redone completely!" << endl;
+        cout << "I'm a Pixelreactor. I need to be redone completely 2!" << endl;
+        cl2::SignalBuilder sb = cl2::SignalBuilder();
+        Beaker<unsigned char> *b = new Beaker<unsigned char>(sb, 60, 40, 600, 400, "Beaker");
     }
-//     ClarityNode *content(ClarityNode *innerContent = nullptr) {
-//         CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");
+    //     ClarityNode *content(ClarityNode *innerContent = nullptr) {
+    //         CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");
 
-// #ifdef USETF
-//         auto *maindiv = builder.build();
-// #else
-//         auto *maindiv = builder.withAttachmentId("hookid")
-//                             .withAttachmentMode(clarity::ClarityNode::AttachmentMode::REPLACE_ID)
-//                             .build();
-// #endif
+    // #ifdef USETF
+    //         auto *maindiv = builder.build();
+    // #else
+    //         auto *maindiv = builder.withAttachmentId("hookid")
+    //                             .withAttachmentMode(clarity::ClarityNode::AttachmentMode::REPLACE_ID)
+    //                             .build();
+    // #endif
 
-//         CLNodeFactory<BeakerNode, Beaker<unsigned char>, int> beakerBuilder(
-//             builder.withChildrenOf(maindiv));
+    //         CLNodeFactory<BeakerNode, Beaker<unsigned char>, int> beakerBuilder(
+    //             builder.withChildrenOf(maindiv));
 
-//         Beaker<unsigned char> *b = new Beaker<unsigned char>(60, 40, 600, 400, "Beaker");
+    //         BeakerNode<Beaker<unsigned char>> *bn =
+    //             beakerBuilder.withTag("div").withName("mainBeaker").withCppVal(b).build();
 
-//         BeakerNode<Beaker<unsigned char>> *bn =
-//             beakerBuilder.withTag("div").withName("mainBeaker").withCppVal(b).build();
-
-//         cout << "Setup complete!" << endl;
-//         return maindiv;
-//     }
+    //         cout << "Setup complete!" << endl;
+    //         return maindiv;
+    //     }
 };
 
 #endif
