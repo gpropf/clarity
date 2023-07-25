@@ -33,3 +33,38 @@ int main() {
     #endif
     return 0;
 }
+
+
+EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
+    // emscripten::class_<cl2::CppObjectSignalObject<std::string, TestObj>>("CppObjectSignalObject")
+    //     .function("emit", &cl2::CppObjectSignalObject<std::string, TestObj>::emit,
+    //               emscripten::allow_raw_pointers())
+    //     .function("getSignal", &cl2::CppObjectSignalObject<std::string, TestObj>::getSignal,
+    //               emscripten::allow_raw_pointers())
+    //     .function("accept", &cl2::CppObjectSignalObject<std::string, TestObj>::accept,
+    //               emscripten::allow_raw_pointers());
+
+    emscripten::class_<cl2::Merge<std::string, std::string, std::string>>("Merge").function(
+        "recompute", &cl2::Merge<std::string, std::string, std::string>::recompute);
+
+    emscripten::class_<cl2::EventListenerEmitter<std::string>>("EventListenerEmitter")
+        .function("emit", &cl2::EventListenerEmitter<std::string>::emit,
+                  emscripten::allow_raw_pointers());
+
+    // emscripten::class_<cl2::ObjectEmitter<std::string, TestObj>>("ObjectEmitter")
+    //     .function("emit", &cl2::ObjectEmitter<std::string, TestObj>::emit,
+    //               emscripten::allow_raw_pointers());
+}
+
+EMSCRIPTEN_BINDINGS(WebElementSignalObject) {
+    // emscripten::class_<WebElementSignalObject<std::string>>("WebElementSignalObject")
+    //     .function("emit", &WebElementSignalObject<std::string>::emit,
+    //               emscripten::allow_raw_pointers())
+    //     .function("accept", &WebElementSignalObject<std::string>::accept,
+    //               emscripten::allow_raw_pointers());
+
+    emscripten::class_<WebElementSignal<std::string>>("WebElementSignal")
+        .function("emit", &WebElementSignal<std::string>::emit, emscripten::allow_raw_pointers())
+        .function("accept", &WebElementSignal<std::string>::accept,
+                  emscripten::allow_raw_pointers());
+}

@@ -410,12 +410,12 @@ auto dblInputWSS =
         signalBuilder_.textInputWSS<std::string>("dblInput", "Enter a floating point number", false);
 
 
-        //auto gridControl = make_shared<GridControl<int>>(15, 10, 600, 400, signalBuilder_, "gc1");
-        // gridControl->addColorToPallete(0, "#000000");
-        // gridControl->addColorToPallete(1, "#ff0000");
-        // gridControl->addColorToPallete(2, "#00ff00");
-        // gridControl->addColorToPallete(3, "#0000ff");
-        // gridControl->finalize();
+        auto gridControl = make_shared<GridControl<int>>(15, 10, 600, 400, signalBuilder_, "gc1");
+        gridControl->addColorToPallete(0, "#000000");
+        gridControl->addColorToPallete(1, "#ff0000");
+        gridControl->addColorToPallete(2, "#00ff00");
+        gridControl->addColorToPallete(3, "#0000ff");
+        gridControl->finalize();
     }
 
     /**
