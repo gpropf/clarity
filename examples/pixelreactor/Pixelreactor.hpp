@@ -833,7 +833,7 @@ auto dblInputWSS =
     int ruleGridWidth_ = 5;   //!< Width of new rule grid in cells.
     int ruleGridHeight_ = 3;  //!< Height of new rule grid in cells.
 
-    V *gridArray;  //!< The actual grid data to be used by the CanvasGrid in BeakerNode.
+    V *gridArray_;  //!< The actual grid data to be used by the CanvasGrid in BeakerNode.
 
     int playMode_ = 0;
 
