@@ -130,7 +130,7 @@ class SignalEmitter : public Signal<S> {
 };
 
 /**
- * @brief Base class representing something that can emit signals.
+ * @brief Base class representing something that can accept signals.
  *
  * @tparam S data type of signal, e.g. string, int, double, etc...
  */

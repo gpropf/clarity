@@ -410,12 +410,12 @@ auto dblInputWSS =
         signalBuilder_.textInputWSS<std::string>("dblInput", "Enter a floating point number", false);
 
 
-        auto gridControl = make_shared<GridControl<int>>(15, 10, 600, 400, signalBuilder_, "gc1");
-        gridControl->addColorToPallete(0, "#000000");
-        gridControl->addColorToPallete(1, "#ff0000");
-        gridControl->addColorToPallete(2, "#00ff00");
-        gridControl->addColorToPallete(3, "#0000ff");
-        gridControl->finalize();
+        gridControl_ = make_shared<GridControl<V>>(15, 10, 600, 400, signalBuilder_, "gc1");
+        gridControl_->addColorToPallete(0, "#000000");
+        gridControl_->addColorToPallete(1, "#ff0000");
+        gridControl_->addColorToPallete(2, "#00ff00");
+        gridControl_->addColorToPallete(3, "#0000ff");
+        gridControl_->finalize();
     }
 
     /**
@@ -820,6 +820,7 @@ auto dblInputWSS =
 
    protected:
     cl2::SignalBuilder &signalBuilder_;
+    shared_ptr<GridControl<V>> gridControl_; 
     std::string name_;
     bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
                                    //!< for an enclosing Beaker.
