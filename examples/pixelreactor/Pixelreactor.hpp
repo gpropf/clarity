@@ -406,9 +406,8 @@ class Beaker {
 
         // svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
 
-auto dblInputWSS =
-        signalBuilder_.textInputWSS<std::string>("dblInput", "Enter a floating point number", false);
-
+        val logStuff = val::global("sayHello");
+        const auto mergeRecomputeButton = signalBuilder_.button("Print Grid", logStuff);
 
         gridControl_ = make_shared<GridControl<V>>(15, 10, 600, 400, signalBuilder_, "gc1");
         gridControl_->addColorToPallete(0, "#000000");
@@ -820,7 +819,7 @@ auto dblInputWSS =
 
    protected:
     cl2::SignalBuilder &signalBuilder_;
-    shared_ptr<GridControl<V>> gridControl_; 
+    shared_ptr<GridControl<V>> gridControl_;
     std::string name_;
     bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
                                    //!< for an enclosing Beaker.
@@ -892,7 +891,7 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
         .function("makeNewReactionRule", &Beaker<unsigned char>::makeNewReactionRule,
                   emscripten::allow_raw_pointers());
 
-    emscripten::class_<SignalBuilder>("SignalBuilder"); 
+    emscripten::class_<SignalBuilder>("SignalBuilder");
     emscripten::class_<GridControl<int>>("GridControl");
 
     emscripten::register_vector<Beaker<unsigned char>::gridCoordinatesValueTripletT>(
@@ -901,8 +900,8 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
     //                 emscripten::allow_raw_pointers());
 }
 
-// EMSCRIPTEN_BINDINGS(SignalBuilder) { 
-//     emscripten::class_<SignalBuilder>("SignalBuilder"); 
+// EMSCRIPTEN_BINDINGS(SignalBuilder) {
+//     emscripten::class_<SignalBuilder>("SignalBuilder");
 // }
 
 /**

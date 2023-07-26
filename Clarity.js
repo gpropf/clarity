@@ -54,6 +54,10 @@ class WebElement {
 
 }
 
+function sayHello() {
+    console.log("This just prints HELLO to the console.");
+}
+
 function logStuff(stuff) {
     console.log("This is a simple signal endpoint: " + stuff);
     return stuff;
