@@ -406,8 +406,9 @@ class Beaker {
 
         // svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
 
-        val logStuff = val::global("sayHello");
-        const auto mergeRecomputeButton = signalBuilder_.button("Print Grid", logStuff);
+        //val logStuff = val::global("sayHello");
+        val printTestFn = val::global("elgCallMethodOnObjByName")(val(*this), val("printTest"));
+        const auto printTestButton = signalBuilder_.button("Print Test", printTestFn);
 
         gridControl_ = make_shared<GridControl<V>>(15, 10, 600, 400, signalBuilder_, "gc1");
         gridControl_->addColorToPallete(0, "#000000");
@@ -514,6 +515,10 @@ class Beaker {
                 }
             }
         }
+    }
+
+    void printTest() {
+        cout << "C++ method called by pressing button." << endl;
     }
 
     /**
@@ -881,6 +886,8 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
     //     .function("tick", &BeakerNode<Beaker<unsigned char>>::tick, allow_raw_pointers());
 
     emscripten::class_<Beaker<unsigned char>>("Beaker")
+        .function("printTest", &Beaker<unsigned char>::printTest,
+                  emscripten::allow_raw_pointers())
         .function("toggleClean", &Beaker<unsigned char>::toggleClean,
                   emscripten::allow_raw_pointers())
         .function("clearGrid", &Beaker<unsigned char>::clearGrid, emscripten::allow_raw_pointers())

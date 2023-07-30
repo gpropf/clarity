@@ -92,7 +92,7 @@ function elgMouseSignal(mouseSignal, domElement) {
         let relX = ev.clientX - boundingBox.x;
         let relY = ev.clientY - boundingBox.y;
 
-        
+
         var viewBoxAttr = domElement.getAttribute("viewBox");
         console.log("viewBox: ", viewBoxAttr);
         var loc;
@@ -123,9 +123,9 @@ function elgTestObjEmitter(testObjCSO) {
 }
 
 function elgObjEmitter(objEmitter) {
-    return function () {        
-        console.log("elgObjEmitter generated fn called. Originating signal.");  
-        objEmitter.emit();     
+    return function () {
+        console.log("elgObjEmitter generated fn called. Originating signal.");
+        objEmitter.emit();
     };
 }
 
@@ -148,6 +148,23 @@ function callMethodByName(obj, objMethodName) {
     if (typeof fn === "function") {
         return fn.apply(obj);
     }
+}
+
+/**
+ * 
+ * @param {bound C++ object} obj 
+ * @param {string} objMethodName 
+ * @returns a function that calls the method on the provided object.
+ * This is useful for buttons that simply need to fire off a zero-argument
+ *  method on some arbitrary C++ object.
+ */
+function elgCallMethodOnObjByName(obj, objMethodName) {
+    return function () {
+        //let s = testObjCSO.getSignal();
+        console.log("elgCallMethodOnObjByName generated fn called.");
+        callMethodByName(obj, objMethodName);
+        //obj.printTest();
+    };
 }
 
 window.WebElement = WebElement
