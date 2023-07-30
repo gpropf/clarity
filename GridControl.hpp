@@ -19,8 +19,6 @@
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
 
-
-
 namespace cl2 {
 
 template <typename PixelT>
@@ -64,6 +62,27 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
     void addColorToPallete(PixelT colorValue, const std::string &colorString) {
         colorPallete_[colorValue] = colorString;
+    }
+
+    PixelT getPixelAt(int x, int y) {
+        int pixelIndex = calculateGridCellIndex(x, y);
+        return pixels_[pixelIndex];
+    }
+
+    /**
+     * @brief Set the Pixel at (x,y) and return the value that was there before.
+     *
+     * @param x
+     * @param y
+     * @param pixelVal
+     * @return PixelT
+     */
+    PixelT setPixelAt(int x, int y, PixelT pixelVal, bool redraw = false) {
+        int pixelIndex = calculateGridCellIndex(x, y);
+        PixelT oldPixelVal = pixels_[pixelIndex];
+        pixels_[pixelIndex] = pixelVal;
+        if (redraw) this->redraw();
+        return oldPixelVal;
     }
 
     GridControl(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight,
@@ -146,11 +165,17 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         this->redraw();
     }
 
-    void printNonZeroPixels() {
+    void printNonZeroPixels(bool convertToIntBeforePrinting = true) {
         int totalPixels = gridHeight_ * gridWidth_;
         while (totalPixels--) {
             PixelT p = pixels_[totalPixels];
-            if (p > 0) cout << "Pixel " << totalPixels << " is " << p << endl;
+
+            if (p > 0) {
+                if (convertToIntBeforePrinting)
+                    cout << "Pixel " << totalPixels << " is " << int(p) << endl;
+                else
+                    cout << "Pixel " << totalPixels << " is " << p << endl;
+            }
         }
     }
 

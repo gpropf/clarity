@@ -407,8 +407,7 @@ class Beaker {
         // svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
 
         //val logStuff = val::global("sayHello");
-        val printTestFn = val::global("elgCallMethodOnObjByName")(val(*this), val("printTest"));
-        const auto printTestButton = signalBuilder_.button("Print Test", printTestFn);
+        
 
         gridControl_ = make_shared<GridControl<V>>(15, 10, 600, 400, signalBuilder_, "gc1");
         gridControl_->addColorToPallete(0, "#000000");
@@ -416,6 +415,9 @@ class Beaker {
         gridControl_->addColorToPallete(2, "#00ff00");
         gridControl_->addColorToPallete(3, "#0000ff");
         gridControl_->finalize();
+
+        val printTestFn = val::global("elgCallMethodOnObjByName")(val(*this), val("printTest"));
+        const auto printTestButton = signalBuilder_.button("Print Test", printTestFn);
     }
 
     /**
@@ -519,6 +521,15 @@ class Beaker {
 
     void printTest() {
         cout << "C++ method called by pressing button." << endl;
+        if (this->gridControl_) {
+            cout << "GrinControl exists!" << endl;
+            this->gridControl_->printNonZeroPixels();
+            V testPixel =  this->gridControl_->getPixelAt(2,1);
+            cout << "Test pixel (2,1) = " << testPixel << endl;
+            testPixel = this->gridControl_->setPixelAt(4,5, 2, true);
+            cout << "Setting pixel at (4,5) to 2, old pixel was " << testPixel << endl;
+        }
+        
     }
 
     /**
@@ -838,7 +849,7 @@ class Beaker {
     int ruleGridWidth_ = 5;   //!< Width of new rule grid in cells.
     int ruleGridHeight_ = 3;  //!< Height of new rule grid in cells.
 
-    V *gridArray_;  //!< The actual grid data to be used by the CanvasGrid in BeakerNode.
+    //V *gridArray_;  //!< The actual grid data to be used by the CanvasGrid in BeakerNode.
 
     int playMode_ = 0;
 
