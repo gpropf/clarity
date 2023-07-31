@@ -409,7 +409,7 @@ class Beaker {
         //val logStuff = val::global("sayHello");
         
 
-        gridControl_ = make_shared<GridControl<V>>(15, 10, 600, 400, signalBuilder_, "gc1");
+        gridControl_ = make_shared<GridControl<V>>(gridWidth_, gridHeight_, 600, 400, signalBuilder_, "gc1");
         gridControl_->addColorToPallete(0, "#000000");
         gridControl_->addColorToPallete(1, "#ff0000");
         gridControl_->addColorToPallete(2, "#00ff00");
