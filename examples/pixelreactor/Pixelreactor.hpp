@@ -535,8 +535,8 @@ class Beaker {
             this->gridControl_->printNonZeroPixels();
             V testPixel = this->gridControl_->getPixelAt(2, 1);
             cout << "Test pixel (2,1) = " << testPixel << endl;
-            testPixel = this->gridControl_->setPixelAt(4, 5, 2, true);
-            cout << "Setting pixel at (4,5) to 2, old pixel was " << testPixel << endl;
+            testPixel = this->gridControl_->setPixelAt(3, 2, 2, true);
+            cout << "Setting pixel at (3,2) to 2, old pixel was " << testPixel << endl;
         }
     }
 
