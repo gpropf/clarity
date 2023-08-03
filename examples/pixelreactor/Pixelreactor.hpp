@@ -390,8 +390,9 @@ class Beaker {
                   //!< errors about forward template definitions. The small space and time savings
                   //!< wasn't worth it.
 
-    Beaker(cl2::SignalBuilder &signalBuilder, int gridWidth, int gridHeight, int gridPixelWidth,
-           int gridPixelHeight, const std::string &name = "", bool isReactionRule = false)
+    Beaker(shared_ptr<cl2::SignalBuilder> signalBuilder, int gridWidth, int gridHeight,
+           int gridPixelWidth, int gridPixelHeight, const std::string &name = "",
+           bool isReactionRule = false)
         : signalBuilder_(signalBuilder),
           gridWidth_(gridWidth),
           gridHeight_(gridHeight),
@@ -406,10 +407,9 @@ class Beaker {
 
         // svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
 
-        //val logStuff = val::global("sayHello");
-        
-
-        gridControl_ = make_shared<GridControl<V>>(gridWidth_, gridHeight_, 600, 400, signalBuilder_, "gc1");
+        // val logStuff = val::global("sayHello");
+        SignalBuilder &sb = *signalBuilder_;
+        gridControl_ = make_shared<GridControl<V>>(gridWidth_, gridHeight_, gridPixelWidth_, gridPixelHeight_, sb, name_ + "_gc1");
         gridControl_->addColorToPallete(0, "#000000");
         gridControl_->addColorToPallete(1, "#ff0000");
         gridControl_->addColorToPallete(2, "#00ff00");
@@ -417,7 +417,13 @@ class Beaker {
         gridControl_->finalize();
 
         val printTestFn = val::global("elgCallMethodOnObjByName")(val(*this), val("printTest"));
-        const auto printTestButton = signalBuilder_.button("Print Test", printTestFn);
+        const auto printTestButton = sb.button("Print Test", printTestFn);
+
+        if (!isReactionRule_) {
+            val makeNewReactionRuleFn =
+                val::global("elgCallMethodOnObjByName")(val(*this), val("makeNewReactionRule"));
+            const auto printTestButton = sb.button("New Rule", makeNewReactionRuleFn);
+        }
     }
 
     /**
@@ -426,13 +432,16 @@ class Beaker {
      *
      */
     void makeNewReactionRule() {
-        Beaker *reactionRule =
-            new Beaker(this->signalBuilder_, this->ruleGridWidth_, this->ruleGridHeight_, 150, 150,
-                       "rule-" + clto_str(++this->ruleCount_), true);
+        Beaker<unsigned char> *reactionRule =
+            // new Beaker<V>(this->signalBuilder_, this->ruleGridWidth_, this->ruleGridHeight_, 150,
+            // 150,
+            //          "rule-" + clto_str(++this->ruleCount_), true);
 
-        reactionRule->parentBeaker_ = this;
-        reactionRule->initPixelListMap();
-        this->reactionRules_.push_back(reactionRule);
+            new Beaker<unsigned char>(this->signalBuilder_, 5, 3, 150, 100, "rule1", true);
+
+         reactionRule->parentBeaker_ = this;
+        // reactionRule->initPixelListMap();
+        // this->reactionRules_.push_back(reactionRule);
 
         // CLNodeFactory<BeakerNode, Beaker<V>, int> beakerBuilder("div", "rr");
 
@@ -524,12 +533,11 @@ class Beaker {
         if (this->gridControl_) {
             cout << "GrinControl exists!" << endl;
             this->gridControl_->printNonZeroPixels();
-            V testPixel =  this->gridControl_->getPixelAt(2,1);
+            V testPixel = this->gridControl_->getPixelAt(2, 1);
             cout << "Test pixel (2,1) = " << testPixel << endl;
-            testPixel = this->gridControl_->setPixelAt(4,5, 2, true);
+            testPixel = this->gridControl_->setPixelAt(4, 5, 2, true);
             cout << "Setting pixel at (4,5) to 2, old pixel was " << testPixel << endl;
         }
-        
     }
 
     /**
@@ -834,7 +842,7 @@ class Beaker {
     static void makeNewReactionRule_st(Beaker *b) { b->makeNewReactionRule(); }
 
    protected:
-    cl2::SignalBuilder &signalBuilder_;
+    shared_ptr<cl2::SignalBuilder> signalBuilder_;
     shared_ptr<GridControl<V>> gridControl_;
     std::string name_;
     bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
@@ -849,7 +857,7 @@ class Beaker {
     int ruleGridWidth_ = 5;   //!< Width of new rule grid in cells.
     int ruleGridHeight_ = 3;  //!< Height of new rule grid in cells.
 
-    //V *gridArray_;  //!< The actual grid data to be used by the CanvasGrid in BeakerNode.
+    // V *gridArray_;  //!< The actual grid data to be used by the CanvasGrid in BeakerNode.
 
     int playMode_ = 0;
 
@@ -897,8 +905,7 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
     //     .function("tick", &BeakerNode<Beaker<unsigned char>>::tick, allow_raw_pointers());
 
     emscripten::class_<Beaker<unsigned char>>("Beaker")
-        .function("printTest", &Beaker<unsigned char>::printTest,
-                  emscripten::allow_raw_pointers())
+        .function("printTest", &Beaker<unsigned char>::printTest, emscripten::allow_raw_pointers())
         .function("toggleClean", &Beaker<unsigned char>::toggleClean,
                   emscripten::allow_raw_pointers())
         .function("clearGrid", &Beaker<unsigned char>::clearGrid, emscripten::allow_raw_pointers())
@@ -932,7 +939,7 @@ struct PixelReactor {
 
     PixelReactor(int defaultRuleframeWidth = 5, int defaultRuleframeHeight = 3) {
         cout << "I'm a Pixelreactor. I need to be redone completely 2!" << endl;
-        cl2::SignalBuilder sb = cl2::SignalBuilder();
+        auto sb = make_shared<cl2::SignalBuilder>();
         Beaker<unsigned char> *b = new Beaker<unsigned char>(sb, 60, 40, 600, 400, "Beaker");
     }
     //     ClarityNode *content(ClarityNode *innerContent = nullptr) {
