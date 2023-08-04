@@ -409,7 +409,8 @@ class Beaker {
 
         // val logStuff = val::global("sayHello");
         SignalBuilder &sb = *signalBuilder_;
-        gridControl_ = make_shared<GridControl<V>>(gridWidth_, gridHeight_, gridPixelWidth_, gridPixelHeight_, sb, name_ + "_gc1");
+        gridControl_ = make_shared<GridControl<V>>(gridWidth_, gridHeight_, gridPixelWidth_,
+                                                   gridPixelHeight_, sb, name_ + "_gc1");
         gridControl_->addColorToPallete(0, "#000000");
         gridControl_->addColorToPallete(1, "#ff0000");
         gridControl_->addColorToPallete(2, "#00ff00");
@@ -437,11 +438,12 @@ class Beaker {
             // 150,
             //          "rule-" + clto_str(++this->ruleCount_), true);
 
-            new Beaker<unsigned char>(this->signalBuilder_, 5, 3, 150, 100, "rule1", true);
+            new Beaker<unsigned char>(this->signalBuilder_, 5, 3, 150, 100,
+                                      "rule" + clto_str(++this->ruleCount_), true);
 
-         reactionRule->parentBeaker_ = this;
+        reactionRule->parentBeaker_ = this;
         // reactionRule->initPixelListMap();
-        // this->reactionRules_.push_back(reactionRule);
+        this->reactionRules_.push_back(reactionRule);
 
         // CLNodeFactory<BeakerNode, Beaker<V>, int> beakerBuilder("div", "rr");
 
