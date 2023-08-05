@@ -421,10 +421,24 @@ class Beaker {
         const auto printTestButton = sb.button("Print Test", printTestFn);
 
         if (!isReactionRule_) {
+            // auto objectAcceptor =
+            //     make_shared<ObjectAcceptor<std::string, Beaker<V>>>(this->shared_from_this());
+            
+            auto ruleWidthInput =
+                sb.textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
+            
+            //objectAcceptor->setSignalAcceptorMethod(&Beaker<V>::setRuleGridWidth);
+            
+            //sb.connect<std::string>(ruleWidthInput, objectAcceptor);
+
             val makeNewReactionRuleFn =
                 val::global("elgCallMethodOnObjByName")(val(*this), val("makeNewReactionRule"));
             const auto printTestButton = sb.button("New Rule", makeNewReactionRuleFn);
         }
+    }
+
+    void setRuleGridWidth(const std::string& v) { ruleGridWidth_ = std::stoi(v); 
+        cout << "SETTING ruleGridWidth_ to " << v << endl;
     }
 
     /**
