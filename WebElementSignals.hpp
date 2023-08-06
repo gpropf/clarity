@@ -120,8 +120,6 @@ template <typename S, typename ObjT>
 class ObjectSignalLoop {
     shared_ptr<ObjT> object_;
 
-    
-
     // shared_ptr<SignalBuilder> signalBuilder_;
     //  S (ObjT::*signalEmitterMethod_)();
     //  void (ObjT::*signalAcceptorMethod_)(const S& s);
@@ -132,17 +130,21 @@ class ObjectSignalLoop {
     shared_ptr<ObjectEmitter<S, ObjT>> objectEmitter_;
 
     ObjectSignalLoop(shared_ptr<ObjT> object,  // shared_ptr<cl2::SignalBuilder> signalBuilder,
-                     shared_ptr<ObjectEmitter<S, ObjT>> objectEmitter,
+                                               // shared_ptr<ObjectEmitter<S, ObjT>> objectEmitter,
                      shared_ptr<WebElementSignal<S>> webElementSignal,
-                     void (ObjT::*signalAcceptorMethod)(const S& s))
+                     void (ObjT::*signalAcceptorMethod)(const S& s),
+                     S (ObjT::*signalEmitterMethod)())
         : object_(object),
           // signalBuilder_(signalBuilder),
           //  objectAcceptor_(objectAcceptor),
-          objectEmitter_(objectEmitter),
+          //objectEmitter_(objectEmitter),
 
           webElementSignal_(webElementSignal) {
         objectAcceptor_ = make_shared<ObjectAcceptor<S, ObjT>>(object_);
+        objectEmitter_ = make_shared<ObjectEmitter<S, ObjT>>(object_);
+
         objectAcceptor_->setSignalAcceptorMethod(signalAcceptorMethod);
+        objectEmitter_->setSignalEmitterMethod(signalEmitterMethod);
         // signalBuilder_->connect<std::string>(webElementSignal_, objectAcceptor_);
     }
 

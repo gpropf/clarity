@@ -969,19 +969,20 @@ struct PixelReactor {
         ruleWidthInput_ =
             sb->textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
 
-        objectEmitter_ =
-            make_shared<ObjectEmitter<std::string, Beaker<unsigned char>>>(mainBeaker_);
+        // objectEmitter_ =
+        //     make_shared<ObjectEmitter<std::string, Beaker<unsigned char>>>(mainBeaker_);
         // objectAcceptor_ =
         //     make_shared<ObjectAcceptor<std::string, Beaker<unsigned char>>>(mainBeaker_);
 
         // mainBeaker_ = make_shared<Beaker<unsigned char>>(sb, 60, 40, 600, 400, "Beaker");
         objectSignalLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-            mainBeaker_, objectEmitter_, ruleWidthInput_, &Beaker<unsigned char>::setRuleGridWidth);
+            mainBeaker_, ruleWidthInput_, &Beaker<unsigned char>::setRuleGridWidth,
+            &Beaker<unsigned char>::getRuleGridWidth);
 
-        //objectAcceptor_->setSignalAcceptorMethod(&Beaker<unsigned char>::setRuleGridWidth);
-        objectEmitter_->setSignalEmitterMethod(&Beaker<unsigned char>::getRuleGridWidth);
-        //sb->connect<std::string>(ruleWidthInput_, objectAcceptor_);
-        //sb->connect<std::string>(objectEmitter_, ruleWidthInput_);
+        // objectAcceptor_->setSignalAcceptorMethod(&Beaker<unsigned char>::setRuleGridWidth);
+        // objectEmitter_->setSignalEmitterMethod(&Beaker<unsigned char>::getRuleGridWidth);
+        // sb->connect<std::string>(ruleWidthInput_, objectAcceptor_);
+        // sb->connect<std::string>(objectEmitter_, ruleWidthInput_);
         sb->connectLoop(objectSignalLoop_);
         // objectAcceptor_->finalize();
     }
