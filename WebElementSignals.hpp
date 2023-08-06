@@ -148,15 +148,15 @@ class ObjectSignalLoop {
         // signalBuilder_->connect<std::string>(webElementSignal_, objectAcceptor_);
     }
 
-    void setSignalAcceptorMethod(void (ObjT::*signalAcceptorMethod)(const S& s)) {
-        // signalAcceptorMethod_ = signalAcceptorMethod;
-        objectAcceptor_->setSignalAcceptorMethod(signalAcceptorMethod);
-    }
+    // void setSignalAcceptorMethod(void (ObjT::*signalAcceptorMethod)(const S& s)) {
+    //     // signalAcceptorMethod_ = signalAcceptorMethod;
+    //     objectAcceptor_->setSignalAcceptorMethod(signalAcceptorMethod);
+    // }
 
-    void setSignalEmitterMethod(S (ObjT::*signalEmitterMethod)()) {
-        // signalEmitterMethod_ = signalEmitterMethod;
-        objectEmitter_->setSignalEmitterMethod(signalEmitterMethod);
-    }
+    // void setSignalEmitterMethod(S (ObjT::*signalEmitterMethod)()) {
+    //     // signalEmitterMethod_ = signalEmitterMethod;
+    //     objectEmitter_->setSignalEmitterMethod(signalEmitterMethod);
+    // }
 };
 
 /**
