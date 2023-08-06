@@ -423,13 +423,10 @@ class Beaker {
         if (!isReactionRule_) {
             // auto objectAcceptor =
             //     make_shared<ObjectAcceptor<std::string, Beaker<V>>>(this->shared_from_this());
-            
-            auto ruleWidthInput =
-                sb.textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
-            
-            //objectAcceptor->setSignalAcceptorMethod(&Beaker<V>::setRuleGridWidth);
-            
-            //sb.connect<std::string>(ruleWidthInput, objectAcceptor);
+
+            // objectAcceptor->setSignalAcceptorMethod(&Beaker<V>::setRuleGridWidth);
+
+            // sb.connect<std::string>(ruleWidthInput, objectAcceptor);
 
             val makeNewReactionRuleFn =
                 val::global("elgCallMethodOnObjByName")(val(*this), val("makeNewReactionRule"));
@@ -437,8 +434,15 @@ class Beaker {
         }
     }
 
-    void setRuleGridWidth(const std::string& v) { ruleGridWidth_ = std::stoi(v); 
+    void setRuleGridWidth(const std::string &v) {
+        ruleGridWidth_ = std::stoi(v);
         cout << "SETTING ruleGridWidth_ to " << v << endl;
+    }
+
+    std::string getRuleGridWidth() {
+        std::string rgwString = std::to_string(ruleGridWidth_);
+        cout << "GETTING ruleGridWidth_ as string value: '" << rgwString << "'" << endl;
+        return rgwString;
     }
 
     /**
@@ -952,11 +956,33 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
 struct PixelReactor {
     int *ruleFrameWidth = new int(5);
     int *ruleFrameHeight = new int(3);
+    shared_ptr<Beaker<unsigned char>> mainBeaker_;
+    shared_ptr<WebElementSignal<std::string>> ruleWidthInput_;
+    shared_ptr<ObjectEmitter<std::string, Beaker<unsigned char>>> objectEmitter_;
+    shared_ptr<ObjectAcceptor<std::string, Beaker<unsigned char>>> objectAcceptor_;
+    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> objectSignalLoop_;
 
     PixelReactor(int defaultRuleframeWidth = 5, int defaultRuleframeHeight = 3) {
         cout << "I'm a Pixelreactor. I need to be redone completely 2!" << endl;
         auto sb = make_shared<cl2::SignalBuilder>();
-        Beaker<unsigned char> *b = new Beaker<unsigned char>(sb, 60, 40, 600, 400, "Beaker");
+        mainBeaker_ = make_shared<Beaker<unsigned char>>(sb, 60, 40, 600, 400, "Beaker");
+        ruleWidthInput_ =
+            sb->textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
+
+        objectEmitter_ =
+            make_shared<ObjectEmitter<std::string, Beaker<unsigned char>>>(mainBeaker_);
+        objectAcceptor_ =
+            make_shared<ObjectAcceptor<std::string, Beaker<unsigned char>>>(mainBeaker_);
+
+        // mainBeaker_ = make_shared<Beaker<unsigned char>>(sb, 60, 40, 600, 400, "Beaker");
+        objectSignalLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+            mainBeaker_, objectAcceptor_, objectEmitter_, ruleWidthInput_);
+
+        objectAcceptor_->setSignalAcceptorMethod(&Beaker<unsigned char>::setRuleGridWidth);
+        objectEmitter_->setSignalEmitterMethod(&Beaker<unsigned char>::getRuleGridWidth);
+        sb->connect<std::string>(ruleWidthInput_, objectAcceptor_);
+        sb->connect<std::string>(objectEmitter_, ruleWidthInput_);
+        // objectAcceptor_->finalize();
     }
     //     ClarityNode *content(ClarityNode *innerContent = nullptr) {
     //         CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");

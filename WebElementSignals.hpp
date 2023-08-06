@@ -32,6 +32,7 @@ using std::cout;
 using std::endl;
 
 namespace cl2 {
+
 /**
  * @brief A signal that originates or ends in a web element. This type may also act as a conduit or
  * passthru due to inheriting both emitter and acceptor capabilities.
@@ -110,6 +111,39 @@ class WebElementSignal : public SignalAcceptor<S>, public SignalEmitter<S> {
     }
 
     virtual ~WebElementSignal() {}
+};
+
+template <typename S, typename ObjT>
+class ObjectSignalLoop {
+    shared_ptr<ObjT> object_;
+    shared_ptr<ObjectAcceptor<S, ObjT>> objectAcceptor_;
+    shared_ptr<ObjectEmitter<S, ObjT>> objectEmitter_;
+    shared_ptr<WebElementSignal<S>> webElementSignal_;
+    // S (ObjT::*signalEmitterMethod_)();
+    // void (ObjT::*signalAcceptorMethod_)(const S& s);
+
+   public:
+    ObjectSignalLoop(shared_ptr<ObjT> object, shared_ptr<ObjectAcceptor<S, ObjT>> objectAcceptor,
+                     shared_ptr<ObjectEmitter<S, ObjT>> objectEmitter,
+                     shared_ptr<WebElementSignal<S>> webElementSignal)
+        : object_(object),
+          objectAcceptor_(objectAcceptor),
+          objectEmitter_(objectEmitter),
+          webElementSignal_(webElementSignal) {
+
+//setSignalAcceptorMethod()
+
+          }
+
+    void setSignalAcceptorMethod(void (ObjT::*signalAcceptorMethod)(const S& s)) {
+        // signalAcceptorMethod_ = signalAcceptorMethod;
+        objectAcceptor_->setSignalAcceptorMethod(signalAcceptorMethod);
+    }
+
+    void setSignalEmitterMethod(S (ObjT::*signalEmitterMethod)()) {
+        // signalEmitterMethod_ = signalEmitterMethod;
+        objectEmitter_->setSignalEmitterMethod(signalEmitterMethod);
+    }
 };
 
 /**
