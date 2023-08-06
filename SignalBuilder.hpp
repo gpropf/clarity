@@ -346,6 +346,12 @@ class SignalBuilder {
         s2->setOutput(merge->getInput2());
         if (mergeOut != nullptr) merge->setOutput(mergeOut);
     }
+
+    template <typename S, typename ObjT>
+    void connectLoop(shared_ptr<ObjectSignalLoop<S, ObjT>> objectSignalLoop) {
+        connect<S>(objectSignalLoop->webElementSignal_, objectSignalLoop->objectAcceptor_);
+        connect<S>(objectSignalLoop->objectEmitter_, objectSignalLoop->webElementSignal_);
+    }
 };
 }  // namespace cl2
 #endif

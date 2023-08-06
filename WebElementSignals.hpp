@@ -26,6 +26,7 @@
 
 #include "SignalPrimitives.hpp"
 #include "WebElements.hpp"
+// #include "SignalBuilder.hpp"
 
 using emscripten::val;
 using std::cout;
@@ -113,27 +114,37 @@ class WebElementSignal : public SignalAcceptor<S>, public SignalEmitter<S> {
     virtual ~WebElementSignal() {}
 };
 
+// class SignalBuilder;
+
 template <typename S, typename ObjT>
 class ObjectSignalLoop {
     shared_ptr<ObjT> object_;
-    shared_ptr<ObjectAcceptor<S, ObjT>> objectAcceptor_;
-    shared_ptr<ObjectEmitter<S, ObjT>> objectEmitter_;
-    shared_ptr<WebElementSignal<S>> webElementSignal_;
-    // S (ObjT::*signalEmitterMethod_)();
-    // void (ObjT::*signalAcceptorMethod_)(const S& s);
+
+    
+
+    // shared_ptr<SignalBuilder> signalBuilder_;
+    //  S (ObjT::*signalEmitterMethod_)();
+    //  void (ObjT::*signalAcceptorMethod_)(const S& s);
 
    public:
-    ObjectSignalLoop(shared_ptr<ObjT> object, shared_ptr<ObjectAcceptor<S, ObjT>> objectAcceptor,
+    shared_ptr<WebElementSignal<S>> webElementSignal_;
+    shared_ptr<ObjectAcceptor<S, ObjT>> objectAcceptor_;
+    shared_ptr<ObjectEmitter<S, ObjT>> objectEmitter_;
+
+    ObjectSignalLoop(shared_ptr<ObjT> object,  // shared_ptr<cl2::SignalBuilder> signalBuilder,
                      shared_ptr<ObjectEmitter<S, ObjT>> objectEmitter,
-                     shared_ptr<WebElementSignal<S>> webElementSignal)
+                     shared_ptr<WebElementSignal<S>> webElementSignal,
+                     void (ObjT::*signalAcceptorMethod)(const S& s))
         : object_(object),
-          objectAcceptor_(objectAcceptor),
+          // signalBuilder_(signalBuilder),
+          //  objectAcceptor_(objectAcceptor),
           objectEmitter_(objectEmitter),
+
           webElementSignal_(webElementSignal) {
-
-//setSignalAcceptorMethod()
-
-          }
+        objectAcceptor_ = make_shared<ObjectAcceptor<S, ObjT>>(object_);
+        objectAcceptor_->setSignalAcceptorMethod(signalAcceptorMethod);
+        // signalBuilder_->connect<std::string>(webElementSignal_, objectAcceptor_);
+    }
 
     void setSignalAcceptorMethod(void (ObjT::*signalAcceptorMethod)(const S& s)) {
         // signalAcceptorMethod_ = signalAcceptorMethod;
