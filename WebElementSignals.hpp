@@ -123,11 +123,23 @@ class ObjectSignalLoop {
     // shared_ptr<SignalBuilder> signalBuilder_;
     //  S (ObjT::*signalEmitterMethod_)();
     //  void (ObjT::*signalAcceptorMethod_)(const S& s);
-
-   public:
-    shared_ptr<WebElementSignal<S>> webElementSignal_;
-    shared_ptr<ObjectAcceptor<S, ObjT>> objectAcceptor_;
     shared_ptr<ObjectEmitter<S, ObjT>> objectEmitter_;
+    shared_ptr<ObjectAcceptor<S, ObjT>> objectAcceptor_;
+    shared_ptr<WebElementSignal<S>> webElementSignal_;
+
+   public:  
+   
+    inline shared_ptr<ObjectEmitter<S, ObjT>> getObjectEmitter() {
+        return objectEmitter_;
+    }
+
+    inline shared_ptr<ObjectAcceptor<S, ObjT>> getObjectAcceptor() {
+        return objectAcceptor_;
+    }
+
+    inline shared_ptr<WebElementSignal<S>> getWebElementSignal() {
+        return webElementSignal_;
+    }
 
     ObjectSignalLoop(shared_ptr<ObjT> object,  // shared_ptr<cl2::SignalBuilder> signalBuilder,
                                                // shared_ptr<ObjectEmitter<S, ObjT>> objectEmitter,
@@ -137,7 +149,7 @@ class ObjectSignalLoop {
         : object_(object),
           // signalBuilder_(signalBuilder),
           //  objectAcceptor_(objectAcceptor),
-          //objectEmitter_(objectEmitter),
+          // objectEmitter_(objectEmitter),
 
           webElementSignal_(webElementSignal) {
         objectAcceptor_ = make_shared<ObjectAcceptor<S, ObjT>>(object_);

@@ -349,8 +349,8 @@ class SignalBuilder {
 
     template <typename S, typename ObjT>
     void connectLoop(shared_ptr<ObjectSignalLoop<S, ObjT>> objectSignalLoop) {
-        connect<S>(objectSignalLoop->webElementSignal_, objectSignalLoop->objectAcceptor_);
-        connect<S>(objectSignalLoop->objectEmitter_, objectSignalLoop->webElementSignal_);
+        connect<S>(objectSignalLoop->getWebElementSignal(), objectSignalLoop->getObjectAcceptor());
+        connect<S>(objectSignalLoop->getObjectEmitter(), objectSignalLoop->getWebElementSignal());
     }
 };
 }  // namespace cl2
