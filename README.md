@@ -34,3 +34,7 @@ There is also a pair of classes `ObjectAcceptor<S>` and `ObjectEmitter<S>` that 
 There is already a small "showcase" type app called `signalTest` that allows you to see how data can move around a page using the new primitives and how controls can manipulate SVG elements. Just do `make signalTest` and then `emrun st.html` to view the page. If you keep the JavaScript console open while using this app you will see quite a lot of diagnostic information showing what's going on in the app.
 
 2023-06-05: adding this to test new github token
+
+## Misc
+
+The directory `Screenshots-from-original-app` shows the test patterns from the old app that should be tried to verify the behavior of the new app.
