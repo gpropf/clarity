@@ -390,6 +390,20 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                   //!< errors about forward template definitions. The small space and time savings
                   //!< wasn't worth it.
 
+    std::shared_ptr<Beaker<V>> getptr() { return this->shared_from_this(); }
+
+    void finalize() {
+        objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+        objAcceptor_->setSignalAcceptorMethod(&Beaker::acceptButtonSignal);
+        newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");
+        signalBuilder_->connect<std::string>(newRuleButton_, objAcceptor_);
+    }
+
+    void acceptButtonSignal(const std::string &s) {
+        cout << "GOT SIGNAL FROM BUTTON: " << s << endl;
+        this->makeNewReactionRule();
+    }
+
     Beaker(shared_ptr<cl2::SignalBuilder> signalBuilder, int gridWidth, int gridHeight,
            int gridPixelWidth, int gridPixelHeight, const std::string &name = "",
            bool isReactionRule = false)
@@ -431,13 +445,13 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             // val makeNewReactionRuleFn =
             //     val::global("elgCallMethodOnObjByName")(val(*this), val("makeNewReactionRule"));
             // const auto newRuleBtn = sb.button("New Rule", makeNewReactionRuleFn);
-            newRuleButtonOutput_ = sb.textInputWSS<std::string>(
-                "New Rule WSS Output", "New Rule button sends output here", false);
+            // newRuleButtonOutput_ = sb.textInputWSS<std::string>(
+            //     "New Rule WSS Output", "New Rule button sends output here", false);
 
-            newRuleButton_ = sb.buttonWSS<std::string>("New Rule WSS");
-            sb.connect<std::string>(newRuleButton_, newRuleButtonOutput_);
+            // newRuleButton_ = sb.buttonWSS<std::string>("New Rule WSS");
+            // sb.connect<std::string>(newRuleButton_, newRuleButtonOutput_);
             // newRuleButton_->setOutput(newRuleButtonOutput_);
-           objAcceptor_ = ObjectAcceptor<std::string, Beaker<V>>(this->shared_from_this());
+            // objAcceptor_ = ObjectAcceptor<std::string, Beaker<V>>(this->shared_from_this());
         }
     }
 
@@ -463,7 +477,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             // 150,
             //          "rule-" + clto_str(++this->ruleCount_), true);
 
-            new Beaker<unsigned char>(this->signalBuilder_, 5, 3, 150, 100,
+            new Beaker<unsigned char>(this->signalBuilder_, this->ruleGridWidth_, 3, 150, 100,
                                       "rule" + clto_str(++this->ruleCount_), true);
 
         reactionRule->parentBeaker_ = this;
@@ -871,9 +885,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
    protected:
     shared_ptr<cl2::SignalBuilder> signalBuilder_;
     shared_ptr<GridControl<V>> gridControl_;
-    shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
+    //shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
     shared_ptr<WebElementSignal<std::string>> newRuleButton_;
-    ObjectAcceptor<std::string, Beaker<V>> objAcceptor_;
+    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
     std::string name_;
     bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
                                    //!< for an enclosing Beaker.
@@ -976,6 +990,7 @@ struct PixelReactor {
         cout << "I'm a Pixelreactor. I need to be redone completely 2!" << endl;
         auto sb = make_shared<cl2::SignalBuilder>();
         mainBeaker_ = make_shared<Beaker<unsigned char>>(sb, 60, 40, 600, 400, "Beaker");
+        mainBeaker_->finalize();
         ruleWidthInput_ =
             sb->textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
 
