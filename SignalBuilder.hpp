@@ -315,6 +315,15 @@ class SignalBuilder {
         return btn;
     }
 
+    template <typename S>
+    shared_ptr<WebElementSignal<S>> buttonWSS(const std::string& displayedText,
+                                              val onClickFn = val::null()) {
+        Button inp = button(displayedText, onClickFn);
+        shared_ptr<WebElementSignal<S>> wso =
+            make_shared<WebElementSignal<S>>(inp, "name", false);
+        return wso;
+    }
+
     /**
      * @brief Plug an emitter signal into an acceptor.
      *

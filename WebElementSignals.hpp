@@ -67,12 +67,16 @@ class WebElementSignal : public SignalAcceptor<S>, public SignalEmitter<S> {
      */
     virtual void update() {
         if (this->output_ == nullptr) return;
+        val elgEmitFn = val::global("elgEmitFn");
         if (wptr_->domElement_["type"] == val("range")) {
             eventListenerName_ = "input";
+        } else if (wptr_->domElement_["type"] == val("submit")) {
+            elgEmitFn = val::global("elgButtonFn"); 
+            eventListenerName_ = "click";
         } else {
             eventListenerName_ = "change";
         }
-        val elgEmitFn = val::global("elgEmitFn");
+
         wptr_->domElement_.call<void>("removeEventListener", val(eventListenerName_),
                                       eventListenerFn_);
         eventListenerFn_ = elgEmitFn(*this);
@@ -127,19 +131,12 @@ class ObjectSignalLoop {
     shared_ptr<ObjectAcceptor<S, ObjT>> objectAcceptor_;
     shared_ptr<WebElementSignal<S>> webElementSignal_;
 
-   public:  
-   
-    inline shared_ptr<ObjectEmitter<S, ObjT>> getObjectEmitter() {
-        return objectEmitter_;
-    }
+   public:
+    inline shared_ptr<ObjectEmitter<S, ObjT>> getObjectEmitter() { return objectEmitter_; }
 
-    inline shared_ptr<ObjectAcceptor<S, ObjT>> getObjectAcceptor() {
-        return objectAcceptor_;
-    }
+    inline shared_ptr<ObjectAcceptor<S, ObjT>> getObjectAcceptor() { return objectAcceptor_; }
 
-    inline shared_ptr<WebElementSignal<S>> getWebElementSignal() {
-        return webElementSignal_;
-    }
+    inline shared_ptr<WebElementSignal<S>> getWebElementSignal() { return webElementSignal_; }
 
     ObjectSignalLoop(shared_ptr<ObjT> object,  // shared_ptr<cl2::SignalBuilder> signalBuilder,
                                                // shared_ptr<ObjectEmitter<S, ObjT>> objectEmitter,

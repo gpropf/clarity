@@ -430,7 +430,14 @@ class Beaker {
 
             val makeNewReactionRuleFn =
                 val::global("elgCallMethodOnObjByName")(val(*this), val("makeNewReactionRule"));
-            const auto printTestButton = sb.button("New Rule", makeNewReactionRuleFn);
+            const auto newRuleBtn = sb.button("New Rule", makeNewReactionRuleFn);
+            newRuleButtonOutput_ = sb.textInputWSS<std::string>(
+                "New Rule WSS Output", "New Rule button sends output here", false);
+
+            newRuleButton_ = sb.buttonWSS<std::string>("New Rule WSS");
+            sb.connect<std::string>(newRuleButton_, newRuleButtonOutput_);
+            newRuleButton_->setOutput(newRuleButtonOutput_);
+
         }
     }
 
@@ -864,6 +871,8 @@ class Beaker {
    protected:
     shared_ptr<cl2::SignalBuilder> signalBuilder_;
     shared_ptr<GridControl<V>> gridControl_;
+    shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
+    shared_ptr<WebElementSignal<std::string>> newRuleButton_;
     std::string name_;
     bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
                                    //!< for an enclosing Beaker.

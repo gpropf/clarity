@@ -75,6 +75,16 @@ function elgEmitFn(webElementSignalObject) {
     };
 }
 
+function elgButtonFn(webElementSignalObject) {
+    return function (ev) {
+        let text = ev.target.name;
+        // It is implied in the use of the name field that we are emitting
+        // a string value. If this is not the case, problems will arise.
+        console.log("elgButtonFn generated fn called. Emitting signal: " + text);
+        webElementSignalObject.emit(text);
+    };
+}
+
 function elgSelectEmitFn(SelectEmitter) {
     return function (ev) {
         let text = ev.target.value;

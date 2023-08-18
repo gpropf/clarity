@@ -221,6 +221,12 @@ int main() {
     auto option2wss = Option("20", "BOO", selectWSSDomElement);
     auto option3wss = Option("30", "TOO", selectWSSDomElement);
     selectWSS->setOutput(selectOutputWSS);
+
+    BR();
+    const auto textInpTest = sb.textInputWSS<std::string>("textInpTest", "Enter some text", false);
+    const auto testButton = sb.buttonWSS<std::string>("Button WSS");
+    auto buttonOutput = sb.textInputWSS<std::string>("buttonOutput", "buttonOutput field");
+    sb.connect<std::string>(testButton, buttonOutput);
     return 0;
 }
 
