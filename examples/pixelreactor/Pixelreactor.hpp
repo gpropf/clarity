@@ -431,12 +431,13 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         gridControl_->addColorToPallete(3, "#0000ff");
         gridControl_->finalize();
 
-        val printTestFn = val::global("elgCallMethodOnObjByName")(val(*this), val("printTest"));
-        const auto printTestButton = sb.button("Print Test", printTestFn);
+        // val printTestFn = val::global("elgCallMethodOnObjByName")(val(*this), val("printTest"));
+        // const auto printTestButton = sb.button("Print Test", printTestFn);
 
         if (!isReactionRule_) {
-            // auto objectAcceptor =
-            //     make_shared<ObjectAcceptor<std::string, Beaker<V>>>(this->shared_from_this());
+            // finalize();
+            //  auto objectAcceptor =
+            //      make_shared<ObjectAcceptor<std::string, Beaker<V>>>(this->shared_from_this());
 
             // objectAcceptor->setSignalAcceptorMethod(&Beaker<V>::setRuleGridWidth);
 
@@ -466,6 +467,17 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         return rgwString;
     }
 
+    void setRuleGridHeight(const std::string &v) {
+        ruleGridHeight_ = std::stoi(v);
+        cout << "SETTING ruleGridHeight_ to " << v << endl;
+    }
+
+    std::string getRuleGridHeight() {
+        std::string outstr = std::to_string(ruleGridHeight_);
+        cout << "GETTING ruleGridHeight_ as string value: '" << outstr << "'" << endl;
+        return outstr;
+    }
+
     /**
      * @brief Creates a new smaller BeakerNode to serve as a reaction pattern to run in the main
      * grid.
@@ -477,7 +489,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             // 150,
             //          "rule-" + clto_str(++this->ruleCount_), true);
 
-            new Beaker<unsigned char>(this->signalBuilder_, this->ruleGridWidth_, 3, 150, 100,
+            new Beaker<unsigned char>(this->signalBuilder_, this->ruleGridWidth_, this->ruleGridHeight_, 150, 100,
                                       "rule" + clto_str(++this->ruleCount_), true);
 
         reactionRule->parentBeaker_ = this;
@@ -885,7 +897,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
    protected:
     shared_ptr<cl2::SignalBuilder> signalBuilder_;
     shared_ptr<GridControl<V>> gridControl_;
-    //shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
+    // shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
     shared_ptr<WebElementSignal<std::string>> newRuleButton_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
     std::string name_;
@@ -982,9 +994,11 @@ struct PixelReactor {
     int *ruleFrameHeight = new int(3);
     shared_ptr<Beaker<unsigned char>> mainBeaker_;
     shared_ptr<WebElementSignal<std::string>> ruleWidthInput_;
-    shared_ptr<ObjectEmitter<std::string, Beaker<unsigned char>>> objectEmitter_;
-    shared_ptr<ObjectAcceptor<std::string, Beaker<unsigned char>>> objectAcceptor_;
-    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> objectSignalLoop_;
+    shared_ptr<WebElementSignal<std::string>> ruleHeightInput_;
+    // shared_ptr<ObjectEmitter<std::string, Beaker<unsigned char>>> objectEmitter_;
+    // shared_ptr<ObjectAcceptor<std::string, Beaker<unsigned char>>> objectAcceptor_;
+    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleWidthLoop_;
+    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleHeightLoop_;
 
     PixelReactor(int defaultRuleframeWidth = 5, int defaultRuleframeHeight = 3) {
         cout << "I'm a Pixelreactor. I need to be redone completely 2!" << endl;
@@ -993,6 +1007,8 @@ struct PixelReactor {
         mainBeaker_->finalize();
         ruleWidthInput_ =
             sb->textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
+        ruleHeightInput_ =
+            sb->textInputWSS<std::string>("ruleHeightInput", "Rule Height in pixels", false);
 
         // objectEmitter_ =
         //     make_shared<ObjectEmitter<std::string, Beaker<unsigned char>>>(mainBeaker_);
@@ -1000,15 +1016,21 @@ struct PixelReactor {
         //     make_shared<ObjectAcceptor<std::string, Beaker<unsigned char>>>(mainBeaker_);
 
         // mainBeaker_ = make_shared<Beaker<unsigned char>>(sb, 60, 40, 600, 400, "Beaker");
-        objectSignalLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+        ruleWidthLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
             mainBeaker_, ruleWidthInput_, &Beaker<unsigned char>::setRuleGridWidth,
             &Beaker<unsigned char>::getRuleGridWidth);
+
+        ruleHeightLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+            mainBeaker_, ruleHeightInput_, &Beaker<unsigned char>::setRuleGridHeight,
+            &Beaker<unsigned char>::getRuleGridHeight);
 
         // objectAcceptor_->setSignalAcceptorMethod(&Beaker<unsigned char>::setRuleGridWidth);
         // objectEmitter_->setSignalEmitterMethod(&Beaker<unsigned char>::getRuleGridWidth);
         // sb->connect<std::string>(ruleWidthInput_, objectAcceptor_);
         // sb->connect<std::string>(objectEmitter_, ruleWidthInput_);
-        sb->connectLoop(objectSignalLoop_);
+        sb->connectLoop(ruleWidthLoop_);
+        sb->connectLoop(ruleHeightLoop_);
+
         // objectAcceptor_->finalize();
     }
     //     ClarityNode *content(ClarityNode *innerContent = nullptr) {

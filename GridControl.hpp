@@ -97,7 +97,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         cl2::BR();
         svg.setAttributes({{"viewBox", val("0 0 " + std::to_string(gridWidth_) + " " +
                                            std::to_string(gridHeight_))},
-                           {"style", val("border: 2px solid blue")}});
+                           {"style", val("border: 2px solid blue")},
+                           {"preserveAspectRatio", val("none")}});
 
         pixels_ = new PixelT[gridWidth_ * gridHeight_];
         initPixels();
