@@ -373,7 +373,7 @@ class Beaker;
  * char`. Theoretically, it's possible to use other types though.
  */
 template <typename V>
-class Beaker {
+class Beaker : public std::enable_shared_from_this<Beaker<V>> {
    public:
     typedef short int
         priorityT;  // I'm using an int type for the text input field for priorities because the
@@ -428,16 +428,16 @@ class Beaker {
 
             // sb.connect<std::string>(ruleWidthInput, objectAcceptor);
 
-            val makeNewReactionRuleFn =
-                val::global("elgCallMethodOnObjByName")(val(*this), val("makeNewReactionRule"));
-            const auto newRuleBtn = sb.button("New Rule", makeNewReactionRuleFn);
+            // val makeNewReactionRuleFn =
+            //     val::global("elgCallMethodOnObjByName")(val(*this), val("makeNewReactionRule"));
+            // const auto newRuleBtn = sb.button("New Rule", makeNewReactionRuleFn);
             newRuleButtonOutput_ = sb.textInputWSS<std::string>(
                 "New Rule WSS Output", "New Rule button sends output here", false);
 
             newRuleButton_ = sb.buttonWSS<std::string>("New Rule WSS");
             sb.connect<std::string>(newRuleButton_, newRuleButtonOutput_);
-            newRuleButton_->setOutput(newRuleButtonOutput_);
-
+            // newRuleButton_->setOutput(newRuleButtonOutput_);
+           objAcceptor_ = ObjectAcceptor<std::string, Beaker<V>>(this->shared_from_this());
         }
     }
 
@@ -873,6 +873,7 @@ class Beaker {
     shared_ptr<GridControl<V>> gridControl_;
     shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
     shared_ptr<WebElementSignal<std::string>> newRuleButton_;
+    ObjectAcceptor<std::string, Beaker<V>> objAcceptor_;
     std::string name_;
     bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
                                    //!< for an enclosing Beaker.
