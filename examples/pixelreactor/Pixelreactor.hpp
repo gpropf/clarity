@@ -73,15 +73,24 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                   //!< errors about forward template definitions. The small space and time savings
                   //!< wasn't worth it.
 
+    /**
+     * @brief Adapted from this doc:
+     * https://en.cppreference.com/w/cpp/memory/enable_shared_from_this
+     *
+     * @return std::shared_ptr<Beaker<V>>
+     */
     std::shared_ptr<Beaker<V>> getptr() { return this->shared_from_this(); }
 
+    /**
+     * @brief Needs to be called outside the constructor due to use of getptr()
+     *
+     */
     void finalize() {
         objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
         objAcceptor_->setSignalAcceptorMethod(&Beaker::makeNewReactionRuleSignal);
-        newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");        
+        newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");
         signalBuilder_->connect<std::string>(newRuleButton_, objAcceptor_);
 
-        
         iterateAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
         iterateAcceptor_->setSignalAcceptorMethod(&Beaker::iterate);
         iterateButton_ = signalBuilder_->buttonWSS<std::string>("Iterate");
@@ -106,9 +115,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         initStandardRotationMatrices();
         cout << "Beaker created!" << endl;
 
-        SignalBuilder &sb = *signalBuilder_;
+        //SignalBuilder &sb = *signalBuilder_;
         gridControl_ = make_shared<GridControl<V>>(gridWidth_, gridHeight_, gridPixelWidth_,
-                                                   gridPixelHeight_, sb, name_ + "_gc1");
+                                                   gridPixelHeight_, *signalBuilder_, name_ + "_gc1");
         gridControl_->addColorToPallete(0, "#000000");
         gridControl_->addColorToPallete(1, "#ff0000");
         gridControl_->addColorToPallete(2, "#00ff00");
@@ -139,7 +148,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     /**
-     * @brief Creates a new smaller BeakerNode to serve as a reaction pattern to run in the main
+     * @brief Creates a new smaller Beaker to serve as a reaction pattern to run in the main
      * grid.
      *
      */
@@ -612,11 +621,14 @@ struct PixelReactor {
         auto sb = make_shared<cl2::SignalBuilder>();
         mainBeaker_ = make_shared<Beaker<unsigned char>>(sb, 60, 40, 600, 400, "Beaker");
         mainBeaker_->finalize();
+
         // mainBeaker_->finalize();
         ruleWidthInput_ =
-            sb->textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
+            sb->withAttributes({{"class", val("small_width")}})
+                .textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
         ruleHeightInput_ =
-            sb->textInputWSS<std::string>("ruleHeightInput", "Rule Height in pixels", false);
+            sb->withAttributes({{"class", val("small_width")}})
+                .textInputWSS<std::string>("ruleHeightInput", "Rule Height in pixels", false);
 
         ruleWidthLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
             mainBeaker_, ruleWidthInput_, &Beaker<unsigned char>::setRuleGridWidth,

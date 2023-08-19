@@ -45,7 +45,7 @@ class SignalBuilder {
     }
 
     /**
-     * @brief Do this after each method call.
+     * @brief Do this in any method that creates a WebElement.
      *
      */
     void postCall(const WebElement& wel) {
