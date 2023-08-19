@@ -51,14 +51,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         return addr;
     }
 
-   public:
-    // auto mouseSignal = make_shared<MouseSignal<std::pair<double, double>>>(svg, "click");
-
-    //     auto svgMouseClickAcceptor =
-    //         make_shared<ObjectAcceptor<std::pair<double, double>, TestObj>>(tobjSptr);
-    //     svgMouseClickAcceptor->setSignalAcceptorMethod(&TestObj::mouseAcceptorTestMethod);
-
-    //     sb.connect<std::pair<double, double>>(mouseSignal, svgMouseClickAcceptor);
+   public:    
 
     void addColorToPallete(PixelT colorValue, const std::string &colorString) {
         colorPallete_[colorValue] = colorString;

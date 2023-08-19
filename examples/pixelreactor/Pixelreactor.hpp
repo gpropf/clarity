@@ -49,7 +49,7 @@ class Beaker;
 
 /**
  * @brief Represents a single "reaction vessel" in which our experiments can take place. The
- * reaction rules that determine how patterns in the grid transform will use the same CanvasGrid
+ * reaction rules that determine how patterns in the grid transform will use the same GridControl
  * control the beaker itself does.
  *
  * @tparam V This is the type we are using for the grid elements. The original app I wrote in
@@ -66,7 +66,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     typedef int gridCoordinateT;
     typedef std::pair<gridCoordinateT, gridCoordinateT> gridCoordinatePairT;
     typedef std::pair<gridCoordinatePairT, V> gridCoordinatesValueTripletT;
-    // typedef
 
     RotationMatrix2D<gridCoordinateT> *r0__, *r90__, *r180__,
         *r270__;  //!< I tried to make these static const class members because they're the same for
@@ -98,14 +97,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
           gridPixelHeight_(gridPixelHeight),
           name_(name),
           isReactionRule_(isReactionRule) {
-        // if (!isReactionRule_)
-        //     successionGrid_ = new std::vector<valuePriorityPairT>[gridWidth * gridHeight];
         initStandardRotationMatrices();
         cout << "Beaker created!" << endl;
 
-        // svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
-
-        // val logStuff = val::global("sayHello");
         SignalBuilder &sb = *signalBuilder_;
         gridControl_ = make_shared<GridControl<V>>(gridWidth_, gridHeight_, gridPixelWidth_,
                                                    gridPixelHeight_, sb, name_ + "_gc1");
@@ -114,30 +108,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         gridControl_->addColorToPallete(2, "#00ff00");
         gridControl_->addColorToPallete(3, "#0000ff");
         gridControl_->finalize();
-
-        // val printTestFn = val::global("elgCallMethodOnObjByName")(val(*this), val("printTest"));
-        // const auto printTestButton = sb.button("Print Test", printTestFn);
-
-        if (!isReactionRule_) {
-            // finalize();
-            //  auto objectAcceptor =
-            //      make_shared<ObjectAcceptor<std::string, Beaker<V>>>(this->shared_from_this());
-
-            // objectAcceptor->setSignalAcceptorMethod(&Beaker<V>::setRuleGridWidth);
-
-            // sb.connect<std::string>(ruleWidthInput, objectAcceptor);
-
-            // val makeNewReactionRuleFn =
-            //     val::global("elgCallMethodOnObjByName")(val(*this), val("makeNewReactionRule"));
-            // const auto newRuleBtn = sb.button("New Rule", makeNewReactionRuleFn);
-            // newRuleButtonOutput_ = sb.textInputWSS<std::string>(
-            //     "New Rule WSS Output", "New Rule button sends output here", false);
-
-            // newRuleButton_ = sb.buttonWSS<std::string>("New Rule WSS");
-            // sb.connect<std::string>(newRuleButton_, newRuleButtonOutput_);
-            // newRuleButton_->setOutput(newRuleButtonOutput_);
-            // objAcceptor_ = ObjectAcceptor<std::string, Beaker<V>>(this->shared_from_this());
-        }
     }
 
     void setRuleGridWidth(const std::string &v) {
@@ -168,26 +138,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      */
     void makeNewReactionRule() {
-        Beaker<unsigned char> *reactionRule =
-            // new Beaker<V>(this->signalBuilder_, this->ruleGridWidth_, this->ruleGridHeight_, 150,
-            // 150,
-            //          "rule-" + clto_str(++this->ruleCount_), true);
-
-            new Beaker<unsigned char>(this->signalBuilder_, this->ruleGridWidth_, this->ruleGridHeight_, 150, 100,
-                                      "rule" + clto_str(++this->ruleCount_), true);
-
+        Beaker<unsigned char> *reactionRule = new Beaker<unsigned char>(
+            this->signalBuilder_, this->ruleGridWidth_, this->ruleGridHeight_, 150, 100,
+            "rule" + clto_str(++this->ruleCount_), true);
         reactionRule->parentBeaker_ = this;
-        // reactionRule->initPixelListMap();
         this->reactionRules_.push_back(reactionRule);
-
-        // CLNodeFactory<BeakerNode, Beaker<V>, int> beakerBuilder("div", "rr");
-
-        // BeakerNode<Beaker<V>> *bn = beakerBuilder.withChildrenOf(beakerNode_->reactionRulesDiv_)
-        //                                 .withTag("div")
-        //                                 .withName("reactionRule")
-        //                                 .withCppVal(reactionRule)
-        //                                 .build();
-        // beakerNode_->refresh();
     }
 
     Beaker<unsigned char> *findRuleByName(const std::string &ruleName) {
@@ -290,7 +245,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     void printPixelList(std::vector<std::pair<V, std::vector<gridCoordinatePairT>>> &pl) {
-        // cout <<
         cout << "PPL() List address: " << &pl << ", rule name: " << name_ << endl;
         for (auto p : pl) {
             auto [pixelVal, gridCoordinates] = p;
@@ -314,11 +268,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     bool matchList2(std::vector<gridCoordinatePairT> &rulePixelList,
                     gridCoordinatePairT matchCoordiates, V pixelVal) {
         auto [mx, my] = matchCoordiates;
-
-        // auto rulePixelListSize = rulePixelList.size();
-        // for (auto i = 0; i < rulePixelListSize; i++) {
-        // bool matched = permutatedMatchList(rulePixelList, matchCoordiates, pixelVal, i);
-        // if (!matched) return false;
 
         for (auto pixel : rulePixelList) {
             auto [px, py] = pixel;
@@ -440,7 +389,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     void updateGrid() {
         clean_ = false;
-        // this->beakerNode_->beakerCanvas_->flushPixelBuffer();
+
         for (const auto &[key, value] : this->successionMap_) {
             auto [px, py] = key;
             std::vector<valuePriorityPairT> vpStack = value;
@@ -487,22 +436,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         }
         // if (clean_) return;
         this->successionMap_.clear();
-        // this->successionMap_.clear();
-        //  this->newPixelList_.clear();
-        //  this->backgroundPixelList_.clear();
 
         makePixelList();
         sortPixelLists();
-        // cout << "PPL() 0 degrees" << endl;
-        // printPixelList(rotationToSortedPixelListsMap_[0]);
-        // cout << "PPL() 90 degrees" << endl;
-        // printPixelList(rotationToSortedPixelListsMap_[90]);
 
-        // cout << "PPM() 0 degrees" << endl;
-        // printPixelMap(rotationToPixelListsMap_[0]);
-        // cout << "PPM() 90 degrees" << endl;
-        // printPixelMap(rotationToPixelListsMap_[90]);
-        // cout << "r0:" << endl;
         clean_ = true;
     }
 
@@ -603,19 +540,16 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     std::map<gridCoordinatePairT, std::vector<valuePriorityPairT>> successionMap_;
 
-    int iterationCount_ =
-        0;  //!< Counter that advances every time the rules are applied to the grid.
-    // BeakerNode<Beaker<V>> *beakerNode_;  //!< Pointer back to containing BN so that BN->refresh()
-    //                                      //!< can be called when this updates.
+    int iterationCount_ = 0;
+    //!< Counter that advances every time the rules are applied to the grid.
 
     std::vector<Beaker *> reactionRules_;
 
     Beaker *parentBeaker_;
 
-    Beaker *successor_ = this;  //!< The pattern we replace this one with.
-    int successorOffsetX_ = 0;  //!< X offset of replacement pattern.
-    int successorOffsetY_ = 0;  //!< Y offset of replacement pattern.
-    // priorityT successionPriority_ = 1;  //!<
+    Beaker *successor_ = this;    //!< The pattern we replace this one with.
+    int successorOffsetX_ = 0;    //!< X offset of replacement pattern.
+    int successorOffsetY_ = 0;    //!< Y offset of replacement pattern.
     int successionPriority_ = 1;  //!< Priority assigned to pixels replaced by application of
                                   //!< this pattern. Lower values take precedence.
 
@@ -623,27 +557,14 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     bool clean_ = true;  //!< We set this to false when the user modifies a rule or the main grid.
 
-    // std::vector<gridCoordinatesValueTripletT> newPixelList_;
-    // std::vector<gridCoordinatesValueTripletT> backgroundPixelList_;
-
     typedef std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMapT;
 
     std::map<int, valueToCoordinateMapT> rotationToPixelListsMap_;
     std::map<int, std::vector<std::pair<V, std::vector<gridCoordinatePairT>>>>
         rotationToSortedPixelListsMap_;
-    // template <typename U>
-    // friend class BeakerNode<Beaker<V>>;
 };
 
 EMSCRIPTEN_BINDINGS(PixelReactor) {
-    // class_<HybridNode<Beaker<unsigned char>::priorityT>>("HybridNode_priorityT")
-    //     .function("updateNodeFromDom",
-    //               &HybridNode<Beaker<unsigned char>::priorityT>::updateNodeFromDom,
-    //               emscripten::allow_raw_pointers());
-
-    // class_<BeakerNode<Beaker<unsigned char>>>("BeakerNode_h")
-    //     .function("tick", &BeakerNode<Beaker<unsigned char>>::tick, allow_raw_pointers());
-
     emscripten::class_<Beaker<unsigned char>>("Beaker")
         .function("printTest", &Beaker<unsigned char>::printTest, emscripten::allow_raw_pointers())
         .function("toggleClean", &Beaker<unsigned char>::toggleClean,
@@ -661,13 +582,7 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
 
     emscripten::register_vector<Beaker<unsigned char>::gridCoordinatesValueTripletT>(
         "std::vector<gridCoordinatesValueTripletT>");
-    // .class_function("makeNewReactionRule_st", &Beaker<unsigned char>::makeNewReactionRule_st,
-    //                 emscripten::allow_raw_pointers());
 }
-
-// EMSCRIPTEN_BINDINGS(SignalBuilder) {
-//     emscripten::class_<SignalBuilder>("SignalBuilder");
-// }
 
 /**
  * @brief The Pixelreactor app from the old ClojureScript site redone in C++.
@@ -689,17 +604,12 @@ struct PixelReactor {
         auto sb = make_shared<cl2::SignalBuilder>();
         mainBeaker_ = make_shared<Beaker<unsigned char>>(sb, 60, 40, 600, 400, "Beaker");
         mainBeaker_->finalize();
+        //mainBeaker_->finalize();
         ruleWidthInput_ =
             sb->textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
         ruleHeightInput_ =
             sb->textInputWSS<std::string>("ruleHeightInput", "Rule Height in pixels", false);
 
-        // objectEmitter_ =
-        //     make_shared<ObjectEmitter<std::string, Beaker<unsigned char>>>(mainBeaker_);
-        // objectAcceptor_ =
-        //     make_shared<ObjectAcceptor<std::string, Beaker<unsigned char>>>(mainBeaker_);
-
-        // mainBeaker_ = make_shared<Beaker<unsigned char>>(sb, 60, 40, 600, 400, "Beaker");
         ruleWidthLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
             mainBeaker_, ruleWidthInput_, &Beaker<unsigned char>::setRuleGridWidth,
             &Beaker<unsigned char>::getRuleGridWidth);
@@ -708,35 +618,9 @@ struct PixelReactor {
             mainBeaker_, ruleHeightInput_, &Beaker<unsigned char>::setRuleGridHeight,
             &Beaker<unsigned char>::getRuleGridHeight);
 
-        // objectAcceptor_->setSignalAcceptorMethod(&Beaker<unsigned char>::setRuleGridWidth);
-        // objectEmitter_->setSignalEmitterMethod(&Beaker<unsigned char>::getRuleGridWidth);
-        // sb->connect<std::string>(ruleWidthInput_, objectAcceptor_);
-        // sb->connect<std::string>(objectEmitter_, ruleWidthInput_);
         sb->connectLoop(ruleWidthLoop_);
         sb->connectLoop(ruleHeightLoop_);
-
-        // objectAcceptor_->finalize();
     }
-    //     ClarityNode *content(ClarityNode *innerContent = nullptr) {
-    //         CLNodeFactory<HybridNode, double, double> builder("div", "maindiv");
-
-    // #ifdef USETF
-    //         auto *maindiv = builder.build();
-    // #else
-    //         auto *maindiv = builder.withAttachmentId("hookid")
-    //                             .withAttachmentMode(clarity::ClarityNode::AttachmentMode::REPLACE_ID)
-    //                             .build();
-    // #endif
-
-    //         CLNodeFactory<BeakerNode, Beaker<unsigned char>, int> beakerBuilder(
-    //             builder.withChildrenOf(maindiv));
-
-    //         BeakerNode<Beaker<unsigned char>> *bn =
-    //             beakerBuilder.withTag("div").withName("mainBeaker").withCppVal(b).build();
-
-    //         cout << "Setup complete!" << endl;
-    //         return maindiv;
-    //     }
 };
 
 #endif
