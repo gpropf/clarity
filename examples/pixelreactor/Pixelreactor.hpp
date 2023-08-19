@@ -117,7 +117,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
         //SignalBuilder &sb = *signalBuilder_;
         gridControl_ = make_shared<GridControl<V>>(gridWidth_, gridHeight_, gridPixelWidth_,
-                                                   gridPixelHeight_, *signalBuilder_, name_ + "_gc1");
+                                                   gridPixelHeight_, signalBuilder_, name_ + "_gc1");
         gridControl_->addColorToPallete(0, "#000000");
         gridControl_->addColorToPallete(1, "#ff0000");
         gridControl_->addColorToPallete(2, "#00ff00");

@@ -79,14 +79,14 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     }
 
     GridControl(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight,
-                const SignalBuilder &sb, const std::string &id = "",
+                shared_ptr<SignalBuilder> signalBuilder, const std::string &id = "",
                 val parentDOMElement = val::null())
         : gridWidth_(gridWidth), gridHeight_(gridHeight) {
         id_ = id;
         svgid_ = this->id_ + "-svg";
         auto svg = cl2::SVG("svg1", pixelWidth, pixelHeight, svgid_, parentDOMElement);
         // svgDOMElement_ = svg.getDomElement();
-        SignalBuilder gcsb = sb.withAttributes({{"class", val("small_width")}}, false);
+        SignalBuilder gcsb = signalBuilder->withAttributes({{"class", val("small_width")}}, false);
         cl2::BR();
         svg.setAttributes({{"viewBox", val("0 0 " + std::to_string(gridWidth_) + " " +
                                            std::to_string(gridHeight_))},
