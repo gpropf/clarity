@@ -295,6 +295,7 @@ class SignalBuilder {
                                                  bool emitInitialValue = true) {
         // InputElement inp = textInput(name, labelText);
         auto selectElement = Select(name, getStrId());
+        postCall(selectElement);
         shared_ptr<WebElementSignal<S>> wso =
             make_shared<WebElementSignal<S>>(selectElement, "value", emitInitialValue);
 
@@ -332,7 +333,7 @@ class SignalBuilder {
      * @param s2
      */
     template <typename S>
-    void connect(shared_ptr<SignalEmitter<S>> s1, shared_ptr<SignalAcceptor<S>> s2) {
+    void connect(shared_ptr<SignalEmitter<S>> s1, shared_ptr<SignalAcceptor<S>> s2) const {
         s1->setOutput(s2);
     }
 
@@ -350,14 +351,14 @@ class SignalBuilder {
     template <typename inT1, typename inT2, typename outT>
     void connect(shared_ptr<SignalEmitter<inT1>> s1, shared_ptr<SignalEmitter<inT2>> s2,
                  shared_ptr<Merge<inT1, inT2, outT>> merge,
-                 shared_ptr<SignalAcceptor<outT>> mergeOut = nullptr) {
+                 shared_ptr<SignalAcceptor<outT>> mergeOut = nullptr) const {
         s1->setOutput(merge->getInput1());
         s2->setOutput(merge->getInput2());
         if (mergeOut != nullptr) merge->setOutput(mergeOut);
     }
 
     template <typename S, typename ObjT>
-    void connectLoop(shared_ptr<ObjectSignalLoop<S, ObjT>> objectSignalLoop) {
+    void connectLoop(shared_ptr<ObjectSignalLoop<S, ObjT>> objectSignalLoop) const {
         connect<S>(objectSignalLoop->getWebElementSignal(), objectSignalLoop->getObjectAcceptor());
         connect<S>(objectSignalLoop->getObjectEmitter(), objectSignalLoop->getWebElementSignal());
     }

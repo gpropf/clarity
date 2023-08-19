@@ -216,7 +216,7 @@ int main() {
 
     const auto selectOutputWSS =
         signalBuilder->textInputWSS<std::string>("selectOutputWSS", "Output of selectWSS appears here.", false);
-    auto selectWSS = signalBuilder->selectBoxWSS<std::string>("wssSelector", "This is a WSS Selector", true);
+    auto selectWSS = signalBuilder->withAttributes({{"class", val("red")}}).selectBoxWSS<std::string>("wssSelector", "This is a WSS Selector", true);
     val selectWSSDomElement = selectWSS->getWebElement()->getDomElement();
     auto option1wss = Option("10", "FOO", selectWSSDomElement);
     auto option2wss = Option("20", "BOO", selectWSSDomElement);
