@@ -83,34 +83,35 @@ int main() {
     auto generatedDiv = cl2::WebElement("div", "generatedDiv", getStrId());
 
     // We're now using the SignalBuilder factory objects to create our web content.
-    cl2::SignalBuilder sb = cl2::SignalBuilder();
+    auto signalBuilder = make_shared<SignalBuilder>();
+    //SignalBuilder &sb = *signalBuilder;
 
-    auto objectEmitterTextInput = sb.textInputWSS<std::string>(
+    auto objectEmitterTextInput = signalBuilder->textInputWSS<std::string>(
         "objectEmitterTextInput", "Enter a new value for the string (s_) stored in the TestObj.");
 
-    sb.connect<std::string>(objectEmitter, objectEmitterTextInput);
+    signalBuilder->connect<std::string>(objectEmitter, objectEmitterTextInput);
 
     auto objectAcceptor = make_shared<ObjectAcceptor<std::string, TestObj>>(tobjSptr);
     objectAcceptor->setSignalAcceptorMethod(&TestObj::signalAcceptorTestMethod);
-    sb.connect<std::string>(objectEmitterTextInput, objectAcceptor);
+    signalBuilder->connect<std::string>(objectEmitterTextInput, objectAcceptor);
 
-    auto srcTextInputWSS = sb.textInputWSS<std::string>(
+    auto srcTextInputWSS = signalBuilder->textInputWSS<std::string>(
         "srcTextInput",
         "WSS: Source field: type something here and it will appear in the next field.");
-    auto dstTextInputWSS = sb.textInputWSS<std::string>(
+    auto dstTextInputWSS = signalBuilder->textInputWSS<std::string>(
         "dstTextInput",
         "WSS: Dest field: type something in the field above and it will be copied here.");
 
     auto dstTextInputWSS2 =
-        sb.textInputWSS<std::string>("dstTextInputWSS2", "WSS: MFork Dest field 2.");
+        signalBuilder->textInputWSS<std::string>("dstTextInputWSS2", "WSS: MFork Dest field 2.");
     auto dstTextInputWSS3 =
-        sb.textInputWSS<std::string>("dstTextInputWSS3", "WSS: MFork Dest field 3.");
+        signalBuilder->textInputWSS<std::string>("dstTextInputWSS3", "WSS: MFork Dest field 3.");
     auto dstTextInputWSS4 =
-        sb.textInputWSS<std::string>("dstTextInputWSS4", "WSS: MFork Dest field 4.");
+        signalBuilder->textInputWSS<std::string>("dstTextInputWSS4", "WSS: MFork Dest field 4.");
 
     auto mfork1 = make_shared<MultiFork<std::string>>();
-    sb.connect<std::string>(srcTextInputWSS, dstTextInputWSS);
-    sb.connect<std::string>(dstTextInputWSS, mfork1);
+    signalBuilder->connect<std::string>(srcTextInputWSS, dstTextInputWSS);
+    signalBuilder->connect<std::string>(dstTextInputWSS, mfork1);
     mfork1->addOutput(dstTextInputWSS2);
     mfork1->addOutput(dstTextInputWSS3);
     mfork1->addOutput(dstTextInputWSS4);
@@ -122,9 +123,9 @@ int main() {
 
     // Signal wrappers for the controls.
     auto circle1CXRangeInputWSO =
-        sb.rangeInputWSS<std::string>("circle1CXRangeInput", "Circle center X value");
+        signalBuilder->rangeInputWSS<std::string>("circle1CXRangeInput", "Circle center X value");
     auto circle1CYRangeInputWSO =
-        sb.rangeInputWSS<std::string>("circle1CYRangeInput", "Circle center Y value");
+        signalBuilder->rangeInputWSS<std::string>("circle1CYRangeInput", "Circle center Y value");
 
     auto svg = cl2::SVG("svg1", 400, 300, getStrId(), generatedDiv.domElement_);
     svg.setAttributes(
@@ -137,7 +138,7 @@ int main() {
         make_shared<ObjectAcceptor<std::pair<double, double>, TestObj>>(tobjSptr);
     svgMouseClickAcceptor->setSignalAcceptorMethod(&TestObj::mouseAcceptorTestMethod);
 
-    sb.connect<std::pair<double, double>>(mouseSignal, svgMouseClickAcceptor);
+    signalBuilder->connect<std::pair<double, double>>(mouseSignal, svgMouseClickAcceptor);
 
     const auto circle1 = cl2::WebElement("circle", "circle1", getStrId(), svg.domElement_);
     circle1.domElement_.call<void>("setAttribute", val("r"), val(45));
@@ -153,8 +154,8 @@ int main() {
     auto circle1CYWSO = make_shared<cl2::WebElementSignal<std::string>>(circle1, "cy");
 
     // Now the range controls are connected to the circle attributes.
-    sb.connect<std::string>(circle1CXRangeInputWSO, circle1CXWSO);
-    sb.connect<std::string>(circle1CYRangeInputWSO, circle1CYWSO);
+    signalBuilder->connect<std::string>(circle1CXRangeInputWSO, circle1CXWSO);
+    signalBuilder->connect<std::string>(circle1CYRangeInputWSO, circle1CYWSO);
 
     // This is the 'functional' part of FRP. We have a pure function here defined as a C++ lambda.
     // We will set this up as the core of a CppLambda object that takes a string, runs the lambda
@@ -170,30 +171,30 @@ int main() {
     auto strToNumTransformerSS = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
 
     // auto dblInputELE =
-    //     sb.textInputELE<std::string>("dblInput", "Enter a floating point number", false);
+    //     signalBuilder->textInputELE<std::string>("dblInput", "Enter a floating point number", false);
 
     auto dblInputWSS =
-        sb.textInputWSS<std::string>("dblInput", "Enter a floating point number", false);
+        signalBuilder->textInputWSS<std::string>("dblInput", "Enter a floating point number", false);
 
-    sb.connect<std::string>(dblInputWSS, strToNumTransformerSS);
+    signalBuilder->connect<std::string>(dblInputWSS, strToNumTransformerSS);
 
     auto mergeFn = [](std::string s1, std::string s2) { return s1 + s2; };
     auto mergeSignal = make_shared<Merge<std::string, std::string, std::string>>(mergeFn);
 
-    const auto m1InputWSO = sb.textInputWSS<std::string>("m1Input", "Enter the first value", false);
+    const auto m1InputWSO = signalBuilder->textInputWSS<std::string>("m1Input", "Enter the first value", false);
     const auto m2InputWSO =
-        sb.textInputWSS<std::string>("m2Input", "Enter the second value", false);
+        signalBuilder->textInputWSS<std::string>("m2Input", "Enter the second value", false);
     const auto mergeOutWSO =
-        sb.textInputWSS<std::string>("mergeOut", "Output of merged signals goes here", false);
+        signalBuilder->textInputWSS<std::string>("mergeOut", "Output of merged signals goes here", false);
 
-    sb.connect<std::string, std::string, std::string>(m1InputWSO, m2InputWSO, mergeSignal,
+    signalBuilder->connect<std::string, std::string, std::string>(m1InputWSO, m2InputWSO, mergeSignal,
                                                       mergeOutWSO);
 
     val recomputeMergeFn = val::global("elgMergeRecompute")(val(*mergeSignal));
-    const auto mergeRecomputeButton = sb.button("Recompute", recomputeMergeFn);
+    const auto mergeRecomputeButton = signalBuilder->button("Recompute", recomputeMergeFn);
 
-    // sb = sb.withAttributes({{"class", val("small_width")}});
-    auto gridControl = make_shared<GridControl<int>>(15, 10, 600, 400, sb, "gc1");
+    // sb = signalBuilder->withAttributes({{"class", val("small_width")}});
+    auto gridControl = make_shared<GridControl<int>>(15, 10, 600, 400, signalBuilder, "gc1");
     // svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
 
     gridControl->addColorToPallete(0, "#000000");
@@ -203,7 +204,7 @@ int main() {
     gridControl->finalize();
 
     // const auto selectOutput =
-    //     sb.textInputWSS<std::string>("selectOutput", "Output of select box appears here.",
+    //     signalBuilder->textInputWSS<std::string>("selectOutput", "Output of select box appears here.",
     //     false);
     // auto select1 = Select("select1", getStrId());
     // auto option1 = Option("1", "Foo", select1.getDomElement());
@@ -214,8 +215,8 @@ int main() {
     // selectEmitter->setOutput(selectOutput);
 
     const auto selectOutputWSS =
-        sb.textInputWSS<std::string>("selectOutputWSS", "Output of selectWSS appears here.", false);
-    auto selectWSS = sb.selectBoxWSS<std::string>("wssSelector", "This is a WSS Selector", true);
+        signalBuilder->textInputWSS<std::string>("selectOutputWSS", "Output of selectWSS appears here.", false);
+    auto selectWSS = signalBuilder->selectBoxWSS<std::string>("wssSelector", "This is a WSS Selector", true);
     val selectWSSDomElement = selectWSS->getWebElement()->getDomElement();
     auto option1wss = Option("10", "FOO", selectWSSDomElement);
     auto option2wss = Option("20", "BOO", selectWSSDomElement);
@@ -223,10 +224,10 @@ int main() {
     selectWSS->setOutput(selectOutputWSS);
 
     BR();
-    const auto textInpTest = sb.textInputWSS<std::string>("textInpTest", "Enter some text", false);
-    const auto testButton = sb.buttonWSS<std::string>("Button WSS");
-    auto buttonOutput = sb.textInputWSS<std::string>("buttonOutput", "buttonOutput field");
-    sb.connect<std::string>(testButton, buttonOutput);
+    const auto textInpTest = signalBuilder->textInputWSS<std::string>("textInpTest", "Enter some text", false);
+    const auto testButton = signalBuilder->buttonWSS<std::string>("Button WSS");
+    auto buttonOutput = signalBuilder->textInputWSS<std::string>("buttonOutput", "buttonOutput field");
+    signalBuilder->connect<std::string>(testButton, buttonOutput);
     return 0;
 }
 
