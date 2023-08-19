@@ -28,7 +28,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     std::string id_;
     std::string svgid_;
     PixelT *pixels_;
-    PixelT currentColor_ = 0;
+    PixelT currentColor_ = 1;
     std::map<PixelT, std::string> colorPallete_;
     std::function<std::string(PixelT)> pixel2String_ = [](PixelT p) { return std::to_string(p); };
     shared_ptr<MouseSignal<std::pair<double, double>>> mouseClickSignal_ = nullptr;
