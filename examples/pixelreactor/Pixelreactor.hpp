@@ -77,12 +77,18 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     void finalize() {
         objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
-        objAcceptor_->setSignalAcceptorMethod(&Beaker::acceptButtonSignal);
-        newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");
+        objAcceptor_->setSignalAcceptorMethod(&Beaker::makeNewReactionRuleSignal);
+        newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");        
         signalBuilder_->connect<std::string>(newRuleButton_, objAcceptor_);
+
+        
+        iterateAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+        iterateAcceptor_->setSignalAcceptorMethod(&Beaker::iterate);
+        iterateButton_ = signalBuilder_->buttonWSS<std::string>("Iterate");
+        signalBuilder_->connect<std::string>(iterateButton_, iterateAcceptor_);
     }
 
-    void acceptButtonSignal(const std::string &s) {
+    void makeNewReactionRuleSignal(const std::string &s) {
         cout << "GOT SIGNAL FROM BUTTON: " << s << endl;
         this->makeNewReactionRule();
     }
@@ -483,7 +489,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      * @brief Apply replacement rules to main grid one time.
      *
      */
-    void iterate() {
+    void iterate(const std::string &s) {
         this->update();
         // this->beakerNode_->nodelog("ITERATING...");
         this->iterationCount_++;
@@ -520,7 +526,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     shared_ptr<GridControl<V>> gridControl_;
     // shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
     shared_ptr<WebElementSignal<std::string>> newRuleButton_;
+    shared_ptr<WebElementSignal<std::string>> iterateButton_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
+    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> iterateAcceptor_;
     std::string name_;
     bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
                                    //!< for an enclosing Beaker.
@@ -604,7 +612,7 @@ struct PixelReactor {
         auto sb = make_shared<cl2::SignalBuilder>();
         mainBeaker_ = make_shared<Beaker<unsigned char>>(sb, 60, 40, 600, 400, "Beaker");
         mainBeaker_->finalize();
-        //mainBeaker_->finalize();
+        // mainBeaker_->finalize();
         ruleWidthInput_ =
             sb->textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
         ruleHeightInput_ =
