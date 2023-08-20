@@ -95,15 +95,26 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      */
     void finalize() {
-        objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
-        objAcceptor_->setSignalAcceptorMethod(&Beaker::makeNewReactionRuleSignal);
-        newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");
-        signalBuilder_->connect<std::string>(newRuleButton_, objAcceptor_);
+        if (isReactionRule_) {
+            nameInput_ = signalBuilder_->withAttributes({{"class", val("medium_width")}})
+                             .textInputWSS<std::string>("nameInput", "Rule Name", false);
 
-        iterateAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
-        iterateAcceptor_->setSignalAcceptorMethod(&Beaker::iterate);
-        iterateButton_ = signalBuilder_->buttonWSS<std::string>("Iterate");
-        signalBuilder_->connect<std::string>(iterateButton_, iterateAcceptor_);
+            nameInputLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+                getptr(), nameInput_, &Beaker<unsigned char>::setName,
+                &Beaker<unsigned char>::getName);
+
+            signalBuilder_->connectLoop(nameInputLoop_);
+        } else {
+            objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            objAcceptor_->setSignalAcceptorMethod(&Beaker::makeNewReactionRuleSignal);
+            newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");
+            signalBuilder_->connect<std::string>(newRuleButton_, objAcceptor_);
+
+            iterateAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            iterateAcceptor_->setSignalAcceptorMethod(&Beaker::iterate);
+            iterateButton_ = signalBuilder_->buttonWSS<std::string>("Iterate");
+            signalBuilder_->connect<std::string>(iterateButton_, iterateAcceptor_);
+        }
     }
 
     void makeNewReactionRuleSignal(const std::string &s) {
@@ -157,6 +168,16 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         return outstr;
     }
 
+    void setName(const std::string &v) {
+        name_ = v;
+        cout << "SETTING name_ to " << v << endl;
+    }
+
+    std::string getName() {
+        cout << "GETTING name_ : '" << name_ << "'" << endl;
+        return name_;
+    }
+
     /**
      * @brief Creates a new smaller Beaker to serve as a reaction pattern to run in the main
      * grid.
@@ -168,6 +189,18 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             "rule" + clto_str(++this->ruleCount_), true);
         reactionRule->parentBeaker_ = this;
         this->reactionRules_.push_back(reactionRule);
+        reactionRule->finalize();
+
+        // nameInput_ =
+        //     signalBuilder_->withAttributes({{"class", val("medium_width")}})
+        //         .textInputWSS<std::string>("nameInput", "Rule Name", false);
+
+        // reactionRule->nameInputLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned
+        // char>>>(
+        //     reactionRule, reactionRule->nameInput_, &Beaker<unsigned char>::setName,
+        //     &Beaker<unsigned char>::getName);
+
+        // signalBuilder_->connectLoop(reactionRule->nameInputLoop_);
     }
 
     void wrapCoordinates(gridCoordinatePairT &p) {
@@ -212,19 +245,19 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
                     if (matchAt(reactionRule, i, j, r0)) {
                         // cout << "(r = 0) MATCH: " << i << ", " << j << endl;
-                        matchLists[0].push_back(std::make_pair(i, j));
+                        reactionRule->matchLists[0].push_back(std::make_pair(i, j));
                     }
                     if (matchAt(reactionRule, i, j, r90)) {
                         // cout << "(r = 90) MATCH: " << i << ", " << j << endl;
-                        matchLists[1].push_back(std::make_pair(i, j));
+                        reactionRule->matchLists[1].push_back(std::make_pair(i, j));
                     }
                     if (matchAt(reactionRule, i, j, r180)) {
                         // cout << "(r = 180) MATCH: " << i << ", " << j << endl;
-                        matchLists[2].push_back(std::make_pair(i, j));
+                        reactionRule->matchLists[2].push_back(std::make_pair(i, j));
                     }
                     if (matchAt(reactionRule, i, j, r270)) {
                         // cout << "(r = 270) MATCH: " << i << ", " << j << endl;
-                        matchLists[3].push_back(std::make_pair(i, j));
+                        reactionRule->matchLists[3].push_back(std::make_pair(i, j));
                     }
                 }
             }
@@ -232,9 +265,12 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     void printMatchLists() {
-        for (int i = 0; i < 4; i++) {
-            for (const auto &[x, y] : matchLists[i]) {
-                cout << "Rot: " << i << " - " << x << ", " << y << endl;
+        for (auto reactionRule : reactionRules_) {
+            cout << "Reaction rule '" << reactionRule->name_ << "'" << endl;
+            for (int i = 0; i < 4; i++) {
+                for (const auto &[x, y] : reactionRule->matchLists[i]) {
+                    cout << "Rot: " << i << " - " << x << ", " << y << endl;
+                }
             }
         }
     }
@@ -598,6 +634,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
    protected:
     shared_ptr<cl2::SignalBuilder> signalBuilder_;
     shared_ptr<GridControl<V>> gridControl_;
+    shared_ptr<WebElementSignal<std::string>> nameInput_;
+    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> nameInputLoop_;
     // shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
     shared_ptr<WebElementSignal<std::string>> newRuleButton_;
     shared_ptr<WebElementSignal<std::string>> iterateButton_;
