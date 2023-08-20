@@ -115,9 +115,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         initStandardRotationMatrices();
         cout << "Beaker created!" << endl;
 
-        //SignalBuilder &sb = *signalBuilder_;
-        gridControl_ = make_shared<GridControl<V>>(gridWidth_, gridHeight_, gridPixelWidth_,
-                                                   gridPixelHeight_, signalBuilder_, name_ + "_gc1");
+        // SignalBuilder &sb = *signalBuilder_;
+        gridControl_ =
+            make_shared<GridControl<V>>(gridWidth_, gridHeight_, gridPixelWidth_, gridPixelHeight_,
+                                        signalBuilder_, name_ + "_gc1");
         gridControl_->addColorToPallete(0, "#000000");
         gridControl_->addColorToPallete(1, "#ff0000");
         gridControl_->addColorToPallete(2, "#00ff00");
@@ -153,12 +154,49 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      */
     void makeNewReactionRule() {
-        Beaker<unsigned char> *reactionRule = new Beaker<unsigned char>(
+        shared_ptr<Beaker<unsigned char>> reactionRule = make_shared<Beaker<unsigned char>>(
             this->signalBuilder_, this->ruleGridWidth_, this->ruleGridHeight_, 150, 100,
             "rule" + clto_str(++this->ruleCount_), true);
         reactionRule->parentBeaker_ = this;
         this->reactionRules_.push_back(reactionRule);
     }
+
+    void wrapCoordinates(gridCoordinatePairT &p) {
+        if (p.first < 0)
+            p.first = gridWidth_ + p.first;
+        else
+            p.first = p.first % gridWidth_;
+        if (p.second < 0)
+            p.second = gridHeight_ + p.second;
+        else
+            p.second = p.second % gridHeight_;
+       // if (p.first < 0 || p.second < 0) cout << "NEGATIVE COORDS!!!!!!!!!" << endl;
+    }
+
+    bool matchAt(shared_ptr<Beaker<V>> beaker, gridCoordinateT x, gridCoordinateT y, RotationMatrix2D<gridCoordinateT> &rotationMatrix) {
+        for (gridCoordinateT i = 0; i < beaker->gridWidth_; i++) {
+            for (gridCoordinateT j = 0; j < beaker->gridHeight_; j++) {
+                V ruleVal = beaker->gridControl_->getPixelAt(i, j);
+
+                gridCoordinatePairT gridOffset = std::make_pair(i,j);
+                gridOffset = rotationMatrix.rotateCoordinates(gridOffset);
+
+                gridCoordinateT gx = x + gridOffset.first;
+                gridCoordinateT gy = y + gridOffset.second;
+                gridCoordinatePairT gp = std::make_pair(gx, gy);
+                wrapCoordinates(gp);
+                V gridVal = this->gridControl_->getPixelAt(gp.first, gp.second);
+                // cout << i << ", " << j << ":: " << int(ruleVal) << "|| " << gp.first << ", "
+                //      << gp.second << ":: " << int(gridVal) << endl;
+                if (gridVal != ruleVal) return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * <<< OLD CODE BELOW THIS LINE
+     */
 
     Beaker<unsigned char> *findRuleByName(const std::string &ruleName) {
         auto nameIs = [&ruleName](Beaker *b) { return (b->name_ == ruleName); };
@@ -225,25 +263,14 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         std::vector<gridCoordinatesValueTripletT> pixels;
         for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
             for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
-                // V pixelVal = this->beakerNode_->beakerCanvas_->getValXY(i, j);
+                V pixelVal = this->gridControl_->getPixelAt(i, j);
+                cout << i << ", " << j << ": " << pixelVal << endl;
                 gridCoordinatePairT xy = std::pair(i, j);
                 gridCoordinatesValueTripletT xyv;
                 if (this->isReactionRule_) {
                     // addPixelToRotationMaps(xy, pixelVal);
                 }
             }
-        }
-    }
-
-    void printTest() {
-        cout << "C++ method called by pressing button." << endl;
-        if (this->gridControl_) {
-            cout << "GrinControl exists!" << endl;
-            this->gridControl_->printNonZeroPixels();
-            V testPixel = this->gridControl_->getPixelAt(2, 1);
-            cout << "Test pixel (2,1) = " << testPixel << endl;
-            testPixel = this->gridControl_->setPixelAt(3, 2, 2, true);
-            cout << "Setting pixel at (3,2) to 2, old pixel was " << testPixel << endl;
         }
     }
 
@@ -444,18 +471,37 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      */
     void update() {
-        for (auto reactionRule : reactionRules_) {
-            cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
-            reactionRule->update();
-            cout << "update() END Reaction rule address: " << reactionRule << endl;
+        if (!isReactionRule_) {
+            for (auto reactionRule : reactionRules_) {
+                cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
+                for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
+                    for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
+                        if (matchAt(reactionRule, i, j, *r0__)) {
+                            cout << "(r = 0) MATCH: " << i << ", " << j << endl;
+                        }
+                        if (matchAt(reactionRule, i, j, *r90__)) {
+                            cout << "(r = 90) MATCH: " << i << ", " << j << endl;
+                        }
+                        if (matchAt(reactionRule, i, j, *r180__)) {
+                            cout << "(r = 180) MATCH: " << i << ", " << j << endl;
+                        }
+                        if (matchAt(reactionRule, i, j, *r270__)) {
+                            cout << "(r = 270) MATCH: " << i << ", " << j << endl;
+                        }
+                    }
+                }
+                // matchAt(reactionRule, 57, 39, 1, 1);
+                //  cout << "update() END Reaction rule address: " << reactionRule << endl;
+            }
+            // makePixelList();
+            // sortPixelLists();
         }
+
         // if (clean_) return;
-        this->successionMap_.clear();
 
-        makePixelList();
-        sortPixelLists();
+        // this->successionMap_.clear();
 
-        clean_ = true;
+        // clean_ = true;
     }
 
     void multiMatch(Beaker<V> &reactionRule, RotationMatrix2D<gridCoordinateT> *rm) {
@@ -560,15 +606,15 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     int iterationCount_ = 0;
     //!< Counter that advances every time the rules are applied to the grid.
 
-    std::vector<Beaker *> reactionRules_;
+    std::vector<shared_ptr<Beaker<V>>> reactionRules_;
 
     Beaker *parentBeaker_;
 
-    Beaker *successor_ = this;    //!< The pattern we replace this one with.
-    int successorOffsetX_ = 0;    //!< X offset of replacement pattern.
-    int successorOffsetY_ = 0;    //!< Y offset of replacement pattern.
-    int successionPriority_ = 1;  //!< Priority assigned to pixels replaced by application of
-                                  //!< this pattern. Lower values take precedence.
+    shared_ptr<Beaker<V>> successor_;  // = this;    //!< The pattern we replace this one with.
+    int successorOffsetX_ = 0;         //!< X offset of replacement pattern.
+    int successorOffsetY_ = 0;         //!< Y offset of replacement pattern.
+    int successionPriority_ = 1;       //!< Priority assigned to pixels replaced by application of
+                                       //!< this pattern. Lower values take precedence.
 
     int ruleCount_ = 0;
 
@@ -583,7 +629,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
 EMSCRIPTEN_BINDINGS(PixelReactor) {
     emscripten::class_<Beaker<unsigned char>>("Beaker")
-        .function("printTest", &Beaker<unsigned char>::printTest, emscripten::allow_raw_pointers())
         .function("toggleClean", &Beaker<unsigned char>::toggleClean,
                   emscripten::allow_raw_pointers())
         .function("clearGrid", &Beaker<unsigned char>::clearGrid, emscripten::allow_raw_pointers())
@@ -620,7 +665,8 @@ struct PixelReactor {
     PixelReactor(int defaultRuleframeWidth = 5, int defaultRuleframeHeight = 3) {
         cout << "I'm a Pixelreactor. I need to be redone completely 2!" << endl;
         signalBuilder_ = make_shared<cl2::SignalBuilder>();
-        mainBeaker_ = make_shared<Beaker<unsigned char>>(signalBuilder_, 60, 40, 600, 400, "Beaker");
+        mainBeaker_ =
+            make_shared<Beaker<unsigned char>>(signalBuilder_, 60, 40, 600, 400, "Beaker");
         mainBeaker_->finalize();
 
         // mainBeaker_->finalize();
