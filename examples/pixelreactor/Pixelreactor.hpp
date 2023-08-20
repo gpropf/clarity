@@ -269,8 +269,16 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             cout << "Reaction rule '" << reactionRule->name_ << "'" << endl;
             for (int i = 0; i < 4; i++) {
                 for (const auto &[x, y] : reactionRule->matchLists[i]) {
-                    cout << "Rot: " << i << " - " << x << ", " << y << endl;
+                    cout << "Rot: " << i * 90 << " - " << x << ", " << y << endl;
                 }
+            }
+        }
+    }
+
+    void purgeMatchLists() {
+        for (auto reactionRule : reactionRules_) {
+            for (int i = 0; i < 4; i++) {
+                reactionRule->matchLists[i].clear();
             }
         }
     }
@@ -283,9 +291,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     void update() {
         populateMatchLists();
         printMatchLists();
-        for (int i = 0; i < 4; i++) {
-            matchLists[i].clear();
-        }
+        purgeMatchLists();
     }
 
     /**
