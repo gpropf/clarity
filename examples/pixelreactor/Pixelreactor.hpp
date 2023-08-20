@@ -74,6 +74,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     typedef std::pair<gridCoordinateT, gridCoordinateT> gridCoordinatePairT;
     typedef std::pair<gridCoordinatePairT, V> gridCoordinatesValueTripletT;
 
+    std::vector<gridCoordinatePairT> matchLists[4];
+
     RotationMatrix2D<gridCoordinateT> *r0__, *r90__, *r180__,
         *r270__;  //!< I tried to make these static const class members because they're the same for
                   //!< all Beakers but ran into huge problems getting link errors and a lot of
@@ -200,6 +202,54 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             }
         }
         return true;
+    }
+
+    void populateMatchLists() {
+        if (isReactionRule_) return;
+        for (auto reactionRule : reactionRules_) {
+            cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
+            for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
+                for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
+                    if (matchAt(reactionRule, i, j, r0)) {
+                        // cout << "(r = 0) MATCH: " << i << ", " << j << endl;
+                        matchLists[0].push_back(std::make_pair(i, j));
+                    }
+                    if (matchAt(reactionRule, i, j, r90)) {
+                        // cout << "(r = 90) MATCH: " << i << ", " << j << endl;
+                        matchLists[1].push_back(std::make_pair(i, j));
+                    }
+                    if (matchAt(reactionRule, i, j, r180)) {
+                        // cout << "(r = 180) MATCH: " << i << ", " << j << endl;
+                        matchLists[2].push_back(std::make_pair(i, j));
+                    }
+                    if (matchAt(reactionRule, i, j, r270)) {
+                        // cout << "(r = 270) MATCH: " << i << ", " << j << endl;
+                        matchLists[3].push_back(std::make_pair(i, j));
+                    }
+                }
+            }
+        }
+    }
+
+    void printMatchLists() {
+        for (int i = 0; i < 4; i++) {
+            for (const auto &[x, y] : matchLists[i]) {
+                cout << "Rot: " << i << " - " << x << ", " << y << endl;
+            }
+        }
+    }
+
+    /**
+     * @brief Performs basic hygeine functions to maintain the lists that are used in matching and
+     * iteration.
+     *
+     */
+    void update() {
+        populateMatchLists();
+        printMatchLists();
+        for (int i = 0; i < 4; i++) {
+            matchLists[i].clear();
+        }
     }
 
     /**
@@ -471,49 +521,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << "BEAKER IS DIRTY!" << endl;
         // auto [x, y, pixelVal] = this->beakerNode_->beakerCanvas_->getLatestPixel();
         // cout << "LATEST PIXEL: " << x << ", " << y << " : " << int(pixelVal) << endl;
-    }
-
-    /**
-     * @brief Performs basic hygeine functions to maintain the lists that are used in matching and
-     * iteration.
-     *
-     */
-    void update() {
-        if (!isReactionRule_) {
-            for (auto reactionRule : reactionRules_) {
-                cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
-                for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
-                    for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
-                        if (matchAt(reactionRule, i, j, r0)) {
-                            cout << "(r = 0) MATCH: " << i << ", " << j << endl;
-                        }
-                        if (matchAt(reactionRule, i, j, r90)) {
-                            cout << "(r = 90) MATCH: " << i << ", " << j << endl;
-                        }
-                        if (matchAt(reactionRule, i, j, r180)) {
-                            cout << "(r = 180) MATCH: " << i << ", " << j << endl;
-                        }
-                        if (matchAt(reactionRule, i, j, r270)) {
-                            cout << "(r = 270) MATCH: " << i << ", " << j << endl;
-                        }
-                    }
-                }
-                // matchAt(reactionRule, 57, 39, 1, 1);
-                //  cout << "update() END Reaction rule address: " << reactionRule << endl;
-            }
-            // makePixelList();
-            // sortPixelLists();
-        }
-
-        // if (clean_) return;
-
-        // this->successionMap_.clear();
-
-        // clean_ = true;
-    }
-
-    void populateMatchLists() {
-        
     }
 
     void multiMatch(Beaker<V> &reactionRule, RotationMatrix2D<gridCoordinateT> *rm) {
