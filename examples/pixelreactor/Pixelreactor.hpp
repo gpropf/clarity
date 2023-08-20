@@ -36,16 +36,23 @@ struct RotationMatrix2D {
     RotationMatrix2D(V r1c1, V r1c2, V r2c1, V r2c2, int angle)
         : r1c1_(r1c1), r1c2_(r1c2), r2c1_(r2c1), r2c2_(r2c2), angle_(angle) {}
 
-    std::pair<V, V> rotateCoordinates(std::pair<V, V> coords) {
+    std::pair<V, V> rotateCoordinates(std::pair<V, V> coords) const {
         auto [x, y] = coords;
         V xprime = r1c1_ * x + r1c2_ * y;
         V yprime = r2c1_ * x + r2c2_ * y;
         return std::pair(xprime, yprime);
     }
+
+    // static const RotationMatrix2D<V> rr0; // = RotationMatrix2D<V>(1, 0, 0, 1, 0);
 };
 
-template <typename U>
-class Beaker;
+const RotationMatrix2D r0 = RotationMatrix2D(1, 0, 0, 1, 0);
+const RotationMatrix2D r90 = RotationMatrix2D(0, -1, 1, 0, 90);
+const RotationMatrix2D r180 = RotationMatrix2D(-1, 0, 0, -1, 180);
+const RotationMatrix2D r270 = RotationMatrix2D(0, 1, -1, 0, 270);
+
+// template <typename U>
+// class Beaker;
 
 /**
  * @brief Represents a single "reaction vessel" in which our experiments can take place. The
@@ -170,15 +177,16 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             p.second = gridHeight_ + p.second;
         else
             p.second = p.second % gridHeight_;
-       // if (p.first < 0 || p.second < 0) cout << "NEGATIVE COORDS!!!!!!!!!" << endl;
+        // if (p.first < 0 || p.second < 0) cout << "NEGATIVE COORDS!!!!!!!!!" << endl;
     }
 
-    bool matchAt(shared_ptr<Beaker<V>> beaker, gridCoordinateT x, gridCoordinateT y, RotationMatrix2D<gridCoordinateT> &rotationMatrix) {
+    bool matchAt(shared_ptr<Beaker<V>> beaker, gridCoordinateT x, gridCoordinateT y,
+                 const RotationMatrix2D<gridCoordinateT> &rotationMatrix) {
         for (gridCoordinateT i = 0; i < beaker->gridWidth_; i++) {
             for (gridCoordinateT j = 0; j < beaker->gridHeight_; j++) {
                 V ruleVal = beaker->gridControl_->getPixelAt(i, j);
 
-                gridCoordinatePairT gridOffset = std::make_pair(i,j);
+                gridCoordinatePairT gridOffset = std::make_pair(i, j);
                 gridOffset = rotationMatrix.rotateCoordinates(gridOffset);
 
                 gridCoordinateT gx = x + gridOffset.first;
@@ -476,16 +484,16 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
                 for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
                     for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
-                        if (matchAt(reactionRule, i, j, *r0__)) {
+                        if (matchAt(reactionRule, i, j, r0)) {
                             cout << "(r = 0) MATCH: " << i << ", " << j << endl;
                         }
-                        if (matchAt(reactionRule, i, j, *r90__)) {
+                        if (matchAt(reactionRule, i, j, r90)) {
                             cout << "(r = 90) MATCH: " << i << ", " << j << endl;
                         }
-                        if (matchAt(reactionRule, i, j, *r180__)) {
+                        if (matchAt(reactionRule, i, j, r180)) {
                             cout << "(r = 180) MATCH: " << i << ", " << j << endl;
                         }
-                        if (matchAt(reactionRule, i, j, *r270__)) {
+                        if (matchAt(reactionRule, i, j, r270)) {
                             cout << "(r = 270) MATCH: " << i << ", " << j << endl;
                         }
                     }
@@ -502,6 +510,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // this->successionMap_.clear();
 
         // clean_ = true;
+    }
+
+    void populateMatchLists() {
+        
     }
 
     void multiMatch(Beaker<V> &reactionRule, RotationMatrix2D<gridCoordinateT> *rm) {
