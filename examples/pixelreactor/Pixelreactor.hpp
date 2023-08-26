@@ -187,7 +187,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         shared_ptr<Beaker<unsigned char>> reactionRule = make_shared<Beaker<unsigned char>>(
             this->signalBuilder_, this->ruleGridWidth_, this->ruleGridHeight_, 150, 100,
             "rule" + clto_str(++this->ruleCount_), true);
-        reactionRule->parentBeaker_ = this;
+        reactionRule->parentBeaker_ = getptr();
         this->reactionRules_.push_back(reactionRule);
         reactionRule->finalize();
 
@@ -671,7 +671,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     std::vector<shared_ptr<Beaker<V>>> reactionRules_;
 
-    Beaker *parentBeaker_;
+    shared_ptr<Beaker> parentBeaker_;
 
     shared_ptr<Beaker<V>> successor_;  // = this;    //!< The pattern we replace this one with.
     int successorOffsetX_ = 0;         //!< X offset of replacement pattern.
