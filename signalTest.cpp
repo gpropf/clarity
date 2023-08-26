@@ -52,8 +52,8 @@ class TestObj {
      *
      * @param mouseLocation
      */
-    void mouseAcceptorTestMethod(const std::pair<double, double> &mouseLocation) {
-        cout << "TestObj::mouseAcceptorTestMethod(): x = " << mouseLocation.first
+    void mouseClickAcceptorMethod(const std::pair<double, double> &mouseLocation) {
+        cout << "TestObj::mouseClickAcceptorMethod(): x = " << mouseLocation.first
              << ", y = " << mouseLocation.second << endl;
     }
 
@@ -136,7 +136,7 @@ int main() {
 
     auto svgMouseClickAcceptor =
         make_shared<ObjectAcceptor<std::pair<double, double>, TestObj>>(tobjSptr);
-    svgMouseClickAcceptor->setSignalAcceptorMethod(&TestObj::mouseAcceptorTestMethod);
+    svgMouseClickAcceptor->setSignalAcceptorMethod(&TestObj::mouseClickAcceptorMethod);
 
     signalBuilder->connect<std::pair<double, double>>(mouseSignal, svgMouseClickAcceptor);
 

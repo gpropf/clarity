@@ -641,6 +641,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     shared_ptr<cl2::SignalBuilder> signalBuilder_;
     shared_ptr<GridControl<V>> gridControl_;
     shared_ptr<WebElementSignal<std::string>> nameInput_;
+    shared_ptr<WebElementSignal<std::string>> successorNameInput_;
     shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> nameInputLoop_;
     // shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
     shared_ptr<WebElementSignal<std::string>> newRuleButton_;

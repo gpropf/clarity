@@ -40,6 +40,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     shared_ptr<ObjectAcceptor<std::string, GridControl<PixelT>>> newColorAcceptor_ = nullptr;
     shared_ptr<ObjectEmitter<PixelT, GridControl<PixelT>>> colorEmitter_ = nullptr;
     shared_ptr<CppLambda<PixelT, std::string>> pixel2StringConverter_ = nullptr;
+    shared_ptr<SignalBuilder> signalBuilder_ = nullptr;
 
    protected:
     int calculateGridCellAddress(int x, int y) const {
@@ -83,7 +84,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     GridControl(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight,
                 shared_ptr<SignalBuilder> signalBuilder, const std::string &id = "",
                 val parentDOMElement = val::null())
-        : gridWidth_(gridWidth), gridHeight_(gridHeight) {
+        : gridWidth_(gridWidth), gridHeight_(gridHeight), signalBuilder_(signalBuilder) {
         id_ = id;
         svgid_ = this->id_ + "-svg";
         auto svg = cl2::SVG("svg1", pixelWidth, pixelHeight, svgid_, parentDOMElement);
@@ -121,7 +122,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         // GridControl<PixelT>>>();
         svgMouseClickAcceptor_ =
             make_shared<ObjectAcceptor<std::pair<double, double>, GridControl>>();
-        svgMouseClickAcceptor_->setSignalAcceptorMethod(&GridControl::mouseAcceptorTestMethod);
+        svgMouseClickAcceptor_->setSignalAcceptorMethod(&GridControl::mouseClickAcceptorMethod);
 
         svgMousePositionAcceptor_ =
             make_shared<ObjectAcceptor<std::pair<double, double>, GridControl>>();
@@ -151,6 +152,9 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
      */
     void finalize() {
         this->svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
+        //this->signalBuilder_->connect<std::pair<double, double>>(this->svgMouseClickAcceptor_, this->shared_from_this());
+
+
         this->svgMousePositionAcceptor_->setObjectPointer(this->shared_from_this());
         this->newColorAcceptor_->setObjectPointer(this->shared_from_this());
         this->colorEmitter_->setObjectPointer(this->shared_from_this());
@@ -216,12 +220,12 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     }
 
     void mousePositionAcceptor(const std::pair<double, double> &mouseLocation) {
-        cout << "GridControl::mouseAcceptorTestMethod(): x = " << mouseLocation.first
+        cout << "GridControl::mousePositionAcceptor(): x = " << mouseLocation.first
              << ", y = " << mouseLocation.second << endl;
     }
 
-    void mouseAcceptorTestMethod(const std::pair<double, double> &mouseLocation) {
-        cout << "GridControl::mouseAcceptorTestMethod(): x = " << mouseLocation.first
+    void mouseClickAcceptorMethod(const std::pair<double, double> &mouseLocation) {
+        cout << "GridControl::mouseClickAcceptorMethod(): x = " << mouseLocation.first
              << ", y = " << mouseLocation.second << endl;
 
         val document = val::global("document");
