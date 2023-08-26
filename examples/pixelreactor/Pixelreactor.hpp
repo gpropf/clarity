@@ -74,6 +74,67 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     typedef std::pair<gridCoordinateT, gridCoordinateT> gridCoordinatePairT;
     typedef std::pair<gridCoordinatePairT, V> gridCoordinatesValueTripletT;
 
+   protected:
+    shared_ptr<cl2::SignalBuilder> signalBuilder_;
+    shared_ptr<GridControl<V>> gridControl_;
+    shared_ptr<WebElementSignal<std::string>> nameInput_;
+    shared_ptr<WebElementSignal<std::string>> successorNameInput_;
+    shared_ptr<WebElementSignal<std::string>> successorPriorityInput_;
+    shared_ptr<WebElementSignal<std::string>> successorOffsetXInput_;
+    shared_ptr<WebElementSignal<std::string>> successorOffsetYInput_;
+    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> nameInputLoop_;
+    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorNameInputLoop_;
+    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorPriorityInputLoop_;
+    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorOffsetXInputLoop_;
+    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorOffsetYInputLoop_;
+    // shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
+    shared_ptr<WebElementSignal<std::string>> newRuleButton_;
+    shared_ptr<WebElementSignal<std::string>> iterateButton_;
+    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
+    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> iterateAcceptor_;
+    std::string name_;
+    bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
+                                   //!< for an enclosing Beaker.
+
+    int gridPixelWidth_ = 600;   //!< Width in pixels of beaker grid.
+    int gridPixelHeight_ = 400;  //!< Height in pixels of beaker grid.
+
+    int gridWidth_ = 60;   //!< Width of beaker grid in cells.
+    int gridHeight_ = 40;  //!< Height of beaker grid in cells.
+
+    int ruleGridWidth_ = 5;   //!< Width of new rule grid in cells.
+    int ruleGridHeight_ = 3;  //!< Height of new rule grid in cells.
+
+    // V *gridArray_;  //!< The actual grid data to be used by the CanvasGrid in BeakerNode.
+
+    int playMode_ = 0;
+
+    std::map<gridCoordinatePairT, std::vector<valuePriorityPairT>> successionMap_;
+
+    int iterationCount_ = 0;
+    //!< Counter that advances every time the rules are applied to the grid.
+
+    std::vector<shared_ptr<Beaker<V>>> reactionRules_;
+
+    shared_ptr<Beaker> parentBeaker_;
+
+    shared_ptr<Beaker<V>> successor_;  // = this;    //!< The pattern we replace this one with.
+    int successorOffsetX_ = 0;         //!< X offset of replacement pattern.
+    int successorOffsetY_ = 0;         //!< Y offset of replacement pattern.
+    int successorPriority_ = 10;       //!< Priority assigned to pixels replaced by application of
+                                       //!< this pattern. Lower values take precedence.
+
+    int ruleCount_ = 0;
+
+    bool clean_ = true;  //!< We set this to false when the user modifies a rule or the main grid.
+
+    typedef std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMapT;
+
+    std::map<int, valueToCoordinateMapT> rotationToPixelListsMap_;
+    std::map<int, std::vector<std::pair<V, std::vector<gridCoordinatePairT>>>>
+        rotationToSortedPixelListsMap_;
+
+   public:
     std::vector<gridCoordinatePairT> matchLists[4];
 
     RotationMatrix2D<gridCoordinateT> *r0__, *r90__, *r180__,
@@ -104,6 +165,52 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 &Beaker<unsigned char>::getName);
 
             signalBuilder_->connectLoop(nameInputLoop_);
+
+            successorNameInput_ =
+                signalBuilder_->withAttributes({{"class", val("medium_width")}})
+                    .textInputWSS<std::string>("successorNameInput", "Successor Rule Name", false);
+
+            successorNameInputLoop_ =
+                make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+                    getptr(), successorNameInput_, &Beaker<unsigned char>::setSuccessorName,
+                    &Beaker<unsigned char>::getSuccessorName);
+
+            signalBuilder_->connectLoop(successorNameInputLoop_);
+
+            successorPriorityInput_ =
+                signalBuilder_->withAttributes({{"class", val("small_width")}})
+                    .textInputWSS<std::string>("successorPriorityInput", "Successor Priority",
+                                               false);
+
+            successorPriorityInputLoop_ =
+                make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+                    getptr(), successorPriorityInput_, &Beaker<unsigned char>::setSuccessorPriority,
+                    &Beaker<unsigned char>::getSuccessorPriority);
+
+            signalBuilder_->connectLoop(successorPriorityInputLoop_);
+
+            successorOffsetXInput_ =
+                signalBuilder_->withAttributes({{"class", val("small_width")}})
+                    .textInputWSS<std::string>("successorOffsetXInput", "SX", false);
+
+            successorOffsetXInputLoop_ =
+                make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+                    getptr(), successorOffsetXInput_, &Beaker<unsigned char>::setSuccessorOffsetX,
+                    &Beaker<unsigned char>::getSuccessorOffsetX);
+
+            signalBuilder_->connectLoop(successorOffsetXInputLoop_);
+
+            successorOffsetYInput_ =
+                signalBuilder_->withAttributes({{"class", val("small_width")}})
+                    .textInputWSS<std::string>("successorOffsetYInput", "SY", false);
+
+            successorOffsetYInputLoop_ =
+                make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+                    getptr(), successorOffsetYInput_, &Beaker<unsigned char>::setSuccessorOffsetY,
+                    &Beaker<unsigned char>::getSuccessorOffsetY);
+
+            signalBuilder_->connectLoop(successorOffsetYInputLoop_);
+
         } else {
             objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
             objAcceptor_->setSignalAcceptorMethod(&Beaker::makeNewReactionRuleSignal);
@@ -170,12 +277,55 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     void setName(const std::string &v) {
         name_ = v;
-        cout << "SETTING name_ to " << v << endl;
+        cout << "SETTING name to " << v << endl;
     }
 
     std::string getName() {
-        cout << "GETTING name_ : '" << name_ << "'" << endl;
+        cout << "GETTING name : '" << name_ << "'" << endl;
         return name_;
+    }
+
+    void setSuccessorName(const std::string &v) {
+        name_ = v;
+        cout << "SETTING successor name to " << v << endl;
+    }
+
+    std::string getSuccessorName() {
+        cout << "GETTING successor name : '" << name_ << "'" << endl;
+        return name_;
+    }
+
+    void setSuccessorPriority(const std::string &v) {
+        successorPriority_ = std::stoi(v);
+        cout << "SETTING successor priority to " << v << endl;
+    }
+
+    std::string getSuccessorPriority() {
+        std::string outstr = std::to_string(successorPriority_);
+        cout << "GETTING successor priority : '" << outstr << "'" << endl;
+        return outstr;
+    }
+
+    void setSuccessorOffsetX(const std::string &v) {
+        successorOffsetX_ = std::stoi(v);
+        cout << "SETTING successor offsetX to " << v << endl;
+    }
+
+    std::string getSuccessorOffsetX() {
+        std::string outstr = std::to_string(successorOffsetX_);
+        cout << "GETTING successor offsetX : '" << outstr << "'" << endl;
+        return outstr;
+    }
+
+    void setSuccessorOffsetY(const std::string &v) {
+        successorOffsetY_ = std::stoi(v);
+        cout << "SETTING successor offsetY to " << v << endl;
+    }
+
+    std::string getSuccessorOffsetY() {
+        std::string outstr = std::to_string(successorOffsetY_);
+        cout << "GETTING successor offsetY : '" << outstr << "'" << endl;
+        return outstr;
     }
 
     /**
@@ -294,16 +444,16 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         purgeMatchLists();
     }
 
+    shared_ptr<Beaker<unsigned char>> findRuleByName(const std::string &ruleName) {
+        auto nameIs = [&ruleName](shared_ptr<Beaker> b) { return (b->name_ == ruleName); };
+        auto it = find_if(reactionRules_.begin(), reactionRules_.end(), nameIs);
+        if (it == reactionRules_.end()) return nullptr;
+        return it;
+    }
+
     /**
      * <<< OLD CODE BELOW THIS LINE
      */
-
-    Beaker<unsigned char> *findRuleByName(const std::string &ruleName) {
-        auto nameIs = [&ruleName](Beaker *b) { return (b->name_ == ruleName); };
-        auto it = find_if(reactionRules_.begin(), reactionRules_.end(), nameIs);
-        if (it == reactionRules_.end()) return nullptr;
-        return *it;
-    }
 
     void initStandardRotationMatrices() {
         r0__ = new RotationMatrix2D<gridCoordinateT>(1, 0, 0, 1, 0);
@@ -521,7 +671,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 px += sox + mx;
                 py += soy + my;
                 auto [ppx, ppy] = this->beakerNode_->beakerCanvas_->wrapCoordiates(px, py);
-                valuePriorityPairT vp = std::pair(pixelVal, reactionRule.successionPriority_);
+                valuePriorityPairT vp = std::pair(pixelVal, reactionRule.successorPriority_);
                 successionMap_[std::pair(ppx, ppy)].push_back(vp);
             }
         }
@@ -636,59 +786,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     static void makeNewReactionRule_st(Beaker *b) { b->makeNewReactionRule(); }
-
-   protected:
-    shared_ptr<cl2::SignalBuilder> signalBuilder_;
-    shared_ptr<GridControl<V>> gridControl_;
-    shared_ptr<WebElementSignal<std::string>> nameInput_;
-    shared_ptr<WebElementSignal<std::string>> successorNameInput_;
-    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> nameInputLoop_;
-    // shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
-    shared_ptr<WebElementSignal<std::string>> newRuleButton_;
-    shared_ptr<WebElementSignal<std::string>> iterateButton_;
-    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
-    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> iterateAcceptor_;
-    std::string name_;
-    bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
-                                   //!< for an enclosing Beaker.
-
-    int gridPixelWidth_ = 600;   //!< Width in pixels of beaker grid.
-    int gridPixelHeight_ = 400;  //!< Height in pixels of beaker grid.
-
-    int gridWidth_ = 60;   //!< Width of beaker grid in cells.
-    int gridHeight_ = 40;  //!< Height of beaker grid in cells.
-
-    int ruleGridWidth_ = 5;   //!< Width of new rule grid in cells.
-    int ruleGridHeight_ = 3;  //!< Height of new rule grid in cells.
-
-    // V *gridArray_;  //!< The actual grid data to be used by the CanvasGrid in BeakerNode.
-
-    int playMode_ = 0;
-
-    std::map<gridCoordinatePairT, std::vector<valuePriorityPairT>> successionMap_;
-
-    int iterationCount_ = 0;
-    //!< Counter that advances every time the rules are applied to the grid.
-
-    std::vector<shared_ptr<Beaker<V>>> reactionRules_;
-
-    shared_ptr<Beaker> parentBeaker_;
-
-    shared_ptr<Beaker<V>> successor_;  // = this;    //!< The pattern we replace this one with.
-    int successorOffsetX_ = 0;         //!< X offset of replacement pattern.
-    int successorOffsetY_ = 0;         //!< Y offset of replacement pattern.
-    int successionPriority_ = 1;       //!< Priority assigned to pixels replaced by application of
-                                       //!< this pattern. Lower values take precedence.
-
-    int ruleCount_ = 0;
-
-    bool clean_ = true;  //!< We set this to false when the user modifies a rule or the main grid.
-
-    typedef std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMapT;
-
-    std::map<int, valueToCoordinateMapT> rotationToPixelListsMap_;
-    std::map<int, std::vector<std::pair<V, std::vector<gridCoordinatePairT>>>>
-        rotationToSortedPixelListsMap_;
 };
 
 EMSCRIPTEN_BINDINGS(PixelReactor) {
