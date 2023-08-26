@@ -76,20 +76,20 @@ class CppLambda : public SignalAcceptor<S>, public SignalEmitter<Sout> {
 
     CppLambda(std::function<Sout(S s)> lambda) : lambda_(lambda) {}
 
-    void printState() {
-        cout << "SignalAcceptor::currentValue_: " << SignalAcceptor<S>::getCurrentValue()
-             << ", SignalEmitter::currentValue_: " << SignalEmitter<Sout>::getCurrentValue()
-             << endl;
-    }
+    // void printState() {
+    //     cout << "SignalAcceptor::currentValue_: " << SignalAcceptor<S>::getCurrentValue()
+    //          << ", SignalEmitter::currentValue_: " << SignalEmitter<Sout>::getCurrentValue()
+    //          << endl;
+    // }
 
     virtual bool accept(const S& s) {
         SignalAcceptor<S>::accept(s);
-        printState();
+        //printState();
         Sout sOut = lambda_(s);
         cout << "OUTPUT of CppLambda: " << sOut << endl;
 
         this->emit(sOut);
-        printState();
+        //printState();
         // if (this->output_ != nullptr) return this->output_->accept(sOut);
         return false;
     }
