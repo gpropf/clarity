@@ -536,7 +536,14 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     /**
-     * <<< OLD CODE BELOW THIS LINE
+     * <<< This block of repeats is meant to be easy for me to see on the right scroll control in VScode.
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
      */
 
     void initStandardRotationMatrices() {
