@@ -155,11 +155,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
    public:
     std::vector<gridCoordinatePairT> matchLists[4];
 
-    RotationMatrix2D<gridCoordinateT> *r0__, *r90__, *r180__,
-        *r270__;  //!< I tried to make these static const class members because they're the same for
-                  //!< all Beakers but ran into huge problems getting link errors and a lot of
-                  //!< errors about forward template definitions. The small space and time savings
-                  //!< wasn't worth it.
+    // RotationMatrix2D<gridCoordinateT> *r0__, *r90__, *r180__,
+    //     *r270__;  //!< I tried to make these static const class members because they're the same for
+    //               //!< all Beakers but ran into huge problems getting link errors and a lot of
+    //               //!< errors about forward template definitions. The small space and time savings
+    //               //!< wasn't worth it.
 
     /**
      * @brief Adapted from this doc:
@@ -259,7 +259,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
           gridPixelHeight_(gridPixelHeight),
           name_(name),
           isReactionRule_(isReactionRule) {
-        initStandardRotationMatrices();
+        //initStandardRotationMatrices();
         cout << "Beaker created!" << endl;
 
         // SignalBuilder &sb = *signalBuilder_;
@@ -540,10 +540,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      */
 
     void initStandardRotationMatrices() {
-        r0__ = new RotationMatrix2D<gridCoordinateT>(1, 0, 0, 1, 0);
-        r90__ = new RotationMatrix2D<gridCoordinateT>(0, -1, 1, 0, 90);
-        r180__ = new RotationMatrix2D<gridCoordinateT>(-1, 0, 0, -1, 180);
-        r270__ = new RotationMatrix2D<gridCoordinateT>(0, 1, -1, 0, 270);
+        // r0__ = new RotationMatrix2D<gridCoordinateT>(1, 0, 0, 1, 0);
+        // r90__ = new RotationMatrix2D<gridCoordinateT>(0, -1, 1, 0, 90);
+        // r180__ = new RotationMatrix2D<gridCoordinateT>(-1, 0, 0, -1, 180);
+        // r270__ = new RotationMatrix2D<gridCoordinateT>(0, 1, -1, 0, 270);
     }
 
     void initPixelListMap() {
@@ -559,13 +559,13 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     void addPixelToRotationMaps(gridCoordinatePairT coordinates, V pixelValue) {
-        rotationToPixelListsMap_[0][pixelValue].push_back(coordinates);
-        gridCoordinatePairT coordinates90 = r90__->rotateCoordinates(coordinates);
-        rotationToPixelListsMap_[90][pixelValue].push_back(coordinates90);
-        gridCoordinatePairT coordinates180 = r180__->rotateCoordinates(coordinates);
-        rotationToPixelListsMap_[180][pixelValue].push_back(coordinates180);
-        gridCoordinatePairT coordinates270 = r270__->rotateCoordinates(coordinates);
-        rotationToPixelListsMap_[270][pixelValue].push_back(coordinates270);
+        // rotationToPixelListsMap_[0][pixelValue].push_back(coordinates);
+        // gridCoordinatePairT coordinates90 = r90__->rotateCoordinates(coordinates);
+        // rotationToPixelListsMap_[90][pixelValue].push_back(coordinates90);
+        // gridCoordinatePairT coordinates180 = r180__->rotateCoordinates(coordinates);
+        // rotationToPixelListsMap_[180][pixelValue].push_back(coordinates180);
+        // gridCoordinatePairT coordinates270 = r270__->rotateCoordinates(coordinates);
+        // rotationToPixelListsMap_[270][pixelValue].push_back(coordinates270);
     }
 
     /**
@@ -700,38 +700,38 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     void matchAndSucceed(Beaker<unsigned char> &reactionRule, gridCoordinatePairT gridCoordinates) {
-        bool mbr = matchesAtByRotation(reactionRule, r0__, gridCoordinates);
-        auto [i, j] = gridCoordinates;
+        // bool mbr = matchesAtByRotation(reactionRule, r0__, gridCoordinates);
+        // auto [i, j] = gridCoordinates;
 
-        if (mbr) {
-            cout << "Using matchesAtByRotation() there is a match at " << i << ", " << j
-                 << " for 0 degree rotatation." << endl;
-            laydownMatchPixels2(reactionRule, gridCoordinates, r0__);
-        }
+        // if (mbr) {
+        //     cout << "Using matchesAtByRotation() there is a match at " << i << ", " << j
+        //          << " for 0 degree rotatation." << endl;
+        //     laydownMatchPixels2(reactionRule, gridCoordinates, r0__);
+        // }
 
-        mbr = matchesAtByRotation(reactionRule, r90__, gridCoordinates);
+        // mbr = matchesAtByRotation(reactionRule, r90__, gridCoordinates);
 
-        if (mbr) {
-            cout << "Using matchesAtByRotation() there is a match at " << i << ", " << j
-                 << " for 90 degree rotatation." << endl;
-            laydownMatchPixels2(reactionRule, gridCoordinates, r90__);
-        }
+        // if (mbr) {
+        //     cout << "Using matchesAtByRotation() there is a match at " << i << ", " << j
+        //          << " for 90 degree rotatation." << endl;
+        //     laydownMatchPixels2(reactionRule, gridCoordinates, r90__);
+        // }
 
-        mbr = matchesAtByRotation(reactionRule, r180__, gridCoordinates);
+        // mbr = matchesAtByRotation(reactionRule, r180__, gridCoordinates);
 
-        if (mbr) {
-            cout << "Using matchesAtByRotation() there is a match at " << i << ", " << j
-                 << " for 180 degree rotatation." << endl;
-            laydownMatchPixels2(reactionRule, gridCoordinates, r180__);
-        }
+        // if (mbr) {
+        //     cout << "Using matchesAtByRotation() there is a match at " << i << ", " << j
+        //          << " for 180 degree rotatation." << endl;
+        //     laydownMatchPixels2(reactionRule, gridCoordinates, r180__);
+        // }
 
-        mbr = matchesAtByRotation(reactionRule, r270__, gridCoordinates);
+        // mbr = matchesAtByRotation(reactionRule, r270__, gridCoordinates);
 
-        if (mbr) {
-            cout << "Using matchesAtByRotation() there is a match at " << i << ", " << j
-                 << " for 270 degree rotatation." << endl;
-            laydownMatchPixels2(reactionRule, gridCoordinates, r270__);
-        }
+        // if (mbr) {
+        //     cout << "Using matchesAtByRotation() there is a match at " << i << ", " << j
+        //          << " for 270 degree rotatation." << endl;
+        //     laydownMatchPixels2(reactionRule, gridCoordinates, r270__);
+        // }
     }
 
     void clearGrid() {
@@ -849,10 +849,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 continue;
             }
 
-            multiMatch(*reactionRule, r0__);
-            multiMatch(*reactionRule, r90__);
-            multiMatch(*reactionRule, r180__);
-            multiMatch(*reactionRule, r270__);
+            // multiMatch(*reactionRule, r0__);
+            // multiMatch(*reactionRule, r90__);
+            // multiMatch(*reactionRule, r180__);
+            // multiMatch(*reactionRule, r270__);
         }
 
         // this->beakerNode_->refresh();
