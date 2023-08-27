@@ -135,7 +135,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     shared_ptr<Beaker> parentBeaker_;
 
-    shared_ptr<Beaker<V>> successor_; // = this;    //!< The pattern we replace this one with.
+    shared_ptr<Beaker<V>> successor_;  // = this;    //!< The pattern we replace this one with.
     std::string successorName_;
     int successorOffsetX_ = 0;          //!< X offset of replacement pattern.
     int successorOffsetY_ = 0;          //!< Y offset of replacement pattern.
@@ -175,7 +175,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      */
     void finalize() {
         if (isReactionRule_) {
-
             this->successor_ = getptr();
 
             nameInput_ = signalBuilder_->withAttributes({{"class", val("medium_width")}})
@@ -278,7 +277,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << "Name: " << name_ << endl;
         cout << "\t\tSuccessor Name: " << successorName_ << endl;
         cout << "\t\tSuccessor Priority: " << successorPriority_ << endl;
-        cout << "\t\tSX: " << successorOffsetX_ << ", SY: " << successorOffsetX_ << endl;
+        cout << "\t\tSX: " << successorOffsetX_ << ", SY: " << successorOffsetY_ << endl;
     }
 
     void setRuleGridWidth(const std::string &v) {
@@ -315,6 +314,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     void setSuccessorName(const std::string &v) {
         successorName_ = v;
+        successor_ = findRuleByName(successorName_);
         cout << "SETTING successor name to " << v << endl;
     }
 
@@ -452,8 +452,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                     auto x = matchOffset.first;
                     auto y = matchOffset.second;
                     cout << "Rot: " << i * 90 << " - " << x << ", " << y << endl;
-                    addEachSuccessorPixel(*reactionRule->successor_, matchOffset,
-                               i, reactionRule->successorPriority_); 
+                    auto successorOffset = std::make_pair(reactionRule->successorOffsetX_,
+                                                          reactionRule->successorOffsetY_);
+
+                    addEachSuccessorPixel(*reactionRule->successor_, successorOffset, matchOffset,
+                                          i, reactionRule->successorPriority_);
                 }
             }
         }
@@ -482,10 +485,20 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     shared_ptr<Beaker<unsigned char>> findRuleByName(const std::string &ruleName) {
-        auto nameIs = [&ruleName](shared_ptr<Beaker> b) { return (b->name_ == ruleName); };
-        auto it = find_if(reactionRules_.begin(), reactionRules_.end(), nameIs);
-        if (it == reactionRules_.end()) return nullptr;
-        return it;
+        // auto nameIs = [&ruleName](shared_ptr<Beaker> b) { return (b->name_ == ruleName); };
+        // auto it = find_if(parentBeaker_->reactionRules_.begin(),
+        //                   parentBeaker_->reactionRules_.end(), nameIs);
+        // if (it == reactionRules_.end()) {
+        //     return nullptr;
+        //     cout << "NO MATCHING RULE FOUND!!" << endl;
+        // }
+        // cout << "MATCH FOUND: " << *it->name_ << endl;
+        // return *it;
+
+        for (auto reactionRule : parentBeaker_->reactionRules_) {
+            if (reactionRule->name_ == ruleName) return reactionRule;
+        }
+        return nullptr;
     }
 
     void addSuccessorPixel(gridCoordinatePairT matchOffset, gridCoordinatePairT p, V pixelVal,
@@ -497,11 +510,14 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         successionMap_[spLocation] = std::make_pair(pixelVal, pixelPriority);
     }
 
-    void addEachSuccessorPixel(const Beaker<V> &successor, const gridCoordinatePairT &matchOffset,
-                               const int rotationIndex, const priorityT successorPriority) {
+    void addEachSuccessorPixel(const Beaker<V> &successor,
+                               const gridCoordinatePairT &successorOffset,
+                               const gridCoordinatePairT &matchOffset, const int rotationIndex,
+                               const priorityT successorPriority) {
         for (auto i = 0; i < successor.gridWidth_; i++) {
             for (auto j = 0; j < successor.gridHeight_; j++) {
-                auto successorCoords = std::make_pair(i, j);
+                auto successorCoords =
+                    std::make_pair(i + successorOffset.first, j + successorOffset.second);
                 auto successorPixelVal = successor.gridControl_->getPixelAt(i, j);
 
                 successorCoords =
@@ -509,8 +525,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 successorCoords.first += matchOffset.first;
                 successorCoords.second += matchOffset.second;
                 valuePriorityPairT vp = std::make_pair(successorPixelVal, successorPriority);
-                //successionMap_[successorCoords]
-                cout << "X: " << successorCoords.first << ", Y: " << successorCoords.second << ", val: " << int(successorPixelVal) << ", pri: " << successorPriority << endl;
+                // successionMap_[successorCoords]
+                cout << "SX: " << successorOffset.first << ", SY: " << successorOffset.second
+                     << ", X: " << successorCoords.first << ", Y: " << successorCoords.second
+                     << ", val: " << int(successorPixelVal) << ", pri: " << successorPriority
+                     << endl;
             }
         }
         // auto successorPixel =
@@ -896,7 +915,7 @@ struct PixelReactor {
         cout << "I'm a Pixelreactor. I need to be redone completely 2!" << endl;
         signalBuilder_ = make_shared<cl2::SignalBuilder>();
         mainBeaker_ =
-            make_shared<Beaker<unsigned char>>(signalBuilder_, 60, 40, 600, 400, "Beaker");
+            make_shared<Beaker<unsigned char>>(signalBuilder_, 30, 20, 600, 400, "Beaker");
         mainBeaker_->finalize();
 
         // mainBeaker_->finalize();
