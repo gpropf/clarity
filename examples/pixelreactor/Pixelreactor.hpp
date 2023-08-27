@@ -156,9 +156,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     std::vector<gridCoordinatePairT> matchLists[4];
 
     // RotationMatrix2D<gridCoordinateT> *r0__, *r90__, *r180__,
-    //     *r270__;  //!< I tried to make these static const class members because they're the same for
+    //     *r270__;  //!< I tried to make these static const class members because they're the same
+    //     for
     //               //!< all Beakers but ran into huge problems getting link errors and a lot of
-    //               //!< errors about forward template definitions. The small space and time savings
+    //               //!< errors about forward template definitions. The small space and time
+    //               savings
     //               //!< wasn't worth it.
 
     /**
@@ -259,7 +261,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
           gridPixelHeight_(gridPixelHeight),
           name_(name),
           isReactionRule_(isReactionRule) {
-        //initStandardRotationMatrices();
+        // initStandardRotationMatrices();
         cout << "Beaker created!" << endl;
 
         // SignalBuilder &sb = *signalBuilder_;
@@ -476,6 +478,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      */
     void update() {
+        successionMap_.clear();
         for (auto reactionRule : reactionRules_) {
             reactionRule->printBeakerStats();
         }
@@ -518,32 +521,81 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             for (auto j = 0; j < successor.gridHeight_; j++) {
                 auto successorCoords =
                     std::make_pair(i + successorOffset.first, j + successorOffset.second);
+
                 auto successorPixelVal = successor.gridControl_->getPixelAt(i, j);
 
                 successorCoords =
                     rotationMatrices[rotationIndex].rotateCoordinates(successorCoords);
                 successorCoords.first += matchOffset.first;
                 successorCoords.second += matchOffset.second;
+
+                wrapCoordinates(successorCoords);
+
                 valuePriorityPairT vp = std::make_pair(successorPixelVal, successorPriority);
                 // successionMap_[successorCoords]
                 cout << "SX: " << successorOffset.first << ", SY: " << successorOffset.second
                      << ", X: " << successorCoords.first << ", Y: " << successorCoords.second
                      << ", val: " << int(successorPixelVal) << ", pri: " << successorPriority
                      << endl;
+
+                successionMap_[successorCoords].push_back(vp);
             }
         }
         // auto successorPixel =
     }
 
     /**
-     * <<< This block of repeats is meant to be easy for me to see on the right scroll control in VScode.
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE
+     * @brief Apply replacement rules to main grid one time.
+     *
+     */
+    void iterate(const std::string &s) {
+        this->update();
+        // this->beakerNode_->nodelog("ITERATING...");
+        this->iterationCount_++;
+        for (auto reactionRule : reactionRules_) {
+            if (reactionRule->successor_ == reactionRule) {
+                cout << "Rule: " << reactionRule->name_ << " has itself for successor." << endl;
+                continue;
+            }
+
+            // multiMatch(*reactionRule, r0__);
+            // multiMatch(*reactionRule, r90__);
+            // multiMatch(*reactionRule, r180__);
+            // multiMatch(*reactionRule, r270__);
+        }
+
+        // this->beakerNode_->refresh();
+
+        for (const auto &[key, value] : this->successionMap_) {
+            auto [px, py] = key;
+            std::vector<valuePriorityPairT> vpStack = value;
+            cout << "coordinate: " << px << ", " << py << endl;
+            int i = 0;
+            for (auto [val, pri] : vpStack) {
+                cout << "\t" << i++ << ":val = " << int(val) << ", pri = " << pri << endl;
+            }
+        }
+        updateGrid();
+        // this->beakerNode_->beakerCanvas_->drawGrid();
+    }
+
+    /**
+     * <<< This block of repeats is meant to be easy for me to see on the right scroll control in
+     * VScode.
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
+     * HERE <<< OLD CODE BELOW HERE
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
+     * HERE <<< OLD CODE BELOW HERE
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
+     * HERE <<< OLD CODE BELOW HERE
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
+     * HERE <<< OLD CODE BELOW HERE
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
+     * HERE <<< OLD CODE BELOW HERE
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
+     * HERE <<< OLD CODE BELOW HERE
+     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
+     * HERE <<< OLD CODE BELOW HERE
      */
 
     void initStandardRotationMatrices() {
@@ -553,17 +605,17 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // r270__ = new RotationMatrix2D<gridCoordinateT>(0, 1, -1, 0, 270);
     }
 
-    void initPixelListMap() {
-        std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap0;
-        std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap90;
-        std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap180;
-        std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap270;
+    // void initPixelListMap() {
+    //     std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap0;
+    //     std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap90;
+    //     std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap180;
+    //     std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap270;
 
-        rotationToPixelListsMap_[0] = valueToCoordinateMap0;
-        rotationToPixelListsMap_[90] = valueToCoordinateMap90;
-        rotationToPixelListsMap_[180] = valueToCoordinateMap180;
-        rotationToPixelListsMap_[270] = valueToCoordinateMap270;
-    }
+    //     rotationToPixelListsMap_[0] = valueToCoordinateMap0;
+    //     rotationToPixelListsMap_[90] = valueToCoordinateMap90;
+    //     rotationToPixelListsMap_[180] = valueToCoordinateMap180;
+    //     rotationToPixelListsMap_[270] = valueToCoordinateMap270;
+    // }
 
     void addPixelToRotationMaps(gridCoordinatePairT coordinates, V pixelValue) {
         // rotationToPixelListsMap_[0][pixelValue].push_back(coordinates);
@@ -840,41 +892,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         //          << uy << endl;
         //     laydownMatchPixels2(reactionRule, umc, rm);
         // }
-    }
-
-    /**
-     * @brief Apply replacement rules to main grid one time.
-     *
-     */
-    void iterate(const std::string &s) {
-        this->update();
-        // this->beakerNode_->nodelog("ITERATING...");
-        this->iterationCount_++;
-        for (auto reactionRule : reactionRules_) {
-            if (reactionRule->successor_ == reactionRule) {
-                cout << "Rule: " << reactionRule->name_ << " has itself for successor." << endl;
-                continue;
-            }
-
-            // multiMatch(*reactionRule, r0__);
-            // multiMatch(*reactionRule, r90__);
-            // multiMatch(*reactionRule, r180__);
-            // multiMatch(*reactionRule, r270__);
-        }
-
-        // this->beakerNode_->refresh();
-
-        for (const auto &[key, value] : this->successionMap_) {
-            auto [px, py] = key;
-            std::vector<valuePriorityPairT> vpStack = value;
-            cout << "coordinate: " << px << ", " << py << endl;
-            for (auto [val, pri] : vpStack) {
-                cout << "\tval = " << int(val) << ", pri = " << pri << endl;
-            }
-        }
-        updateGrid();
-        // this->beakerNode_->beakerCanvas_->drawGrid();
-    }
+    }    
 
     static void makeNewReactionRule_st(Beaker *b) { b->makeNewReactionRule(); }
 };
