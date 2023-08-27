@@ -395,17 +395,17 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // if (p.first < 0 || p.second < 0) cout << "NEGATIVE COORDS!!!!!!!!!" << endl;
     }
 
-    bool matchAt(shared_ptr<Beaker<V>> beaker, gridCoordinateT x, gridCoordinateT y,
+    bool matchAt(shared_ptr<Beaker<V>> reactionRule, gridCoordinateT x, gridCoordinateT y,
                  const RotationMatrix2D<gridCoordinateT> &rotationMatrix) {
-        for (gridCoordinateT i = 0; i < beaker->gridWidth_; i++) {
-            for (gridCoordinateT j = 0; j < beaker->gridHeight_; j++) {
-                V ruleVal = beaker->gridControl_->getPixelAt(i, j);
+        for (gridCoordinateT i = 0; i < reactionRule->gridWidth_; i++) {
+            for (gridCoordinateT j = 0; j < reactionRule->gridHeight_; j++) {
+                V ruleVal = reactionRule->gridControl_->getPixelAt(i, j);
 
-                gridCoordinatePairT gridOffset = std::make_pair(i, j);
-                gridOffset = rotationMatrix.rotateCoordinates(gridOffset);
+                gridCoordinatePairT reactionRuleOffset = std::make_pair(i, j);
+                reactionRuleOffset = rotationMatrix.rotateCoordinates(reactionRuleOffset);
 
-                gridCoordinateT gx = x + gridOffset.first;
-                gridCoordinateT gy = y + gridOffset.second;
+                gridCoordinateT gx = x + reactionRuleOffset.first;
+                gridCoordinateT gy = y + reactionRuleOffset.second;
                 gridCoordinatePairT gp = std::make_pair(gx, gy);
                 wrapCoordinates(gp);
                 V gridVal = this->gridControl_->getPixelAt(gp.first, gp.second);
