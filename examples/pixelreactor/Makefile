@@ -1,16 +1,22 @@
 AR 		= emar
-CC		= emcc
+CXX		= emcc
 ENV		= DEMANGLE_SUPPORT=1
 
-DEBUG_CFLAGS = -O0 -g -std=c++17 -sALLOW_MEMORY_GROWTH -I../../
-CFLAGS	= $(DEBUG_CFLAGS) -sNO_DISABLE_EXCEPTION_CATCHING
+DEBUG_CXXFLAGS = -O0 -g -std=c++17 -sALLOW_MEMORY_GROWTH -I../../
+CXXFLAGS	= $(DEBUG_CXXFLAGS) -sNO_DISABLE_EXCEPTION_CATCHING
 
 %.o : %.cpp
-	$(ENV) $(CC) $(CFLAGS) $< -o $@ -c
+	$(ENV) $(CXX) $(CXXFLAGS) $< -o $@ -c
 
 
-pixelreactor: pixelreactor.o
-	$(ENV) $(CC) $(CFLAGS) -lembind pixelreactor.o -o pixelreactor.js
+
+
+pixelreactor.js: pixelreactor.o
+	$(ENV) $(CXX) $(CXXFLAGS) -lembind pixelreactor.o -o pixelreactor.js
+
+
+pixelreactor.o: Pixelreactor.hpp
+#$(CXX) $(CXXFLAGS) -c -o $@ $<
 
 
 clean:	

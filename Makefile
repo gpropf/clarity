@@ -18,6 +18,9 @@ CFLAGS	= $(DEBUG_CFLAGS)
 # %.o : %.hpp
 # 	$(ENV) $(CC) $(CFLAGS) $< -o $@ -c
 
+all: signalTest
+	make -C examples
+
 cl2.a: ENV = 
 cl2.a: WebElement.o Signal.o
 	rm -f cl2.a
@@ -45,4 +48,3 @@ simpleTest: simpleTest.o #WebElement.o Signal.o
 realclean:
 	rm -f *.o *.wasm *.wasm.map *.a signalTest.js
 
-# all: showcase speedtest docs

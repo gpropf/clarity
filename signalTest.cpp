@@ -84,7 +84,7 @@ int main() {
 
     // We're now using the SignalBuilder factory objects to create our web content.
     auto signalBuilder = make_shared<SignalBuilder>();
-    //SignalBuilder &sb = *signalBuilder;
+    // SignalBuilder &sb = *signalBuilder;
 
     auto objectEmitterTextInput = signalBuilder->textInputWSS<std::string>(
         "objectEmitterTextInput", "Enter a new value for the string (s_) stored in the TestObj.");
@@ -171,24 +171,26 @@ int main() {
     auto strToNumTransformerSS = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
 
     // auto dblInputELE =
-    //     signalBuilder->textInputELE<std::string>("dblInput", "Enter a floating point number", false);
+    //     signalBuilder->textInputELE<std::string>("dblInput", "Enter a floating point number",
+    //     false);
 
-    auto dblInputWSS =
-        signalBuilder->textInputWSS<std::string>("dblInput", "Enter a floating point number", false);
+    auto dblInputWSS = signalBuilder->textInputWSS<std::string>(
+        "dblInput", "Enter a floating point number", false);
 
     signalBuilder->connect<std::string>(dblInputWSS, strToNumTransformerSS);
 
     auto mergeFn = [](std::string s1, std::string s2) { return s1 + s2; };
     auto mergeSignal = make_shared<Merge<std::string, std::string, std::string>>(mergeFn);
 
-    const auto m1InputWSO = signalBuilder->textInputWSS<std::string>("m1Input", "Enter the first value", false);
+    const auto m1InputWSO =
+        signalBuilder->textInputWSS<std::string>("m1Input", "Enter the first value", false);
     const auto m2InputWSO =
         signalBuilder->textInputWSS<std::string>("m2Input", "Enter the second value", false);
-    const auto mergeOutWSO =
-        signalBuilder->textInputWSS<std::string>("mergeOut", "Output of merged signals goes here", false);
+    const auto mergeOutWSO = signalBuilder->textInputWSS<std::string>(
+        "mergeOut", "Output of merged signals goes here", false);
 
-    signalBuilder->connect<std::string, std::string, std::string>(m1InputWSO, m2InputWSO, mergeSignal,
-                                                      mergeOutWSO);
+    signalBuilder->connect<std::string, std::string, std::string>(m1InputWSO, m2InputWSO,
+                                                                  mergeSignal, mergeOutWSO);
 
     val recomputeMergeFn = val::global("elgMergeRecompute")(val(*mergeSignal));
     const auto mergeRecomputeButton = signalBuilder->button("Recompute", recomputeMergeFn);
@@ -201,11 +203,15 @@ int main() {
     gridControl->addColorToPallete(1, "#ff0000");
     gridControl->addColorToPallete(2, "#00ff00");
     gridControl->addColorToPallete(3, "#0000ff");
+    gridControl->addColorToPallete(4, "#ff00ff");
+    gridControl->addColorToPallete(5, "#ffff00");
+    gridControl->addColorToPallete(6, "#00ffff");
+
     gridControl->finalize();
 
     // const auto selectOutput =
-    //     signalBuilder->textInputWSS<std::string>("selectOutput", "Output of select box appears here.",
-    //     false);
+    //     signalBuilder->textInputWSS<std::string>("selectOutput", "Output of select box appears
+    //     here.", false);
     // auto select1 = Select("select1", getStrId());
     // auto option1 = Option("1", "Foo", select1.getDomElement());
     // auto option2 = Option("2", "Bar", select1.getDomElement());
@@ -214,9 +220,10 @@ int main() {
     // auto selectEmitter = make_shared<SelectEmitter<std::string>>(select1.getDomElement());
     // selectEmitter->setOutput(selectOutput);
 
-    const auto selectOutputWSS =
-        signalBuilder->textInputWSS<std::string>("selectOutputWSS", "Output of selectWSS appears here.", false);
-    auto selectWSS = signalBuilder->withAttributes({{"class", val("red")}}).selectBoxWSS<std::string>("wssSelector", "This is a WSS Selector", true);
+    const auto selectOutputWSS = signalBuilder->textInputWSS<std::string>(
+        "selectOutputWSS", "Output of selectWSS appears here.", false);
+    auto selectWSS = signalBuilder->withAttributes({{"class", val("red")}})
+                         .selectBoxWSS<std::string>("wssSelector", "This is a WSS Selector", true);
     val selectWSSDomElement = selectWSS->getWebElement()->getDomElement();
     auto option1wss = Option("10", "FOO", selectWSSDomElement);
     auto option2wss = Option("20", "BOO", selectWSSDomElement);
@@ -224,9 +231,11 @@ int main() {
     selectWSS->setOutput(selectOutputWSS);
 
     BR();
-    const auto textInpTest = signalBuilder->textInputWSS<std::string>("textInpTest", "Enter some text", false);
+    const auto textInpTest =
+        signalBuilder->textInputWSS<std::string>("textInpTest", "Enter some text", false);
     const auto testButton = signalBuilder->buttonWSS<std::string>("Button WSS");
-    auto buttonOutput = signalBuilder->textInputWSS<std::string>("buttonOutput", "buttonOutput field");
+    auto buttonOutput =
+        signalBuilder->textInputWSS<std::string>("buttonOutput", "buttonOutput field");
     signalBuilder->connect<std::string>(testButton, buttonOutput);
     return 0;
 }

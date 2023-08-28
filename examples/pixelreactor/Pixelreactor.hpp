@@ -272,6 +272,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         gridControl_->addColorToPallete(1, "#ff0000");
         gridControl_->addColorToPallete(2, "#00ff00");
         gridControl_->addColorToPallete(3, "#0000ff");
+        gridControl_->addColorToPallete(4, "#ff00ff");
+        gridControl_->addColorToPallete(5, "#ffff00");
+        gridControl_->addColorToPallete(6, "#00ffff");
         gridControl_->finalize();
     }
 
@@ -937,7 +940,7 @@ struct PixelReactor {
     shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleHeightLoop_;
 
     PixelReactor(int defaultRuleframeWidth = 5, int defaultRuleframeHeight = 3) {
-        cout << "I'm a Pixelreactor. I need to be redone completely 2!" << endl;
+        cout << "I'm a Pixelreactor. I need to be redone completely 9!" << endl;
         signalBuilder_ = make_shared<cl2::SignalBuilder>();
         mainBeaker_ =
             make_shared<Beaker<unsigned char>>(signalBuilder_, 30, 20, 600, 400, "Beaker");
