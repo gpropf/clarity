@@ -114,7 +114,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         mouseClickSignal_ = make_shared<MouseSignal<std::pair<double, double>>>(svg, "click");
 
         mousePositionSignal_ =
-            make_shared<MouseSignal<std::pair<double, double>>>(svg, "mouseover");
+            make_shared<MouseSignal<std::pair<double, double>>>(svg, "mousemove");
         // mouseClickSignal_ = make_shared<MouseSignal<std::pair<double, double>>>(svg,
         // "mouseover");
 
@@ -220,8 +220,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     }
 
     void mousePositionAcceptor(const std::pair<double, double> &mouseLocation) {
-        cout << "GridControl::mousePositionAcceptor(): x = " << mouseLocation.first
-             << ", y = " << mouseLocation.second << endl;
+        cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
+             << ", y = " << floor(mouseLocation.second) << endl;
     }
 
     void mouseClickAcceptorMethod(const std::pair<double, double> &mouseLocation) {

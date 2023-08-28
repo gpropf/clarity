@@ -115,7 +115,7 @@ function elgMouseSignal(mouseSignal, domElement) {
             let vbX = viewBox.baseVal.width * ratioX + viewBox.baseVal.x;
             let vbY = viewBox.baseVal.height * ratioY + viewBox.baseVal.y;
             loc = Module.MouseSignal.packageCoordPair(vbX, vbY);
-            console.log("viewBox click location (x,y): ", vbX, vbY);
+            console.log("viewBox location (x,y): ", vbX, vbY);
         }
         //console.log("elgMouseSignal generated fn called. Emitting signal: " + loc);
         mouseSignal.emit(loc);
