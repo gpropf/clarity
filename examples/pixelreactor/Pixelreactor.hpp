@@ -582,6 +582,23 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // this->beakerNode_->beakerCanvas_->drawGrid();
     }
 
+    void updateGrid() {
+        clean_ = false;
+
+        for (const auto &[key, value] : this->successionMap_) {
+            auto [px, py] = key;
+            std::vector<valuePriorityPairT> vpStack = value;
+            cout << "update coordinate: " << px << ", " << py << endl;
+            if (!vpStack.empty()) {
+                sortValuePriorityStack(vpStack);
+                auto [val, pri] = vpStack.back();
+                gridControl_->setPixelAt(px, py, val, false); 
+                // this->beakerNode_->beakerCanvas_->setValXYNoDraw(px, py, val);
+            }
+        }
+        gridControl_->redraw();
+    }
+
     /**
      * <<< This block of repeats is meant to be easy for me to see on the right scroll control in
      * VScode.
@@ -636,38 +653,38 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      * @param m
      * @return std::vector<std::pair<V, std::vector<gridCoordinatePairT>>>
      */
-    std::vector<std::pair<V, std::vector<gridCoordinatePairT>>> sortPixelList(
-        std::map<V, std::vector<gridCoordinatePairT>> &m) {
-        std::vector<std::pair<V, std::vector<gridCoordinatePairT>>> vectorOfPairs;
-        for (const auto &[pixelVal, coordinates] : m) {
-            vectorOfPairs.push_back(std::pair(pixelVal, coordinates));
-        }
+    // std::vector<std::pair<V, std::vector<gridCoordinatePairT>>> sortPixelList(
+    //     std::map<V, std::vector<gridCoordinatePairT>> &m) {
+    //     std::vector<std::pair<V, std::vector<gridCoordinatePairT>>> vectorOfPairs;
+    //     for (const auto &[pixelVal, coordinates] : m) {
+    //         vectorOfPairs.push_back(std::pair(pixelVal, coordinates));
+    //     }
 
-        return vectorOfPairs;
-    }
+    //     return vectorOfPairs;
+    // }
 
     void sortPixelLists() {
-        rotationToSortedPixelListsMap_[0] = sortPixelList(rotationToPixelListsMap_[0]);
-        rotationToSortedPixelListsMap_[90] = sortPixelList(rotationToPixelListsMap_[90]);
-        rotationToSortedPixelListsMap_[180] = sortPixelList(rotationToPixelListsMap_[180]);
-        rotationToSortedPixelListsMap_[270] = sortPixelList(rotationToPixelListsMap_[270]);
+        // rotationToSortedPixelListsMap_[0] = sortPixelList(rotationToPixelListsMap_[0]);
+        // rotationToSortedPixelListsMap_[90] = sortPixelList(rotationToPixelListsMap_[90]);
+        // rotationToSortedPixelListsMap_[180] = sortPixelList(rotationToPixelListsMap_[180]);
+        // rotationToSortedPixelListsMap_[270] = sortPixelList(rotationToPixelListsMap_[270]);
     }
 
     void makePixelList() {
-        rotationToPixelListsMap_.clear();
-        rotationToSortedPixelListsMap_.clear();
-        std::vector<gridCoordinatesValueTripletT> pixels;
-        for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
-            for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
-                V pixelVal = this->gridControl_->getPixelAt(i, j);
-                cout << i << ", " << j << ": " << pixelVal << endl;
-                gridCoordinatePairT xy = std::pair(i, j);
-                gridCoordinatesValueTripletT xyv;
-                if (this->isReactionRule_) {
-                    // addPixelToRotationMaps(xy, pixelVal);
-                }
-            }
-        }
+        // rotationToPixelListsMap_.clear();
+        // rotationToSortedPixelListsMap_.clear();
+        // std::vector<gridCoordinatesValueTripletT> pixels;
+        // for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
+        //     for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
+        //         V pixelVal = this->gridControl_->getPixelAt(i, j);
+        //         cout << i << ", " << j << ": " << pixelVal << endl;
+        //         gridCoordinatePairT xy = std::pair(i, j);
+        //         gridCoordinatesValueTripletT xyv;
+        //         if (this->isReactionRule_) {
+        //             // addPixelToRotationMaps(xy, pixelVal);
+        //         }
+        //     }
+        // }
     }
 
     /**
@@ -675,90 +692,91 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      */
     void printRuleStats() {
-        int i = 0;
-        for (auto rule : this->reactionRules_) {
-            cout << "Rule " << i++ << ": " << rule->name_ << ", succ: " << rule->successor_->name_
-                 << endl;
-        }
+        // int i = 0;
+        // for (auto rule : this->reactionRules_) {
+        //     cout << "Rule " << i++ << ": " << rule->name_ << ", succ: " << rule->successor_->name_
+        //          << endl;
+        // }
     }
 
     void printPixelList(std::vector<std::pair<V, std::vector<gridCoordinatePairT>>> &pl) {
-        cout << "PPL() List address: " << &pl << ", rule name: " << name_ << endl;
-        for (auto p : pl) {
-            auto [pixelVal, gridCoordinates] = p;
-            cout << "PPL() For pixelVal " << int(pixelVal) << endl;
-            for (auto coordinatePair : gridCoordinates) {
-                cout << "\tPPL() " << coordinatePair.first << ", " << coordinatePair.second << endl;
-            }
-        }
+        // cout << "PPL() List address: " << &pl << ", rule name: " << name_ << endl;
+        // for (auto p : pl) {
+        //     auto [pixelVal, gridCoordinates] = p;
+        //     cout << "PPL() For pixelVal " << int(pixelVal) << endl;
+        //     for (auto coordinatePair : gridCoordinates) {
+        //         cout << "\tPPL() " << coordinatePair.first << ", " << coordinatePair.second << endl;
+        //     }
+        // }
     }
 
     void printPixelMap(std::map<V, std::vector<gridCoordinatePairT>> &m) {
-        cout << "PPM() rule name: " << name_ << endl;
-        for (auto [pixelVal, gridCoordinates] : m) {
-            cout << "PPM() For pixelVal " << int(pixelVal) << endl;
-            for (auto coordinatePair : gridCoordinates) {
-                cout << "\tPPM() " << coordinatePair.first << ", " << coordinatePair.second << endl;
-            }
-        }
+        // cout << "PPM() rule name: " << name_ << endl;
+        // for (auto [pixelVal, gridCoordinates] : m) {
+        //     cout << "PPM() For pixelVal " << int(pixelVal) << endl;
+        //     for (auto coordinatePair : gridCoordinates) {
+        //         cout << "\tPPM() " << coordinatePair.first << ", " << coordinatePair.second << endl;
+        //     }
+        // }
     }
 
     bool matchList2(std::vector<gridCoordinatePairT> &rulePixelList,
                     gridCoordinatePairT matchCoordiates, V pixelVal) {
-        auto [mx, my] = matchCoordiates;
+        // auto [mx, my] = matchCoordiates;
 
-        for (auto pixel : rulePixelList) {
-            auto [px, py] = pixel;
-            px += mx;
-            py += my;
-            auto [ppx, ppy] = this->beakerNode_->beakerCanvas_->wrapCoordiates(px, py);
-            V mainGridVal = this->beakerNode_->beakerCanvas_->getValXY(ppx, ppy);
-            if (mainGridVal != pixelVal) return false;
-        }
-        return true;
+        // for (auto pixel : rulePixelList) {
+        //     auto [px, py] = pixel;
+        //     px += mx;
+        //     py += my;
+        //     auto [ppx, ppy] = this->beakerNode_->beakerCanvas_->wrapCoordiates(px, py);
+        //     V mainGridVal = this->beakerNode_->beakerCanvas_->getValXY(ppx, ppy);
+        //     if (mainGridVal != pixelVal) return false;
+        // }
+        // return true;
     }
 
     bool permutatedMatchList(std::vector<gridCoordinatePairT> &rulePixelList,
                              gridCoordinatePairT matchCoordiates, V pixelVal, int anchorIndex) {
-        auto [mx, my] = matchCoordiates;
-        auto [ax, ay] = rulePixelList.at(anchorIndex);
-        auto rulePixelListSize = rulePixelList.size();
-        for (auto i = 0; i < rulePixelListSize; i++) {
-            if (i == anchorIndex) continue;
-            auto [px, py] = rulePixelList.at(i);
-            px += mx - ax;
-            py += my - ay;
-            auto [ppx, ppy] = this->beakerNode_->beakerCanvas_->wrapCoordiates(px, py);
-            V mainGridVal = this->beakerNode_->beakerCanvas_->getValXY(ppx, ppy);
-            if (mainGridVal != pixelVal) return false;
-        }
-        return true;
+        // auto [mx, my] = matchCoordiates;
+        // auto [ax, ay] = rulePixelList.at(anchorIndex);
+        // auto rulePixelListSize = rulePixelList.size();
+        // for (auto i = 0; i < rulePixelListSize; i++) {
+        //     if (i == anchorIndex) continue;
+        //     auto [px, py] = rulePixelList.at(i);
+        //     px += mx - ax;
+        //     py += my - ay;
+        //     auto [ppx, ppy] = this->beakerNode_->beakerCanvas_->wrapCoordiates(px, py);
+        //     V mainGridVal = this->beakerNode_->beakerCanvas_->getValXY(ppx, ppy);
+        //     if (mainGridVal != pixelVal) return false;
+        // }
+        // return true;
     }
 
     bool matchesAtByRotation(Beaker<V> &rule, RotationMatrix2D<gridCoordinateT> *rotation,
                              gridCoordinatePairT matchCoordiates) {
-        std::vector<std::pair<V, std::vector<gridCoordinatePairT>>> pixelLists =
-            rule.rotationToSortedPixelListsMap_[rotation->angle_];
-        bool couldMatch = false;
-        for (auto [pixelVal, coordinates] : pixelLists) {
-            couldMatch = matchList2(coordinates, matchCoordiates, pixelVal);
-            if (!couldMatch) return false;
-        }
-        return couldMatch;
+        // std::vector<std::pair<V, std::vector<gridCoordinatePairT>>> pixelLists =
+        //     rule.rotationToSortedPixelListsMap_[rotation->angle_];
+        // bool couldMatch = false;
+        // for (auto [pixelVal, coordinates] : pixelLists) {
+        //     couldMatch = matchList2(coordinates, matchCoordiates, pixelVal);
+        //     if (!couldMatch) return false;
+        // }
+        // return couldMatch;
     }
 
     std::vector<gridCoordinatePairT> generatePotentialMatchCoordinates(
         std::tuple<gridCoordinateT, gridCoordinateT, V> &newPixel,
         std::map<V, std::vector<gridCoordinatePairT>> &valueToPixelLocationsMap) const {
-        auto [npx, npy, npVal] = newPixel;
-        std::vector<gridCoordinatePairT> coordinatesVector = valueToPixelLocationsMap[npVal];
-        std::vector<gridCoordinatePairT> potentialMatchCoordinates;
-        for (auto [rx, ry] : coordinatesVector) {
-            auto pmx = npx - rx;
-            auto pmy = npy - ry;
-            potentialMatchCoordinates.push_back(std::pair(pmx, pmy));
-        }
-        return potentialMatchCoordinates;
+
+        // auto [npx, npy, npVal] = newPixel;
+        // std::vector<gridCoordinatePairT> coordinatesVector = valueToPixelLocationsMap[npVal];
+        // std::vector<gridCoordinatePairT> potentialMatchCoordinates;
+        // for (auto [rx, ry] : coordinatesVector) {
+        //     auto pmx = npx - rx;
+        //     auto pmy = npy - ry;
+        //     potentialMatchCoordinates.push_back(std::pair(pmx, pmy));
+        // }
+        // return potentialMatchCoordinates;
     }
 
     void matchAndSucceed(Beaker<unsigned char> &reactionRule, gridCoordinatePairT gridCoordinates) {
@@ -797,50 +815,35 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     void clearGrid() {
-        cout << "clearGrid()" << endl;
+        // cout << "clearGrid()" << endl;
         // this->beakerNode_->beakerCanvas_->clearGridToValue(0);
     }
 
     void laydownMatchPixels2(Beaker<V> &reactionRule, gridCoordinatePairT matchCoordiates,
                              RotationMatrix2D<gridCoordinateT> *rotation) {
-        auto [mx, my] = matchCoordiates;
-        gridCoordinatePairT successorOffset =
-            std::pair(reactionRule.successorOffsetX_, reactionRule.successorOffsetY_);
-        successorOffset = rotation->rotateCoordinates(successorOffset);
-        auto [sox, soy] = successorOffset;
-        int c = 0;
-        for (auto vectorOfPairs :
-             reactionRule.successor_->rotationToSortedPixelListsMap_[rotation->angle_]) {
-            auto [pixelVal, gridCoordinates] = vectorOfPairs;
-            for (auto [px, py] : gridCoordinates) {
-                c++;
-                px += sox + mx;
-                py += soy + my;
-                auto [ppx, ppy] = this->beakerNode_->beakerCanvas_->wrapCoordiates(px, py);
-                valuePriorityPairT vp = std::pair(pixelVal, reactionRule.successorPriority_);
-                successionMap_[std::pair(ppx, ppy)].push_back(vp);
-            }
-        }
-        cout << "Done laying down " << c << " match pixels for rule: " << reactionRule.name_
-             << endl;
+        // auto [mx, my] = matchCoordiates;
+        // gridCoordinatePairT successorOffset =
+        //     std::pair(reactionRule.successorOffsetX_, reactionRule.successorOffsetY_);
+        // successorOffset = rotation->rotateCoordinates(successorOffset);
+        // auto [sox, soy] = successorOffset;
+        // int c = 0;
+        // for (auto vectorOfPairs :
+        //      reactionRule.successor_->rotationToSortedPixelListsMap_[rotation->angle_]) {
+        //     auto [pixelVal, gridCoordinates] = vectorOfPairs;
+        //     for (auto [px, py] : gridCoordinates) {
+        //         c++;
+        //         px += sox + mx;
+        //         py += soy + my;
+        //         auto [ppx, ppy] = this->beakerNode_->beakerCanvas_->wrapCoordiates(px, py);
+        //         valuePriorityPairT vp = std::pair(pixelVal, reactionRule.successorPriority_);
+        //         successionMap_[std::pair(ppx, ppy)].push_back(vp);
+        //     }
+        // }
+        // cout << "Done laying down " << c << " match pixels for rule: " << reactionRule.name_
+        //      << endl;
     }
 
-    void updateGrid() {
-        clean_ = false;
-
-        for (const auto &[key, value] : this->successionMap_) {
-            auto [px, py] = key;
-            std::vector<valuePriorityPairT> vpStack = value;
-            cout << "update coordinate: " << px << ", " << py << endl;
-            if (!vpStack.empty()) {
-                sortValuePriorityStack(vpStack);
-                auto [val, pri] = vpStack.back();
-                gridControl_->setPixelAt(px, py, val, false); 
-                // this->beakerNode_->beakerCanvas_->setValXYNoDraw(px, py, val);
-            }
-        }
-        gridControl_->redraw();
-    }
+    
 
     static bool compareValuePriorityPairs(valuePriorityPairT vp1, valuePriorityPairT vp2) {
         return (vp1.second < vp2.second);
@@ -864,7 +867,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     void multiMatch(Beaker<V> &reactionRule, RotationMatrix2D<gridCoordinateT> *rm) {
-        std::set<gridCoordinatePairT> uniqueMatchLocations;
+        // std::set<gridCoordinatePairT> uniqueMatchLocations;
         // for (auto [x, y, pixelVal] : this->beakerNode_->beakerCanvas_->pixelBuffer_) {
         //     cout << "NEW PIXEL: " << x << ", " << y << " : " << int(pixelVal) << endl;
         //     auto newPixel = make_tuple(x, y, pixelVal);
@@ -899,7 +902,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // }
     }    
 
-    static void makeNewReactionRule_st(Beaker *b) { b->makeNewReactionRule(); }
+    //static void makeNewReactionRule_st(Beaker *b) { b->makeNewReactionRule(); }
 };
 
 template <>
@@ -910,11 +913,11 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
     emscripten::class_<Beaker<unsigned char>>("Beaker")
         .function("toggleClean", &Beaker<unsigned char>::toggleClean,
                   emscripten::allow_raw_pointers())
-        .function("clearGrid", &Beaker<unsigned char>::clearGrid, emscripten::allow_raw_pointers())
+       // .function("clearGrid", &Beaker<unsigned char>::clearGrid, emscripten::allow_raw_pointers())
         .function("makeDirty", &Beaker<unsigned char>::makeDirty, emscripten::allow_raw_pointers())
         .function("iterate", &Beaker<unsigned char>::iterate, emscripten::allow_raw_pointers())
-        .function("makePixelList", &Beaker<unsigned char>::makePixelList,
-                  emscripten::allow_raw_pointers())
+        // .function("makePixelList", &Beaker<unsigned char>::makePixelList,
+        //           emscripten::allow_raw_pointers())
         .function("makeNewReactionRule", &Beaker<unsigned char>::makeNewReactionRule,
                   emscripten::allow_raw_pointers());
 
