@@ -835,9 +835,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             if (!vpStack.empty()) {
                 sortValuePriorityStack(vpStack);
                 auto [val, pri] = vpStack.back();
+                gridControl_->setPixelAt(px, py, val, false); 
                 // this->beakerNode_->beakerCanvas_->setValXYNoDraw(px, py, val);
             }
         }
+        gridControl_->redraw();
     }
 
     static bool compareValuePriorityPairs(valuePriorityPairT vp1, valuePriorityPairT vp2) {
