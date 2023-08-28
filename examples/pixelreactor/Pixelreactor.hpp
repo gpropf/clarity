@@ -450,6 +450,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         if (isReactionRule_) return;
         for (auto reactionRule : reactionRules_) {
             cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
+            if (reactionRule->successor_ == reactionRule || reactionRule->successor_ == nullptr)
+                continue;
             for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
                 for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
                     if (matchAt(reactionRule, i, j, r0)) {
@@ -960,42 +962,15 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
  *
  */
 struct PixelReactor {
-    int *ruleFrameWidth = new int(5);
-    int *ruleFrameHeight = new int(3);
     shared_ptr<Beaker<unsigned char>> mainBeaker_;
     shared_ptr<SignalBuilder> signalBuilder_;
-    shared_ptr<WebElementSignal<std::string>> ruleWidthInput_;
-    shared_ptr<WebElementSignal<std::string>> ruleHeightInput_;
-    // shared_ptr<ObjectEmitter<std::string, Beaker<unsigned char>>> objectEmitter_;
-    // shared_ptr<ObjectAcceptor<std::string, Beaker<unsigned char>>> objectAcceptor_;
-    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleWidthLoop_;
-    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleHeightLoop_;
 
-    PixelReactor(int defaultRuleframeWidth = 5, int defaultRuleframeHeight = 3) {
+    PixelReactor() {
         cout << "I'm a Pixelreactor. I need to be redone completely 9!" << endl;
         signalBuilder_ = make_shared<cl2::SignalBuilder>();
         mainBeaker_ =
             make_shared<Beaker<unsigned char>>(signalBuilder_, 30, 20, 600, 400, "Beaker");
         mainBeaker_->finalize();
-
-        // mainBeaker_->finalize();
-        // ruleWidthInput_ =
-        //     signalBuilder_->withAttributes({{"class", val("small_width")}})
-        //         .textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
-        // ruleHeightInput_ =
-        //     signalBuilder_->withAttributes({{"class", val("small_width")}})
-        //         .textInputWSS<std::string>("ruleHeightInput", "Rule Height in pixels", false);
-
-        // ruleWidthLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-        //     mainBeaker_, ruleWidthInput_, &Beaker<unsigned char>::setRuleGridWidth,
-        //     &Beaker<unsigned char>::getRuleGridWidth);
-
-        // ruleHeightLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-        //     mainBeaker_, ruleHeightInput_, &Beaker<unsigned char>::setRuleGridHeight,
-        //     &Beaker<unsigned char>::getRuleGridHeight);
-
-        // signalBuilder_->connectLoop(ruleWidthLoop_);
-        // signalBuilder_->connectLoop(ruleHeightLoop_);
     }
 };
 
