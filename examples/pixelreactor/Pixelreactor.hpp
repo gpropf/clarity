@@ -109,6 +109,13 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> iterateAcceptor_;
 
+    shared_ptr<WebElementSignal<std::string>> ruleWidthInput_;
+    shared_ptr<WebElementSignal<std::string>> ruleHeightInput_;
+    // shared_ptr<ObjectEmitter<std::string, Beaker<unsigned char>>> objectEmitter_;
+    // shared_ptr<ObjectAcceptor<std::string, Beaker<unsigned char>>> objectAcceptor_;
+    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleWidthLoop_;
+    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleHeightLoop_;
+
     std::string name_;
     bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
                                    //!< for an enclosing Beaker.
@@ -243,6 +250,25 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             iterateAcceptor_->setSignalAcceptorMethod(&Beaker::iterate);
             iterateButton_ = signalBuilder_->buttonWSS<std::string>("Iterate");
             signalBuilder_->connect<std::string>(iterateButton_, iterateAcceptor_);
+
+            ruleWidthInput_ =
+                signalBuilder_->withAttributes({{"class", val("small_width")}})
+                    .textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
+
+            ruleHeightInput_ =
+                signalBuilder_->withAttributes({{"class", val("small_width")}})
+                    .textInputWSS<std::string>("ruleHeightInput", "Rule Height in pixels", false);
+
+            ruleWidthLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+                getptr(), ruleWidthInput_, &Beaker<unsigned char>::setRuleGridWidth,
+                &Beaker<unsigned char>::getRuleGridWidth);
+
+            ruleHeightLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+                getptr(), ruleHeightInput_, &Beaker<unsigned char>::setRuleGridHeight,
+                &Beaker<unsigned char>::getRuleGridHeight);
+
+            signalBuilder_->connectLoop(ruleWidthLoop_);
+            signalBuilder_->connectLoop(ruleHeightLoop_);
         }
     }
 
@@ -592,7 +618,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             if (!vpStack.empty()) {
                 sortValuePriorityStack(vpStack);
                 auto [val, pri] = vpStack.back();
-                gridControl_->setPixelAt(px, py, val, false); 
+                gridControl_->setPixelAt(px, py, val, false);
                 // this->beakerNode_->beakerCanvas_->setValXYNoDraw(px, py, val);
             }
         }
@@ -694,7 +720,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     void printRuleStats() {
         // int i = 0;
         // for (auto rule : this->reactionRules_) {
-        //     cout << "Rule " << i++ << ": " << rule->name_ << ", succ: " << rule->successor_->name_
+        //     cout << "Rule " << i++ << ": " << rule->name_ << ", succ: " <<
+        //     rule->successor_->name_
         //          << endl;
         // }
     }
@@ -705,7 +732,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         //     auto [pixelVal, gridCoordinates] = p;
         //     cout << "PPL() For pixelVal " << int(pixelVal) << endl;
         //     for (auto coordinatePair : gridCoordinates) {
-        //         cout << "\tPPL() " << coordinatePair.first << ", " << coordinatePair.second << endl;
+        //         cout << "\tPPL() " << coordinatePair.first << ", " << coordinatePair.second <<
+        //         endl;
         //     }
         // }
     }
@@ -715,7 +743,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // for (auto [pixelVal, gridCoordinates] : m) {
         //     cout << "PPM() For pixelVal " << int(pixelVal) << endl;
         //     for (auto coordinatePair : gridCoordinates) {
-        //         cout << "\tPPM() " << coordinatePair.first << ", " << coordinatePair.second << endl;
+        //         cout << "\tPPM() " << coordinatePair.first << ", " << coordinatePair.second <<
+        //         endl;
         //     }
         // }
     }
@@ -767,7 +796,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     std::vector<gridCoordinatePairT> generatePotentialMatchCoordinates(
         std::tuple<gridCoordinateT, gridCoordinateT, V> &newPixel,
         std::map<V, std::vector<gridCoordinatePairT>> &valueToPixelLocationsMap) const {
-
         // auto [npx, npy, npVal] = newPixel;
         // std::vector<gridCoordinatePairT> coordinatesVector = valueToPixelLocationsMap[npVal];
         // std::vector<gridCoordinatePairT> potentialMatchCoordinates;
@@ -843,8 +871,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         //      << endl;
     }
 
-    
-
     static bool compareValuePriorityPairs(valuePriorityPairT vp1, valuePriorityPairT vp2) {
         return (vp1.second < vp2.second);
     }
@@ -900,9 +926,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         //          << uy << endl;
         //     laydownMatchPixels2(reactionRule, umc, rm);
         // }
-    }    
+    }
 
-    //static void makeNewReactionRule_st(Beaker *b) { b->makeNewReactionRule(); }
+    // static void makeNewReactionRule_st(Beaker *b) { b->makeNewReactionRule(); }
 };
 
 template <>
@@ -913,7 +939,8 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
     emscripten::class_<Beaker<unsigned char>>("Beaker")
         .function("toggleClean", &Beaker<unsigned char>::toggleClean,
                   emscripten::allow_raw_pointers())
-       // .function("clearGrid", &Beaker<unsigned char>::clearGrid, emscripten::allow_raw_pointers())
+        // .function("clearGrid", &Beaker<unsigned char>::clearGrid,
+        // emscripten::allow_raw_pointers())
         .function("makeDirty", &Beaker<unsigned char>::makeDirty, emscripten::allow_raw_pointers())
         .function("iterate", &Beaker<unsigned char>::iterate, emscripten::allow_raw_pointers())
         // .function("makePixelList", &Beaker<unsigned char>::makePixelList,
@@ -952,23 +979,23 @@ struct PixelReactor {
         mainBeaker_->finalize();
 
         // mainBeaker_->finalize();
-        ruleWidthInput_ =
-            signalBuilder_->withAttributes({{"class", val("small_width")}})
-                .textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
-        ruleHeightInput_ =
-            signalBuilder_->withAttributes({{"class", val("small_width")}})
-                .textInputWSS<std::string>("ruleHeightInput", "Rule Height in pixels", false);
+        // ruleWidthInput_ =
+        //     signalBuilder_->withAttributes({{"class", val("small_width")}})
+        //         .textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
+        // ruleHeightInput_ =
+        //     signalBuilder_->withAttributes({{"class", val("small_width")}})
+        //         .textInputWSS<std::string>("ruleHeightInput", "Rule Height in pixels", false);
 
-        ruleWidthLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-            mainBeaker_, ruleWidthInput_, &Beaker<unsigned char>::setRuleGridWidth,
-            &Beaker<unsigned char>::getRuleGridWidth);
+        // ruleWidthLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+        //     mainBeaker_, ruleWidthInput_, &Beaker<unsigned char>::setRuleGridWidth,
+        //     &Beaker<unsigned char>::getRuleGridWidth);
 
-        ruleHeightLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-            mainBeaker_, ruleHeightInput_, &Beaker<unsigned char>::setRuleGridHeight,
-            &Beaker<unsigned char>::getRuleGridHeight);
+        // ruleHeightLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+        //     mainBeaker_, ruleHeightInput_, &Beaker<unsigned char>::setRuleGridHeight,
+        //     &Beaker<unsigned char>::getRuleGridHeight);
 
-        signalBuilder_->connectLoop(ruleWidthLoop_);
-        signalBuilder_->connectLoop(ruleHeightLoop_);
+        // signalBuilder_->connectLoop(ruleWidthLoop_);
+        // signalBuilder_->connectLoop(ruleHeightLoop_);
     }
 };
 
