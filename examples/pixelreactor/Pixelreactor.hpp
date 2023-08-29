@@ -13,6 +13,7 @@
 #include "WebElements.hpp"
 
 using namespace cl2;
+using namespace std::chrono;
 
 /**
  * @brief My own stringification function once I saw that to_string() wasn't always working.
@@ -580,6 +581,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      */
     void iterate(const std::string &s) {
+        auto start = high_resolution_clock::now();
+
+        // Call the function, here sort()
+
         this->update();
         // this->beakerNode_->nodelog("ITERATING...");
         this->iterationCount_++;
@@ -608,6 +613,16 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         }
         updateGrid();
         // this->beakerNode_->beakerCanvas_->drawGrid();
+
+        // Get ending timepoint
+        auto stop = high_resolution_clock::now();
+
+        // Get duration. Substart timepoints to
+        // get duration. To cast it to proper unit
+        // use duration cast method
+        auto duration = duration_cast<microseconds>(stop - start);
+
+        cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
     }
 
     void updateGrid() {
