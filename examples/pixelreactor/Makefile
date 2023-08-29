@@ -7,8 +7,14 @@ DEBUG_CXXFLAGS = -O0 -g -std=c++17 -sALLOW_MEMORY_GROWTH -I../../
 
 CXXFLAGS	=  -O3 -std=c++17 -I../../
 
-%.o : %.cpp
-	$(ENV) $(CXX) $(CXXFLAGS) $< -o $@ -c
+
+SRC = $(wildcard *.cpp)
+
+%.o: %.cpp Makefile
+	$(CXX) $(CXXFLAGS) -MMD -MP -c $< -o $@
+
+# %.o : %.cpp
+# 	$(ENV) $(CXX) $(CXXFLAGS) $< -o $@ -c
 
 
 
@@ -23,3 +29,7 @@ pixelreactor.o: Pixelreactor.hpp
 
 clean:	
 	rm -f *.o *.wasm *.wasm.map *.a pixelreactor.js
+
+
+-include $(SRC:%.cpp=%.d)
+

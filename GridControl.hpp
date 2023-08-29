@@ -211,7 +211,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     }
 
     void printNewPixels() {
-        cout << "NEW PIXELS #6:" << endl;
+        cout << "NEW PIXELS #7:" << endl;
         for (const auto &[color, pixels]: newPixelMap_) {
             cout << "COLOR: " << color << endl;
             for (const auto &p: pixels) {
