@@ -21,13 +21,18 @@
 
 namespace cl2 {
 
+
+
 template <typename PixelT>
 class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
+
+    typedef std::pair<PixelT, PixelT> gridCoordinatePairT;
     // val svgDOMElement_ = val::null();
     int gridWidth_, gridHeight_;
     std::string id_;
     std::string svgid_;
     PixelT *pixels_;
+    std::map<PixelT, std::vector<gridCoordinatePairT>> newPixelMap_;
     PixelT currentColor_ = 1;
     std::map<PixelT, std::string> colorPallete_;
     std::function<std::string(PixelT)> pixel2String_ = [](PixelT p) { return std::to_string(p); };
@@ -107,7 +112,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
         // We now place our lambda in the core of the CppLambda signal wrapper.
         // auto strToNumTransformer = make_shared<cl2::CppLambda<std::string, double>>(str2DblFn);
-        auto xyPairToStringTrn = make_shared<cl2::CppLambda<std::pair<double, double>, std::string>>(xyPairToString);
+        auto xyPairToStringTrn =
+            make_shared<cl2::CppLambda<std::pair<double, double>, std::string>>(xyPairToString);
 
         auto colorInput = gcsb.textInputWSS<std::string>("colorInput", "Color Index", false);
 
@@ -142,7 +148,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
         mouseClickSignal_->setOutput(svgMouseClickAcceptor_);
         mousePositionSignal_->setOutput(svgMousePositionAcceptor_);
-        //svgMousePositionAcceptor_->setOutput(xyPairToStringTrn);
+        // svgMousePositionAcceptor_->setOutput(xyPairToStringTrn);
     }
 
     /**
@@ -152,8 +158,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
      */
     void finalize() {
         this->svgMouseClickAcceptor_->setObjectPointer(this->shared_from_this());
-        //this->signalBuilder_->connect<std::pair<double, double>>(this->svgMouseClickAcceptor_, this->shared_from_this());
-
+        // this->signalBuilder_->connect<std::pair<double, double>>(this->svgMouseClickAcceptor_,
+        // this->shared_from_this());
 
         this->svgMousePositionAcceptor_->setObjectPointer(this->shared_from_this());
         this->newColorAcceptor_->setObjectPointer(this->shared_from_this());
@@ -204,6 +210,16 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         }
     }
 
+    void printNewPixels() {
+        cout << "NEW PIXELS #6:" << endl;
+        for (const auto &[color, pixels]: newPixelMap_) {
+            cout << "COLOR: " << color << endl;
+            for (const auto &p: pixels) {
+                cout << "\t" << p.first << ": " << p.second << endl;
+            }
+        }
+    }
+
     void redraw() {
         val document = val::global("document");
         val svgDOMElement = document.call<val>("getElementById", val(svgid_));
@@ -219,6 +235,14 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         }
     }
 
+    std::map<PixelT, std::vector<gridCoordinatePairT>> getNewPixelMap() {
+        return newPixelMap_;
+    }
+
+    void clearNewPixelMap() {
+        newPixelMap_.clear();
+    }
+
     void mousePositionAcceptor(const std::pair<double, double> &mouseLocation) {
         cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
              << ", y = " << floor(mouseLocation.second) << endl;
@@ -230,7 +254,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
         val document = val::global("document");
         // std::string svgid = this->id_ + "-svg";
-        cout << "Looking for svgid: " << svgid_ << endl;
+        //cout << "Looking for svgid: " << svgid_ << endl;
         val svgDOMElement = document.call<val>("getElementById", val(svgid_));
         int floorX = floor(mouseLocation.first);
         int floorY = floor(mouseLocation.second);
@@ -238,12 +262,17 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         // std::to_string(floorY);
         std::string cursorSquareId = "cursorSquareId";
         std::string colorString = this->colorPallete_[this->currentColor_];
-        cout << "Current Color: " << this->currentColor_ << endl;
+        //cout << "Current Color: " << this->currentColor_ << endl;
         auto rect1 = Rect("", floorX, floorY, 1, 1, colorString, "purple", 0.1, false,
                           cursorSquareId, svgDOMElement);
 
         pixels_[calculateGridCellIndex(floorX, floorY)] = this->currentColor_;
-        printNonZeroPixels();
+
+        auto pos = std::make_pair(floorX, floorY);
+
+        newPixelMap_[currentColor_].push_back(pos);
+        //printNonZeroPixels();
+        printNewPixels();
     }
 
     void setCurrentColor(const std::string &c) {
