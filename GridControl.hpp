@@ -263,11 +263,13 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         auto rect1 = Rect("", floorX, floorY, 1, 1, colorString, "purple", 0.1, false,
                           cursorSquareId, svgDOMElement);
 
-        pixels_[calculateGridCellIndex(floorX, floorY)] = this->currentColor_;
+        setPixelAt(floorX, floorY, currentColor_, false);
 
-        auto pos = std::make_pair(floorX, floorY);
+        // pixels_[calculateGridCellIndex(floorX, floorY)] = this->currentColor_;
 
-        newPixelMap_[currentColor_].push_back(pos);
+        // auto pos = std::make_pair(floorX, floorY);
+
+        // newPixelMap_[currentColor_].push_back(pos);
         // printNonZeroPixels();
         // printNewPixels();
     }
