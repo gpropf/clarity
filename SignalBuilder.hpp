@@ -214,6 +214,16 @@ class SignalBuilder {
         return inp;
     }
 
+    WebElement textArea(const std::string& name, int rows, int cols, const std::string& labelText) {
+        const Textarea inp =
+            Textarea(name, rows, cols, tm_.getNextStrId(), parentDOMElement_);
+        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, tm_.getNextStrId(),
+                                parentDOMElement_);
+        postCall(inp);
+        addElementToMap(inp, name);
+        return inp;
+    }
+
     /**
      * @brief Creates a text input signal emitter using an `EventListenerEmitter`
      *
@@ -286,6 +296,17 @@ class SignalBuilder {
         InputElement inp = rangeInput(name, labelText);
         shared_ptr<WebElementSignal<S>> wso =
             make_shared<WebElementSignal<S>>(inp, "value", emitInitialValue);
+        return wso;
+    }
+
+    template <typename S>
+    shared_ptr<WebElementSignal<S>> textAreaWSS(const std::string& name, int rows, int cols,
+                                                 const std::string& labelText,
+                                                 bool emitInitialValue = true) {
+        WebElement inp = textArea(name, rows, cols, labelText);
+        shared_ptr<WebElementSignal<S>> wso =
+            make_shared<WebElementSignal<S>>(inp, "value", emitInitialValue);
+
         return wso;
     }
 

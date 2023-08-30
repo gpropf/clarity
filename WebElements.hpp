@@ -95,6 +95,15 @@ struct Option : public WebElement {
     }
 };
 
+struct Textarea : public WebElement {
+    Textarea(const std::string& name, int rows, int cols, const std::string& id = "",
+             val parentElement = val::null())
+        : WebElement("textarea", name, id, parentElement) {
+        domElement_.call<void>("setAttribute", val("rows"), val(rows));
+        domElement_.call<void>("setAttribute", val("cols"), val(cols));
+    }
+};
+
 /**
  * @brief Simple br tag, probably doesn't need a name or id. The logic in the JS code is that
  * negative ids are not created so you can set the id to a negative to create a tag with no id.
@@ -119,8 +128,9 @@ struct SVG : public WebElement {
 
 struct Rect : public WebElement {
     Rect(const std::string& name, double x, double y, double width, double height,
-         const std::string& fill, const std::string& stroke = "", double strokeWidth = 0.5, bool preventDuplicateIds = true,
-         const std::string& id = "", val parentElement = val::null())
+         const std::string& fill, const std::string& stroke = "", double strokeWidth = 0.5,
+         bool preventDuplicateIds = true, const std::string& id = "",
+         val parentElement = val::null())
         : WebElement("rect", name, id, parentElement) {
         if (preventDuplicateIds) {
             val document = val::global("document");

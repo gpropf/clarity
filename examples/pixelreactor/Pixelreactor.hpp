@@ -452,8 +452,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         if (isReactionRule_) return;
 
         auto newPixelMap = gridControl_->getNewPixelMap();
-        //cout << "ITERATION: " << this->iterationCount_ << endl;
-        if (newPixelMap.empty()) cout << "ITERATION: " << this->iterationCount_ << ", There are NO NEW PIXELS!" << endl;
+        // cout << "ITERATION: " << this->iterationCount_ << endl;
+        if (newPixelMap.empty())
+            cout << "ITERATION: " << this->iterationCount_ << ", There are NO NEW PIXELS!" << endl;
         for (const auto &[anchorPixelColor, pixels] : newPixelMap) {
             cout << "ITERATION: " << this->iterationCount_ << ", There are " << pixels.size()
                  << " new anchor pixels with index = " << int(anchorPixelColor) << endl;
@@ -1073,6 +1074,8 @@ struct PixelReactor {
         mainBeaker_ =
             make_shared<Beaker<unsigned char>>(signalBuilder_, 30, 20, 600, 400, "Beaker");
         mainBeaker_->finalize();
+
+        signalBuilder_->textAreaWSS<std::string>("jsonText", 8, 60, "Json Input Area");
     }
 };
 
