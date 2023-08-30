@@ -26,7 +26,9 @@ namespace cl2 {
 template <typename PixelT>
 class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
-    typedef std::pair<PixelT, PixelT> gridCoordinatePairT;
+    typedef int gridCoordinateT;
+    typedef std::pair<gridCoordinateT, gridCoordinateT> gridCoordinatePairT;
+    
     // val svgDOMElement_ = val::null();
     int gridWidth_, gridHeight_;
     std::string id_;
@@ -213,7 +215,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     void printNewPixels() {
         cout << "NEW PIXELS #7:" << endl;
         for (const auto &[color, pixels]: newPixelMap_) {
-            cout << "COLOR: " << color << endl;
+            cout << "COLOR: " << int(color) << endl;
             for (const auto &p: pixels) {
                 cout << "\t" << p.first << ": " << p.second << endl;
             }
@@ -272,7 +274,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
         newPixelMap_[currentColor_].push_back(pos);
         //printNonZeroPixels();
-        printNewPixels();
+        //printNewPixels();
+
     }
 
     void setCurrentColor(const std::string &c) {

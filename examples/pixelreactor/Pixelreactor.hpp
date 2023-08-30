@@ -450,6 +450,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     void populateMatchLists() {
         if (isReactionRule_) return;
+
+        auto newPixelMap = gridControl_->getNewPixelMap();
+
+        gridControl_->printNewPixels();
+
         for (auto reactionRule : reactionRules_) {
             cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
             if (reactionRule->successor_ == reactionRule || reactionRule->successor_ == nullptr)
