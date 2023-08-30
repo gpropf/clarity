@@ -21,14 +21,11 @@
 
 namespace cl2 {
 
-
-
 template <typename PixelT>
 class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
-
     typedef int gridCoordinateT;
     typedef std::pair<gridCoordinateT, gridCoordinateT> gridCoordinatePairT;
-    
+
     // val svgDOMElement_ = val::null();
     int gridWidth_, gridHeight_;
     std::string id_;
@@ -85,6 +82,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         PixelT oldPixelVal = pixels_[pixelIndex];
         pixels_[pixelIndex] = pixelVal;
         if (redraw) this->redraw();
+        auto pos = std::make_pair(x, y);
+        newPixelMap_[pixelVal].push_back(pos);
         return oldPixelVal;
     }
 
@@ -214,9 +213,9 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
     void printNewPixels() {
         cout << "NEW PIXELS #7:" << endl;
-        for (const auto &[color, pixels]: newPixelMap_) {
+        for (const auto &[color, pixels] : newPixelMap_) {
             cout << "COLOR: " << int(color) << endl;
-            for (const auto &p: pixels) {
+            for (const auto &p : pixels) {
                 cout << "\t" << p.first << ": " << p.second << endl;
             }
         }
@@ -237,13 +236,9 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         }
     }
 
-    std::map<PixelT, std::vector<gridCoordinatePairT>> getNewPixelMap() {
-        return newPixelMap_;
-    }
+    std::map<PixelT, std::vector<gridCoordinatePairT>> getNewPixelMap() { return newPixelMap_; }
 
-    void clearNewPixelMap() {
-        newPixelMap_.clear();
-    }
+    void clearNewPixelMap() { newPixelMap_.clear(); }
 
     void mousePositionAcceptor(const std::pair<double, double> &mouseLocation) {
         cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
@@ -256,7 +251,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
         val document = val::global("document");
         // std::string svgid = this->id_ + "-svg";
-        //cout << "Looking for svgid: " << svgid_ << endl;
+        // cout << "Looking for svgid: " << svgid_ << endl;
         val svgDOMElement = document.call<val>("getElementById", val(svgid_));
         int floorX = floor(mouseLocation.first);
         int floorY = floor(mouseLocation.second);
@@ -264,7 +259,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         // std::to_string(floorY);
         std::string cursorSquareId = "cursorSquareId";
         std::string colorString = this->colorPallete_[this->currentColor_];
-        //cout << "Current Color: " << this->currentColor_ << endl;
+        // cout << "Current Color: " << this->currentColor_ << endl;
         auto rect1 = Rect("", floorX, floorY, 1, 1, colorString, "purple", 0.1, false,
                           cursorSquareId, svgDOMElement);
 
@@ -273,9 +268,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         auto pos = std::make_pair(floorX, floorY);
 
         newPixelMap_[currentColor_].push_back(pos);
-        //printNonZeroPixels();
-        //printNewPixels();
-
+        // printNonZeroPixels();
+        // printNewPixels();
     }
 
     void setCurrentColor(const std::string &c) {

@@ -452,7 +452,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         if (isReactionRule_) return;
 
         auto newPixelMap = gridControl_->getNewPixelMap();
-
+        if (newPixelMap.empty()) cout << "There are NO NEW PIXELS!" << endl;
         for (const auto &[anchorPixelColor, pixels] : newPixelMap) {
             cout << "There are " << pixels.size()
                  << " new anchor pixels with index = " << int(anchorPixelColor) << endl;
