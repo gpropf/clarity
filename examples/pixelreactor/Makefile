@@ -3,9 +3,9 @@ CXX		= emcc
 ENV		= DEMANGLE_SUPPORT=1
 
 DEBUG_CXXFLAGS = -O0 -g -std=c++17 -sALLOW_MEMORY_GROWTH -I../../
-#CXXFLAGS	= $(DEBUG_CXXFLAGS) -sNO_DISABLE_EXCEPTION_CATCHING
+CXXFLAGS	= $(DEBUG_CXXFLAGS) -sNO_DISABLE_EXCEPTION_CATCHING
 
-CXXFLAGS	=  -O3 -std=c++17 -I../../
+#CXXFLAGS	=  -O3 -std=c++17 -I../../
 
 
 SRC = $(wildcard *.cpp)
@@ -16,7 +16,7 @@ SRC = $(wildcard *.cpp)
 # %.o : %.cpp
 # 	$(ENV) $(CXX) $(CXXFLAGS) $< -o $@ -c
 
-
+# --preload-file asset_dir
 
 
 pixelreactor.js: pixelreactor.o
