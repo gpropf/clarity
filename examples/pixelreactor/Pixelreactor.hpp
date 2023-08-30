@@ -453,7 +453,14 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
         auto newPixelMap = gridControl_->getNewPixelMap();
 
-        gridControl_->printNewPixels();
+        for (const auto &[color, pixels] : newPixelMap) {
+            cout << "populateMatchLists: COLOR: " << int(color) << endl;
+            for (const auto &p : pixels) {
+                cout << "\t" << p.first << ": " << p.second << endl;
+            }
+        }
+
+        // gridControl_->printNewPixels();
 
         for (auto reactionRule : reactionRules_) {
             cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
@@ -518,6 +525,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     void update() {
         successionMap_.clear();
         buildPixelValueMaps();
+        printPixelValueMaps();
         for (auto reactionRule : reactionRules_) {
             reactionRule->printBeakerStats();
         }
@@ -544,33 +552,45 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     std::map<V, std::vector<gridCoordinatePairT>> buildPixelValueMap(
-        shared_ptr<Beaker<V>> reactionRule,
         const RotationMatrix2D<gridCoordinateT> &rotationMatrix) {
         std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMap;
 
-        for (gridCoordinateT i = 0; i < reactionRule->gridWidth_; i++) {
-            for (gridCoordinateT j = 0; j < reactionRule->gridHeight_; j++) {
-                V ruleVal = reactionRule->gridControl_->getPixelAt(i, j);
+        for (gridCoordinateT i = 0; i < gridWidth_; i++) {
+            for (gridCoordinateT j = 0; j < gridHeight_; j++) {
+                V ruleVal = gridControl_->getPixelAt(i, j);
 
                 gridCoordinatePairT reactionRuleOffset = std::make_pair(i, j);
                 reactionRuleOffset = rotationMatrix.rotateCoordinates(reactionRuleOffset);
                 valueToCoordinateMap[ruleVal].push_back(reactionRuleOffset);
             }
         }
-        for (const auto &[v, coordinatePairs] : valueToCoordinateMap) {
-            cout << "Pixel val: " << int(v) << endl;
-            for (const auto &[x, y] : coordinatePairs) {
-                cout << "\tX: " << x << ", " << y << endl;
-            }
-        }
+
         return valueToCoordinateMap;
     }
 
     void buildPixelValueMaps() {
+        cout << "buildPixelValueMaps()" << endl;
         for (auto reactionRule : reactionRules_) {
             for (int i = 0; i < 4; i++) {
-                valueToCoordinateMaps_[i].clear();
-                valueToCoordinateMaps_[i] = buildPixelValueMap(reactionRule, rotationMatrices[i]);
+                reactionRule->valueToCoordinateMaps_[i].clear();
+                reactionRule->valueToCoordinateMaps_[i] =
+                    reactionRule->buildPixelValueMap(rotationMatrices[i]);
+            }
+        }
+    }
+
+    void printPixelValueMaps() {
+        for (auto reactionRule : reactionRules_) {
+            for (int i = 0; i < 4; i++) {
+                for (const auto &[v, coordinatePairs] : reactionRule->valueToCoordinateMaps_[i]) {
+                    if (v == 0) continue;
+                    // We aren't going to bother printing all the empty pixels.
+                    cout << reactionRule->name_ << " @ " << i * 90
+                         << " Pixel color = " << int(v) << endl;
+                    for (const auto &[x, y] : coordinatePairs) {
+                        cout << "\t" << x << ", " << y << endl;
+                    }
+                }
             }
         }
     }
