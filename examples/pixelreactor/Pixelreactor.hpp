@@ -453,40 +453,65 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
         auto newPixelMap = gridControl_->getNewPixelMap();
 
-        for (const auto &[color, pixels] : newPixelMap) {
-            cout << "populateMatchLists: COLOR: " << int(color) << endl;
+        for (const auto &[anchorPixelColor, pixels] : newPixelMap) {
+            cout << "There are " << pixels.size()
+                 << " new anchor pixels with index = " << int(anchorPixelColor) << endl;
+            cout << "Anchor pixels: COLOR: " << int(anchorPixelColor) << endl;
             for (const auto &p : pixels) {
                 cout << "\t" << p.first << ": " << p.second << endl;
+
+                for (auto reactionRule : reactionRules_) {
+                    cout << "\t\tRule name: " << reactionRule->name_ << endl;
+                    if (reactionRule->successor_ == reactionRule ||
+                        reactionRule->successor_ == nullptr)
+                        continue;
+
+                    for (int r = 0; r < 4; r++) {
+                        const auto &rotationMatrix = rotationMatrices[r];
+                        auto vcm = reactionRule->valueToCoordinateMaps_[r];
+                        auto matchingPixels = vcm[anchorPixelColor];
+                        for (auto [x, y] : matchingPixels) {
+                            auto potentialMatchX = p.first - x;
+                            auto potentialMatchY = p.second - y;
+                            if (matchAt(reactionRule, potentialMatchX, potentialMatchY,
+                                        rotationMatrix)) {
+                                reactionRule->matchLists_[r].push_back(
+                                    std::make_pair(potentialMatchX, potentialMatchY));
+                            }
+                        }
+                    }
+                }
             }
         }
 
         // gridControl_->printNewPixels();
 
-        for (auto reactionRule : reactionRules_) {
-            cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
-            if (reactionRule->successor_ == reactionRule || reactionRule->successor_ == nullptr)
-                continue;
-            for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
-                for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
-                    if (matchAt(reactionRule, i, j, r0)) {
-                        // cout << "(r = 0) MATCH: " << i << ", " << j << endl;
-                        reactionRule->matchLists_[0].push_back(std::make_pair(i, j));
-                    }
-                    if (matchAt(reactionRule, i, j, r90)) {
-                        // cout << "(r = 90) MATCH: " << i << ", " << j << endl;
-                        reactionRule->matchLists_[1].push_back(std::make_pair(i, j));
-                    }
-                    if (matchAt(reactionRule, i, j, r180)) {
-                        // cout << "(r = 180) MATCH: " << i << ", " << j << endl;
-                        reactionRule->matchLists_[2].push_back(std::make_pair(i, j));
-                    }
-                    if (matchAt(reactionRule, i, j, r270)) {
-                        // cout << "(r = 270) MATCH: " << i << ", " << j << endl;
-                        reactionRule->matchLists_[3].push_back(std::make_pair(i, j));
-                    }
-                }
-            }
-        }
+        // for (auto reactionRule : reactionRules_) {
+        //     cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
+        //     if (reactionRule->successor_ == reactionRule || reactionRule->successor_ == nullptr)
+        //         continue;
+        //     for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
+        //         for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
+        //             if (matchAt(reactionRule, i, j, r0)) {
+        //                 // cout << "(r = 0) MATCH: " << i << ", " << j << endl;
+        //                 reactionRule->matchLists_[0].push_back(std::make_pair(i, j));
+        //             }
+        //             if (matchAt(reactionRule, i, j, r90)) {
+        //                 // cout << "(r = 90) MATCH: " << i << ", " << j << endl;
+        //                 reactionRule->matchLists_[1].push_back(std::make_pair(i, j));
+        //             }
+        //             if (matchAt(reactionRule, i, j, r180)) {
+        //                 // cout << "(r = 180) MATCH: " << i << ", " << j << endl;
+        //                 reactionRule->matchLists_[2].push_back(std::make_pair(i, j));
+        //             }
+        //             if (matchAt(reactionRule, i, j, r270)) {
+        //                 // cout << "(r = 270) MATCH: " << i << ", " << j << endl;
+        //                 reactionRule->matchLists_[3].push_back(std::make_pair(i, j));
+        //             }
+        //         }
+        //     }
+        // }
+        gridControl_->clearNewPixelMap();
     }
 
     void printMatchLists() {
@@ -583,10 +608,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         for (auto reactionRule : reactionRules_) {
             for (int i = 0; i < 4; i++) {
                 for (const auto &[v, coordinatePairs] : reactionRule->valueToCoordinateMaps_[i]) {
-                    if (v == 0) continue;
-                    // We aren't going to bother printing all the empty pixels.
-                    cout << reactionRule->name_ << " @ " << i * 90
-                         << " Pixel color = " << int(v) << endl;
+                    // if (v == 0) continue;
+                    //  We aren't going to bother printing all the empty pixels.
+                    cout << reactionRule->name_ << " @ " << i * 90 << " Pixel color = " << int(v)
+                         << endl;
                     for (const auto &[x, y] : coordinatePairs) {
                         cout << "\t" << x << ", " << y << endl;
                     }
@@ -645,35 +670,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // Call the function, here sort()
 
         this->update();
-        // this->beakerNode_->nodelog("ITERATING...");
-        this->iterationCount_++;
-        for (auto reactionRule : reactionRules_) {
-            if (reactionRule->successor_ == reactionRule) {
-                cout << "Rule: " << reactionRule->name_ << " has itself for successor." << endl;
-                continue;
-            }
 
-            // multiMatch(*reactionRule, r0__);
-            // multiMatch(*reactionRule, r90__);
-            // multiMatch(*reactionRule, r180__);
-            // multiMatch(*reactionRule, r270__);
-        }
-
-        // this->beakerNode_->refresh();
-
-        for (const auto &[key, value] : this->successionMap_) {
-            auto [px, py] = key;
-            std::vector<valuePriorityPairT> vpStack = value;
-            cout << "coordinate: " << px << ", " << py << endl;
-            int i = 0;
-            for (auto [val, pri] : vpStack) {
-                cout << "\t" << i++ << ":val = " << int(val) << ", pri = " << pri << endl;
-            }
-        }
-        updateGrid();
-        // this->beakerNode_->beakerCanvas_->drawGrid();
-
-        // Get ending timepoint
         auto stop = high_resolution_clock::now();
 
         // Get duration. Substart timepoints to
@@ -681,7 +678,37 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // use duration cast method
         auto duration = duration_cast<microseconds>(stop - start);
 
-        cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
+        cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;
+
+        // this->beakerNode_->nodelog("ITERATING...");
+        this->iterationCount_++;
+        // for (auto reactionRule : reactionRules_) {
+        //     if (reactionRule->successor_ == reactionRule) {
+        //         cout << "Rule: " << reactionRule->name_ << " has itself for successor." << endl;
+        //         continue;
+        //     }
+
+        //     // multiMatch(*reactionRule, r0__);
+        //     // multiMatch(*reactionRule, r90__);
+        //     // multiMatch(*reactionRule, r180__);
+        //     // multiMatch(*reactionRule, r270__);
+        // }
+
+        // this->beakerNode_->refresh();
+
+        // for (const auto &[key, value] : this->successionMap_) {
+        //     auto [px, py] = key;
+        //     std::vector<valuePriorityPairT> vpStack = value;
+        //     cout << "coordinate: " << px << ", " << py << endl;
+        //     int i = 0;
+        //     for (auto [val, pri] : vpStack) {
+        //         cout << "\t" << i++ << ":val = " << int(val) << ", pri = " << pri << endl;
+        //     }
+        // }
+        updateGrid();
+        // this->beakerNode_->beakerCanvas_->drawGrid();
+
+        // Get ending timepoint
     }
 
     void updateGrid() {
