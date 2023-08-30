@@ -83,7 +83,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         pixels_[pixelIndex] = pixelVal;
         if (redraw) this->redraw();
         auto pos = std::make_pair(x, y);
-        newPixelMap_[pixelVal].push_back(pos);
+        //newPixelMap_[pixelVal].push_back(pos);
+        if (pixelVal != oldPixelVal) newPixelMap_[pixelVal].push_back(pos);
         return oldPixelVal;
     }
 

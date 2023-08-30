@@ -452,9 +452,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         if (isReactionRule_) return;
 
         auto newPixelMap = gridControl_->getNewPixelMap();
-        if (newPixelMap.empty()) cout << "There are NO NEW PIXELS!" << endl;
+        //cout << "ITERATION: " << this->iterationCount_ << endl;
+        if (newPixelMap.empty()) cout << "ITERATION: " << this->iterationCount_ << ", There are NO NEW PIXELS!" << endl;
         for (const auto &[anchorPixelColor, pixels] : newPixelMap) {
-            cout << "There are " << pixels.size()
+            cout << "ITERATION: " << this->iterationCount_ << ", There are " << pixels.size()
                  << " new anchor pixels with index = " << int(anchorPixelColor) << endl;
             cout << "Anchor pixels: COLOR: " << int(anchorPixelColor) << endl;
             for (const auto &p : pixels) {
