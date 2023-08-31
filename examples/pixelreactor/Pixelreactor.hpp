@@ -1067,6 +1067,8 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
 struct PixelReactor {
     shared_ptr<Beaker<unsigned char>> mainBeaker_;
     shared_ptr<SignalBuilder> signalBuilder_;
+    shared_ptr<WebElementSignal<std::string>> jsonTextArea_;
+    //shared_ptr<WebElementSignal<std::string>> validationField_;
 
     PixelReactor() {
         cout << "I'm a Pixelreactor. I need to be redone completely 9!" << endl;
@@ -1074,8 +1076,15 @@ struct PixelReactor {
         mainBeaker_ =
             make_shared<Beaker<unsigned char>>(signalBuilder_, 30, 20, 600, 400, "Beaker");
         mainBeaker_->finalize();
-
-        signalBuilder_->textAreaWSS<std::string>("jsonText", 8, 60, "Json Input Area");
+        BR();
+        jsonTextArea_ =
+            signalBuilder_->textAreaWSS<std::string>("jsonText", 8, 60, "Json Input Area", false);
+        // validationField_ =
+        //     signalBuilder_->withAttributes({{"class", val("medium_width")}})
+        //         .textInputWSS<std::string>("jsonInput",
+        //                                    "Text field to validate textAreaWSS control", false);
+        // signalBuilder_->connect<std::string>(validationField_, jsonTextArea_);
+        // signalBuilder_->connect<std::string>(jsonTextArea_, validationField_);
     }
 };
 
