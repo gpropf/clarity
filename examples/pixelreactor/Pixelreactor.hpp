@@ -107,6 +107,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     // shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
     shared_ptr<WebElementSignal<std::string>> newRuleButton_;
     shared_ptr<WebElementSignal<std::string>> iterateButton_;
+    shared_ptr<WebElementSignal<std::string>> deleteRuleButton_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> iterateAcceptor_;
 
