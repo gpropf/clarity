@@ -243,6 +243,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
             signalBuilder_->connectLoop(successorOffsetYInputLoop_);
 
+            objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            objAcceptor_->setSignalAcceptorMethod(&Beaker::deleteRuleSignal);
+            deleteRuleButton_ = signalBuilder_->buttonWSS<std::string>("Delete this rule");
+            signalBuilder_->connect<std::string>(deleteRuleButton_, objAcceptor_);
+
         } else {
             objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
             objAcceptor_->setSignalAcceptorMethod(&Beaker::makeNewReactionRuleSignal);
@@ -278,6 +283,12 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     void makeNewReactionRuleSignal(const std::string &s) {
         cout << "GOT SIGNAL FROM BUTTON: " << s << endl;
         this->makeNewReactionRule();
+    }
+
+    void deleteRuleSignal(const std::string &s) {
+        cout << "GOT DELETE SIGNAL FROM BUTTON: " << s << endl;
+        //this->makeNewReactionRule();
+        // We need a way to destroy and remove elements!
     }
 
     Beaker(shared_ptr<cl2::SignalBuilder> signalBuilder, int gridWidth, int gridHeight,
