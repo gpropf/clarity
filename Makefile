@@ -9,8 +9,8 @@ ENV		= DEMANGLE_SUPPORT=1
 
 #CXXFLAGS	=  -O0 -g -gsource-map --source-map-base=http://localhost:6931/ -std=c++17
 #DEBUG_CXXFLAGS = -O0 -g -std=c++17 -sALLOW_MEMORY_GROWTH -fsanitize=undefined -s ASSERTIONS=2 -s SAFE_HEAP=1 -s STACK_OVERFLOW_CHECK=1 -s WASM=1
-DEBUG_CXXFLAGS = -O0 -g -std=c++17 -sALLOW_MEMORY_GROWTH
-CXXFLAGS	= $(DEBUG_CXXFLAGS) -MD -MP
+DEBUG_CXXFLAGS = -O0 -g -std=c++17
+CXXFLAGS	= $(DEBUG_CXXFLAGS)
 
 #CXXFLAGS	=  -O3 -std=c++17
 
@@ -38,7 +38,7 @@ all: signalTest
 # 	emranlib cl2.a
 
 signalTest: signalTest.o
-	$(ENV) $(CXX) $(CXXFLAGS) -lembind signalTest.o -o signalTest.js
+	$(ENV) $(CXX) $(CXXFLAGS) -lembind signalTest.o -o signalTest.js -sALLOW_MEMORY_GROWTH
 	
 
 # docsclean:

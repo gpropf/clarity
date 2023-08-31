@@ -47,6 +47,10 @@ struct WebElement {
         return domElement_.call<val>("getAttribute", val("name")).as<std::string>();
     }
 
+    ~WebElement() {
+
+    }
+
     WebElement(const std::string& tag, const std::string& name, const std::string& id = "",
                val parentElement = val::null()) {
         val initElement = val::global("WebElement")["initElement"];
