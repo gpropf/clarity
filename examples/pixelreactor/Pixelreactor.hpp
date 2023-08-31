@@ -181,6 +181,13 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      */
     std::shared_ptr<Beaker<V>> getptr() { return this->shared_from_this(); }
 
+
+    void deleteRule() {
+        nameInput_.reset();
+    }
+
+
+
     /**
      * @brief Needs to be called outside the constructor due to use of getptr()
      *
@@ -288,6 +295,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     void deleteRuleSignal(const std::string &s) {
         cout << "GOT DELETE SIGNAL FROM BUTTON: " << s << endl;
         //this->makeNewReactionRule();
+        shared_ptr<Beaker<unsigned char>> thisRuleInParent = findRuleByName(name_);
+        cout << "This rule name: " << name_ << " is found in parent as: " << thisRuleInParent->name_ << endl;
         // We need a way to destroy and remove elements!
     }
 
@@ -1089,8 +1098,10 @@ struct PixelReactor {
             make_shared<Beaker<unsigned char>>(signalBuilder_, 30, 20, 600, 400, "Beaker");
         mainBeaker_->finalize();
         BR();
+
         jsonTextArea_ =
             signalBuilder_->textAreaWSS<std::string>("jsonText", 8, 60, "Json Input Area", false);
+        
         // validationField_ =
         //     signalBuilder_->withAttributes({{"class", val("medium_width")}})
         //         .textInputWSS<std::string>("jsonInput",

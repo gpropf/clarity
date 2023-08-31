@@ -50,6 +50,10 @@ class WebElementSignal : public SignalAcceptor<S>, public SignalEmitter<S> {
     val eventListenerFn_ = val::null();
 
    public:
+    virtual ~WebElementSignal() {
+        wptr_.reset();
+    }
+
     virtual void emit(const S& s) { SignalEmitter<S>::emit(s); }
     shared_ptr<WebElement> getWebElement() { return wptr_; }
 
@@ -71,7 +75,7 @@ class WebElementSignal : public SignalAcceptor<S>, public SignalEmitter<S> {
         if (wptr_->domElement_["type"] == val("range")) {
             eventListenerName_ = "input";
         } else if (wptr_->domElement_["type"] == val("submit")) {
-            elgEmitFn = val::global("elgButtonFn"); 
+            elgEmitFn = val::global("elgButtonFn");
             eventListenerName_ = "click";
         } else {
             eventListenerName_ = "change";
@@ -115,7 +119,7 @@ class WebElementSignal : public SignalAcceptor<S>, public SignalEmitter<S> {
         return true;
     }
 
-    virtual ~WebElementSignal() {}
+    
 };
 
 // class SignalBuilder;

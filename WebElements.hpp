@@ -39,6 +39,13 @@ namespace cl2 {
 struct WebElement {
     val domElement_;
 
+    bool deleteDomElementOnExit_ = false;
+    //bool deleteDomElementOnExit_ = true;
+
+    void forceDeleteDomElementOnExit() {
+        deleteDomElementOnExit_ = true;
+    }
+
     val getId() const { return domElement_["id"]; }
 
     val getDomElement() const { return domElement_; }
@@ -47,8 +54,8 @@ struct WebElement {
         return domElement_.call<val>("getAttribute", val("name")).as<std::string>();
     }
 
-    ~WebElement() {
-
+    virtual ~WebElement() {
+        if (deleteDomElementOnExit_) domElement_.call<void>("remove");
     }
 
     WebElement(const std::string& tag, const std::string& name, const std::string& id = "",
