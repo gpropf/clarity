@@ -97,9 +97,9 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         auto svg = cl2::SVG("svg1", pixelWidth, pixelHeight, svgid_, parentDOMElement);
         // svgDOMElement_ = svg.getDomElement();
         SignalBuilder gcsb = signalBuilder->withAttributes({{"class", val("small_width")}}, false);
-        auto br = cl2::BR("foobr");
+        auto br = cl2::BR();
         //cl2::BR();
-        br.forceDeleteDomElementOnExit();
+        //br.forceDeleteDomElementOnExit();
         //br.forceDeleteDomElementOnExit();
         svg.setAttributes({{"viewBox", val("0 0 " + std::to_string(gridWidth_) + " " +
                                            std::to_string(gridHeight_))},
