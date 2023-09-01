@@ -34,13 +34,18 @@ int setInterval(val jsFunc, int delay) {
 class TicketMachine {
    private:
     int id_ = 0;
+    static int sid__;
 
    public:
     TicketMachine(int startVal = 0) { id_ = startVal; }
 
     int getNext() { return ++id_; }
+    static int getNextSid() { return ++sid__; }
     std::string getNextStrId() { return std::to_string(getNext()); }
+    static std::string getNextStrSid() { return std::to_string(getNextSid()); }
 };
+
+int TicketMachine::sid__ = 0;
 
 /**
  * @brief An old fashioned C-style function with a static int that stores state. Produces the same

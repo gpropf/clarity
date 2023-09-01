@@ -206,8 +206,8 @@ class SignalBuilder {
      */
     InputElement textInput(const std::string& name, const std::string& labelText) {
         const InputElement inp =
-            InputElement("input", name, "text", tm_.getNextStrId(), parentDOMElement_);
-        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, tm_.getNextStrId(),
+            InputElement("input", name, "text", TicketMachine::getNextStrSid(), parentDOMElement_);
+        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, TicketMachine::getNextStrSid(),
                                 parentDOMElement_);
         postCall(inp);
         addElementToMap(inp, name);
@@ -216,8 +216,8 @@ class SignalBuilder {
 
     WebElement textArea(const std::string& name, int rows, int cols, const std::string& labelText) {
         const Textarea inp =
-            Textarea(name, rows, cols, tm_.getNextStrId(), parentDOMElement_);
-        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, tm_.getNextStrId(),
+            Textarea(name, rows, cols, TicketMachine::getNextStrSid(), parentDOMElement_);
+        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, TicketMachine::getNextStrSid(),
                                 parentDOMElement_);
         postCall(inp);
         addElementToMap(inp, name);
@@ -273,8 +273,8 @@ class SignalBuilder {
      */
     InputElement rangeInput(const std::string& name, const std::string& labelText) {
         const InputElement inp =
-            InputElement("input", name, "range", tm_.getNextStrId(), parentDOMElement_);
-        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, tm_.getNextStrId(),
+            InputElement("input", name, "range", TicketMachine::getNextStrSid(), parentDOMElement_);
+        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, TicketMachine::getNextStrSid(),
                                 parentDOMElement_);
         postCall(inp);
         return inp;
@@ -332,7 +332,7 @@ class SignalBuilder {
      */
     Button button(const std::string& displayedText, val onClickFn) {
         Button btn =
-            Button(displayedText, displayedText, onClickFn, tm_.getNextStrId(), parentDOMElement_);
+            Button(displayedText, displayedText, onClickFn, TicketMachine::getNextStrSid(), parentDOMElement_);
         postCall(btn);
         return btn;
     }
