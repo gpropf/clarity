@@ -108,6 +108,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     shared_ptr<WebElementSignal<std::string>> newRuleButton_;
     shared_ptr<WebElementSignal<std::string>> iterateButton_;
     shared_ptr<WebElementSignal<std::string>> deleteRuleButton_;
+    shared_ptr<WebElementSignal<std::string>> loadButton_;
+    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> loadAcceptor_;
+    shared_ptr<WebElementSignal<std::string>> saveButton_;
+    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> saveAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> iterateAcceptor_;
 
@@ -265,6 +269,12 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             iterateAcceptor_->setSignalAcceptorMethod(&Beaker::iterate);
             iterateButton_ = signalBuilder_->buttonWSS<std::string>("Iterate");
             signalBuilder_->connect<std::string>(iterateButton_, iterateAcceptor_);
+
+            loadButton_ = signalBuilder_->buttonWSS<std::string>("Load Rules");
+            saveButton_ = signalBuilder_->buttonWSS<std::string>("Save Rules");
+            saveAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            saveAcceptor_->setSignalAcceptorMethod(&Beaker::serialize);
+            signalBuilder_->connect<std::string>(saveButton_, saveAcceptor_);
 
             ruleWidthInput_ =
                 signalBuilder_->withAttributes({{"class", val("small_width")}})
@@ -681,6 +691,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             }
         }
         // auto successorPixel =
+    }
+
+    void serialize(const std::string &s) {
+        cout << "Serializing reactor and reaction rules..." << endl;
+
     }
 
     /**
