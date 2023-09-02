@@ -25,6 +25,8 @@ pixelreactor.js: pixelreactor.o
 	$(ENV) $(CXX) $(CXXFLAGS) -lembind pixelreactor.o -o pixelreactor.js -sALLOW_MEMORY_GROWTH
 
 
+#pixelreactor.html:
+
 #pixelreactor.o: Pixelreactor.hpp
 #$(CXX) $(CXXFLAGS) -c -o $@ $<
 

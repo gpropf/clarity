@@ -31,7 +31,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     std::string id_;
     std::string svgid_;
     PixelT *pixels_;
-    Rect **pixelRects;
+    Rect **pixelRects_;
     std::map<PixelT, std::vector<gridCoordinatePairT>> newPixelMap_;
     PixelT currentColor_ = 1;
     std::map<PixelT, std::string> colorPallete_;
@@ -89,12 +89,12 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         std::string colorString = this->colorPallete_[this->pixels_[pixelIndex]];
         // std::string colorString = "#ffff00";
 
-        if (pixelRects[pixelIndex] == nullptr) {
+        if (pixelRects_[pixelIndex] == nullptr) {
             auto *rectptr =
                 new Rect("", x, y, 1, 1, colorString, "teal", 0.1, false, "", svgDOMElement);
-            pixelRects[pixelIndex] = rectptr;
+            pixelRects_[pixelIndex] = rectptr;
         } else {
-            pixelRects[pixelIndex]->domElement_.call<void>("setAttribute", val("fill"),
+            pixelRects_[pixelIndex]->domElement_.call<void>("setAttribute", val("fill"),
                                                            val(colorString));
         }
 
@@ -109,7 +109,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                 val parentDOMElement = val::null())
         : gridWidth_(gridWidth), gridHeight_(gridHeight), signalBuilder_(signalBuilder) {
         id_ = id;
-        pixelRects = new Rect *[gridWidth_ * gridHeight_];
+        pixelRects_ = new Rect *[gridWidth_ * gridHeight_];
         svgid_ = this->id_ + "-svg";
         auto svg = cl2::SVG("svg1", pixelWidth, pixelHeight, svgid_, parentDOMElement);
         // svgDOMElement_ = svg.getDomElement();
@@ -252,13 +252,13 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                 // std::string colorString = this->colorPallete_[this->pixels_[idx]];
                 // // std::string colorString = "#ffff00";
 setPixelAt(i,j,this->pixels_[idx]);
-                // if (pixelRects[idx] == nullptr) {
+                // if (pixelRects_[idx] == nullptr) {
                 //     auto *rectptr = new Rect("", i, j, 1, 1, colorString, "teal", 0.1, false, "",
                 //                              svgDOMElement);
-                //     pixelRects[idx] = rectptr;
+                //     pixelRects_[idx] = rectptr;
                 // }
                 // else {
-                //     pixelRects[idx]->domElement_.call<void>("setAttribute", val("fill"),
+                //     pixelRects_[idx]->domElement_.call<void>("setAttribute", val("fill"),
                 //     val(colorString));
                 // }
             }

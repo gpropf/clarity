@@ -138,6 +138,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     // V *gridArray_;  //!< The actual grid data to be used by the CanvasGrid in BeakerNode.
 
     int playMode_ = 0;
+    int iterationInterval_ = 500;
 
     std::map<gridCoordinatePairT, std::vector<valuePriorityPairT>> successionMap_;
 
