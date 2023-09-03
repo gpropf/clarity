@@ -714,6 +714,13 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     void iterateOnce() {
         cout << "THIS IS THE ITERATION WITHOUT TOGGLING THE PLAYING SETTING!!!" << endl;
+        auto start = high_resolution_clock::now();
+        this->update();
+        auto stop = high_resolution_clock::now();        
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;        
+        this->iterationCount_++;        
+        updateGrid();  
     }
 
     /**
@@ -744,13 +751,13 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
         
 
-        auto start = high_resolution_clock::now();
-        this->update();
-        auto stop = high_resolution_clock::now();        
-        auto duration = duration_cast<microseconds>(stop - start);
-        cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;        
-        this->iterationCount_++;        
-        updateGrid();        
+        // auto start = high_resolution_clock::now();
+        // this->update();
+        // auto stop = high_resolution_clock::now();        
+        // auto duration = duration_cast<microseconds>(stop - start);
+        // cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;        
+        // this->iterationCount_++;        
+        // updateGrid();        
     }
 
     void updateGrid() {
