@@ -7,6 +7,7 @@ latex/
 work_shit/
 *.o
 *.a
+*.d
 
 # Compiled output files
 #############################
