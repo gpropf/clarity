@@ -78,7 +78,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
      * @param pixelVal
      * @return PixelT
      */
-    PixelT setPixelAt(int x, int y, PixelT pixelVal) {
+    PixelT setPixelAt(int x, int y, PixelT pixelVal, bool forceCreateNewRect = false) {
         val document = val::global("document");
         val svgDOMElement = document.call<val>("getElementById", val(svgid_));
         int pixelIndex = calculateGridCellIndex(x, y);
@@ -91,7 +91,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
         Rect * rptr = pixelRects_[pixelIndex];
 
-        if (rptr == nullptr) {
+        if (rptr == nullptr || forceCreateNewRect) {
             auto *rectptr =
                 new Rect("", x, y, 1, 1, colorString, "teal", 0.1, false, "", svgDOMElement);
             pixelRects_[pixelIndex] = rectptr;
@@ -253,7 +253,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                 int idx = calculateGridCellIndex(i, j);
                 // std::string colorString = this->colorPallete_[this->pixels_[idx]];
                 // // std::string colorString = "#ffff00";
-                setPixelAt(i, j, this->pixels_[idx]);
+                setPixelAt(i, j, this->pixels_[idx], true);
                 // if (pixelRects_[idx] == nullptr) {
                 //     auto *rectptr = new Rect("", i, j, 1, 1, colorString, "teal", 0.1, false, "",
                 //                              svgDOMElement);
