@@ -58,6 +58,12 @@ function sayHello() {
     console.log("This just prints HELLO to the console.");
 }
 
+function callIterateMethodOnObject(obj) {
+    return function() {
+        obj.iterateOnce();
+    }    
+}
+
 function logStuff(stuff) {
     console.log("This is a simple signal endpoint: " + stuff);
     return stuff;

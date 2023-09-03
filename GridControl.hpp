@@ -89,13 +89,15 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         std::string colorString = this->colorPallete_[this->pixels_[pixelIndex]];
         // std::string colorString = "#ffff00";
 
-        if (pixelRects_[pixelIndex] == nullptr) {
+        Rect * rptr = pixelRects_[pixelIndex];
+
+        if (rptr == nullptr) {
             auto *rectptr =
                 new Rect("", x, y, 1, 1, colorString, "teal", 0.1, false, "", svgDOMElement);
             pixelRects_[pixelIndex] = rectptr;
         } else {
-            pixelRects_[pixelIndex]->domElement_.call<void>("setAttribute", val("fill"),
-                                                           val(colorString));
+            rptr->domElement_.call<void>("setAttribute", val("fill"),
+                                                            val(colorString));
         }
 
         auto pos = std::make_pair(x, y);
@@ -251,7 +253,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                 int idx = calculateGridCellIndex(i, j);
                 // std::string colorString = this->colorPallete_[this->pixels_[idx]];
                 // // std::string colorString = "#ffff00";
-setPixelAt(i,j,this->pixels_[idx]);
+                setPixelAt(i, j, this->pixels_[idx]);
                 // if (pixelRects_[idx] == nullptr) {
                 //     auto *rectptr = new Rect("", i, j, 1, 1, colorString, "teal", 0.1, false, "",
                 //                              svgDOMElement);

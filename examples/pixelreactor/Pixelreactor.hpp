@@ -67,6 +67,16 @@ const RotationMatrix2D r90 = RotationMatrix2D(0, -1, 1, 0, 90);
 const RotationMatrix2D r180 = RotationMatrix2D(-1, 0, 0, -1, 180);
 const RotationMatrix2D r270 = RotationMatrix2D(0, 1, -1, 0, 270);
 
+
+struct SimpleObj {
+    void iterateOnce() {
+        cout << "FOO TO YOU" << endl;
+    }
+
+};
+
+
+
 // template <typename U>
 // class Beaker;
 
@@ -121,6 +131,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     // shared_ptr<ObjectAcceptor<std::string, Beaker<unsigned char>>> objectAcceptor_;
     shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleWidthLoop_;
     shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleHeightLoop_;
+    
 
     std::string name_;
     bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
@@ -137,8 +148,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     // V *gridArray_;  //!< The actual grid data to be used by the CanvasGrid in BeakerNode.
 
-    int playMode_ = 0;
+    bool isPlaying_ = false;
     int iterationInterval_ = 500;
+    val timerId_ = val::null();
 
     std::map<gridCoordinatePairT, std::vector<valuePriorityPairT>> successionMap_;
 
@@ -267,7 +279,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             signalBuilder_->connect<std::string>(newRuleButton_, objAcceptor_);
 
             iterateAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
-            iterateAcceptor_->setSignalAcceptorMethod(&Beaker::iterate);
+            iterateAcceptor_->setSignalAcceptorMethod(&Beaker::iterateSignalMethod);
             iterateButton_ = signalBuilder_->buttonWSS<std::string>("Iterate");
             signalBuilder_->connect<std::string>(iterateButton_, iterateAcceptor_);
 
@@ -699,55 +711,46 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     }
 
+
+    void iterateOnce() {
+        cout << "THIS IS THE ITERATION WITHOUT TOGGLING THE PLAYING SETTING!!!" << endl;
+    }
+
     /**
      * @brief Apply replacement rules to main grid one time.
      *
      */
-    void iterate(const std::string &s) {
+    void iterateSignalMethod(const std::string &s) {
+        if (!isPlaying_) {
+            isPlaying_ = true;
+            val sayHello = val::global("elgCallMethodOnObjByName");
+            val sh = sayHello(*this, val("iterateOnce"));
+            sh();
+
+            val setInterval = val::global("setInterval");
+            timerId_ = setInterval(sh, val(iterationInterval_));
+            //SimpleObj s;
+
+            // val sayHello = val::global("callIterateMethodOnObject");
+            // val sh = sayHello(s);
+            // sh();
+        }
+        else {
+            isPlaying_ = false;
+            val clearInterval = val::global("clearInterval");
+            clearInterval(timerId_);
+        }
+
+
+        
+
         auto start = high_resolution_clock::now();
-
-        // Call the function, here sort()
-
         this->update();
-
-        auto stop = high_resolution_clock::now();
-
-        // Get duration. Substart timepoints to
-        // get duration. To cast it to proper unit
-        // use duration cast method
+        auto stop = high_resolution_clock::now();        
         auto duration = duration_cast<microseconds>(stop - start);
-
-        cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;
-
-        // this->beakerNode_->nodelog("ITERATING...");
-        this->iterationCount_++;
-        // for (auto reactionRule : reactionRules_) {
-        //     if (reactionRule->successor_ == reactionRule) {
-        //         cout << "Rule: " << reactionRule->name_ << " has itself for successor." << endl;
-        //         continue;
-        //     }
-
-        //     // multiMatch(*reactionRule, r0__);
-        //     // multiMatch(*reactionRule, r90__);
-        //     // multiMatch(*reactionRule, r180__);
-        //     // multiMatch(*reactionRule, r270__);
-        // }
-
-        // this->beakerNode_->refresh();
-
-        // for (const auto &[key, value] : this->successionMap_) {
-        //     auto [px, py] = key;
-        //     std::vector<valuePriorityPairT> vpStack = value;
-        //     cout << "coordinate: " << px << ", " << py << endl;
-        //     int i = 0;
-        //     for (auto [val, pri] : vpStack) {
-        //         cout << "\t" << i++ << ":val = " << int(val) << ", pri = " << pri << endl;
-        //     }
-        // }
-        updateGrid();
-        // this->beakerNode_->beakerCanvas_->drawGrid();
-
-        // Get ending timepoint
+        cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;        
+        this->iterationCount_++;        
+        updateGrid();        
     }
 
     void updateGrid() {
@@ -1084,7 +1087,8 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
         // .function("clearGrid", &Beaker<unsigned char>::clearGrid,
         // emscripten::allow_raw_pointers())
         .function("makeDirty", &Beaker<unsigned char>::makeDirty, emscripten::allow_raw_pointers())
-        .function("iterate", &Beaker<unsigned char>::iterate, emscripten::allow_raw_pointers())
+        .function("iterateSignalMethod", &Beaker<unsigned char>::iterateSignalMethod, emscripten::allow_raw_pointers())
+        .function("iterateOnce", &Beaker<unsigned char>::iterateOnce, emscripten::allow_raw_pointers())
         // .function("makePixelList", &Beaker<unsigned char>::makePixelList,
         //           emscripten::allow_raw_pointers())
         .function("makeNewReactionRule", &Beaker<unsigned char>::makeNewReactionRule,
@@ -1092,6 +1096,9 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
 
     emscripten::class_<SignalBuilder>("SignalBuilder");
     emscripten::class_<GridControl<int>>("GridControl");
+
+    // emscripten::class_<SimpleObj>("SimpleObj")
+    // .function()
 
     emscripten::register_vector<Beaker<unsigned char>::gridCoordinatesValueTripletT>(
         "std::vector<gridCoordinatesValueTripletT>");
