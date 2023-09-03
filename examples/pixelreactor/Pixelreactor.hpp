@@ -149,7 +149,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     std::map<gridCoordinatePairT, std::vector<valuePriorityPairT>> successionMap_;
 
     int iterationCount_;// = 0;
-    int iterationCountSave_;
+    //int iterationCountSave_;
     //!< Counter that advances every time the rules are applied to the grid.
 
     std::vector<shared_ptr<Beaker<V>>> reactionRules_;
@@ -489,9 +489,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
         auto newPixelMap = gridControl_->getNewPixelMap();
         // cout << "ITERATION: " << this->iterationCount_ << endl;
-        if (newPixelMap.empty()) {
-            return;
+        if (newPixelMap.empty()) {            
             cout << "ITERATION: " << this->iterationCount_ << ", There are NO NEW PIXELS!" << endl;
+            return;
         }
         for (const auto &[anchorPixelColor, pixels] : newPixelMap) {
             // cout << "ITERATION: " << this->iterationCount_ << ", There are " << pixels.size()
@@ -723,7 +723,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << "RUNNING ITERATION: " << iterationCount_ << endl;
         updateGrid();
         iterationLock_ = false;
-        iterationCountSave_ = iterationCount_;
+        //iterationCountSave_ = iterationCount_;
     }
 
     /**
@@ -733,21 +733,21 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     void iterateSignalMethod(const std::string &s) {
         if (!isPlaying_) {
             isPlaying_ = true;
-            iterationCount_ = iterationCountSave_;
+            //iterationCount_ = iterationCountSave_;
             cout << "STARTING RUN AT ITERATION: " << iterationCount_ << endl;
             //cout << "Calling elgCallMethodOnObjByName..." << endl;
-            val sayHello = val::global("elgCallMethodOnObjByName");
-            val sh = sayHello(*this, val("iterateOnce"));
-            //sh();
+            val jsMethodCallerFn = val::global("elgCallMethodOnObjByName");
+            val iterateOnceJS = jsMethodCallerFn(*this, val("iterateOnce"));
+            //iterateOnceJS();
             //cout << "Called elgCallMethodOnObjByName..." << endl;
 
             val setInterval = val::global("setInterval");
-            timerId_ = setInterval(sh, val(iterationInterval_));
+            timerId_ = setInterval(iterateOnceJS, val(iterationInterval_));
             // SimpleObj s;
 
-            // val sayHello = val::global("callIterateMethodOnObject");
-            // val sh = sayHello(s);
-            // sh();
+            // val jsMethodCallerFn = val::global("callIterateMethodOnObject");
+            // val iterateOnceJS = jsMethodCallerFn(s);
+            // iterateOnceJS();
         } else {
             isPlaying_ = false;
             cout << "STOPPING RUN AT ITERATION: " << iterationCount_ << endl;
