@@ -738,7 +738,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             //cout << "Calling elgCallMethodOnObjByName..." << endl;
             val sayHello = val::global("elgCallMethodOnObjByName");
             val sh = sayHello(*this, val("iterateOnce"));
-            sh();
+            //sh();
             //cout << "Called elgCallMethodOnObjByName..." << endl;
 
             val setInterval = val::global("setInterval");
