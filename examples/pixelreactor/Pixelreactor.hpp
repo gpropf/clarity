@@ -502,12 +502,12 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         for (const auto &[anchorPixelColor, pixels] : newPixelMap) {
             cout << "ITERATION: " << this->iterationCount_ << ", There are " << pixels.size()
                  << " new anchor pixels with index = " << int(anchorPixelColor) << endl;
-            cout << "Anchor pixels: COLOR: " << int(anchorPixelColor) << endl;
+            // cout << "Anchor pixels: COLOR: " << int(anchorPixelColor) << endl;
             for (const auto &p : pixels) {
-                cout << "\t" << p.first << ": " << p.second << endl;
+                //cout << "\t" << p.first << ": " << p.second << endl;
 
                 for (auto reactionRule : reactionRules_) {
-                    cout << "\t\tRule name: " << reactionRule->name_ << endl;
+                    // cout << "\t\tRule name: " << reactionRule->name_ << endl;
                     if (reactionRule->successor_ == reactionRule ||
                         reactionRule->successor_ == nullptr)
                         continue;
@@ -560,8 +560,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         gridControl_->clearNewPixelMap();
     }
 
-    void printMatchLists() {
+    void processMatchLists() {
         for (auto reactionRule : reactionRules_) {
+            if (reactionRule->successor_ == reactionRule ||
+                        reactionRule->successor_ == nullptr)
+                        continue;
             cout << "Reaction rule '" << reactionRule->name_ << "'" << endl;
             cout << "\tSuccessor rule '" << reactionRule->successorName_ << "'" << endl;
             // shared_ptr<Beaker<V>> successor = reactionRule->successor_;
@@ -569,11 +572,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 for (const auto &matchOffset : reactionRule->matchLists_[i]) {
                     auto x = matchOffset.first;
                     auto y = matchOffset.second;
-                    cout << "Rot: " << i * 90 << " - " << x << ", " << y << endl;
+                    //cout << "Rot: " << i * 90 << " - " << x << ", " << y << endl;
                     auto successorOffset = std::make_pair(reactionRule->successorOffsetX_,
                                                           reactionRule->successorOffsetY_);
 
-                    addEachSuccessorPixel(*reactionRule->successor_, successorOffset, matchOffset,
+                    addSuccessorPixels(*reactionRule->successor_, successorOffset, matchOffset,
                                           i, reactionRule->successorPriority_);
                 }
             }
@@ -596,12 +599,12 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     void update() {
         successionMap_.clear();
         buildPixelValueMaps();
-        printPixelValueMaps();
-        for (auto reactionRule : reactionRules_) {
-            reactionRule->printBeakerStats();
-        }
+        // printPixelValueMaps();
+        // for (auto reactionRule : reactionRules_) {
+        //     reactionRule->printBeakerStats();
+        // }
         populateMatchLists();
-        printMatchLists();
+        processMatchLists();
         purgeMatchLists();
     }
 
@@ -675,7 +678,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     //     successionMap_[spLocation] = std::make_pair(pixelVal, pixelPriority);
     // }
 
-    void addEachSuccessorPixel(const Beaker<V> &successor,
+    void addSuccessorPixels(const Beaker<V> &successor,
                                const gridCoordinatePairT &successorOffset,
                                const gridCoordinatePairT &matchOffset, const int rotationIndex,
                                const priorityT successorPriority) {
@@ -695,10 +698,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
                 valuePriorityPairT vp = std::make_pair(successorPixelVal, successorPriority);
                 // successionMap_[successorCoords]
-                cout << "SX: " << successorOffset.first << ", SY: " << successorOffset.second
-                     << ", X: " << successorCoords.first << ", Y: " << successorCoords.second
-                     << ", val: " << int(successorPixelVal) << ", pri: " << successorPriority
-                     << endl;
+                // cout << "SX: " << successorOffset.first << ", SY: " << successorOffset.second
+                //      << ", X: " << successorCoords.first << ", Y: " << successorCoords.second
+                //      << ", val: " << int(successorPixelVal) << ", pri: " << successorPriority
+                //      << endl;
 
                 successionMap_[successorCoords].push_back(vp);
             }
@@ -713,7 +716,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
 
     void iterateOnce() {
-        cout << "THIS IS THE ITERATION WITHOUT TOGGLING THE PLAYING SETTING!!!" << endl;
+        //cout << "THIS IS THE ITERATION WITHOUT TOGGLING THE PLAYING SETTING!!!" << endl;
         auto start = high_resolution_clock::now();
         this->update();
         auto stop = high_resolution_clock::now();        
@@ -766,7 +769,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         for (const auto &[key, value] : this->successionMap_) {
             auto [px, py] = key;
             std::vector<valuePriorityPairT> vpStack = value;
-            cout << "update coordinate: " << px << ", " << py << endl;
+            //cout << "update coordinate: " << px << ", " << py << endl;
             if (!vpStack.empty()) {
                 sortValuePriorityStack(vpStack);
                 auto [val, pri] = vpStack.back();
@@ -774,7 +777,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 // this->beakerNode_->beakerCanvas_->setValXYNoDraw(px, py, val);
             }
         }
-        gridControl_->redraw();
+        //gridControl_->redraw();
     }
 
     /**
