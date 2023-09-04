@@ -121,10 +121,14 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> iterateAcceptor_;
 
+    shared_ptr<WebElementSignal<std::string>> iterationIntervalInput_;
     shared_ptr<WebElementSignal<std::string>> ruleWidthInput_;
     shared_ptr<WebElementSignal<std::string>> ruleHeightInput_;
     // shared_ptr<ObjectEmitter<std::string, Beaker<unsigned char>>> objectEmitter_;
     // shared_ptr<ObjectAcceptor<std::string, Beaker<unsigned char>>> objectAcceptor_;
+
+    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> iterationIntervalLoop_;
+
     shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleWidthLoop_;
     shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleHeightLoop_;
 
@@ -286,6 +290,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             saveAcceptor_->setSignalAcceptorMethod(&Beaker::serialize);
             signalBuilder_->connect<std::string>(saveButton_, saveAcceptor_);
 
+            iterationIntervalInput_ =
+                signalBuilder_->withAttributes({{"class", val("small_width")}})
+                    .textInputWSS<std::string>("iterationIntervalInput", "Iteration interval in ms",
+                                               false);
+
             ruleWidthInput_ =
                 signalBuilder_->withAttributes({{"class", val("small_width")}})
                     .textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
@@ -293,6 +302,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             ruleHeightInput_ =
                 signalBuilder_->withAttributes({{"class", val("small_width")}})
                     .textInputWSS<std::string>("ruleHeightInput", "Rule Height in pixels", false);
+
+            iterationIntervalLoop_ =
+                make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+                    getptr(), iterationIntervalInput_, &Beaker<unsigned char>::setIterationInterval,
+                    &Beaker<unsigned char>::getIterationInterval);
 
             ruleWidthLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
                 getptr(), ruleWidthInput_, &Beaker<unsigned char>::setRuleGridWidth,
@@ -304,6 +318,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
             signalBuilder_->connectLoop(ruleWidthLoop_);
             signalBuilder_->connectLoop(ruleHeightLoop_);
+            signalBuilder_->connectLoop(iterationIntervalLoop_);
         }
     }
 
@@ -354,6 +369,17 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << "\t\tSuccessor Name: " << successorName_ << endl;
         cout << "\t\tSuccessor Priority: " << successorPriority_ << endl;
         cout << "\t\tSX: " << successorOffsetX_ << ", SY: " << successorOffsetY_ << endl;
+    }
+
+    void setIterationInterval(const std::string &v) {
+        iterationInterval_ = std::stoi(v);
+        cout << "SETTING iterationInterval_ to " << v << endl;
+    }
+
+    std::string getIterationInterval() {
+        std::string outstr = std::to_string(iterationInterval_);
+        cout << "GETTING iterationInterval_ as string value: '" << outstr << "'" << endl;
+        return outstr;
     }
 
     void setRuleGridWidth(const std::string &v) {
