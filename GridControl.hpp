@@ -126,7 +126,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                            {"preserveAspectRatio", val("none")}});
 
         pixels_ = new PixelT[gridWidth_ * gridHeight_];
-        initPixels();
+        clearGridToValue(0, true);
 
         auto xyPairToString = [](std::pair<double, double> p) {
             std::string xstr = std::to_string(p.first);
@@ -212,12 +212,13 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         return std::pair(xp, yp);
     }
 
-    void initPixels() {
+    void clearGridToValue(PixelT v = 0, bool forceCreateNewRect = false) {
         int totalPixels = gridHeight_ * gridWidth_;
         while (totalPixels--) {
             pixels_[totalPixels] = 0;
         }
-        this->redraw();
+        clearNewPixelMap();
+        this->redraw(forceCreateNewRect);
     }
 
     void printNonZeroPixels(bool convertToIntBeforePrinting = true) {
@@ -244,7 +245,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         }
     }
 
-    void redraw() {
+    void redraw(bool forceCreateNewRect = false) {
         // val document = val::global("document");
         // val svgDOMElement = document.call<val>("getElementById", val(svgid_));
 
@@ -253,7 +254,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                 int idx = calculateGridCellIndex(i, j);
                 // std::string colorString = this->colorPallete_[this->pixels_[idx]];
                 // // std::string colorString = "#ffff00";
-                setPixelAt(i, j, this->pixels_[idx], true);
+                setPixelAt(i, j, this->pixels_[idx], forceCreateNewRect);
                 // if (pixelRects_[idx] == nullptr) {
                 //     auto *rectptr = new Rect("", i, j, 1, 1, colorString, "teal", 0.1, false, "",
                 //                              svgDOMElement);

@@ -112,10 +112,12 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     shared_ptr<WebElementSignal<std::string>> newRuleButton_;
     shared_ptr<WebElementSignal<std::string>> iterateButton_;
     shared_ptr<WebElementSignal<std::string>> deleteRuleButton_;
+    shared_ptr<WebElementSignal<std::string>> clearButton_;
     shared_ptr<WebElementSignal<std::string>> loadButton_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> loadAcceptor_;
     shared_ptr<WebElementSignal<std::string>> saveButton_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> saveAcceptor_;
+    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> clearAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> iterateAcceptor_;
 
@@ -148,8 +150,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     std::map<gridCoordinatePairT, std::vector<valuePriorityPairT>> successionMap_;
 
-    int iterationCount_;// = 0;
-    //int iterationCountSave_;
+    int iterationCount_;  // = 0;
+    // int iterationCountSave_;
     //!< Counter that advances every time the rules are applied to the grid.
 
     std::vector<shared_ptr<Beaker<V>>> reactionRules_;
@@ -272,6 +274,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             iterateAcceptor_->setSignalAcceptorMethod(&Beaker::iterateSignalMethod);
             iterateButton_ = signalBuilder_->buttonWSS<std::string>("Iterate");
             signalBuilder_->connect<std::string>(iterateButton_, iterateAcceptor_);
+
+            clearAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            clearAcceptor_->setSignalAcceptorMethod(&Beaker::clearGrid);
+            clearButton_ = signalBuilder_->buttonWSS<std::string>("Clear Grid");
+            signalBuilder_->connect<std::string>(clearButton_, clearAcceptor_);
 
             loadButton_ = signalBuilder_->buttonWSS<std::string>("Load Rules");
             saveButton_ = signalBuilder_->buttonWSS<std::string>("Save Rules");
@@ -489,11 +496,12 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
         auto newPixelMap = gridControl_->getNewPixelMap();
         // cout << "ITERATION: " << this->iterationCount_ << endl;
-        if (newPixelMap.empty()) {            
+        if (newPixelMap.empty()) {
             cout << "ITERATION: " << this->iterationCount_ << ", There are NO NEW PIXELS!" << endl;
             return;
         }
         for (const auto &[anchorPixelColor, pixels] : newPixelMap) {
+            cout << int(anchorPixelColor) << ":" << pixels.size() << ",";
             // cout << "ITERATION: " << this->iterationCount_ << ", There are " << pixels.size()
             //      << " new anchor pixels with index = " << int(anchorPixelColor) << endl;
 
@@ -553,6 +561,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         //     }
         // }
         gridControl_->clearNewPixelMap();
+        cout << endl;
     }
 
     void processMatchLists() {
@@ -723,7 +732,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << "RUNNING ITERATION: " << iterationCount_ << endl;
         updateGrid();
         iterationLock_ = false;
-        //iterationCountSave_ = iterationCount_;
+        // iterationCountSave_ = iterationCount_;
     }
 
     /**
@@ -733,13 +742,13 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     void iterateSignalMethod(const std::string &s) {
         if (!isPlaying_) {
             isPlaying_ = true;
-            //iterationCount_ = iterationCountSave_;
+            // iterationCount_ = iterationCountSave_;
             cout << "STARTING RUN AT ITERATION: " << iterationCount_ << endl;
-            //cout << "Calling elgCallMethodOnObjByName..." << endl;
+            // cout << "Calling elgCallMethodOnObjByName..." << endl;
             val jsMethodCallerFn = val::global("elgCallMethodOnObjByName");
             val iterateOnceJS = jsMethodCallerFn(*this, val("iterateOnce"));
-            //iterateOnceJS();
-            //cout << "Called elgCallMethodOnObjByName..." << endl;
+            // iterateOnceJS();
+            // cout << "Called elgCallMethodOnObjByName..." << endl;
 
             val setInterval = val::global("setInterval");
             timerId_ = setInterval(iterateOnceJS, val(iterationInterval_));
@@ -998,9 +1007,12 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // }
     }
 
-    void clearGrid() {
+    void clearGrid(const std::string &s) {
         // cout << "clearGrid()" << endl;
         // this->beakerNode_->beakerCanvas_->clearGridToValue(0);
+
+        cout << "Clearing the grid!" << endl;
+        gridControl_->clearGridToValue();
     }
 
     void laydownMatchPixels2(Beaker<V> &reactionRule, gridCoordinatePairT matchCoordiates,
@@ -1131,7 +1143,7 @@ struct PixelReactor {
         cout << "I'm a Pixelreactor. I need to be redone completely 9!" << endl;
         signalBuilder_ = make_shared<cl2::SignalBuilder>();
         mainBeaker_ =
-            make_shared<Beaker<unsigned char>>(signalBuilder_, 120, 80, 1200, 800, "Beaker");
+            make_shared<Beaker<unsigned char>>(signalBuilder_, 90, 60, 1200, 800, "Beaker");
         mainBeaker_->finalize();
         BR();
 
