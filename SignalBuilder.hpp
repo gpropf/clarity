@@ -44,6 +44,10 @@ class SignalBuilder {
         tm_ = TicketMachine(startId);
     }
 
+    void setDomElement(val domElement) { this->parentDOMElement_ = domElement; }
+
+    val getDomElement() { return this->parentDOMElement_; }
+
     /**
      * @brief Do this in any method that creates a WebElement.
      *
@@ -207,18 +211,36 @@ class SignalBuilder {
     InputElement textInput(const std::string& name, const std::string& labelText) {
         const InputElement inp =
             InputElement("input", name, "text", TicketMachine::getNextStrSid(), parentDOMElement_);
-        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, TicketMachine::getNextStrSid(),
-                                parentDOMElement_);
+        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_,
+                                TicketMachine::getNextStrSid(), parentDOMElement_);
         postCall(inp);
         addElementToMap(inp, name);
         return inp;
     }
 
+    SVG svg(const std::string& name, int pixelWidth, int pixelHeight, const std::string& id = "",
+            val parentDOMElement = val::null()) {
+        SVG svg = SVG(name, pixelWidth, pixelHeight, id, parentDOMElement_);
+        return svg;
+    }
+
+    Div div(const std::string& name = "", const std::string& id = "") {
+        if (id == "") {
+            const Div div = Div(name, TicketMachine::getNextStrSid(), parentDOMElement_);
+            return div;
+        }
+
+        else {
+            const Div div = Div(name, id, parentDOMElement_);
+            return div;
+        }
+    }
+
     WebElement textArea(const std::string& name, int rows, int cols, const std::string& labelText) {
         const Textarea inp =
             Textarea(name, rows, cols, TicketMachine::getNextStrSid(), parentDOMElement_);
-        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, TicketMachine::getNextStrSid(),
-                                parentDOMElement_);
+        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_,
+                                TicketMachine::getNextStrSid(), parentDOMElement_);
         postCall(inp);
         addElementToMap(inp, name);
         return inp;
@@ -274,8 +296,8 @@ class SignalBuilder {
     InputElement rangeInput(const std::string& name, const std::string& labelText) {
         const InputElement inp =
             InputElement("input", name, "range", TicketMachine::getNextStrSid(), parentDOMElement_);
-        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_, TicketMachine::getNextStrSid(),
-                                parentDOMElement_);
+        const Label lbl = Label(labelText, inp, labelsSwallowTheirReferents_,
+                                TicketMachine::getNextStrSid(), parentDOMElement_);
         postCall(inp);
         return inp;
     }
@@ -301,8 +323,8 @@ class SignalBuilder {
 
     template <typename S>
     shared_ptr<WebElementSignal<S>> textAreaWSS(const std::string& name, int rows, int cols,
-                                                 const std::string& labelText,
-                                                 bool emitInitialValue = true) {
+                                                const std::string& labelText,
+                                                bool emitInitialValue = true) {
         WebElement inp = textArea(name, rows, cols, labelText);
         shared_ptr<WebElementSignal<S>> wso =
             make_shared<WebElementSignal<S>>(inp, "value", emitInitialValue);
@@ -331,8 +353,8 @@ class SignalBuilder {
      * @return Button
      */
     Button button(const std::string& displayedText, val onClickFn) {
-        Button btn =
-            Button(displayedText, displayedText, onClickFn, TicketMachine::getNextStrSid(), parentDOMElement_);
+        Button btn = Button(displayedText, displayedText, onClickFn, TicketMachine::getNextStrSid(),
+                            parentDOMElement_);
         postCall(btn);
         return btn;
     }
@@ -341,8 +363,7 @@ class SignalBuilder {
     shared_ptr<WebElementSignal<S>> buttonWSS(const std::string& displayedText,
                                               val onClickFn = val::null()) {
         Button inp = button(displayedText, onClickFn);
-        shared_ptr<WebElementSignal<S>> wso =
-            make_shared<WebElementSignal<S>>(inp, "name", false);
+        shared_ptr<WebElementSignal<S>> wso = make_shared<WebElementSignal<S>>(inp, "name", false);
         return wso;
     }
 

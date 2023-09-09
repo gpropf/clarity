@@ -93,6 +93,11 @@ struct WebElement {
     }
 };
 
+struct Div : public WebElement {
+    Div(const std::string& name = "", const std::string& id = "", val parentElement = val::null())
+        : WebElement("div", name, id, parentElement) {}
+};
+
 struct Select : public WebElement {
     Select(const std::string& name, const std::string& id = "", val parentElement = val::null())
         : WebElement("select", name, id, parentElement) {}

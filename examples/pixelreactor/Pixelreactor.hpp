@@ -97,6 +97,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
    protected:
     shared_ptr<cl2::SignalBuilder> signalBuilder_;
+    val signalBuilderDomElement_ = val::null();
+    shared_ptr<Div> beakerDiv_;
+
     shared_ptr<GridControl<V>> gridControl_;
     shared_ptr<WebElementSignal<std::string>> nameInput_;
     shared_ptr<WebElementSignal<std::string>> successorNameInput_;
@@ -334,7 +337,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << "This rule name: " << name_ << " is found in parent as: " << thisRuleInParent->name_
              << endl;
 
-        thisRuleInParent->nameInput_->getWebElement()->deleteDomElement();
+        // thisRuleInParent->nameInput_->getWebElement()->deleteDomElement();
+
+        thisRuleInParent->nameInput_.reset();
         // We need a way to destroy and remove elements!
     }
 
@@ -352,6 +357,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << "Beaker created!" << endl;
         iterationCount_ = 0;
 
+        auto beakerDiv = signalBuilder->div(name_);
+        signalBuilder_  = make_shared<SignalBuilder>(signalBuilder_->withParentWebElement(beakerDiv));
         // SignalBuilder &sb = *signalBuilder_;
         gridControl_ =
             make_shared<GridControl<V>>(gridWidth_, gridHeight_, gridPixelWidth_, gridPixelHeight_,
@@ -1171,7 +1178,7 @@ struct PixelReactor {
         cout << "I'm a Pixelreactor. I need to be redone completely 9!" << endl;
         signalBuilder_ = make_shared<cl2::SignalBuilder>();
         mainBeaker_ =
-            make_shared<Beaker<unsigned char>>(signalBuilder_, 90, 60, 1200, 800, "Beaker");
+            make_shared<Beaker<unsigned char>>(signalBuilder_, 60, 40, 1200, 800, "Beaker");
         mainBeaker_->finalize();
         BR();
 

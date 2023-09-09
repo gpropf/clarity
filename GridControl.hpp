@@ -113,7 +113,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         id_ = id;
         pixelRects_ = new Rect *[gridWidth_ * gridHeight_];
         svgid_ = this->id_ + "-svg";
-        auto svg = cl2::SVG("svg1", pixelWidth, pixelHeight, svgid_, parentDOMElement);
+        auto svg = signalBuilder_->svg("svg1", pixelWidth, pixelHeight, svgid_, parentDOMElement);
         // svgDOMElement_ = svg.getDomElement();
         SignalBuilder gcsb = signalBuilder->withAttributes({{"class", val("small_width")}}, false);
         auto br = cl2::BR();
