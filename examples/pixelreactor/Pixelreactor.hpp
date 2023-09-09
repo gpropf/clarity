@@ -339,7 +339,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
         // thisRuleInParent->nameInput_->getWebElement()->deleteDomElement();
 
-        thisRuleInParent->nameInput_.reset();
+        thisRuleInParent->beakerDiv_->deleteDomElement();
         // We need a way to destroy and remove elements!
     }
 
@@ -357,8 +357,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << "Beaker created!" << endl;
         iterationCount_ = 0;
 
-        auto beakerDiv = signalBuilder->div(name_);
-        signalBuilder_  = make_shared<SignalBuilder>(signalBuilder_->withParentWebElement(beakerDiv));
+        beakerDiv_ = make_shared<Div>(signalBuilder->div(name_));
+        signalBuilder_  = make_shared<SignalBuilder>(signalBuilder_->withParentWebElement(*beakerDiv_));
         // SignalBuilder &sb = *signalBuilder_;
         gridControl_ =
             make_shared<GridControl<V>>(gridWidth_, gridHeight_, gridPixelWidth_, gridPixelHeight_,
