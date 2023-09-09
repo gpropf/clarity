@@ -333,6 +333,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         shared_ptr<Beaker<unsigned char>> thisRuleInParent = findRuleByName(name_);
         cout << "This rule name: " << name_ << " is found in parent as: " << thisRuleInParent->name_
              << endl;
+
+        thisRuleInParent->nameInput_->getWebElement()->deleteDomElement();
         // We need a way to destroy and remove elements!
     }
 

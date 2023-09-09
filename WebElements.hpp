@@ -40,11 +40,11 @@ struct WebElement {
     val domElement_;
 
     bool deleteDomElementOnExit_ = false;
-    //bool deleteDomElementOnExit_ = true;
+    // bool deleteDomElementOnExit_ = true;
 
-    void forceDeleteDomElementOnExit() {
-        deleteDomElementOnExit_ = true;
-    }
+    void forceDeleteDomElementOnExit() { deleteDomElementOnExit_ = true; }
+
+    void deleteDomElement() { domElement_.call<void>("remove"); }
 
     val getId() const { return domElement_["id"]; }
 
