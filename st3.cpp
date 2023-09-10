@@ -62,15 +62,11 @@ class TestObj {
 
 int main() {
     // We make a test object and then a signal wrapper for it.
-    TestObj tobj;
+    // TestObj tobj;
     auto tobjSptr = make_shared<TestObj>();
 
-    // Now we're going to create a JS timer to read the value and fire the signal every so often.
-    // val testObjEmitter = val::global("elgTestObjEmitter")(val(*testObjCSO));
-    // val setInterval = val::global("setInterval");
-    // setInterval(testObjEmitter, 500);
+    tobjSptr->signalEmitterTestMethod();
 
-   
     return 0;
 }
 
