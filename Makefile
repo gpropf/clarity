@@ -40,6 +40,9 @@ all: signalTest
 signalTest: signalTest.o
 	$(ENV) $(CXX) $(CXXFLAGS) -lembind signalTest.o -o signalTest.js -sALLOW_MEMORY_GROWTH
 	
+st3: st3.o
+	$(ENV) $(CXX) $(CXXFLAGS) -lembind st3.o -o st3.js -sALLOW_MEMORY_GROWTH
+
 
 # docsclean:
 # 	rm -rf html latex
