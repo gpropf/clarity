@@ -193,12 +193,14 @@ struct Button : public WebElement {
 struct InputElement : public WebElement {
    public:
     InputElement(const std::string& tag, const std::string& name, const std::string& type,
-                 const std::string& id = "", val parentElement = val::null())
+                 const std::string& id = "", val onChangeFn = val::null(),
+                 val parentElement = val::null())
         : WebElement(tag, name, id, parentElement) {
         domElement_.set("type", val(type));
+        domElement_.call<void>("addEventListener", val("change"), onChangeFn);
     }
 };
 
-}  // namespace cl2
+}  // namespace cl3
 
 #endif

@@ -21,6 +21,8 @@
 
 using namespace cl3;
 
+namespace cl3 {
+
 /**
  * @brief This is a simple do-nothing class meant to test the `CppObjectSignalObject` class' ability
  * to use getter and setter method pointers to act as initiation points or endpoints for signals.
@@ -59,6 +61,7 @@ class TestObj {
 
     std::string getS() { return s_; }
 };
+}  // namespace cl3
 
 int main() {
     // We make a test object and then a signal wrapper for it.
@@ -67,10 +70,15 @@ int main() {
 
     tobjSptr->signalEmitterTestMethod();
 
+    val elg = val::global("elgCallMethodOnObjByName");
+    val onChangeFn = elg(*tobjSptr, val("signalEmitterTestMethod"));
+
+    auto textField1 = make_shared<InputElement>("input", "TF1", "text", "TF1-id", onChangeFn);
+
     return 0;
 }
 
-EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
+EMSCRIPTEN_BINDINGS(TestObj) {
     // emscripten::class_<cl2::CppObjectSignalObject<std::string, TestObj>>("CppObjectSignalObject")
     //     .function("emit", &cl2::CppObjectSignalObject<std::string, TestObj>::emit,
     //               emscripten::allow_raw_pointers())
@@ -79,16 +87,8 @@ EMSCRIPTEN_BINDINGS(CppObjectSignalObject) {
     //     .function("accept", &cl2::CppObjectSignalObject<std::string, TestObj>::accept,
     //               emscripten::allow_raw_pointers());
 
-    emscripten::class_<cl2::Merge<std::string, std::string, std::string>>("Merge").function(
-        "recompute", &cl2::Merge<std::string, std::string, std::string>::recompute);
-
-    emscripten::class_<cl2::EventListenerEmitter<std::string>>("EventListenerEmitter")
-        .function("emit", &cl2::EventListenerEmitter<std::string>::emit,
-                  emscripten::allow_raw_pointers());
-
-    emscripten::class_<cl2::ObjectEmitter<std::string, TestObj>>("ObjectEmitter")
-        .function("emit", &cl2::ObjectEmitter<std::string, TestObj>::emit,
-                  emscripten::allow_raw_pointers());
+    emscripten::class_<TestObj>("TestObj").function("signalEmitterTestMethod",
+                                                    &TestObj::signalEmitterTestMethod);
 }
 
 EMSCRIPTEN_BINDINGS(WebElementSignalObject) {
@@ -103,3 +103,4 @@ EMSCRIPTEN_BINDINGS(WebElementSignalObject) {
     //     .function("accept", &WebElementSignal<std::string>::accept,
     //               emscripten::allow_raw_pointers());
 }
+// namespace cl3
