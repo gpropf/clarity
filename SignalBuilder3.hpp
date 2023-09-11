@@ -17,22 +17,25 @@
 #include "WebElementSignals.hpp"
 #include "WebElements3.hpp"
 
-
-
 namespace cl3 {
 
-
-class WebSignal {
+class IChannel {
 
 };
 
 
+template <typename S>
+class Channel : public IChannel {
+    S currentValue_;
+};
 
 /**
  * @brief Factory class that creates WebElements and signals. Also connects signals to one another.
  *
  */
-class SignalBuilder3 {
+//template <template <typename> class T>
+class AppBuilder {
+    std::map<const std::string, shared_ptr<IChannel>> channels_;
     TicketMachine tm_;
     bool labelAllInputs_ = true;
     bool labelsSwallowTheirReferents_ = true;
@@ -45,8 +48,8 @@ class SignalBuilder3 {
     bool attrsResetAfterSingleUse_ = true;
 
    public:
-    SignalBuilder3(int startId = 0, bool labelAllInputs = true,
-                  bool labelsSwallowTheirReferents = true, val parentDOMElement = val::null())
+    AppBuilder(int startId = 0, bool labelAllInputs = true,
+                   bool labelsSwallowTheirReferents = true, val parentDOMElement = val::null())
         : labelAllInputs_(labelAllInputs),
           labelsSwallowTheirReferents_(labelsSwallowTheirReferents),
           parentDOMElement_(parentDOMElement) {

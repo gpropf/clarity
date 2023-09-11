@@ -91,7 +91,40 @@ struct WebElement {
             setAttribute(attrName, value);
         }
     }
+
+    void addEventListener(val ev, val listenerFn) {
+        domElement_.call<void>("addEventListener", ev, listenerFn);
+    }
 };
+
+/**
+ * @brief Specializing the `WebElement` for input fields. Also a struct because this is intended to
+ * be instantiated const and used as immutable.
+ *
+ */
+struct InputElement : public WebElement {
+   public:
+    InputElement(const std::string& name, const std::string& type, const std::string& id = "",
+                 val parentElement = val::null())
+        : WebElement("input", name, id, parentElement) {
+        domElement_.set("type", val(type));
+        // domElement_.call<void>("addEventListener", val("change"), onChangeFn);
+    }
+};
+
+struct TextField : public InputElement {
+    TextField(const std::string& name, const std::string& id = "", val parentElement = val::null())
+        : InputElement(name, "text", id, parentElement) {}
+};
+
+struct RangeInput : public InputElement {
+    RangeInput(const std::string& name, const std::string& id = "", val parentElement = val::null())
+        : InputElement(name, "range", id, parentElement) {}
+};
+
+// OLD STUFF BELOW
+// OLD STUFF BELOW
+// OLD STUFF BELOW
 
 struct Div : public WebElement {
     Div(const std::string& name = "", const std::string& id = "", val parentElement = val::null())
@@ -182,22 +215,6 @@ struct Button : public WebElement {
         : WebElement("button", name, id, parentElement) {
         this->domElement_.call<void>("addEventListener", val("click"), onClickFn);
         this->domElement_.set("textContent", val(displayedText));
-    }
-};
-
-/**
- * @brief Specializing the `WebElement` for input fields. Also a struct because this is intended to
- * be instantiated const and used as immutable.
- *
- */
-struct InputElement : public WebElement {
-   public:
-    InputElement(const std::string& tag, const std::string& name, const std::string& type,
-                 const std::string& id = "", val onChangeFn = val::null(),
-                 val parentElement = val::null())
-        : WebElement(tag, name, id, parentElement) {
-        domElement_.set("type", val(type));
-        domElement_.call<void>("addEventListener", val("change"), onChangeFn);
     }
 };
 

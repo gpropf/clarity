@@ -73,7 +73,12 @@ int main() {
     val elg = val::global("elgCallMethodOnObjByName");
     val onChangeFn = elg(*tobjSptr, val("signalEmitterTestMethod"));
 
-    auto textField1 = make_shared<InputElement>("input", "TF1", "text", "TF1-id", onChangeFn);
+    auto textField1 = make_shared<TextField>("TF1", "TF1-id");
+    textField1->addEventListener(val("change"), onChangeFn);
+
+    auto range1 = make_shared<RangeInput>("R1", "R1-id");
+
+    auto appBldr = make_shared<AppBuilder>();
 
     return 0;
 }
