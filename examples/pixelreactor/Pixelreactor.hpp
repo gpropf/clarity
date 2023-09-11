@@ -339,6 +339,36 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
         // thisRuleInParent->nameInput_->getWebElement()->deleteDomElement();
 
+        if (isReactionRule_) {
+            nameInput_.reset();
+            nameInputLoop_.reset();
+            successorNameInput_.reset();
+            successorNameInputLoop_.reset();
+            successorPriorityInput_.reset();
+            successorPriorityInputLoop_.reset();
+            successorOffsetXInput_.reset();
+            successorOffsetXInputLoop_.reset();
+            successorOffsetYInput_.reset();
+            successorOffsetYInputLoop_.reset();
+            objAcceptor_.reset();
+            deleteRuleButton_.reset();
+        } else {
+            objAcceptor_.reset();
+            newRuleButton_.reset();
+            iterateAcceptor_.reset();
+            iterateButton_.reset();
+            clearAcceptor_.reset();
+            clearButton_.reset();
+            loadButton_.reset();
+            saveButton_.reset();
+            saveAcceptor_.reset();
+            iterationIntervalInput_.reset();
+            ruleWidthInput_.reset();
+            ruleHeightInput_.reset();
+            iterationIntervalLoop_.reset();
+            ruleWidthLoop_.reset();
+            ruleHeightLoop_.reset();
+        }
         thisRuleInParent->beakerDiv_->deleteDomElement();
         // We need a way to destroy and remove elements!
     }
@@ -358,7 +388,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         iterationCount_ = 0;
 
         beakerDiv_ = make_shared<Div>(signalBuilder->div(name_));
-        signalBuilder_  = make_shared<SignalBuilder>(signalBuilder_->withParentWebElement(*beakerDiv_));
+        signalBuilder_ =
+            make_shared<SignalBuilder>(signalBuilder_->withParentWebElement(*beakerDiv_));
         // SignalBuilder &sb = *signalBuilder_;
         gridControl_ =
             make_shared<GridControl<V>>(gridWidth_, gridHeight_, gridPixelWidth_, gridPixelHeight_,
