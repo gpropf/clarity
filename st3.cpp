@@ -68,17 +68,18 @@ int main() {
     // TestObj tobj;
     auto tobjSptr = make_shared<TestObj>();
 
+ auto appBldr = make_shared<AppBuilder>();
     //tobjSptr->signalEmitterTestMethod();
 
     val elg = val::global("elgCallMethodOnObjByName");
     val onChangeFn = elg(*tobjSptr, val("signalEmitterTestMethod"));
 
-    auto textField1 = make_shared<TextField>("TF1", "TF1-id");
-    textField1->addEventListener(val("change"), onChangeFn);
+    val textField1 = appBldr->textField("TF1");
+    textField1.call<void>("addEventListener", val("change"), onChangeFn);
 
     auto range1 = make_shared<RangeInput>("R1", "R1-id");
 
-    auto appBldr = make_shared<AppBuilder>();
+   
 
     return 0;
 }

@@ -17,6 +17,9 @@
 #include "WebElementSignals.hpp"
 #include "WebElements3.hpp"
 
+using std::cout;
+using std::string;
+
 namespace cl3 {
 
 class IChannel {
@@ -35,7 +38,9 @@ class Channel : public IChannel {
  */
 //template <template <typename> class T>
 class AppBuilder {
+    std::vector<const int> currentGroupIds_;
     std::map<const std::string, shared_ptr<IChannel>> channels_;
+    std::map<const std::string, val> domElements_;
     TicketMachine tm_;
     bool labelAllInputs_ = true;
     bool labelsSwallowTheirReferents_ = true;
@@ -55,6 +60,17 @@ class AppBuilder {
           parentDOMElement_(parentDOMElement) {
         tm_ = TicketMachine(startId);
     }
+
+    val textField(const std::string& name, val parentElement = val::null()) {        
+        const string tfid = cl3::TicketMachine::getNextStrSid();
+        auto tf = TextField(name, tfid , parentElement);
+        val tfDomEl = tf.getDomElement();
+        domElements_.insert({tfid, tfDomEl});
+        return tfDomEl;
+    }
+
+
+
 };
 }  // namespace cl3
 #endif
