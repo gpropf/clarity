@@ -11,13 +11,18 @@
 
 // #include "MonolithicSignals.hpp"
 
+#include "AppBuilder.hpp"
 #include "GridControl.hpp"
 #include "Signal.hpp"
-#include "AppBuilder.hpp"
 #include "SignalPrimitives.hpp"
 #include "Util3.hpp"
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
+
+using std::cout;
+using std::string;
+using std::to_string;
+using std::vector;
 
 using namespace cl3;
 
@@ -68,18 +73,22 @@ int main() {
     // TestObj tobj;
     auto tobjSptr = make_shared<TestObj>();
 
- auto appBldr = make_shared<AppBuilder>();
-    //tobjSptr->signalEmitterTestMethod();
+    auto appBldr = make_shared<AppBuilder>();
+    // tobjSptr->signalEmitterTestMethod();
 
     val elg = val::global("elgCallMethodOnObjByName");
     val onChangeFn = elg(*tobjSptr, val("signalEmitterTestMethod"));
 
     val textField1 = appBldr->textField("TF1");
+    val textField2 = appBldr->textField("TF2");
+    val textField3 = appBldr->textField("TF3");
+
+    vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
+    appBldr->printGroup("g1");
+    appBldr->printGroup("g1");
     textField1.call<void>("addEventListener", val("change"), onChangeFn);
 
     auto range1 = make_shared<RangeInput>("R1", "R1-id");
-
-   
 
     return 0;
 }
