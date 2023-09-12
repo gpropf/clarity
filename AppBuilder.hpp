@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef SignalBuilder3_hpp
-#define SignalBuilder3_hpp
+#ifndef AppBuilder3_hpp
+#define AppBuilder3_hpp
 
 #include "SignalPrimitives.hpp"
 #include "Util3.hpp"

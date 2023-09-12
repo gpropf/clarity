@@ -13,7 +13,7 @@
 
 #include "GridControl.hpp"
 #include "Signal.hpp"
-#include "SignalBuilder3.hpp"
+#include "AppBuilder.hpp"
 #include "SignalPrimitives.hpp"
 #include "Util3.hpp"
 #include "WebElementSignals.hpp"
@@ -68,7 +68,7 @@ int main() {
     // TestObj tobj;
     auto tobjSptr = make_shared<TestObj>();
 
-    tobjSptr->signalEmitterTestMethod();
+    //tobjSptr->signalEmitterTestMethod();
 
     val elg = val::global("elgCallMethodOnObjByName");
     val onChangeFn = elg(*tobjSptr, val("signalEmitterTestMethod"));
