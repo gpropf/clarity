@@ -54,14 +54,41 @@ class WebElement {
 
 }
 
+/**
+ * This function and its partner `putJSONIntoDomElement` are just a quick hack to create a way to
+ * load and save the data from the PixelReactor app. Eventually, I plan on including a better approach in the CL3 redesign.
+ * 
+ * 
+ * @param {*} jsonTextAreaId 
+ * @returns The text from the referenced textarea
+ */
+function getJSONFromDomElement(jsonTextAreaId = "json-target") {
+    var textarea = document.getElementById(jsonTextAreaId);
+    let json = textarea.value;
+    return json;
+}
+
+/**
+ * This function and its partner `getJSONFromDomElement` are just a quick hack to create a way to
+ * load and save the data from the PixelReactor app. Eventually, I plan on including a better approach in the CL3 redesign.
+ * 
+ * @param {*} jsonContent 
+ * @param {*} jsonTextAreaId 
+ */
+function putJSONIntoDomElement(jsonContent, jsonTextAreaId = "json-target") {
+    var textarea = document.getElementById(jsonTextAreaId);
+    textarea.value = jsonContent;
+}
+
+
 function sayHello() {
     console.log("This just prints HELLO to the console.");
 }
 
 function callIterateMethodOnObject(obj) {
-    return function() {
+    return function () {
         obj.iterateOnce();
-    }    
+    }
 }
 
 function logStuff(stuff) {
@@ -83,7 +110,7 @@ function elgEmitFn(webElementSignalObject) {
 
 function elgButtonFn(webElementSignalObject) {
     return function (ev) {
-        let text = ev.target.id;        
+        let text = ev.target.id;
         console.log("elgButtonFn generated fn called. Emitting signal: " + text);
         webElementSignalObject.emit(text);
     };

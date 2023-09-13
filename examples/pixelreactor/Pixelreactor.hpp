@@ -291,7 +291,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             saveButton_ = signalBuilder_->buttonWSS<std::string>("Save Rules");
             saveAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
             saveAcceptor_->setSignalAcceptorMethod(&Beaker::serialize);
+
+            loadAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            loadAcceptor_->setSignalAcceptorMethod(&Beaker::deserialize);
             signalBuilder_->connect<std::string>(saveButton_, saveAcceptor_);
+            signalBuilder_->connect<std::string>(loadButton_, loadAcceptor_);
 
             iterationIntervalInput_ =
                 signalBuilder_->withAttributes({{"class", val("small_width")}})
@@ -779,6 +783,15 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     void serialize(const std::string &s) {
         cout << "Serializing reactor and reaction rules..." << endl;
+        val putJSONIntoDomElement = val::global("putJSONIntoDomElement");
+        putJSONIntoDomElement(val("Serializing reactor and reaction rules..."));
+    }
+
+    void deserialize(const std::string &s) {
+        cout << "Loading and de-serializing reactor and reaction rules..." << endl;
+        val getJSONFromDomElement = val::global("getJSONFromDomElement");
+        val json = getJSONFromDomElement();
+        cout << json.as<std::string>() << endl;
     }
 
     void iterateOnce() {
@@ -930,19 +943,19 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
 struct PixelReactor {
     shared_ptr<Beaker<unsigned char>> mainBeaker_;
     shared_ptr<SignalBuilder> signalBuilder_;
-    shared_ptr<WebElementSignal<std::string>> jsonTextArea_;
+    //shared_ptr<WebElementSignal<std::string>> jsonTextArea_;
     // shared_ptr<WebElementSignal<std::string>> validationField_;
 
     PixelReactor() {
         cout << "I'm a Pixelreactor. I need to be redone completely 9!" << endl;
         signalBuilder_ = make_shared<cl2::SignalBuilder>();
         mainBeaker_ =
-            make_shared<Beaker<unsigned char>>(signalBuilder_, 30, 20, 1200, 800, "Beaker");
+            make_shared<Beaker<unsigned char>>(signalBuilder_, 60, 40, 900, 600, "Beaker");
         mainBeaker_->finalize();
         BR();
 
-        jsonTextArea_ =
-            signalBuilder_->textAreaWSS<std::string>("jsonText", 8, 60, "Json Input Area", false);
+        // jsonTextArea_ =
+        //     signalBuilder_->textAreaWSS<std::string>("jsonText", 8, 60, "Json Input Area", false);
 
         // validationField_ =
         //     signalBuilder_->withAttributes({{"class", val("medium_width")}})
