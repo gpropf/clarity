@@ -12,26 +12,33 @@
 #ifndef AppBuilder3_hpp
 #define AppBuilder3_hpp
 
-//#include "SignalPrimitives.hpp"
+// #include "SignalPrimitives.hpp"
 #include "Util3.hpp"
-//#include "WebElementSignals.hpp"
-#include "WebElements3.hpp"
+// #include "WebElementSignals.hpp"
 #include <memory>
 
+#include "WebElements3.hpp"
+
 using std::cout;
+using std::map;
 using std::shared_ptr;
 using std::string;
 using std::to_string;
 using std::vector;
-using std::map;
 
 namespace cl3 {
 
-class IChannel {};
+class IChannel {
+
+                                                
+
+};
 
 template <typename S>
 class Channel : public IChannel {
     S currentValue_;
+
+
 };
 
 /**
@@ -63,9 +70,6 @@ class AppBuilder {
         allIds_.push_back(id);
     }
 
-   
-    
-
    public:
     AppBuilder(int startId = 0, bool labelAllInputs = true, bool labelsSwallowTheirReferents = true,
                val parentDOMElement = val::null())
@@ -75,12 +79,13 @@ class AppBuilder {
         // tm_ = TicketMachine(startId);
     }
 
-     const int addObject(shared_ptr<void> obj) {
+    const int addObject(shared_ptr<void> obj) {
         const int objid = cl3::TicketMachine::getNextSid();
-          pushId(objid);
-          return objid;
+        pushId(objid);
+        return objid;
     }
 
+    
 
     vector<const int> defineCurrentGroup(const string groupName) {
         vector<const int> groupIds;
@@ -92,7 +97,7 @@ class AppBuilder {
         return groupIds;
     }
 
-    void printGroup(const string &groupName) {
+    void printGroup(const string& groupName) {
         auto ids = groups_[groupName];
         while (!ids.empty()) {
             int id = ids.back();
