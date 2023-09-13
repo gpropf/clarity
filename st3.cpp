@@ -37,6 +37,7 @@ class TestObj {
     int i_ = 0;
     double d_ = 0;
     std::string s_ = "foo";
+    int width_ = 1;
 
    public:
     void setS(const std::string &s) {
@@ -52,6 +53,14 @@ class TestObj {
     std::string signalEmitterTestMethod() {
         cout << "TestObj::signalEmitterTestMethod(): " << s_ << endl;
         return s_;
+    }
+
+    void setWidth(int w) {
+        width_ = w;
+    }
+
+    int getWidth() const {
+        return width_;
     }
 
     /**
@@ -83,9 +92,11 @@ int main() {
     val textField2 = appBldr->textField("TF2");
     val textField3 = appBldr->textField("TF3");
 
+    appBldr->addObject(tobjSptr);
+
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     appBldr->printGroup("g1");
-    appBldr->printGroup("g1");
+    //appBldr->printGroup("g1");
     textField1.call<void>("addEventListener", val("change"), onChangeFn);
 
     auto range1 = make_shared<RangeInput>("R1", "R1-id");

@@ -38,10 +38,11 @@ class Channel : public IChannel {
  */
 // template <template <typename> class T>
 class AppBuilder {
-    std::vector<const int> currentGroupIds_;
-    std::vector<const int> allIds_;
-    std::map<const int, shared_ptr<IChannel>> channels_;
-    std::map<const int, val> domElements_;
+    vector<const int> currentGroupIds_;
+    vector<const int> allIds_;
+    map<const int, shared_ptr<IChannel>> channels_;
+    map<const int, shared_ptr<void>> objects_;
+    map<const int, val> domElements_;
     map<const string, vector<const int>> groups_;
 
     // TicketMachine tm_;
@@ -50,9 +51,9 @@ class AppBuilder {
     bool addBRAfterAllCalls_ =
         true;  //!< add a '<BR>' tag after each call so everything goes on its own line.
     val parentDOMElement_ = val::null();
-    // std::map<const std::string, const WebElement*>
+    // map<const string, const WebElement*>
     //     elementMap_;  //!< a map of elements we've created so we can re-use them.
-    // std::map<std::string, val> attrs_;
+    // map<string, val> attrs_;
     bool attrsResetAfterSingleUse_ = true;
 
     void pushId(const int id) {
@@ -60,6 +61,7 @@ class AppBuilder {
         allIds_.push_back(id);
     }
 
+   
     
 
    public:
@@ -70,6 +72,13 @@ class AppBuilder {
           parentDOMElement_(parentDOMElement) {
         // tm_ = TicketMachine(startId);
     }
+
+     const int addObject(shared_ptr<void> obj) {
+        const int objid = cl3::TicketMachine::getNextSid();
+          pushId(objid);
+          return objid;
+    }
+
 
     vector<const int> defineCurrentGroup(const string groupName) {
         vector<const int> groupIds;
@@ -90,7 +99,7 @@ class AppBuilder {
         }
     }
 
-    val textField(const std::string& name, val parentElement = val::null()) {
+    val textField(const string& name, val parentElement = val::null()) {
         const int tfid = cl3::TicketMachine::getNextSid();
         pushId(tfid);
         auto tf = TextField(name, to_string(tfid), parentElement);
