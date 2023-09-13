@@ -89,16 +89,16 @@ int main() {
     val elg = val::global("elgCallMethodOnObjByName");
     val onChangeFn = elg(*tobjSptr, val("signalEmitterTestMethod"));
 
-    val textField1 = appBldr->textField("TF1");
-    val textField2 = appBldr->textField("TF2");
-    val textField3 = appBldr->textField("TF3");
+    auto textField1 = appBldr->textField("TF1");
+    auto textField2 = appBldr->textField("TF2");
+    auto textField3 = appBldr->textField("TF3");
 
     appBldr->addObject(tobjSptr);
 
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     appBldr->printGroup("g1");
     //appBldr->printGroup("g1");
-    textField1.call<void>("addEventListener", val("change"), onChangeFn);
+    textField1->addEventListener(val("change"), onChangeFn);
 
     auto range1 = make_shared<RangeInput>("R1", "R1-id");
 

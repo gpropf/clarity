@@ -29,20 +29,22 @@ using std::vector;
 namespace cl3 {
 
 class IChannel {
-
-                                                
-
+    vector<IChannel> channels_;
+    void addConnection(IChannel c) { channels_.push_back(c); }
 };
 
 template <typename S>
 class Channel : public IChannel {
     S currentValue_;
+};
 
-
+template <typename S, class ObjClass>
+class ObjectChannel : public Channel<S> {
+    shared_ptr<ObjClass> objPtr;
 };
 
 /**
- * @brief Factory class that creates WebElements and signals. Also connects signals to one another.
+ * @brief 
  *
  */
 // template <template <typename> class T>
@@ -51,7 +53,8 @@ class AppBuilder {
     vector<const int> allIds_;
     map<const int, shared_ptr<IChannel>> channels_;
     map<const int, shared_ptr<void>> objects_;
-    map<const int, val> domElements_;
+    //  map<const int, val> domElements_;
+    map<const int, shared_ptr<WebElement>> webElements_;
     map<const string, vector<const int>> groups_;
 
     // TicketMachine tm_;
@@ -85,8 +88,6 @@ class AppBuilder {
         return objid;
     }
 
-    
-
     vector<const int> defineCurrentGroup(const string groupName) {
         vector<const int> groupIds;
         while (!currentGroupIds_.empty()) {
@@ -106,13 +107,13 @@ class AppBuilder {
         }
     }
 
-    val textField(const string& name, val parentElement = val::null()) {
+    shared_ptr<TextField> textField(const string& name, val parentElement = val::null()) {
         const int tfid = cl3::TicketMachine::getNextSid();
         pushId(tfid);
-        auto tf = TextField(name, to_string(tfid), parentElement);
-        val tfDomEl = tf.getDomElement();
-        domElements_.insert({tfid, tfDomEl});
-        return tfDomEl;
+        auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
+        // val tfDomEl = tf.getDomElement();
+        webElements_.insert({tfid, tf});
+        return tf;
     }
 };
 }  // namespace cl3
