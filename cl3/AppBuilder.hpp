@@ -29,8 +29,9 @@ using std::vector;
 namespace cl3 {
 
 class IChannel {
-    vector<IChannel> channels_;
-    void addConnection(IChannel c) { channels_.push_back(c); }
+    vector<shared_ptr<IChannel>> channels_;
+    void addConnection(shared_ptr<IChannel> c) { channels_.push_back(c); 
+    }
 };
 
 template <typename S>
