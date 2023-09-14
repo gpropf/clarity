@@ -28,15 +28,50 @@ using std::vector;
 
 namespace cl3 {
 
-class IChannel {
+class IChannel : public std::enable_shared_from_this<IChannel> {
+
+    protected:
     vector<shared_ptr<IChannel>> channels_;
-    void addConnection(shared_ptr<IChannel> c) { channels_.push_back(c); 
+    string name_;
+
+    /**
+     * @brief Adapted from this doc:
+     * https://en.cppreference.com/w/cpp/memory/enable_shared_from_this
+     *
+     * @return std::shared_ptr<IChannel>
+     */
+    std::shared_ptr<IChannel> getptr() { return this->shared_from_this(); }
+
+   public:
+
+    IChannel(string name): name_(name) {}
+
+    void addConnection(shared_ptr<IChannel> c, bool addBack = true) {
+        // if (c == getptr()) return;
+        channels_.push_back(c);
+        if (addBack) c->addConnection(getptr(), false);
     }
+
+    template <typename S>
+    void inject(const S& s, shared_ptr<IChannel> originator = nullptr) {
+        string originatorName = "NULL";
+        if (originator) originatorName = originator->name_;
+        cout << "Channel name: " << name_ << ", Signal: " << s << ", injected from " << originatorName << endl;
+        for (auto c : this->channels_) {
+            if (c != originator) c->inject(s, getptr());
+        }
+    }
+
+    
 };
 
 template <typename S>
 class Channel : public IChannel {
     S currentValue_;
+
+   public:
+    Channel(string name): IChannel(name) {}
+    
 };
 
 template <typename S, class ObjClass>
@@ -45,12 +80,10 @@ class ObjectChannel : public Channel<S> {
 };
 
 template <typename S>
-class WebElementChannel: public Channel<S> {
-
-};
+class WebElementChannel : public Channel<S> {};
 
 /**
- * @brief 
+ * @brief
  *
  */
 // template <template <typename> class T>

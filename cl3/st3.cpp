@@ -100,6 +100,12 @@ int main() {
     //appBldr->printGroup("g1");
     textField1->addEventListener(val("change"), onChangeFn);
 
+    auto c1 = make_shared<Channel<string>>("c1");
+    auto c2 = make_shared<Channel<string>>("c2");
+    c1->addConnection(c2);
+    c1->inject("FOO");
+    //textField1->addConnection(textField2);
+
     auto range1 = make_shared<RangeInput>("R1", "R1-id");
 
     return 0;
