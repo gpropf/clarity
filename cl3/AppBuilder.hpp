@@ -43,6 +43,11 @@ class ObjectChannel : public Channel<S> {
     shared_ptr<ObjClass> objPtr;
 };
 
+template <typename S>
+class WebElementChannel: public Channel<S> {
+
+};
+
 /**
  * @brief 
  *
