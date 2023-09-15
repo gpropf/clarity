@@ -11,16 +11,14 @@
 
 // #include "MonolithicSignals.hpp"
 
-#include "AppBuilder.hpp"
-
-
-#include "Util3.hpp"
 #include <memory>
 
+#include "AppBuilder.hpp"
+#include "Util3.hpp"
 
-using std::shared_ptr;
-using std::make_shared;
 using std::cout;
+using std::make_shared;
+using std::shared_ptr;
 using std::string;
 using std::to_string;
 using std::vector;
@@ -56,13 +54,9 @@ class TestObj {
         return s_;
     }
 
-    void setWidth(int w) {
-        width_ = w;
-    }
+    void setWidth(int w) { width_ = w; }
 
-    int getWidth() const {
-        return width_;
-    }
+    int getWidth() const { return width_; }
 
     /**
      * @brief We're also using the TestObj class to test the MouseSignal class.
@@ -95,17 +89,21 @@ int main() {
 
     appBldr->addObject(tobjSptr);
 
-    vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
-    appBldr->printGroup("g1");
-    //appBldr->printGroup("g1");
+    // appBldr->printGroup("g1");
     textField1->addEventListener(val("change"), onChangeFn);
 
-    auto c1 = make_shared<Channel<string>>("c1");
-    auto c2 = make_shared<Channel<string>>("c2");
-    c1->addConnection(c2);
-    c1->inject("FOO");
-    //textField1->addConnection(textField2);
+    // auto c1 = make_shared<Channel<string>>("c1");
+    // auto c2 = make_shared<Channel<string>>("c2");
+    // c1->addConnection(c2);
 
+    auto c3 = appBldr->addChannel<string>("c3");
+    auto c4 = appBldr->addChannel<string>("c4");
+    c3->addConnection(c4);
+
+    c3->inject("BOO");
+    // textField1->addConnection(textField2);
+    vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
+    appBldr->printGroup("g1");
     auto range1 = make_shared<RangeInput>("R1", "R1-id");
 
     return 0;

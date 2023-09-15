@@ -29,8 +29,7 @@ using std::vector;
 namespace cl3 {
 
 class IChannel : public std::enable_shared_from_this<IChannel> {
-
-    protected:
+   protected:
     vector<shared_ptr<IChannel>> channels_;
     string name_;
 
@@ -43,8 +42,7 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
     std::shared_ptr<IChannel> getptr() { return this->shared_from_this(); }
 
    public:
-
-    IChannel(string name): name_(name) {}
+    IChannel(string name) : name_(name) {}
 
     void addConnection(shared_ptr<IChannel> c, bool addBack = true) {
         // if (c == getptr()) return;
@@ -56,13 +54,12 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
     void inject(const S& s, shared_ptr<IChannel> originator = nullptr) {
         string originatorName = "NULL";
         if (originator) originatorName = originator->name_;
-        cout << "Channel name: " << name_ << ", Signal: " << s << ", injected from " << originatorName << endl;
+        cout << "Channel name: " << name_ << ", Signal: " << s << ", injected from "
+             << originatorName << endl;
         for (auto c : this->channels_) {
             if (c != originator) c->inject(s, getptr());
         }
     }
-
-    
 };
 
 template <typename S>
@@ -70,8 +67,7 @@ class Channel : public IChannel {
     S currentValue_;
 
    public:
-    Channel(string name): IChannel(name) {}
-    
+    Channel(string name) : IChannel(name) {}
 };
 
 template <typename S, class ObjClass>
@@ -121,10 +117,34 @@ class AppBuilder {
         // tm_ = TicketMachine(startId);
     }
 
+    template <typename S>
+    void connect(shared_ptr<Channel<S>> c, shared_ptr<WebElementChannel<S>> wc) {
+        c->addConnection(wc);
+    }
+
     const int addObject(shared_ptr<void> obj) {
         const int objid = cl3::TicketMachine::getNextSid();
+        objects_.insert({objid, obj});
         pushId(objid);
         return objid;
+    }
+
+    template <typename S>
+    shared_ptr<Channel<S>> addChannel(string name = "") {
+        auto c = make_shared<Channel<S>>(name);
+        const int objid = cl3::TicketMachine::getNextSid();
+        channels_.insert({objid, c});
+        pushId(objid);
+        return c;
+    }
+
+    shared_ptr<TextField> textField(const string& name, val parentElement = val::null()) {
+        const int tfid = cl3::TicketMachine::getNextSid();
+        pushId(tfid);
+        auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
+        // val tfDomEl = tf.getDomElement();
+        webElements_.insert({tfid, tf});
+        return tf;
     }
 
     vector<const int> defineCurrentGroup(const string groupName) {
@@ -144,15 +164,6 @@ class AppBuilder {
             ids.pop_back();
             cout << "ID: " << id << endl;
         }
-    }
-
-    shared_ptr<TextField> textField(const string& name, val parentElement = val::null()) {
-        const int tfid = cl3::TicketMachine::getNextSid();
-        pushId(tfid);
-        auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
-        // val tfDomEl = tf.getDomElement();
-        webElements_.insert({tfid, tf});
-        return tf;
     }
 };
 }  // namespace cl3
