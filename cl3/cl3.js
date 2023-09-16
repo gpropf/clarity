@@ -180,4 +180,14 @@ function elgCallMethodOnObjByName(obj, objMethodName) {
     };
 }
 
+
+function generateEventListenerWithObjectMethodCall(obj, objMethodName) {
+    return function (ev) {
+        //let s = testObjCSO.getSignal();
+        console.log("generateEventListenerWithObjectMethodCall generated fn called.");
+        callMethodByName(obj, objMethodName)(ev.target.value);
+        //obj.printTest();
+    };
+}
+
 window.WebElement = WebElement

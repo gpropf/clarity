@@ -76,7 +76,16 @@ class ObjectChannel : public Channel<S> {
 };
 
 template <typename S>
-class WebElementChannel : public Channel<S> {};
+class WebElementChannel : public Channel<S> {
+    shared_ptr<WebElement> weptr_;
+
+   public:
+    WebElementChannel(string name) : Channel<S>(name) {
+        val elg = val::global("generateEventListenerWithObjectMethodCall");
+        val onChangeFn = elg(*this->getptr(), val("inject"));
+        // this->weptr_->addEventListener(val("change"), onChangeFn);
+    }
+};
 
 /**
  * @brief

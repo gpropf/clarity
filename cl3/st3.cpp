@@ -92,9 +92,7 @@ int main() {
     // appBldr->printGroup("g1");
     textField1->addEventListener(val("change"), onChangeFn);
 
-    // auto c1 = make_shared<Channel<string>>("c1");
-    // auto c2 = make_shared<Channel<string>>("c2");
-    // c1->addConnection(c2);
+    //auto wec = make_shared<WebElementChannel<string>>("wec1");
 
     auto c3 = appBldr->addChannel<string>("c3");
     auto c4 = appBldr->addChannel<string>("c4");
