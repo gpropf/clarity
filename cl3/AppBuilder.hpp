@@ -67,13 +67,31 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
     }
 
     
-    void inject(val s, shared_ptr<IChannel> originator = nullptr) {
+    virtual void inject(val s, shared_ptr<IChannel> originator = nullptr) {
         string originatorName = "NULL";
         if (originator) originatorName = originator->name_;
         cout << "Channel name: " << name_ << ", Signal: " << s.as<string>() << ", injected from "
              << originatorName << endl;
         for (auto c : this->channels_) {
             if (c != originator) c->inject(s, getptr());
+        }
+    }
+
+    virtual void injectCppval(int i, shared_ptr<IChannel> originator = nullptr) {
+        string originatorName = "NULL";
+        if (originator) originatorName = originator->name_;
+        cout << "Channel name: " << name_ << ", Signal: " << i << ", injected from "
+             << originatorName << endl;
+        for (auto c : this->channels_) {
+            if (c != originator) c->injectCppval(i, getptr());
+        }
+    }
+
+    void inject2(val s) {
+      
+        cout << "Channel name: " << name_ << ", Signal: " << s.as<string>() << ", injected from OUTER SPACE" << endl;
+        for (auto c : this->channels_) {
+            c->inject(s, getptr());
         }
     }
 };
@@ -96,8 +114,9 @@ class WebElementChannel : public IChannel {
     }
 
     virtual void finalize() {
-        val elg = val::global("elgCallMethodOnObjByName");
-        val onChangeFn = elg(*this->getptr(), val("testMethod"));
+        shared_ptr<WebElementChannel> dummy;
+        val elgInjectCppval = val::global("elgInject2");
+        val onChangeFn = elgInjectCppval(*this->getptr());
         this->weptr_->addEventListener(val("change"), onChangeFn);
     }
 

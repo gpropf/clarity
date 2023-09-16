@@ -150,6 +150,31 @@ class WebElement {
 //     };
 // }
 
+
+function elgInject2(channel) {
+    return function (ev) {
+        //let s = testObjCSO.getSignal();
+        console.log("elgInject2 generated fn called.");
+        channel.inject2(ev.target.value);
+    };
+}
+
+function elgInject(channel, originator = null) {
+    return function (ev) {
+        //let s = testObjCSO.getSignal();
+        console.log("elgInject generated fn called.");
+        channel.inject(ev.target.value, originator);
+    };
+}
+
+function elgInjectCppval(channel, originator = null) {
+    return function (ev) {
+        //let s = testObjCSO.getSignal();
+        console.log("elgInjectCppval generated fn called.");
+        channel.injectCppval(ev.target.value, originator);
+    };
+}
+
 /**
  * 
  * @param {bound C++ object} obj 
@@ -182,12 +207,13 @@ function elgCallMethodOnObjByName(obj, objMethodName) {
 
 
 function generateEventListenerWithObjectMethodCall(obj, objMethodName) {
-    return function (ev) {
-        //let s = testObjCSO.getSignal();
-        console.log("generateEventListenerWithObjectMethodCall generated fn called.");
-        callMethodByName(obj, objMethodName)(ev.target.value);
-        //obj.printTest();
-    };
+    var elfn = callMethodByName(obj, objMethodName)("fooooo");
+    // return function (ev) {
+    //     //let s = testObjCSO.getSignal();
+    //     console.log("generateEventListenerWithObjectMethodCall generated fn called.");
+    //     //elfn(ev.target.value);
+    //     //obj.printTest();
+    // };
 }
 
 window.WebElement = WebElement
