@@ -31,6 +31,9 @@ using std::endl;
 
 namespace cl3 {
 
+
+class Channel;
+
 /**
  * @brief Represents a single web element. Defined as a struct because this is meant to defined
  * using const.
@@ -95,6 +98,8 @@ struct WebElement {
     void addEventListener(val ev, val listenerFn) {
         domElement_.call<void>("addEventListener", ev, listenerFn);
     }
+
+    
 };
 
 /**

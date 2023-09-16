@@ -93,6 +93,8 @@ int main() {
     textField1->addEventListener(val("change"), onChangeFn);
 
     auto wec = make_shared<WebElementChannel>("wec1");
+
+    wec->installWebElement(textField2);
     wec->finalize();
 
     auto c3 = appBldr->addChannel("c3");
@@ -121,10 +123,10 @@ EMSCRIPTEN_BINDINGS(TestObj) {
                                                     &TestObj::signalEmitterTestMethod);
 }
 
-EMSCRIPTEN_BINDINGS(WebElementChannel) {
-     emscripten::class_<WebElementChannel>("WebElementChannel")
-         .function("inject", &WebElementChannel::inject,
-                   emscripten::allow_raw_pointers());
+EMSCRIPTEN_BINDINGS(IChannel) {
+    emscripten::class_<IChannel>("IChannel")
+        .function("inject", &IChannel::inject, emscripten::allow_raw_pointers())
+        .function("testMethod", &IChannel::testMethod, emscripten::allow_raw_pointers());
     //     .function("accept", &WebElementSignalObject<std::string>::accept,
     //               emscripten::allow_raw_pointers());
 

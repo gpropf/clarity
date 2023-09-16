@@ -35,6 +35,8 @@ using std::vector;
 namespace cl3 {
 
 class IChannel : public std::enable_shared_from_this<IChannel> {
+    val currentValue_;
+
    protected:
     vector<shared_ptr<IChannel>> channels_;
     string name_;
@@ -52,6 +54,10 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
 
     virtual void finalize() {
 
+    }
+
+    virtual void testMethod() {
+        cout << "IChannel::testMethod()" << endl;
     }
 
     void addConnection(shared_ptr<IChannel> c, bool addBack = true) {
@@ -73,31 +79,30 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
 };
 
 
-class Channel : public IChannel {
-    val currentValue_;
 
-   public:
-    Channel(string name) : IChannel(name) {}
-};
 
 template <class ObjClass>
-class ObjectChannel : public Channel {
+class ObjectChannel : public IChannel {
     shared_ptr<ObjClass> objPtr;
 };
 
 
-class WebElementChannel : public Channel {
+class WebElementChannel : public IChannel {
     shared_ptr<WebElement> weptr_;
 
    public:
-    WebElementChannel(string name) : Channel(name) {
+    WebElementChannel(string name) : IChannel(name) {
                     
     }
 
     virtual void finalize() {
         val elg = val::global("elgCallMethodOnObjByName");
-       // val onChangeFn = elg(*this->weptr_, val("forceDeleteDomElementOnExit"));
-        //this->weptr_->addEventListener(val("change"), onChangeFn);
+        val onChangeFn = elg(*this->getptr(), val("testMethod"));
+        this->weptr_->addEventListener(val("change"), onChangeFn);
+    }
+
+    void installWebElement(shared_ptr<WebElement> weptr) {
+        this->weptr_ = weptr;
     }
 };
 
@@ -153,8 +158,8 @@ class AppBuilder {
     }
 
     
-    shared_ptr<Channel> addChannel(string name = "") {
-        auto c = make_shared<Channel>(name);
+    shared_ptr<IChannel> addChannel(string name = "") {
+        auto c = make_shared<IChannel>(name);
         const int objid = cl3::TicketMachine::getNextSid();
         channels_.insert({objid, c});
         pushId(objid);
