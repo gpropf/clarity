@@ -92,14 +92,14 @@ int main() {
     // appBldr->printGroup("g1");
     textField1->addEventListener(val("change"), onChangeFn);
 
-    auto wec = make_shared<WebElementChannel<string>>("wec1");
+    auto wec = make_shared<WebElementChannel>("wec1");
     wec->finalize();
 
-    auto c3 = appBldr->addChannel<string>("c3");
-    auto c4 = appBldr->addChannel<string>("c4");
+    auto c3 = appBldr->addChannel("c3");
+    auto c4 = appBldr->addChannel("c4");
     c3->addConnection(c4);
 
-    c3->inject("BOO");
+    c3->inject(val("BOO"));
     // textField1->addConnection(textField2);
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     appBldr->printGroup("g1");
@@ -121,16 +121,10 @@ EMSCRIPTEN_BINDINGS(TestObj) {
                                                     &TestObj::signalEmitterTestMethod);
 }
 
-
-EMSCRIPTEN_BINDINGS(AppBuilder) {
-    emscripten::class_<WebElementChannel<string>>("AppBuilder").function("inject",
-                                                    &WebElementChannel<string>::inject<string>);
-}
-
-EMSCRIPTEN_BINDINGS(WebElementSignalObject) {
-    // emscripten::class_<WebElementSignalObject<std::string>>("WebElementSignalObject")
-    //     .function("emit", &WebElementSignalObject<std::string>::emit,
-    //               emscripten::allow_raw_pointers())
+EMSCRIPTEN_BINDINGS(WebElementChannel) {
+     emscripten::class_<WebElementChannel>("WebElementChannel")
+         .function("inject", &WebElementChannel::inject,
+                   emscripten::allow_raw_pointers());
     //     .function("accept", &WebElementSignalObject<std::string>::accept,
     //               emscripten::allow_raw_pointers());
 

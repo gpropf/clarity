@@ -60,11 +60,11 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
         if (addBack) c->addConnection(getptr(), false);
     }
 
-    template <typename S>
-    void inject(const S& s, shared_ptr<IChannel> originator = nullptr) {
+    
+    void inject(val s, shared_ptr<IChannel> originator = nullptr) {
         string originatorName = "NULL";
         if (originator) originatorName = originator->name_;
-        cout << "Channel name: " << name_ << ", Signal: " << s << ", injected from "
+        cout << "Channel name: " << name_ << ", Signal: " << s.as<string>() << ", injected from "
              << originatorName << endl;
         for (auto c : this->channels_) {
             if (c != originator) c->inject(s, getptr());
@@ -72,31 +72,31 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
     }
 };
 
-template <typename S>
+
 class Channel : public IChannel {
-    S currentValue_;
+    val currentValue_;
 
    public:
     Channel(string name) : IChannel(name) {}
 };
 
-template <typename S, class ObjClass>
-class ObjectChannel : public Channel<S> {
+template <class ObjClass>
+class ObjectChannel : public Channel {
     shared_ptr<ObjClass> objPtr;
 };
 
-template <typename S>
-class WebElementChannel : public Channel<S> {
+
+class WebElementChannel : public Channel {
     shared_ptr<WebElement> weptr_;
 
    public:
-    WebElementChannel(string name) : Channel<S>(name) {
+    WebElementChannel(string name) : Channel(name) {
                     
     }
 
     virtual void finalize() {
-        val elg = val::global("generateEventListenerWithObjectMethodCall");
-        //val onChangeFn = elg(*this->getptr(), val("inject"));
+        val elg = val::global("elgCallMethodOnObjByName");
+       // val onChangeFn = elg(*this->weptr_, val("forceDeleteDomElementOnExit"));
         //this->weptr_->addEventListener(val("change"), onChangeFn);
     }
 };
@@ -140,10 +140,10 @@ class AppBuilder {
         // tm_ = TicketMachine(startId);
     }
 
-    template <typename S>
-    void connect(shared_ptr<Channel<S>> c, shared_ptr<WebElementChannel<S>> wc) {
-        c->addConnection(wc);
-    }
+    // template <typename S>
+    // void connect(shared_ptr<Channel<S>> c, shared_ptr<WebElementChannel<S>> wc) {
+    //     c->addConnection(wc);
+    // }
 
     const int addObject(shared_ptr<void> obj) {
         const int objid = cl3::TicketMachine::getNextSid();
@@ -152,9 +152,9 @@ class AppBuilder {
         return objid;
     }
 
-    template <typename S>
-    shared_ptr<Channel<S>> addChannel(string name = "") {
-        auto c = make_shared<Channel<S>>(name);
+    
+    shared_ptr<Channel> addChannel(string name = "") {
+        auto c = make_shared<Channel>(name);
         const int objid = cl3::TicketMachine::getNextSid();
         channels_.insert({objid, c});
         pushId(objid);
