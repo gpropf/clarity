@@ -26,6 +26,12 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+
+#include <emscripten.h>
+#include <emscripten/bind.h>
+#include <emscripten/val.h>
+
+
 namespace cl3 {
 
 class IChannel : public std::enable_shared_from_this<IChannel> {
@@ -43,6 +49,10 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
 
    public:
     IChannel(string name) : name_(name) {}
+
+    virtual void finalize() {
+
+    }
 
     void addConnection(shared_ptr<IChannel> c, bool addBack = true) {
         // if (c == getptr()) return;
@@ -81,9 +91,13 @@ class WebElementChannel : public Channel<S> {
 
    public:
     WebElementChannel(string name) : Channel<S>(name) {
+                    
+    }
+
+    virtual void finalize() {
         val elg = val::global("generateEventListenerWithObjectMethodCall");
-        val onChangeFn = elg(*this->getptr(), val("inject"));
-        // this->weptr_->addEventListener(val("change"), onChangeFn);
+        //val onChangeFn = elg(*this->getptr(), val("inject"));
+        //this->weptr_->addEventListener(val("change"), onChangeFn);
     }
 };
 
@@ -175,5 +189,10 @@ class AppBuilder {
         }
     }
 };
-}  // namespace cl3
+
+};  // namespace cl3
+
+
+
+
 #endif

@@ -92,7 +92,8 @@ int main() {
     // appBldr->printGroup("g1");
     textField1->addEventListener(val("change"), onChangeFn);
 
-    //auto wec = make_shared<WebElementChannel<string>>("wec1");
+    auto wec = make_shared<WebElementChannel<string>>("wec1");
+    wec->finalize();
 
     auto c3 = appBldr->addChannel<string>("c3");
     auto c4 = appBldr->addChannel<string>("c4");
@@ -118,6 +119,12 @@ EMSCRIPTEN_BINDINGS(TestObj) {
 
     emscripten::class_<TestObj>("TestObj").function("signalEmitterTestMethod",
                                                     &TestObj::signalEmitterTestMethod);
+}
+
+
+EMSCRIPTEN_BINDINGS(AppBuilder) {
+    emscripten::class_<WebElementChannel<string>>("AppBuilder").function("inject",
+                                                    &WebElementChannel<string>::inject<string>);
 }
 
 EMSCRIPTEN_BINDINGS(WebElementSignalObject) {
