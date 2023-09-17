@@ -98,7 +98,7 @@ int main() {
     textField1->addEventListener(val("change"), onChangeFn);
 
     auto wec = make_shared<WebElementChannel>("wec1");
-    //wec->addConnection(c3);
+    wec->addConnection(c3);
 
     wec->installWebElement(textField2);
     wec->finalize();
@@ -130,15 +130,15 @@ EMSCRIPTEN_BINDINGS(TestObj) {
 EMSCRIPTEN_BINDINGS(IChannel) {
     emscripten::class_<IChannel>("IChannel") 
         .function("inject", &IChannel::inject, emscripten::allow_raw_pointers())
-        .function("injectCppval", &IChannel::injectCppval, emscripten::allow_raw_pointers())
+        //.function("injectCppval", &IChannel::injectCppval, emscripten::allow_raw_pointers())
         .function("inject2", &IChannel::inject2, emscripten::allow_raw_pointers())
         .function("testMethod", &IChannel::testMethod, emscripten::allow_raw_pointers());
     //     .function("accept", &WebElementSignalObject<std::string>::accept,
     //               emscripten::allow_raw_pointers());
 
     emscripten::class_<WebElementChannel>("WebElementChannel")
-        .function("inject", &WebElementChannel::inject, emscripten::allow_raw_pointers())
-        .function("injectCppval", &WebElementChannel::injectCppval, emscripten::allow_raw_pointers());
+        .function("inject", &WebElementChannel::inject, emscripten::allow_raw_pointers());
+      //  .function("injectCppval", &WebElementChannel::injectCppval, emscripten::allow_raw_pointers());
     // emscripten::class_<WebElementSignal<std::string>>("WebElementSignal")
     //     .function("emit", &WebElementSignal<std::string>::emit, emscripten::allow_raw_pointers())
     //     .function("accept", &WebElementSignal<std::string>::accept,

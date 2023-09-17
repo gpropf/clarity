@@ -77,21 +77,21 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
         }
     }
 
-    virtual void injectCppval(int i, shared_ptr<IChannel> originator = nullptr) {
-        string originatorName = "NULL";
-        if (originator) originatorName = originator->name_;
-        cout << "Channel name: " << name_ << ", Signal: " << i << ", injected from "
-             << originatorName << endl;
-        for (auto c : this->channels_) {
-            if (c != originator) c->injectCppval(i, getptr());
-        }
-    }
+    // virtual void injectCppval(int i, shared_ptr<IChannel> originator = nullptr) {
+    //     string originatorName = "NULL";
+    //     if (originator) originatorName = originator->name_;
+    //     cout << "Channel name: " << name_ << ", Signal: " << i << ", injected from "
+    //          << originatorName << endl;
+    //     for (auto c : this->channels_) {
+    //         if (c != originator) c->injectCppval(i, getptr());
+    //     }
+    // }
 
     void inject2(val s) {
       
         cout << "Channel name: " << name_ << ", Signal: " << s.as<string>() << ", injected from OUTER SPACE" << endl;
         for (auto c : this->channels_) {
-            c->inject(s, getptr());
+            c->inject(s);
         }
     }
 };
