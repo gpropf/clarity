@@ -112,10 +112,16 @@ class WebElementChannel : public IChannel {
                     
     }
 
-    virtual void finalize() {
-        shared_ptr<WebElementChannel> dummy;
-        val injectForWEC = val::global("injectForWEC");
-        val onChangeFn = injectForWEC(*this->getptr());
+    // virtual void finalize() {
+    //     shared_ptr<WebElementChannel> dummy;
+    //     val injectForWEC = val::global("injectForWEC");
+    //     val onChangeFn = injectForWEC(*this->getptr());
+    //     this->weptr_->addEventListener(val("change"), onChangeFn);
+    // }
+
+    virtual void finalize() {        
+        val inject = val::global("inject");
+        val onChangeFn = inject(*this->getptr());
         this->weptr_->addEventListener(val("change"), onChangeFn);
     }
 

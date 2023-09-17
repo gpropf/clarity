@@ -159,6 +159,14 @@ function injectForWEC(channel) {
     };
 }
 
+function inject(channel) {
+    return function (ev) {
+        //let s = testObjCSO.getSignal();
+        console.log("inject generated fn called.");
+        channel.inject(ev.target.value, 0);
+    };
+}
+
 
 /**
  * 
