@@ -151,11 +151,11 @@ class WebElement {
 // }
 
 
-function elgInject2(channel) {
+function injectForWEC(channel) {
     return function (ev) {
         //let s = testObjCSO.getSignal();
-        console.log("elgInject2 generated fn called.");
-        channel.inject2(ev.target.value);
+        console.log("injectForWEC generated fn called.");
+        channel.injectForWEC(ev.target.value);
     };
 }
 
@@ -167,13 +167,13 @@ function elgInject2(channel) {
 //     };
 // }
 
-function elgInjectCppval(channel, originator = null) {
-    return function (ev) {
-        //let s = testObjCSO.getSignal();
-        console.log("elgInjectCppval generated fn called.");
-        channel.injectCppval(ev.target.value, originator);
-    };
-}
+// function elgInjectCppval(channel, originator = null) {
+//     return function (ev) {
+//         //let s = testObjCSO.getSignal();
+//         console.log("elgInjectCppval generated fn called.");
+//         channel.injectCppval(ev.target.value, originator);
+//     };
+// }
 
 /**
  * 

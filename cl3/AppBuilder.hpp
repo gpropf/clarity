@@ -87,7 +87,7 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
     //     }
     // }
 
-    void inject2(val s) {
+    void injectForWEC(val s) {
       
         cout << "Channel name: " << name_ << ", Signal: " << s.as<string>() << ", injected from OUTER SPACE" << endl;
         for (auto c : this->channels_) {
@@ -115,8 +115,8 @@ class WebElementChannel : public IChannel {
 
     virtual void finalize() {
         shared_ptr<WebElementChannel> dummy;
-        val elgInjectCppval = val::global("elgInject2");
-        val onChangeFn = elgInjectCppval(*this->getptr());
+        val injectForWEC = val::global("injectForWEC");
+        val onChangeFn = injectForWEC(*this->getptr());
         this->weptr_->addEventListener(val("change"), onChangeFn);
     }
 

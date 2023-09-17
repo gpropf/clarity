@@ -131,7 +131,7 @@ EMSCRIPTEN_BINDINGS(IChannel) {
     emscripten::class_<IChannel>("IChannel") 
         .function("inject", &IChannel::inject, emscripten::allow_raw_pointers())
         //.function("injectCppval", &IChannel::injectCppval, emscripten::allow_raw_pointers())
-        .function("inject2", &IChannel::inject2, emscripten::allow_raw_pointers())
+        .function("injectForWEC", &IChannel::injectForWEC, emscripten::allow_raw_pointers())
         .function("testMethod", &IChannel::testMethod, emscripten::allow_raw_pointers());
     //     .function("accept", &WebElementSignalObject<std::string>::accept,
     //               emscripten::allow_raw_pointers());
