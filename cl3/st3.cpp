@@ -91,7 +91,7 @@ int main() {
 
   auto c3 = appBldr->addChannel("c3");
     auto c4 = appBldr->addChannel("c4");
-    //c3->addConnection(c4);
+    c3->addConnection(c4);
 
 
     // appBldr->printGroup("g1");
