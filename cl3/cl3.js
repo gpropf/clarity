@@ -159,13 +159,13 @@ function elgInject2(channel) {
     };
 }
 
-function elgInject(channel, originator = null) {
-    return function (ev) {
-        //let s = testObjCSO.getSignal();
-        console.log("elgInject generated fn called.");
-        channel.inject(ev.target.value, originator);
-    };
-}
+// function elgInject(channel, originator = null) {
+//     return function (ev) {
+//         //let s = testObjCSO.getSignal();
+//         console.log("elgInject generated fn called.");
+//         channel.inject(ev.target.value, originator);
+//     };
+// }
 
 function elgInjectCppval(channel, originator = null) {
     return function (ev) {
