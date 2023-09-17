@@ -159,21 +159,6 @@ function injectForWEC(channel) {
     };
 }
 
-// function elgInject(channel, originator = null) {
-//     return function (ev) {
-//         //let s = testObjCSO.getSignal();
-//         console.log("elgInject generated fn called.");
-//         channel.inject(ev.target.value, originator);
-//     };
-// }
-
-// function elgInjectCppval(channel, originator = null) {
-//     return function (ev) {
-//         //let s = testObjCSO.getSignal();
-//         console.log("elgInjectCppval generated fn called.");
-//         channel.injectCppval(ev.target.value, originator);
-//     };
-// }
 
 /**
  * 
