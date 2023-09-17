@@ -67,13 +67,12 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
     }
 
     
-    virtual void inject(val s, shared_ptr<IChannel> originator = nullptr) {
-        string originatorName = "NULL";
-        if (originator) originatorName = originator->name_;
-        cout << "Channel name: " << name_ << ", Signal: " << s.as<string>() << ", injected from "
-             << originatorName << endl;
+    virtual void inject(val s, int signalGeneration = 0) {
+        
+        cout << "Channel name: " << name_ << ", Signal: " << s.as<string>() << ", signal generation = "
+             << signalGeneration << endl;
         for (auto c : this->channels_) {
-            if (c != originator) c->inject(s, getptr());
+            if (signalGeneration == 0) c->inject(s, ++signalGeneration);
         }
     }
 
