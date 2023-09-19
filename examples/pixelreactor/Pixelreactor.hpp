@@ -113,6 +113,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorOffsetYInputLoop_;
     // shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
     shared_ptr<WebElementSignal<std::string>> newRuleButton_;
+    shared_ptr<WebElementSignal<std::string>> debugRulesButton_;
     shared_ptr<WebElementSignal<std::string>> iterateOnceButton_;
     shared_ptr<WebElementSignal<std::string>> runButton_;
     shared_ptr<WebElementSignal<std::string>> deleteRuleButton_;
@@ -122,7 +123,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     shared_ptr<WebElementSignal<std::string>> saveButton_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> saveAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> clearAcceptor_;
-    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
+    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> makeNewRuleAcceptor_;
+    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> makeDebugRulesAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> iterateOnceAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> runAcceptor_;
 
@@ -268,16 +270,21 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
             signalBuilder_->connectLoop(successorOffsetYInputLoop_);
 
-            objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
-            objAcceptor_->setSignalAcceptorMethod(&Beaker::deleteRuleSignal);
+            makeNewRuleAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            makeNewRuleAcceptor_->setSignalAcceptorMethod(&Beaker::deleteRuleSignal);
             deleteRuleButton_ = signalBuilder_->buttonWSS<std::string>("Delete this rule");
-            signalBuilder_->connect<std::string>(deleteRuleButton_, objAcceptor_);
+            signalBuilder_->connect<std::string>(deleteRuleButton_, makeNewRuleAcceptor_);
 
         } else {
-            objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
-            objAcceptor_->setSignalAcceptorMethod(&Beaker::makeNewReactionRuleSignal);
+            makeNewRuleAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            makeNewRuleAcceptor_->setSignalAcceptorMethod(&Beaker::makeNewReactionRuleSignal);
             newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");
-            signalBuilder_->connect<std::string>(newRuleButton_, objAcceptor_);
+            signalBuilder_->connect<std::string>(newRuleButton_, makeNewRuleAcceptor_);
+
+            makeDebugRulesAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            makeDebugRulesAcceptor_->setSignalAcceptorMethod(&Beaker::makeDebugRulesSignal);
+            debugRulesButton_ = signalBuilder_->buttonWSS<std::string>("Debug Rule Set");
+            signalBuilder_->connect<std::string>(debugRulesButton_, makeDebugRulesAcceptor_);
 
             iterateOnceAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
             iterateOnceAcceptor_->setSignalAcceptorMethod(&Beaker::iterateOnceSignalTarget);
@@ -341,6 +348,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         this->makeNewReactionRule();
     }
 
+    void makeDebugRulesSignal(const std::string &s) {
+        cout << "CREATING DEBUG RULE SET: " << s << endl;
+        this->makeDebugRuleSet();
+    }
+
     void deleteRuleSignal(const std::string &s) {
         cout << "GOT DELETE SIGNAL FROM BUTTON: " << s << endl;
         // this->makeNewReactionRule();
@@ -361,10 +373,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             successorOffsetXInputLoop_.reset();
             successorOffsetYInput_.reset();
             successorOffsetYInputLoop_.reset();
-            objAcceptor_.reset();
+            makeNewRuleAcceptor_.reset();
             deleteRuleButton_.reset();
         } else {
-            objAcceptor_.reset();
+            makeNewRuleAcceptor_.reset();
             newRuleButton_.reset();
             iterateOnceAcceptor_.reset();
             iterateOnceButton_.reset();
@@ -532,6 +544,37 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         //     &Beaker<unsigned char>::getName);
 
         // signalBuilder_->connectLoop(reactionRule->nameInputLoop_);
+    }
+
+    void makeDebugRuleSet() {
+        this->setRuleGridHeight("3");
+        this->setRuleGridWidth("3");
+        this->makeNewReactionRule();
+        this->makeNewReactionRule();
+        this->setRuleGridHeight("5");
+        this->setRuleGridWidth("5");
+        this->makeNewReactionRule();
+        
+        reactionRules_[1]->setSuccessorName("rule3");
+        reactionRules_[1]->setSuccessorOffsetX("-1");
+        reactionRules_[1]->setSuccessorOffsetY("-1");
+        reactionRules_[0]->setSuccessorName("rule2");
+        reactionRules_[0]->gridControl_->setPixelAt(1,1, 1);
+        reactionRules_[1]->gridControl_->setPixelAt(0,1, 1);
+        reactionRules_[1]->gridControl_->setPixelAt(1,0, 1);
+        reactionRules_[1]->gridControl_->setPixelAt(1,2, 1);
+        reactionRules_[1]->gridControl_->setPixelAt(2,1, 1);
+
+        reactionRules_[2]->gridControl_->setPixelAt(0,0, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(4,0, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(0,4, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(4,4, 1);
+
+        reactionRules_[2]->gridControl_->setPixelAt(1,2, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(2,2, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(3,2, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(2,1, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(2,3, 1);
     }
 
     void wrapCoordinates(gridCoordinatePairT &p) {
@@ -970,8 +1013,8 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
 struct PixelReactor {
     shared_ptr<Beaker<unsigned char>> mainBeaker_;
     shared_ptr<SignalBuilder> signalBuilder_;
-    //shared_ptr<WebElementSignal<std::string>> jsonTextArea_;
-    // shared_ptr<WebElementSignal<std::string>> validationField_;
+    // shared_ptr<WebElementSignal<std::string>> jsonTextArea_;
+    //  shared_ptr<WebElementSignal<std::string>> validationField_;
 
     PixelReactor() {
         cout << "I'm a Pixelreactor. I need to be redone completely 9!" << endl;
@@ -982,7 +1025,8 @@ struct PixelReactor {
         BR();
 
         // jsonTextArea_ =
-        //     signalBuilder_->textAreaWSS<std::string>("jsonText", 8, 60, "Json Input Area", false);
+        //     signalBuilder_->textAreaWSS<std::string>("jsonText", 8, 60, "Json Input Area",
+        //     false);
 
         // validationField_ =
         //     signalBuilder_->withAttributes({{"class", val("medium_width")}})
