@@ -113,7 +113,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorOffsetYInputLoop_;
     // shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
     shared_ptr<WebElementSignal<std::string>> newRuleButton_;
-    shared_ptr<WebElementSignal<std::string>> iterateButton_;
+    shared_ptr<WebElementSignal<std::string>> iterateOnceButton_;
+    shared_ptr<WebElementSignal<std::string>> runButton_;
     shared_ptr<WebElementSignal<std::string>> deleteRuleButton_;
     shared_ptr<WebElementSignal<std::string>> clearButton_;
     shared_ptr<WebElementSignal<std::string>> loadButton_;
@@ -122,7 +123,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> saveAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> clearAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
-    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> iterateAcceptor_;
+    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> iterateOnceAcceptor_;
+    shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> runAcceptor_;
 
     shared_ptr<WebElementSignal<std::string>> iterationIntervalInput_;
     shared_ptr<WebElementSignal<std::string>> ruleWidthInput_;
@@ -277,10 +279,15 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");
             signalBuilder_->connect<std::string>(newRuleButton_, objAcceptor_);
 
-            iterateAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
-            iterateAcceptor_->setSignalAcceptorMethod(&Beaker::iterateSignalMethod);
-            iterateButton_ = signalBuilder_->buttonWSS<std::string>("Iterate");
-            signalBuilder_->connect<std::string>(iterateButton_, iterateAcceptor_);
+            iterateOnceAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            iterateOnceAcceptor_->setSignalAcceptorMethod(&Beaker::iterateOnceSignalTarget);
+            iterateOnceButton_ = signalBuilder_->buttonWSS<std::string>("Iterate Once");
+            signalBuilder_->connect<std::string>(iterateOnceButton_, iterateOnceAcceptor_);
+
+            runAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            runAcceptor_->setSignalAcceptorMethod(&Beaker::runSignalMethod);
+            runButton_ = signalBuilder_->buttonWSS<std::string>("Run");
+            signalBuilder_->connect<std::string>(runButton_, runAcceptor_);
 
             clearAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
             clearAcceptor_->setSignalAcceptorMethod(&Beaker::clearGrid);
@@ -359,8 +366,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         } else {
             objAcceptor_.reset();
             newRuleButton_.reset();
-            iterateAcceptor_.reset();
-            iterateButton_.reset();
+            iterateOnceAcceptor_.reset();
+            iterateOnceButton_.reset();
             clearAcceptor_.reset();
             clearButton_.reset();
             loadButton_.reset();
@@ -814,11 +821,31 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // iterationCountSave_ = iterationCount_;
     }
 
+    void iterateOnceSignalTarget(const std::string &s) {
+        if (iterationLock_) {
+            cout << "ITERATION LOCKED!" << endl;
+            return;
+        }
+        iterationLock_ = true;
+
+        // cout << "THIS IS THE ITERATION WITHOUT TOGGLING THE PLAYING SETTING!!!" << endl;
+        auto start = high_resolution_clock::now();
+        this->update();
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;
+        iterationCount_++;
+        cout << "RUNNING ITERATION: " << iterationCount_ << endl;
+        updateGrid();
+        iterationLock_ = false;
+        // iterationCountSave_ = iterationCount_;
+    }
+
     /**
      * @brief Apply replacement rules to main grid one time.
      *
      */
-    void iterateSignalMethod(const std::string &s) {
+    void runSignalMethod(const std::string &s) {
         if (!isPlaying_) {
             isPlaying_ = true;
             // iterationCount_ = iterationCountSave_;
@@ -917,7 +944,7 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
         // // emscripten::allow_raw_pointers())
         // .function("makeDirty", &Beaker<unsigned char>::makeDirty,
         // emscripten::allow_raw_pointers())
-        .function("iterateSignalMethod", &Beaker<unsigned char>::iterateSignalMethod,
+        .function("runSignalMethod", &Beaker<unsigned char>::runSignalMethod,
                   emscripten::allow_raw_pointers())
         .function("iterateOnce", &Beaker<unsigned char>::iterateOnce,
                   emscripten::allow_raw_pointers())
