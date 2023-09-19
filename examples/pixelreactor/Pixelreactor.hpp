@@ -684,6 +684,64 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << endl;
     }
 
+    void debugMatchLists() {
+        if (isReactionRule_) return;
+
+        for (gridCoordinateT i = 0; i < gridWidth_; i++) {
+            for (gridCoordinateT j = 0; j < gridHeight_; j++) {
+       
+            const auto &p = std::make_pair(i,j);
+                // cout << "\t" << p.first << ": " << p.second << endl;
+
+                for (auto reactionRule : reactionRules_) {
+                    // cout << "\t\tRule name: " << reactionRule->name_ << endl;
+                    if (reactionRule->successor_ == reactionRule ||
+                        reactionRule->successor_ == nullptr)
+                        continue;
+
+                 
+                            if (matchAt(reactionRule, p.first, p.second,
+                                        rotationMatrices[0])) {
+                                reactionRule->matchLists_[0].push_back(
+                                    std::make_pair(p.first, p.second));
+                            }
+                        }
+                 
+            }
+        }
+
+        // gridControl_->printNewPixels();
+
+        // for (auto reactionRule : reactionRules_) {
+        //     cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
+        //     if (reactionRule->successor_ == reactionRule || reactionRule->successor_ == nullptr)
+        //         continue;
+        //     for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
+        //         for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
+        //             if (matchAt(reactionRule, i, j, r0)) {
+        //                 // cout << "(r = 0) MATCH: " << i << ", " << j << endl;
+        //                 reactionRule->matchLists_[0].push_back(std::make_pair(i, j));
+        //             }
+        //             if (matchAt(reactionRule, i, j, r90)) {
+        //                 // cout << "(r = 90) MATCH: " << i << ", " << j << endl;
+        //                 reactionRule->matchLists_[1].push_back(std::make_pair(i, j));
+        //             }
+        //             if (matchAt(reactionRule, i, j, r180)) {
+        //                 // cout << "(r = 180) MATCH: " << i << ", " << j << endl;
+        //                 reactionRule->matchLists_[2].push_back(std::make_pair(i, j));
+        //             }
+        //             if (matchAt(reactionRule, i, j, r270)) {
+        //                 // cout << "(r = 270) MATCH: " << i << ", " << j << endl;
+        //                 reactionRule->matchLists_[3].push_back(std::make_pair(i, j));
+        //             }
+        //         }
+        //     }
+        // }
+        gridControl_->clearNewPixelMap();
+        cout << endl;
+    }
+
+
     void processMatchLists() {
         for (auto reactionRule : reactionRules_) {
             if (reactionRule->successor_ == reactionRule || reactionRule->successor_ == nullptr)
@@ -726,7 +784,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // for (auto reactionRule : reactionRules_) {
         //     reactionRule->printBeakerStats();
         // }
+        //debugMatchLists();
         populateMatchLists();
+                                          
         processMatchLists();
         purgeMatchLists();
     }
