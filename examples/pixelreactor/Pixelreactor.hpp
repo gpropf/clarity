@@ -670,7 +670,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                         reactionRule->successor_ == nullptr)
                         continue;
 
-                    for (int r = 0; r < 1; r++) {
+                    for (int r = 0; r < 4; r++) {
                         const auto &rotationMatrix = rotationMatrices[r];
                         if (matchAt(reactionRule, p.first, p.second, rotationMatrix)) {
                             reactionRule->matchLists_[r].push_back(
@@ -680,7 +680,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 }
             }
         }        
-        gridControl_->clearNewPixelMap();
+        //gridControl_->clearNewPixelMap();
         cout << endl;
     }
 
@@ -726,8 +726,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // for (auto reactionRule : reactionRules_) {
         //     reactionRule->printBeakerStats();
         // }
-        debugMatchLists();
-        // populateMatchLists();
+        //debugMatchLists();
+        populateMatchLists();
 
         processMatchLists();
         purgeMatchLists();
