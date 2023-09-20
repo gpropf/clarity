@@ -554,27 +554,27 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         this->setRuleGridHeight("5");
         this->setRuleGridWidth("5");
         this->makeNewReactionRule();
-        
+
         reactionRules_[1]->setSuccessorName("rule3");
         reactionRules_[1]->setSuccessorOffsetX("-1");
         reactionRules_[1]->setSuccessorOffsetY("-1");
         reactionRules_[0]->setSuccessorName("rule2");
-        reactionRules_[0]->gridControl_->setPixelAt(1,1, 1);
-        reactionRules_[1]->gridControl_->setPixelAt(0,1, 1);
-        reactionRules_[1]->gridControl_->setPixelAt(1,0, 1);
-        reactionRules_[1]->gridControl_->setPixelAt(1,2, 1);
-        reactionRules_[1]->gridControl_->setPixelAt(2,1, 1);
+        reactionRules_[0]->gridControl_->setPixelAt(1, 1, 1);
+        reactionRules_[1]->gridControl_->setPixelAt(0, 1, 1);
+        reactionRules_[1]->gridControl_->setPixelAt(1, 0, 1);
+        reactionRules_[1]->gridControl_->setPixelAt(1, 2, 1);
+        reactionRules_[1]->gridControl_->setPixelAt(2, 1, 1);
 
-        reactionRules_[2]->gridControl_->setPixelAt(0,0, 1);
-        reactionRules_[2]->gridControl_->setPixelAt(4,0, 1);
-        reactionRules_[2]->gridControl_->setPixelAt(0,4, 1);
-        reactionRules_[2]->gridControl_->setPixelAt(4,4, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(0, 0, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(4, 0, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(0, 4, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(4, 4, 1);
 
-        reactionRules_[2]->gridControl_->setPixelAt(1,2, 1);
-        reactionRules_[2]->gridControl_->setPixelAt(2,2, 1);
-        reactionRules_[2]->gridControl_->setPixelAt(3,2, 1);
-        reactionRules_[2]->gridControl_->setPixelAt(2,1, 1);
-        reactionRules_[2]->gridControl_->setPixelAt(2,3, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(1, 2, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(2, 2, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(3, 2, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(2, 1, 1);
+        reactionRules_[2]->gridControl_->setPixelAt(2, 3, 1);
     }
 
     void wrapCoordinates(gridCoordinatePairT &p) {
@@ -652,34 +652,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 }
             }
         }
-
-        // gridControl_->printNewPixels();
-
-        // for (auto reactionRule : reactionRules_) {
-        //     cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
-        //     if (reactionRule->successor_ == reactionRule || reactionRule->successor_ == nullptr)
-        //         continue;
-        //     for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
-        //         for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
-        //             if (matchAt(reactionRule, i, j, r0)) {
-        //                 // cout << "(r = 0) MATCH: " << i << ", " << j << endl;
-        //                 reactionRule->matchLists_[0].push_back(std::make_pair(i, j));
-        //             }
-        //             if (matchAt(reactionRule, i, j, r90)) {
-        //                 // cout << "(r = 90) MATCH: " << i << ", " << j << endl;
-        //                 reactionRule->matchLists_[1].push_back(std::make_pair(i, j));
-        //             }
-        //             if (matchAt(reactionRule, i, j, r180)) {
-        //                 // cout << "(r = 180) MATCH: " << i << ", " << j << endl;
-        //                 reactionRule->matchLists_[2].push_back(std::make_pair(i, j));
-        //             }
-        //             if (matchAt(reactionRule, i, j, r270)) {
-        //                 // cout << "(r = 270) MATCH: " << i << ", " << j << endl;
-        //                 reactionRule->matchLists_[3].push_back(std::make_pair(i, j));
-        //             }
-        //         }
-        //     }
-        // }
         gridControl_->clearNewPixelMap();
         cout << endl;
     }
@@ -689,8 +661,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
         for (gridCoordinateT i = 0; i < gridWidth_; i++) {
             for (gridCoordinateT j = 0; j < gridHeight_; j++) {
-       
-            const auto &p = std::make_pair(i,j);
+                const auto &p = std::make_pair(i, j);
                 // cout << "\t" << p.first << ": " << p.second << endl;
 
                 for (auto reactionRule : reactionRules_) {
@@ -699,48 +670,19 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                         reactionRule->successor_ == nullptr)
                         continue;
 
-                 
-                            if (matchAt(reactionRule, p.first, p.second,
-                                        rotationMatrices[0])) {
-                                reactionRule->matchLists_[0].push_back(
-                                    std::make_pair(p.first, p.second));
-                            }
+                    for (int r = 0; r < 1; r++) {
+                        const auto &rotationMatrix = rotationMatrices[r];
+                        if (matchAt(reactionRule, p.first, p.second, rotationMatrix)) {
+                            reactionRule->matchLists_[r].push_back(
+                                std::make_pair(p.first, p.second));
                         }
-                 
+                    }
+                }
             }
-        }
-
-        // gridControl_->printNewPixels();
-
-        // for (auto reactionRule : reactionRules_) {
-        //     cout << "update() BEGIN Reaction rule address: " << reactionRule << endl;
-        //     if (reactionRule->successor_ == reactionRule || reactionRule->successor_ == nullptr)
-        //         continue;
-        //     for (gridCoordinateT i = 0; i < this->gridWidth_; i++) {
-        //         for (gridCoordinateT j = 0; j < this->gridHeight_; j++) {
-        //             if (matchAt(reactionRule, i, j, r0)) {
-        //                 // cout << "(r = 0) MATCH: " << i << ", " << j << endl;
-        //                 reactionRule->matchLists_[0].push_back(std::make_pair(i, j));
-        //             }
-        //             if (matchAt(reactionRule, i, j, r90)) {
-        //                 // cout << "(r = 90) MATCH: " << i << ", " << j << endl;
-        //                 reactionRule->matchLists_[1].push_back(std::make_pair(i, j));
-        //             }
-        //             if (matchAt(reactionRule, i, j, r180)) {
-        //                 // cout << "(r = 180) MATCH: " << i << ", " << j << endl;
-        //                 reactionRule->matchLists_[2].push_back(std::make_pair(i, j));
-        //             }
-        //             if (matchAt(reactionRule, i, j, r270)) {
-        //                 // cout << "(r = 270) MATCH: " << i << ", " << j << endl;
-        //                 reactionRule->matchLists_[3].push_back(std::make_pair(i, j));
-        //             }
-        //         }
-        //     }
-        // }
+        }        
         gridControl_->clearNewPixelMap();
         cout << endl;
     }
-
 
     void processMatchLists() {
         for (auto reactionRule : reactionRules_) {
@@ -784,9 +726,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // for (auto reactionRule : reactionRules_) {
         //     reactionRule->printBeakerStats();
         // }
-        //debugMatchLists();
-        populateMatchLists();
-                                          
+        debugMatchLists();
+        // populateMatchLists();
+
         processMatchLists();
         purgeMatchLists();
     }
@@ -870,6 +812,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                     std::make_pair(i + successorOffset.first, j + successorOffset.second);
 
                 auto successorPixelVal = successor.gridControl_->getPixelAt(i, j);
+
+                //if (successorPixelVal == 0) continue;
 
                 successorCoords =
                     rotationMatrices[rotationIndex].rotateCoordinates(successorCoords);
