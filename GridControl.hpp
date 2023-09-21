@@ -202,15 +202,15 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
      * @param y
      * @return pair<int,int>
      */
-    std::pair<int, int> wrapCoordiates(int x, int y) {
-        int xp = x % this->gridWidth_;
-        int yp = y % this->gridHeight_;
-        if (xp < 0) xp += gridWidth_;
-        if (yp < 0) yp += gridHeight_;
-        assert(xp >= 0);
-        assert(yp >= 0);
-        return std::pair(xp, yp);
-    }
+    // std::pair<int, int> wrapCoordiates(int x, int y) {
+    //     int xp = x % this->gridWidth_;
+    //     int yp = y % this->gridHeight_;
+    //     if (xp < 0) xp += gridWidth_;
+    //     if (yp < 0) yp += gridHeight_;
+    //     assert(xp >= 0);
+    //     assert(yp >= 0);
+    //     return std::pair(xp, yp);
+    // }
 
     void clearGridToValue(PixelT v = 0, bool forceCreateNewRect = false) {
         int totalPixels = gridHeight_ * gridWidth_;
