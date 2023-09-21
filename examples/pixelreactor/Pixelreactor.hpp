@@ -615,6 +615,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         if (isReactionRule_) return;
 
         auto newPixelMap = gridControl_->getNewPixelMap();
+        gridControl_->clearNewPixelMap();
         // cout << "ITERATION: " << this->iterationCount_ << endl;
         if (newPixelMap.empty()) {
             cout << "ITERATION: " << this->iterationCount_ << ", There are NO NEW PIXELS!" << endl;
@@ -659,7 +660,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 }
             }
         }
-        gridControl_->clearNewPixelMap();
+        
         cout << endl;
     }
 
