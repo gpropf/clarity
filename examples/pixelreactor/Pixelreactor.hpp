@@ -730,6 +730,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         populateMatchLists();
 
         processMatchLists();
+        updateGrid();
         purgeMatchLists();
     }
 
@@ -863,7 +864,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;
         iterationCount_++;
         cout << "RUNNING ITERATION: " << iterationCount_ << endl;
-        updateGrid();
+        //updateGrid();
         iterationLock_ = false;
         // iterationCountSave_ = iterationCount_;
     }
@@ -883,7 +884,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;
         iterationCount_++;
         cout << "RUNNING ITERATION: " << iterationCount_ << endl;
-        updateGrid();
+        //updateGrid();
         iterationLock_ = false;
         // iterationCountSave_ = iterationCount_;
     }
@@ -932,7 +933,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         for (const auto &[key, value] : this->successionMap_) {
             auto [px, py] = key;
             std::vector<valuePriorityPairT> vpStack = value;
-            // cout << "update coordinate: " << px << ", " << py << endl;
+            cout << "UPD: " << px << ", " << py << " has " << vpStack.size() << " pixels." << endl;
             if (!vpStack.empty()) {
                 sortValuePriorityStack(vpStack);
                 auto [val, pri] = vpStack.back();
