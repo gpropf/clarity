@@ -89,8 +89,8 @@ int main() {
 
     appBldr->addObject(tobjSptr);
 
-  auto c3 = appBldr->addChannel("c3");
-    auto c4 = appBldr->addChannel("c4");
+  auto c3 = appBldr->makeChannel("c3");
+    auto c4 = appBldr->makeChannel("c4");
     c3->addConnection(c4);
 
 

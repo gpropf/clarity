@@ -26,11 +26,9 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-
 #include <emscripten.h>
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
-
 
 namespace cl3 {
 
@@ -52,13 +50,9 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
    public:
     IChannel(string name) : name_(name) {}
 
-    virtual void finalize() {
+    virtual void finalize() {}
 
-    }
-
-    virtual void testMethod() {
-        cout << "IChannel::testMethod()" << endl;
-    }
+    virtual void testMethod() { cout << "IChannel::testMethod()" << endl; }
 
     void addConnection(shared_ptr<IChannel> c, bool addBack = true) {
         // if (c == getptr()) return;
@@ -66,11 +60,9 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
         if (addBack) c->addConnection(getptr(), false);
     }
 
-    
     virtual void inject(val s, int signalGeneration = 0) {
-        
-        cout << "Channel name: " << name_ << ", Signal: " << s.as<string>() << ", signal generation = "
-             << signalGeneration << endl;
+        cout << "Channel name: " << name_ << ", Signal: " << s.as<string>()
+             << ", signal generation = " << signalGeneration << endl;
         for (auto c : this->channels_) {
             if (signalGeneration == 0) c->inject(s, ++signalGeneration);
         }
@@ -87,30 +79,26 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
     // }
 
     // void injectForWEC(val s) {
-      
-    //     cout << "Channel name: " << name_ << ", Signal: " << s.as<string>() << ", injected from OUTER SPACE" << endl;
-    //     for (auto c : this->channels_) {
+
+    //     cout << "Channel name: " << name_ << ", Signal: " << s.as<string>() << ", injected from
+    //     OUTER SPACE" << endl; for (auto c : this->channels_) {
     //         c->inject(s);
     //     }
     // }
 };
 
-
-
-
-template <class ObjClass>
+template <class ObjClass, typename S>
 class ObjectChannel : public IChannel {
     shared_ptr<ObjClass> objPtr;
+    void (ObjClass::*signalAcceptorMethod_)(const S& s);
+    S (ObjClass::*signalEmitterMethod_)();
 };
-
 
 class WebElementChannel : public IChannel {
     shared_ptr<WebElement> weptr_;
 
    public:
-    WebElementChannel(string name) : IChannel(name) {
-                    
-    }
+    WebElementChannel(string name) : IChannel(name) {}
 
     // virtual void finalize() {
     //     shared_ptr<WebElementChannel> dummy;
@@ -119,15 +107,13 @@ class WebElementChannel : public IChannel {
     //     this->weptr_->addEventListener(val("change"), onChangeFn);
     // }
 
-    virtual void finalize() {        
+    virtual void finalize() {
         val inject = val::global("inject");
         val onChangeFn = inject(*this->getptr());
         this->weptr_->addEventListener(val("change"), onChangeFn);
     }
 
-    void installWebElement(shared_ptr<WebElement> weptr) {
-        this->weptr_ = weptr;
-    }
+    void installWebElement(shared_ptr<WebElement> weptr) { this->weptr_ = weptr; }
 };
 
 /**
@@ -181,8 +167,7 @@ class AppBuilder {
         return objid;
     }
 
-    
-    shared_ptr<IChannel> addChannel(string name = "") {
+    shared_ptr<IChannel> makeChannel(string name = "") {
         auto c = make_shared<IChannel>(name);
         const int objid = cl3::TicketMachine::getNextSid();
         channels_.insert({objid, c});
@@ -220,8 +205,5 @@ class AppBuilder {
 };
 
 };  // namespace cl3
-
-
-
 
 #endif
