@@ -642,7 +642,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                         for (auto [x, y] : matchingPixels) {
                             auto potentialMatchX = p.first - x;
                             auto potentialMatchY = p.second - y;
-                            if (matchAt(reactionRule, potentialMatchX, potentialMatchY,
+
+                            auto potentialMatchLoc = std::make_pair(potentialMatchX,potentialMatchY);
+
+                            if (matchAt(reactionRule, potentialMatchLoc.first, potentialMatchLoc.second,
                                         rotationMatrix)) {
                                 reactionRule->matchLists_[r].push_back(
                                     std::make_pair(potentialMatchX, potentialMatchY));
@@ -660,7 +663,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         if (isReactionRule_) return;
 
         for (gridCoordinateT i = 0; i < gridWidth_; i++) {
-            for (gridCoordinateT j = 0; j < gridHeight_; j++) {
+            for (gridCoordinateT j = gridHeight_; j > 0; j--) {
                 const auto &p = std::make_pair(i, j);
                 // cout << "\t" << p.first << ": " << p.second << endl;
 
@@ -679,8 +682,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                     }
                 }
             }
-        }        
-        //gridControl_->clearNewPixelMap();
+        }
+        // gridControl_->clearNewPixelMap();
         cout << endl;
     }
 
@@ -814,7 +817,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
                 auto successorPixelVal = successor.gridControl_->getPixelAt(i, j);
 
-                //if (successorPixelVal == 0) continue;
+                // if (successorPixelVal == 0) continue;
 
                 successorCoords =
                     rotationMatrices[rotationIndex].rotateCoordinates(successorCoords);
@@ -864,7 +867,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;
         iterationCount_++;
         cout << "RUNNING ITERATION: " << iterationCount_ << endl;
-        //updateGrid();
+        // updateGrid();
         iterationLock_ = false;
         // iterationCountSave_ = iterationCount_;
     }
@@ -884,7 +887,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;
         iterationCount_++;
         cout << "RUNNING ITERATION: " << iterationCount_ << endl;
-        //updateGrid();
+        // updateGrid();
         iterationLock_ = false;
         // iterationCountSave_ = iterationCount_;
     }
@@ -927,13 +930,42 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // updateGrid();
     }
 
+    void rectifySuccessionMap() {
+        std::vector<gridCoordinatePairT> keysToDestroy;
+        for (const auto &[key, value] : this->successionMap_) {
+            auto [px, py] = key;
+            auto keyPrime = key;
+            wrapCoordinates(keyPrime);
+            auto [pxPrime, pyPrime] = keyPrime;
+            if (px != pxPrime || py != pyPrime) {
+                cout << "WRAPPING! " << px << ", " << pxPrime << ", " << py << ", " << pyPrime;
+                auto pixelsToBeWrapped = successionMap_[key];
+                successionMap_[keyPrime].insert(successionMap_[keyPrime].end(),
+                                                std::begin(pixelsToBeWrapped),
+                                                std::end(pixelsToBeWrapped));
+                //
+                keysToDestroy.push_back(key);
+                // successionMap_[successorCoords].push_back(vp);
+            }
+            std::vector<valuePriorityPairT> vpStack = successionMap_[keyPrime];
+            cout << " || UPD: " << pxPrime << ", " << pyPrime << " has " << vpStack.size() << " pixels."
+                 << endl;
+        }
+        for (auto key: keysToDestroy) {
+            auto [px, py] = key;
+            cout << "DESTROYING WRAPPED KEY: " << px << ", " << py << endl;
+            successionMap_.erase(key);
+        }
+    }
+
     void updateGrid() {
         clean_ = false;
-
+        //rectifySuccessionMap();
         for (const auto &[key, value] : this->successionMap_) {
             auto [px, py] = key;
             std::vector<valuePriorityPairT> vpStack = value;
-            cout << "UPD: " << px << ", " << py << " has " << vpStack.size() << " pixels." << endl;
+            // cout << "UPD: " << px << ", " << py << " has " << vpStack.size() << " pixels." <<
+            // endl;
             if (!vpStack.empty()) {
                 sortValuePriorityStack(vpStack);
                 auto [val, pri] = vpStack.back();
