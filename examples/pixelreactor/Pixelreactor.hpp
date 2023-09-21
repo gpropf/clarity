@@ -639,16 +639,20 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                         const auto &rotationMatrix = rotationMatrices[r];
                         auto vcm = reactionRule->valueToCoordinateMaps_[r];
                         auto matchingPixels = vcm[anchorPixelColor];
+                        std::set<gridCoordinatePairT> potentialMatchLocations;
                         for (auto [x, y] : matchingPixels) {
                             auto potentialMatchX = p.first - x;
                             auto potentialMatchY = p.second - y;
 
-                            auto potentialMatchLoc = std::make_pair(potentialMatchX,potentialMatchY);
-
-                            if (matchAt(reactionRule, potentialMatchLoc.first, potentialMatchLoc.second,
-                                        rotationMatrix)) {
-                                reactionRule->matchLists_[r].push_back(
-                                    std::make_pair(potentialMatchX, potentialMatchY));
+                            auto potentialMatchLoc =
+                                std::make_pair(potentialMatchX, potentialMatchY);
+                            //wrapCoordinates(potentialMatchLoc);
+                            potentialMatchLocations.insert(potentialMatchLoc);
+                        }
+                        for (auto loc : potentialMatchLocations) {
+                            auto [x, y] = loc;
+                            if (matchAt(reactionRule, x, y, rotationMatrix)) {
+                                reactionRule->matchLists_[r].push_back(loc);
                             }
                         }
                     }
@@ -729,7 +733,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // for (auto reactionRule : reactionRules_) {
         //     reactionRule->printBeakerStats();
         // }
-        //debugMatchLists();
+        // debugMatchLists();
         populateMatchLists();
 
         processMatchLists();
@@ -948,10 +952,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 // successionMap_[successorCoords].push_back(vp);
             }
             std::vector<valuePriorityPairT> vpStack = successionMap_[keyPrime];
-            cout << " || UPD: " << pxPrime << ", " << pyPrime << " has " << vpStack.size() << " pixels."
-                 << endl;
+            cout << " || UPD: " << pxPrime << ", " << pyPrime << " has " << vpStack.size()
+                 << " pixels." << endl;
         }
-        for (auto key: keysToDestroy) {
+        for (auto key : keysToDestroy) {
             auto [px, py] = key;
             cout << "DESTROYING WRAPPED KEY: " << px << ", " << py << endl;
             successionMap_.erase(key);
@@ -960,7 +964,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     void updateGrid() {
         clean_ = false;
-        //rectifySuccessionMap();
+        // rectifySuccessionMap();
         for (const auto &[key, value] : this->successionMap_) {
             auto [px, py] = key;
             std::vector<valuePriorityPairT> vpStack = value;
