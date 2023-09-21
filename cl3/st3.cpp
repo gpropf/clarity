@@ -127,12 +127,12 @@ EMSCRIPTEN_BINDINGS(TestObj) {
                                                     &TestObj::signalEmitterTestMethod);
 }
 
-EMSCRIPTEN_BINDINGS(IChannel) {
-    emscripten::class_<IChannel>("IChannel") 
-        .function("inject", &IChannel::inject, emscripten::allow_raw_pointers())
-        //.function("injectCppval", &IChannel::injectCppval, emscripten::allow_raw_pointers())
-        //.function("injectForWEC", &IChannel::injectForWEC, emscripten::allow_raw_pointers())
-        .function("testMethod", &IChannel::testMethod, emscripten::allow_raw_pointers());
+EMSCRIPTEN_BINDINGS(Channel) {
+    emscripten::class_<Channel>("Channel") 
+        .function("inject", &Channel::inject, emscripten::allow_raw_pointers())
+        //.function("injectCppval", &Channel::injectCppval, emscripten::allow_raw_pointers())
+        //.function("injectForWEC", &Channel::injectForWEC, emscripten::allow_raw_pointers())
+        .function("testMethod", &Channel::testMethod, emscripten::allow_raw_pointers());
     //     .function("accept", &WebElementSignalObject<std::string>::accept,
     //               emscripten::allow_raw_pointers());
 

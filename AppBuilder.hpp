@@ -25,10 +25,10 @@ using std::map;
 
 namespace cl3 {
 
-class IChannel {};
+class Channel {};
 
 template <typename S>
-class Channel : public IChannel {
+class Channel : public Channel {
     S currentValue_;
 };
 
@@ -40,7 +40,7 @@ class Channel : public IChannel {
 class AppBuilder {
     vector<const int> currentGroupIds_;
     vector<const int> allIds_;
-    map<const int, shared_ptr<IChannel>> channels_;
+    map<const int, shared_ptr<Channel>> channels_;
     map<const int, shared_ptr<void>> objects_;
     map<const int, val> domElements_;
     map<const string, vector<const int>> groups_;

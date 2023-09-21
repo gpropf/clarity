@@ -32,29 +32,29 @@ using std::vector;
 
 namespace cl3 {
 
-class IChannel : public std::enable_shared_from_this<IChannel> {
+class Channel : public std::enable_shared_from_this<Channel> {
     val currentValue_;
 
    protected:
-    vector<shared_ptr<IChannel>> channels_;
+    vector<shared_ptr<Channel>> channels_;
     string name_;
 
     /**
      * @brief Adapted from this doc:
      * https://en.cppreference.com/w/cpp/memory/enable_shared_from_this
      *
-     * @return std::shared_ptr<IChannel>
+     * @return std::shared_ptr<Channel>
      */
-    std::shared_ptr<IChannel> getptr() { return this->shared_from_this(); }
+    std::shared_ptr<Channel> getptr() { return this->shared_from_this(); }
 
    public:
-    IChannel(string name) : name_(name) {}
+    Channel(string name) : name_(name) {}
 
     virtual void finalize() {}
 
-    virtual void testMethod() { cout << "IChannel::testMethod()" << endl; }
+    virtual void testMethod() { cout << "Channel::testMethod()" << endl; }
 
-    void addConnection(shared_ptr<IChannel> c, bool addBack = true) {
+    void addConnection(shared_ptr<Channel> c, bool addBack = true) {
         // if (c == getptr()) return;
         channels_.push_back(c);
         if (addBack) c->addConnection(getptr(), false);
@@ -68,7 +68,7 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
         }
     }
 
-    // virtual void injectCppval(int i, shared_ptr<IChannel> originator = nullptr) {
+    // virtual void injectCppval(int i, shared_ptr<Channel> originator = nullptr) {
     //     string originatorName = "NULL";
     //     if (originator) originatorName = originator->name_;
     //     cout << "Channel name: " << name_ << ", Signal: " << i << ", injected from "
@@ -88,17 +88,17 @@ class IChannel : public std::enable_shared_from_this<IChannel> {
 };
 
 template <class ObjClass, typename S>
-class ObjectChannel : public IChannel {
+class ObjectChannel : public Channel {
     shared_ptr<ObjClass> objPtr;
     void (ObjClass::*signalAcceptorMethod_)(const S& s);
     S (ObjClass::*signalEmitterMethod_)();
 };
 
-class WebElementChannel : public IChannel {
+class WebElementChannel : public Channel {
     shared_ptr<WebElement> weptr_;
 
    public:
-    WebElementChannel(string name) : IChannel(name) {}
+    WebElementChannel(string name) : Channel(name) {}
 
     // virtual void finalize() {
     //     shared_ptr<WebElementChannel> dummy;
@@ -124,7 +124,7 @@ class WebElementChannel : public IChannel {
 class AppBuilder {
     vector<const int> currentGroupIds_;
     vector<const int> allIds_;
-    map<const int, shared_ptr<IChannel>> channels_;
+    map<const int, shared_ptr<Channel>> channels_;
     map<const int, shared_ptr<void>> objects_;
     //  map<const int, val> domElements_;
     map<const int, shared_ptr<WebElement>> webElements_;
@@ -167,8 +167,8 @@ class AppBuilder {
         return objid;
     }
 
-    shared_ptr<IChannel> makeChannel(string name = "") {
-        auto c = make_shared<IChannel>(name);
+    shared_ptr<Channel> makeChannel(string name = "") {
+        auto c = make_shared<Channel>(name);
         const int objid = cl3::TicketMachine::getNextSid();
         channels_.insert({objid, c});
         pushId(objid);
