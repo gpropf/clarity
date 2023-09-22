@@ -54,9 +54,15 @@ class TestObj {
         return s_;
     }
 
-    void setWidth(int w) { width_ = w; }
+    void setWidth(const int &w) {
+        cout << "TestObj::setWidth(): " << w << endl;
+        width_ = w;
+    }
 
-    int getWidth() const { return width_; }
+    int getWidth() const {
+        cout << "TestObj::getWidth(): " << width_ << endl;
+        return width_;
+    }
 
     /**
      * @brief We're also using the TestObj class to test the MouseSignal class.
@@ -79,36 +85,33 @@ int main() {
 
     auto appBldr = make_shared<AppBuilder>();
     // tobjSptr->signalEmitterTestMethod();
-    auto toChannel = make_shared<ObjectChannel<TestObj, int>>(tobjSptr);
-
-    val elg = val::global("elgCallMethodOnObjByName");
-    val onChangeFn = elg(*tobjSptr, val("signalEmitterTestMethod"));
+    auto toChannel = make_shared<ObjectChannel<TestObj, int>>(tobjSptr, &TestObj::setWidth, &TestObj::getWidth);
 
     auto textField1 = appBldr->textField("TF1");
-    //auto textField2 = appBldr->textField("TF2");
-    //auto textField3 = appBldr->textField("TF3");
+    // auto textField2 = appBldr->textField("TF2");
+    // auto textField3 = appBldr->textField("TF3");
 
     appBldr->addObject(tobjSptr);
 
-  auto c3 = appBldr->makeChannel("c3");
+    auto c3 = appBldr->makeChannel("c3");
     auto c4 = appBldr->makeChannel("c4");
-    //c3->addConnection(c4);
+    // c3->addConnection(c4);
 
-    //c4->addConnection(toChannel);
-
+    // c4->addConnection(toChannel);
 
     // appBldr->printGroup("g1");
-    textField1->addEventListener(val("change"), onChangeFn);
 
     auto wec = make_shared<WebElementChannel>("wec1");
+    wec->installWebElement(textField1);
+    // val elg = val::global("elgCallMethodOnObjByName");
+    // val onChangeFn = elg(*wec, val("inject"));
+    // textField1->addEventListener(val("change"), onChangeFn);
+
     wec->addConnection(toChannel);
 
-    wec->installWebElement(textField1);
     wec->finalize();
 
-  
-
-    //c3->inject(val("BOO"));
+    // c3->inject(val("BOO"));
     c4->inject(val(5));
     // textField1->addConnection(textField2);
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
@@ -132,7 +135,7 @@ EMSCRIPTEN_BINDINGS(TestObj) {
 }
 
 EMSCRIPTEN_BINDINGS(Channel) {
-    emscripten::class_<Channel>("Channel") 
+    emscripten::class_<Channel>("Channel")
         .function("inject", &Channel::inject, emscripten::allow_raw_pointers())
         //.function("injectCppval", &Channel::injectCppval, emscripten::allow_raw_pointers())
         //.function("injectForWEC", &Channel::injectForWEC, emscripten::allow_raw_pointers())
@@ -142,7 +145,8 @@ EMSCRIPTEN_BINDINGS(Channel) {
 
     emscripten::class_<WebElementChannel>("WebElementChannel")
         .function("inject", &WebElementChannel::inject, emscripten::allow_raw_pointers());
-      //  .function("injectCppval", &WebElementChannel::injectCppval, emscripten::allow_raw_pointers());
+    //  .function("injectCppval", &WebElementChannel::injectCppval,
+    //  emscripten::allow_raw_pointers());
     // emscripten::class_<WebElementSignal<std::string>>("WebElementSignal")
     //     .function("emit", &WebElementSignal<std::string>::emit, emscripten::allow_raw_pointers())
     //     .function("accept", &WebElementSignal<std::string>::accept,

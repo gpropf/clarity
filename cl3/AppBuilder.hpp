@@ -48,7 +48,7 @@ class Channel : public std::enable_shared_from_this<Channel> {
     std::shared_ptr<Channel> getptr() { return this->shared_from_this(); }
 
    public:
-   Channel() {}
+    Channel() {}
     Channel(string name) : name_(name) {}
 
     virtual void finalize() {}
@@ -93,24 +93,33 @@ template <class ObjClass, typename S>
 class ObjectChannel : public Channel {
     shared_ptr<ObjClass> objPtr_;
     void (ObjClass::*signalAcceptorMethod_)(const S& s);
-    S (ObjClass::*signalEmitterMethod_)();
+    S (ObjClass::*signalEmitterMethod_)() const;
 
-    S valToCPP(val v) {
-        return std::stoi(v.as<string>());
+    void setSignalEmitterMethod(S (ObjClass::*signalEmitterMethod)()) {
+        signalEmitterMethod_ = signalEmitterMethod;
     }
 
-    val cppToVal(S s) {
-        return val(s);
+    void setSignalAcceptorMethod(void (ObjClass::*signalAcceptorMethod)(const S& s)) {
+        signalAcceptorMethod_ = signalAcceptorMethod;
     }
 
-    public:
-    ObjectChannel(shared_ptr<ObjClass> objPtr) : objPtr_(objPtr) {}
-     virtual void inject(val v, int signalGeneration = 0) {
-        Channel::inject(v,signalGeneration);
+    S valToCPP(val v) { return std::stoi(v.as<string>()); }
+
+    val cppToVal(S s) { return val(s); }
+
+   public:
+    ObjectChannel(shared_ptr<ObjClass> objPtr,
+                  void (ObjClass::*signalAcceptorMethod)(const S& s) = nullptr,
+                  S (ObjClass::*signalEmitterMethod)() const = nullptr)
+        : objPtr_(objPtr),
+          signalAcceptorMethod_(signalAcceptorMethod),
+          signalEmitterMethod_(signalEmitterMethod) {}
+    virtual void inject(val v, int signalGeneration = 0) {
+        Channel::inject(v, signalGeneration);
         S s = valToCPP(v);
         cout << "Injected value treated as ??? " << s << endl;
-     }
-    
+        (*objPtr_.*signalAcceptorMethod_)(s);
+    }
 };
 
 class WebElementChannel : public Channel {
