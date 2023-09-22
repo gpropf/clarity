@@ -48,6 +48,7 @@ class Channel : public std::enable_shared_from_this<Channel> {
     std::shared_ptr<Channel> getptr() { return this->shared_from_this(); }
 
    public:
+   Channel() {}
     Channel(string name) : name_(name) {}
 
     virtual void finalize() {}
@@ -61,10 +62,11 @@ class Channel : public std::enable_shared_from_this<Channel> {
     }
 
     virtual void inject(val s, int signalGeneration = 0) {
-        cout << "Channel name: " << name_ << ", Signal: " << s.as<string>()
+        val printVal = val::global("printVal");
+        cout << "Channel name: " << name_ << ", Signal: "
              << ", signal generation = " << signalGeneration << endl;
         for (auto c : this->channels_) {
-            if (signalGeneration == 0) c->inject(s, ++signalGeneration);
+            if (signalGeneration == 0) c->inject(s, signalGeneration + 1);
         }
     }
 
@@ -89,9 +91,17 @@ class Channel : public std::enable_shared_from_this<Channel> {
 
 template <class ObjClass, typename S>
 class ObjectChannel : public Channel {
-    shared_ptr<ObjClass> objPtr;
+    shared_ptr<ObjClass> objPtr_;
     void (ObjClass::*signalAcceptorMethod_)(const S& s);
     S (ObjClass::*signalEmitterMethod_)();
+    public:
+    ObjectChannel(shared_ptr<ObjClass> objPtr) : objPtr_(objPtr) {}
+     virtual void inject(val v, int signalGeneration = 0) {
+        Channel::inject(v,signalGeneration);
+        S s = v.as<S>();
+        cout << "Injected value treated as ??? " << s << endl;
+     }
+    
 };
 
 class WebElementChannel : public Channel {

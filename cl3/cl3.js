@@ -150,6 +150,9 @@ class WebElement {
 //     };
 // }
 
+function printVal(v) {
+    console.log(v);
+}
 
 function injectForWEC(channel) {
     return function (ev) {

@@ -79,6 +79,7 @@ int main() {
 
     auto appBldr = make_shared<AppBuilder>();
     // tobjSptr->signalEmitterTestMethod();
+    auto toChannel = make_shared<ObjectChannel<TestObj, int>>(tobjSptr);
 
     val elg = val::global("elgCallMethodOnObjByName");
     val onChangeFn = elg(*tobjSptr, val("signalEmitterTestMethod"));
@@ -91,21 +92,24 @@ int main() {
 
   auto c3 = appBldr->makeChannel("c3");
     auto c4 = appBldr->makeChannel("c4");
-    c3->addConnection(c4);
+    //c3->addConnection(c4);
+
+    //c4->addConnection(toChannel);
 
 
     // appBldr->printGroup("g1");
     textField1->addEventListener(val("change"), onChangeFn);
 
     auto wec = make_shared<WebElementChannel>("wec1");
-    wec->addConnection(c3);
+    wec->addConnection(toChannel);
 
-    wec->installWebElement(textField2);
+    wec->installWebElement(textField1);
     wec->finalize();
 
   
 
-    c3->inject(val("BOO"));
+    //c3->inject(val("BOO"));
+    c4->inject(val(5));
     // textField1->addConnection(textField2);
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     appBldr->printGroup("g1");
