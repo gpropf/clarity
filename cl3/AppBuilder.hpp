@@ -94,11 +94,20 @@ class ObjectChannel : public Channel {
     shared_ptr<ObjClass> objPtr_;
     void (ObjClass::*signalAcceptorMethod_)(const S& s);
     S (ObjClass::*signalEmitterMethod_)();
+
+    S valToCPP(val v) {
+        return std::stoi(v.as<string>());
+    }
+
+    val cppToVal(S s) {
+        return val(s);
+    }
+
     public:
     ObjectChannel(shared_ptr<ObjClass> objPtr) : objPtr_(objPtr) {}
      virtual void inject(val v, int signalGeneration = 0) {
         Channel::inject(v,signalGeneration);
-        S s = v.as<S>();
+        S s = valToCPP(v);
         cout << "Injected value treated as ??? " << s << endl;
      }
     

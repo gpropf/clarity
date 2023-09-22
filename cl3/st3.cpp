@@ -85,8 +85,8 @@ int main() {
     val onChangeFn = elg(*tobjSptr, val("signalEmitterTestMethod"));
 
     auto textField1 = appBldr->textField("TF1");
-    auto textField2 = appBldr->textField("TF2");
-    auto textField3 = appBldr->textField("TF3");
+    //auto textField2 = appBldr->textField("TF2");
+    //auto textField3 = appBldr->textField("TF3");
 
     appBldr->addObject(tobjSptr);
 
