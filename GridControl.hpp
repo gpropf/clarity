@@ -31,6 +31,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     std::string id_;
     std::string svgid_;
     PixelT *pixels_;
+    std::vector<PixelT *> pixelBuffers_;
+    std::vector<Rect **> rectBuffers_;
     Rect **pixelRects_;
     std::map<PixelT, std::vector<gridCoordinatePairT>> newPixelMap_;
     PixelT currentColor_ = 1;
@@ -61,6 +63,14 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     }
 
    public:
+
+    void createNewScreenBuffer() {
+        PixelT * pixels = new PixelT[gridWidth_ * gridHeight_];
+        Rect ** rects =  new Rect *[gridWidth_ * gridHeight_];
+        pixelBuffers_.push_back(pixels);
+        rectBuffers_.push_back(rects);
+    }
+
     void addColorToPallete(PixelT colorValue, const std::string &colorString) {
         colorPallete_[colorValue] = colorString;
     }
@@ -111,6 +121,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                 val parentDOMElement = val::null())
         : gridWidth_(gridWidth), gridHeight_(gridHeight), signalBuilder_(signalBuilder) {
         id_ = id;
+        createNewScreenBuffer();
         pixelRects_ = new Rect *[gridWidth_ * gridHeight_];
         svgid_ = this->id_ + "-svg";
         auto svg = signalBuilder_->svg("svg1", pixelWidth, pixelHeight, svgid_, parentDOMElement);
