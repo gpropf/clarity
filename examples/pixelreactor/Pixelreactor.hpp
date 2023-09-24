@@ -424,6 +424,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         gridControl_->addColorToPallete(4, "#ff00ff");
         gridControl_->addColorToPallete(5, "#ffff00");
         gridControl_->addColorToPallete(6, "#00ffff");
+
+       gridControl_->createNewScreenBuffer();
+      // gridControl_->setPixelAt(35,21, 2, true, 1);
         gridControl_->finalize();
     }
 
@@ -608,6 +611,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 if (gridVal != ruleVal) return false;
             }
         }
+        gridControl_->setPixelAt(x,y,2,true,1);
         return true;
     }
 
