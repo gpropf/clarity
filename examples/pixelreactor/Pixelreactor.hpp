@@ -611,7 +611,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 if (gridVal != ruleVal) return false;
             }
         }
-        gridControl_->setPixelAt(x,y,2,true,1);
+        //gridControl_->setPixelAt(x,y,2,true,1);
         return true;
     }
 
@@ -732,6 +732,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      */
     void update() {
+        //gridControl_->clearGridToValue(0,true,1);
+        // gridControl_->redraw(false,0);
         successionMap_.clear();
         buildPixelValueMaps();
         // printPixelValueMaps();

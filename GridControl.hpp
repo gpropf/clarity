@@ -63,10 +63,9 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     }
 
    public:
-
     void createNewScreenBuffer() {
-        PixelT * pixels = new PixelT[gridWidth_ * gridHeight_];
-        Rect ** rects =  new Rect *[gridWidth_ * gridHeight_];
+        PixelT *pixels = new PixelT[gridWidth_ * gridHeight_];
+        Rect **rects = new Rect *[gridWidth_ * gridHeight_];
         pixelBuffers_.push_back(pixels);
         rectBuffers_.push_back(rects);
     }
@@ -88,27 +87,27 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
      * @param pixelVal
      * @return PixelT
      */
-    PixelT setPixelAt(int x, int y, PixelT pixelVal, bool forceCreateNewRect = false, int layerNum = 0) {
+    PixelT setPixelAt(int x, int y, PixelT pixelVal, bool forceCreateNewRect = false,
+                      int layerNum = 0) {
         val document = val::global("document");
         val svgDOMElement = document.call<val>("getElementById", val(svgid_));
         int pixelIndex = calculateGridCellIndex(x, y);
-        
+
         PixelT oldPixelVal = pixelBuffers_[layerNum][pixelIndex];
         pixelBuffers_[layerNum][pixelIndex] = pixelVal;
         // if (redraw) this->redraw();
 
         std::string colorString = this->colorPallete_[this->pixelBuffers_[layerNum][pixelIndex]];
         // std::string colorString = "#ffff00";
-        
-        Rect * rptr = rectBuffers_[layerNum][pixelIndex];
+
+        Rect *rptr = rectBuffers_[layerNum][pixelIndex];
 
         if (rptr == nullptr || forceCreateNewRect) {
             auto *rectptr =
                 new Rect("", x, y, 1, 1, colorString, "teal", 0.1, false, "", svgDOMElement);
             rectBuffers_[layerNum][pixelIndex] = rectptr;
         } else {
-            rptr->domElement_.call<void>("setAttribute", val("fill"),
-                                                            val(colorString));
+            rptr->domElement_.call<void>("setAttribute", val("fill"), val(colorString));
         }
 
         auto pos = std::make_pair(x, y);
@@ -123,7 +122,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         : gridWidth_(gridWidth), gridHeight_(gridHeight), signalBuilder_(signalBuilder) {
         id_ = id;
         createNewScreenBuffer();
-        //pixelRects_ = new Rect *[gridWidth_ * gridHeight_];
+        // pixelRects_ = new Rect *[gridWidth_ * gridHeight_];
         svgid_ = this->id_ + "-svg";
         auto svg = signalBuilder_->svg("svg1", pixelWidth, pixelHeight, svgid_, parentDOMElement);
         // svgDOMElement_ = svg.getDomElement();
@@ -137,7 +136,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                            {"style", val("border: 2px solid blue")},
                            {"preserveAspectRatio", val("none")}});
 
-        //pixels_ = new PixelT[gridWidth_ * gridHeight_];
+        // pixels_ = new PixelT[gridWidth_ * gridHeight_];
         clearGridToValue(0, true);
 
         auto xyPairToString = [](std::pair<double, double> p) {
@@ -227,10 +226,17 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     void clearGridToValue(PixelT v = 0, bool forceCreateNewRect = false, int layerNum = 0) {
         int totalPixels = gridHeight_ * gridWidth_;
         while (totalPixels--) {
-            pixelBuffers_[layerNum][totalPixels] = 0;
+            pixelBuffers_[layerNum][totalPixels] = v;
         }
-        clearNewPixelMap();
-        this->redraw(forceCreateNewRect);
+        if (layerNum == 0) {
+            clearNewPixelMap();
+            this->redraw(forceCreateNewRect);
+        }
+        else {
+            //this->redraw(forceCreateNewRect, layerNum);
+            this->redraw(forceCreateNewRect, 0);
+        }
+
     }
 
     void printNonZeroPixels(bool convertToIntBeforePrinting = true, int layerNum = 0) {
@@ -257,25 +263,11 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         }
     }
 
-    void redraw(bool forceCreateNewRect = false, int layerNum = 0) {
-        // val document = val::global("document");
-        // val svgDOMElement = document.call<val>("getElementById", val(svgid_));
-
+    void redraw(bool forceCreateNewRect = false, int layerNum = 0) { 
         for (int i = 0; i < this->gridWidth_; i++) {
             for (int j = 0; j < this->gridHeight_; j++) {
-                int idx = calculateGridCellIndex(i, j);
-                // std::string colorString = this->colorPallete_[this->pixels_[idx]];
-                // // std::string colorString = "#ffff00";
-                setPixelAt(i, j, this->pixelBuffers_[layerNum][idx], forceCreateNewRect);
-                // if (pixelRects_[idx] == nullptr) {
-                //     auto *rectptr = new Rect("", i, j, 1, 1, colorString, "teal", 0.1, false, "",
-                //                              svgDOMElement);
-                //     pixelRects_[idx] = rectptr;
-                // }
-                // else {
-                //     pixelRects_[idx]->domElement_.call<void>("setAttribute", val("fill"),
-                //     val(colorString));
-                // }
+                int idx = calculateGridCellIndex(i, j);               
+                setPixelAt(i, j, this->pixelBuffers_[layerNum][idx], forceCreateNewRect, layerNum);                
             }
         }
     }
