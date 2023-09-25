@@ -127,7 +127,7 @@ class ObjectChannel : public Channel {
     virtual void inject(val v, int signalGeneration = 0) {
         Channel::inject(v, signalGeneration);
         S s = valToCPP<S>(v);
-        cout << "Injected value treated as ??? " << s << endl;
+        cout << "Injected value treated as '" << typeid(s).name() << "'" << endl;
         (*objPtr_.*signalAcceptorMethod_)(s);
     }
 };
@@ -139,6 +139,7 @@ class ObjectChannel : public Channel {
  */
 class WebElementChannel : public Channel {
     shared_ptr<WebElement> weptr_;
+    string eventListenerName_ = "change";
 
    public:
     WebElementChannel(string name) : Channel(name) {}
@@ -146,7 +147,7 @@ class WebElementChannel : public Channel {
     virtual void finalize() {
         val inject = val::global("inject");
         val onChangeFn = inject(*this->getptr());
-        this->weptr_->addEventListener(val("change"), onChangeFn);
+        this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
     }
 
     /**
