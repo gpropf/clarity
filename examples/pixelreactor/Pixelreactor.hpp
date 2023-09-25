@@ -1013,11 +1013,12 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     static bool compareValuePriorityPairsOnValue(valuePriorityPairT vp1, valuePriorityPairT vp2) {
-        return (vp1.first < vp2.first);
+        return (vp1.first > vp2.first);
     }
 
     void sortValuePriorityStack(std::vector<valuePriorityPairT> &vpStack) const {
         sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairs);
+        sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairsOnValue);
     }
 };
 
