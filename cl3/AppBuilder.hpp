@@ -86,25 +86,7 @@ class Channel : public std::enable_shared_from_this<Channel> {
         for (auto c : this->channels_) {
             if (signalGeneration == 0) c->inject(s, signalGeneration + 1);
         }
-    }
-
-    // virtual void injectCppval(int i, shared_ptr<Channel> originator = nullptr) {
-    //     string originatorName = "NULL";
-    //     if (originator) originatorName = originator->name_;
-    //     cout << "Channel name: " << name_ << ", Signal: " << i << ", injected from "
-    //          << originatorName << endl;
-    //     for (auto c : this->channels_) {
-    //         if (c != originator) c->injectCppval(i, getptr());
-    //     }
-    // }
-
-    // void injectForWEC(val s) {
-
-    //     cout << "Channel name: " << name_ << ", Signal: " << s.as<string>() << ", injected from
-    //     OUTER SPACE" << endl; for (auto c : this->channels_) {
-    //         c->inject(s);
-    //     }
-    // }
+    }    
 };
 
 template <class ObjClass, typename S>
