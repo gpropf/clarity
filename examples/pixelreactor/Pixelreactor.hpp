@@ -99,7 +99,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     shared_ptr<cl2::SignalBuilder> signalBuilder_;
     val signalBuilderDomElement_ = val::null();
     shared_ptr<Div> beakerDiv_;
-    bool debugMode_ = true;
+    bool debugMode_ = false;
 
     shared_ptr<GridControl<V>> gridControl_;
     shared_ptr<WebElementSignal<std::string>> nameInput_;
@@ -763,8 +763,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // for (auto reactionRule : reactionRules_) {
         //     reactionRule->printBeakerStats();
         // }
-        debugMatchLists();
-        // populateMatchLists();
+        //debugMatchLists();
+        populateMatchLists();
 
         processMatchLists();
         updateGrid();
@@ -1002,6 +1002,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             // endl;
             if (!vpStack.empty()) {
                 sortValuePriorityStack(vpStack);
+                //successionMap_[key] = vpStack;
                 auto [val, pri] = vpStack.back();
                 gridControl_->setPixelAt(px, py, val);
                 // this->beakerNode_->beakerCanvas_->setValXYNoDraw(px, py, val);
@@ -1037,12 +1038,17 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         gridControl_->clearGridToValue();
     }
 
-    static bool compareValuePriorityPairs(valuePriorityPairT vp1, valuePriorityPairT vp2) {
+    static bool compareValuePriorityPairsOnPriority(valuePriorityPairT vp1, valuePriorityPairT vp2) {
         return (vp1.second < vp2.second);
     }
 
+    static bool compareValuePriorityPairsOnValue(valuePriorityPairT vp1, valuePriorityPairT vp2) {
+        return (vp1.first > vp2.first);
+    }
+
     void sortValuePriorityStack(std::vector<valuePriorityPairT> &vpStack) const {
-        sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairs);
+        sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairsOnPriority);
+        //sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairsOnValue);
     }
 };
 
