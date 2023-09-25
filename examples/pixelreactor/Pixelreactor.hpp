@@ -99,7 +99,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     shared_ptr<cl2::SignalBuilder> signalBuilder_;
     val signalBuilderDomElement_ = val::null();
     shared_ptr<Div> beakerDiv_;
-    bool debugMode_ = true;
 
     shared_ptr<GridControl<V>> gridControl_;
     shared_ptr<WebElementSignal<std::string>> nameInput_;
@@ -277,8 +276,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             signalBuilder_->connect<std::string>(deleteRuleButton_, makeNewRuleAcceptor_);
 
         } else {
-            gridControl_->installMousePositionCallback(createGCMousePositionCallback());
-
             makeNewRuleAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
             makeNewRuleAcceptor_->setSignalAcceptorMethod(&Beaker::makeNewReactionRuleSignal);
             newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");
@@ -427,9 +424,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         gridControl_->addColorToPallete(4, "#ff00ff");
         gridControl_->addColorToPallete(5, "#ffff00");
         gridControl_->addColorToPallete(6, "#00ffff");
-
-        gridControl_->createNewScreenBuffer();
-        // gridControl_->setPixelAt(35,21, 2, true, 1);
         gridControl_->finalize();
     }
 
@@ -595,26 +589,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // if (p.first < 0 || p.second < 0) cout << "NEGATIVE COORDS!!!!!!!!!" << endl;
     }
 
-    void printSuccessionStackAt(gridCoordinateT x, gridCoordinateT y) {
-        auto vpstack = successionMap_[std::make_pair(x, y)];
-        for (auto vp : vpstack) {
-            auto [val, priority] = vp;
-            cout << "SS: " << x << ", " << y << ": val = " << int(val) << ", pri = " << priority
-                 << endl;
-        }
-    }
-
-    /**
-     * @brief Creates the lambda function that is then passed to the GC.
-     *
-     * @return auto
-     */
-    auto createGCMousePositionCallback() {
-        return [&](double x, double y) { this->printSuccessionStackAt(int(x), int(y)); };
-    }
-
     bool matchAt(shared_ptr<Beaker<V>> reactionRule, gridCoordinateT x, gridCoordinateT y,
-                 const RotationMatrix2D<gridCoordinateT> &rotationMatrix, V markerColor = 2) {
+                 const RotationMatrix2D<gridCoordinateT> &rotationMatrix) {
         for (gridCoordinateT i = 0; i < reactionRule->gridWidth_; i++) {
             for (gridCoordinateT j = 0; j < reactionRule->gridHeight_; j++) {
                 V ruleVal = reactionRule->gridControl_->getPixelAt(i, j);
@@ -632,7 +608,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 if (gridVal != ruleVal) return false;
             }
         }
-        if (debugMode_) gridControl_->setPixelAt(x, y, markerColor, true, 1);
         return true;
     }
 
@@ -654,13 +629,13 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             // cout << "Anchor pixels: COLOR: " << int(anchorPixelColor) << endl;
             for (const auto &p : pixels) {
                 // cout << "\t" << p.first << ": " << p.second << endl;
-                int ruleIndex = 1;
+
                 for (auto reactionRule : reactionRules_) {
                     // cout << "\t\tRule name: " << reactionRule->name_ << endl;
                     if (reactionRule->successor_ == reactionRule ||
                         reactionRule->successor_ == nullptr)
                         continue;
-                    ruleIndex++;
+
                     for (int r = 0; r < 4; r++) {
                         const auto &rotationMatrix = rotationMatrices[r];
                         auto vcm = reactionRule->valueToCoordinateMaps_[r];
@@ -672,12 +647,12 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
                             auto potentialMatchLoc =
                                 std::make_pair(potentialMatchX, potentialMatchY);
-                            // wrapCoordinates(potentialMatchLoc);
+                            //wrapCoordinates(potentialMatchLoc);
                             potentialMatchLocations.insert(potentialMatchLoc);
                         }
                         for (auto loc : potentialMatchLocations) {
                             auto [x, y] = loc;
-                            if (matchAt(reactionRule, x, y, rotationMatrix, ruleIndex)) {
+                            if (matchAt(reactionRule, x, y, rotationMatrix)) {
                                 reactionRule->matchLists_[r].push_back(loc);
                             }
                         }
@@ -685,7 +660,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 }
             }
         }
-
+        
         cout << endl;
     }
 
@@ -696,17 +671,16 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             for (gridCoordinateT j = gridHeight_; j > 0; j--) {
                 const auto &p = std::make_pair(i, j);
                 // cout << "\t" << p.first << ": " << p.second << endl;
-                int ruleIndex = 1;
+
                 for (auto reactionRule : reactionRules_) {
-                    ruleIndex++;
                     // cout << "\t\tRule name: " << reactionRule->name_ << endl;
                     if (reactionRule->successor_ == reactionRule ||
                         reactionRule->successor_ == nullptr)
                         continue;
 
-                    for (int r = 0; r < 1; r++) {
+                    for (int r = 0; r < 4; r++) {
                         const auto &rotationMatrix = rotationMatrices[r];
-                        if (matchAt(reactionRule, p.first, p.second, rotationMatrix, ruleIndex)) {
+                        if (matchAt(reactionRule, p.first, p.second, rotationMatrix)) {
                             reactionRule->matchLists_[r].push_back(
                                 std::make_pair(p.first, p.second));
                         }
@@ -754,17 +728,14 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      */
     void update() {
-        gridControl_->clearGridToValue(0, true, 1);
-        // gridControl_->redraw(false,0);
-        // gridControl_->redraw(false,1);
         successionMap_.clear();
         buildPixelValueMaps();
         // printPixelValueMaps();
         // for (auto reactionRule : reactionRules_) {
         //     reactionRule->printBeakerStats();
         // }
-        debugMatchLists();
-        // populateMatchLists();
+        // debugMatchLists();
+        populateMatchLists();
 
         processMatchLists();
         updateGrid();
@@ -853,8 +824,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
                 // if (successorPixelVal == 0) continue;
 
-                // successorCoords =
-                //     rotationMatrices[rotationIndex].rotateCoordinates(successorCoords);
+                successorCoords =
+                    rotationMatrices[rotationIndex].rotateCoordinates(successorCoords);
                 successorCoords.first += matchOffset.first;
                 successorCoords.second += matchOffset.second;
 
@@ -1037,15 +1008,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         gridControl_->clearGridToValue();
     }
 
-    // static bool compareValuePriorityPairs(valuePriorityPairT vp1, valuePriorityPairT vp2) {
-    //     return (vp1.second < vp2.second);
-    // }
-
-    // void sortValuePriorityStack(std::vector<valuePriorityPairT> &vpStack) const {
-    //     sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairs);
-    // }
-
-    static bool compareValuePriorityPairsOnPriority(valuePriorityPairT vp1, valuePriorityPairT vp2) {
+    static bool compareValuePriorityPairs(valuePriorityPairT vp1, valuePriorityPairT vp2) {
         return (vp1.second < vp2.second);
     }
 
@@ -1054,7 +1017,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     void sortValuePriorityStack(std::vector<valuePriorityPairT> &vpStack) const {
-        sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairsOnPriority);
+        sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairs);
         sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairsOnValue);
     }
 };
