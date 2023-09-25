@@ -89,6 +89,15 @@ class Channel : public std::enable_shared_from_this<Channel> {
     }    
 };
 
+template<typename S>
+S valToCPP(val v) { return std::stoi(v.as<string>()); }
+
+template<>
+int valToCPP(val v) { return std::stoi(v.as<string>()); }
+
+template<>
+double valToCPP(val v) { return std::stod(v.as<string>()); }
+
 template <class ObjClass, typename S>
 class ObjectChannel : public Channel {
     shared_ptr<ObjClass> objPtr_;
@@ -103,7 +112,7 @@ class ObjectChannel : public Channel {
         signalAcceptorMethod_ = signalAcceptorMethod;
     }
 
-    S valToCPP(val v) { return std::stoi(v.as<string>()); }
+    //S valToCPP(val v) { return std::stoi(v.as<string>()); }
 
     val cppToVal(S s) { return val(s); }
 
@@ -117,7 +126,7 @@ class ObjectChannel : public Channel {
 
     virtual void inject(val v, int signalGeneration = 0) {
         Channel::inject(v, signalGeneration);
-        S s = valToCPP(v);
+        S s = valToCPP<S>(v);
         cout << "Injected value treated as ??? " << s << endl;
         (*objPtr_.*signalAcceptorMethod_)(s);
     }

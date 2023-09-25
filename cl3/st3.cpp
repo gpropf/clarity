@@ -35,6 +35,7 @@ namespace cl3 {
 class TestObj {
     int i_ = 0;
     double d_ = 0;
+    double dblval_ = 0;
     std::string s_ = "foo";
     int width_ = 1;
 
@@ -64,6 +65,16 @@ class TestObj {
         return width_;
     }
 
+    void setDblval(const double &w) {
+        cout << "TestObj::setDblval(): " << w << endl;
+        dblval_ = w;
+    }
+
+    double getDblval() const {
+        cout << "TestObj::getDblval(): " << width_ << endl;
+        return dblval_;
+    }
+
     /**
      * @brief We're also using the TestObj class to test the MouseSignal class.
      *
@@ -81,39 +92,47 @@ class TestObj {
 int main() {
     // We make a test object and then a signal wrapper for it.
     // TestObj tobj;
-    auto tobjSptr = make_shared<TestObj>();
+    auto obj = make_shared<TestObj>();
 
     auto appBldr = make_shared<AppBuilder>();
-    // tobjSptr->signalEmitterTestMethod();
-    auto toChannel = make_shared<ObjectChannel<TestObj, int>>(tobjSptr, &TestObj::setWidth, &TestObj::getWidth);
+    // obj->signalEmitterTestMethod();
+    auto objIntChannel = make_shared<ObjectChannel<TestObj, int>>(obj, &TestObj::setWidth, &TestObj::getWidth);
+     auto objDblChannel = make_shared<ObjectChannel<TestObj, double>>(obj, &TestObj::setDblval, &TestObj::getDblval);
 
-    auto textField1 = appBldr->textField("TF1");
+    auto widthInput = appBldr->textField("widthInput");
+    auto dblInput = appBldr->textField("dblInput");
     // auto textField2 = appBldr->textField("TF2");
     // auto textField3 = appBldr->textField("TF3");
 
-    appBldr->addObject(tobjSptr);
+    appBldr->addObject(obj);
 
     auto c3 = appBldr->makeChannel("c3");
     auto c4 = appBldr->makeChannel("c4");
     // c3->addConnection(c4);
 
-    // c4->addConnection(toChannel);
+    // c4->addConnection(objIntChannel);
 
     // appBldr->printGroup("g1");
 
-    auto wec = make_shared<WebElementChannel>("wec1");
-    wec->installWebElement(textField1);
+    auto widthChannel = make_shared<WebElementChannel>("widthChannel");
+    auto dblChannel = make_shared<WebElementChannel>("dblChannel");
+    widthChannel->installWebElement(widthInput);
+    dblChannel->installWebElement(dblInput);
     // val elg = val::global("elgCallMethodOnObjByName");
-    // val onChangeFn = elg(*wec, val("inject"));
-    // textField1->addEventListener(val("change"), onChangeFn);
+    // val onChangeFn = elg(*widthChannel, val("inject"));
+    // widthInput->addEventListener(val("change"), onChangeFn);
 
-    wec->addConnection(toChannel);
+    widthChannel->addConnection(objIntChannel);
 
-    wec->finalize();
+    widthChannel->finalize();
+
+    dblChannel->addConnection(objDblChannel);
+
+    dblChannel->finalize();
 
     // c3->inject(val("BOO"));
     c4->inject(val(5));
-    // textField1->addConnection(textField2);
+    // widthInput->addConnection(textField2);
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     appBldr->printGroup("g1");
     auto range1 = make_shared<RangeInput>("R1", "R1-id");
