@@ -100,6 +100,7 @@ double valToCPP(val v) { return std::stod(v.as<string>()); }
 
 template <class ObjClass, typename S>
 class ObjectChannel : public Channel {
+    S signalValue_;
     shared_ptr<ObjClass> objPtr_;
     void (ObjClass::*signalAcceptorMethod_)(const S& s);
     S (ObjClass::*signalEmitterMethod_)() const;
