@@ -55,12 +55,30 @@ class Channel : public std::enable_shared_from_this<Channel> {
 
     virtual void testMethod() { cout << "Channel::testMethod()" << endl; }
 
+    /**
+     * @brief Added the specified channel as a connection.
+     *
+     * @param c
+     * @param addBack: if true the added connection's addConnection method is called to add the
+     * caller back as a connection. This is a dangerous process that can lead to infinite recursion
+     * as a signal endlessly echoes back and forth in the network. The default behavior is to set
+     * this to false when calling this method on another channel.
+     */
     void addConnection(shared_ptr<Channel> c, bool addBack = true) {
         // if (c == getptr()) return;
         channels_.push_back(c);
         if (addBack) c->addConnection(getptr(), false);
     }
 
+    /**
+     * @brief Probably the most important method here. This is how signals get into the signal
+     * network. Essentially anything that wants to participate in the network will be a type of
+     * channel and will inject values into the network which will then propagate to any other
+     * channels that have been attached.
+     *
+     * @param s
+     * @param signalGeneration
+     */
     virtual void inject(val s, int signalGeneration = 0) {
         val printVal = val::global("printVal");
         cout << "Channel name: " << name_ << ", Signal: "
@@ -114,6 +132,7 @@ class ObjectChannel : public Channel {
         : objPtr_(objPtr),
           signalAcceptorMethod_(signalAcceptorMethod),
           signalEmitterMethod_(signalEmitterMethod) {}
+
     virtual void inject(val v, int signalGeneration = 0) {
         Channel::inject(v, signalGeneration);
         S s = valToCPP(v);
@@ -122,18 +141,16 @@ class ObjectChannel : public Channel {
     }
 };
 
+/**
+ * @brief A type of channel with a WebElement at its core. The WebElement's event listeners will
+ * originate signals that are then injected into the network.
+ *
+ */
 class WebElementChannel : public Channel {
     shared_ptr<WebElement> weptr_;
 
    public:
     WebElementChannel(string name) : Channel(name) {}
-
-    // virtual void finalize() {
-    //     shared_ptr<WebElementChannel> dummy;
-    //     val injectForWEC = val::global("injectForWEC");
-    //     val onChangeFn = injectForWEC(*this->getptr());
-    //     this->weptr_->addEventListener(val("change"), onChangeFn);
-    // }
 
     virtual void finalize() {
         val inject = val::global("inject");
@@ -141,6 +158,11 @@ class WebElementChannel : public Channel {
         this->weptr_->addEventListener(val("change"), onChangeFn);
     }
 
+    /**
+     * @brief Assigns the provided WebElement to this channel
+     *
+     * @param weptr
+     */
     void installWebElement(shared_ptr<WebElement> weptr) { this->weptr_ = weptr; }
 };
 
@@ -154,7 +176,6 @@ class AppBuilder {
     vector<const int> allIds_;
     map<const int, shared_ptr<Channel>> channels_;
     map<const int, shared_ptr<void>> objects_;
-    //  map<const int, val> domElements_;
     map<const int, shared_ptr<WebElement>> webElements_;
     map<const string, vector<const int>> groups_;
 
@@ -175,6 +196,26 @@ class AppBuilder {
     }
 
    public:
+    /**
+     * @brief Construct a new App Builder object. This class is the central factory class and also
+     * functions as an online registry and database for the various elements of the signal network
+     * you create. There are three classes of things we track and manage here:
+     * 1. Objects: stored as map<const int, shared_ptr<void>> objects_. These can be of any type and
+     * we make no assumptions about them
+     * 2. Channels: stored as map<const int, shared_ptr<Channel>> channels_
+     * 3. WebElements: stored as map<const int, shared_ptr<WebElement>> webElements_
+     * 4. Groups: stored as map<const string, vector<const int>> groups_
+     *
+     * In addition to creating various GUI elements such as text fields and range controls, the AB
+     * also watches existing objects and makes sure that changes in the internal state of objects
+     * are reflected by signals in the network that ultimately cause values in GUI elements to
+     * update as well.
+     *
+     * @param startId
+     * @param labelAllInputs
+     * @param labelsSwallowTheirReferents
+     * @param parentDOMElement
+     */
     AppBuilder(int startId = 0, bool labelAllInputs = true, bool labelsSwallowTheirReferents = true,
                val parentDOMElement = val::null())
         : labelAllInputs_(labelAllInputs),
@@ -183,11 +224,12 @@ class AppBuilder {
         // tm_ = TicketMachine(startId);
     }
 
-    // template <typename S>
-    // void connect(shared_ptr<Channel<S>> c, shared_ptr<WebElementChannel<S>> wc) {
-    //     c->addConnection(wc);
-    // }
-
+    /**
+     * @brief Adds a pre-existing object to the database.
+     *
+     * @param obj
+     * @return const int: the assigned id
+     */
     const int addObject(shared_ptr<void> obj) {
         const int objid = cl3::TicketMachine::getNextSid();
         objects_.insert({objid, obj});
@@ -195,6 +237,12 @@ class AppBuilder {
         return objid;
     }
 
+    /**
+     * @brief Creates a basic channel and ads it to the database.
+     *
+     * @param name
+     * @return shared_ptr<Channel>
+     */
     shared_ptr<Channel> makeChannel(string name = "") {
         auto c = make_shared<Channel>(name);
         const int objid = cl3::TicketMachine::getNextSid();
@@ -203,6 +251,13 @@ class AppBuilder {
         return c;
     }
 
+    /**
+     * @brief Creates a text field HTML element using the WebElements library
+     *
+     * @param name
+     * @param parentElement
+     * @return shared_ptr<TextField>
+     */
     shared_ptr<TextField> textField(const string& name, val parentElement = val::null()) {
         const int tfid = cl3::TicketMachine::getNextSid();
         pushId(tfid);
@@ -212,6 +267,14 @@ class AppBuilder {
         return tf;
     }
 
+    /**
+     * @brief When called, assigns a name, which can then be used as a unique identifier, to the
+     * most recent set of objects that have been created or added. This is meant as a way to keep
+     * track of signal sub-networks so that they can be moved, copied, or deleted as a unit.
+     *
+     * @param groupName
+     * @return vector<const int>
+     */
     vector<const int> defineCurrentGroup(const string groupName) {
         vector<const int> groupIds;
         while (!currentGroupIds_.empty()) {
