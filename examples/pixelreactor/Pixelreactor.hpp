@@ -1008,12 +1008,25 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         gridControl_->clearGridToValue();
     }
 
-    static bool compareValuePriorityPairs(valuePriorityPairT vp1, valuePriorityPairT vp2) {
+    // static bool compareValuePriorityPairs(valuePriorityPairT vp1, valuePriorityPairT vp2) {
+    //     return (vp1.second < vp2.second);
+    // }
+
+    // void sortValuePriorityStack(std::vector<valuePriorityPairT> &vpStack) const {
+    //     sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairs);
+    // }
+
+    static bool compareValuePriorityPairsOnPriority(valuePriorityPairT vp1, valuePriorityPairT vp2) {
         return (vp1.second < vp2.second);
     }
 
+    static bool compareValuePriorityPairsOnValue(valuePriorityPairT vp1, valuePriorityPairT vp2) {
+        return (vp1.first > vp2.first);
+    }
+
     void sortValuePriorityStack(std::vector<valuePriorityPairT> &vpStack) const {
-        sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairs);
+        sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairsOnPriority);
+        sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairsOnValue);
     }
 };
 
