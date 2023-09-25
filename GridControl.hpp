@@ -38,6 +38,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     PixelT currentColor_ = 1;
     std::map<PixelT, std::string> colorPallete_;
     std::function<std::string(PixelT)> pixel2String_ = [](PixelT p) { return std::to_string(p); };
+    std::function<void(double, double)> mousePositionCallback_ = [](double x, double y){};
     shared_ptr<MouseSignal<std::pair<double, double>>> mouseClickSignal_ = nullptr;
     shared_ptr<MouseSignal<std::pair<double, double>>> mousePositionSignal_ = nullptr;
     shared_ptr<ObjectAcceptor<std::pair<double, double>, GridControl<PixelT>>>
@@ -206,6 +207,10 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         this->newColorAcceptor_->update();
     }
 
+    void installMousePositionCallback(std::function<void(double x, double y)> callback) {
+        mousePositionCallback_ = callback;
+    }
+
     /**
      * @brief Better version of mod-in-place method above.
      *
@@ -231,12 +236,10 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         if (layerNum == 0) {
             clearNewPixelMap();
             this->redraw(forceCreateNewRect);
-        }
-        else {
-            //this->redraw(forceCreateNewRect, layerNum);
+        } else {
+            // this->redraw(forceCreateNewRect, layerNum);
             this->redraw(forceCreateNewRect, 0);
         }
-
     }
 
     void printNonZeroPixels(bool convertToIntBeforePrinting = true, int layerNum = 0) {
@@ -263,11 +266,11 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         }
     }
 
-    void redraw(bool forceCreateNewRect = false, int layerNum = 0) { 
+    void redraw(bool forceCreateNewRect = false, int layerNum = 0) {
         for (int i = 0; i < this->gridWidth_; i++) {
             for (int j = 0; j < this->gridHeight_; j++) {
-                int idx = calculateGridCellIndex(i, j);               
-                setPixelAt(i, j, this->pixelBuffers_[layerNum][idx], forceCreateNewRect, layerNum);                
+                int idx = calculateGridCellIndex(i, j);
+                setPixelAt(i, j, this->pixelBuffers_[layerNum][idx], forceCreateNewRect, layerNum);
             }
         }
     }
@@ -279,6 +282,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     void mousePositionAcceptor(const std::pair<double, double> &mouseLocation) {
         cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
              << ", y = " << floor(mouseLocation.second) << endl;
+
+        mousePositionCallback_(mouseLocation.first, mouseLocation.second);
     }
 
     void mouseClickAcceptorMethod(const std::pair<double, double> &mouseLocation) {
