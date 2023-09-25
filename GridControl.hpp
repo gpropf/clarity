@@ -31,11 +31,14 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     std::string id_;
     std::string svgid_;
     PixelT *pixels_;
+    std::vector<PixelT *> pixelBuffers_;
+    std::vector<Rect **> rectBuffers_;
     Rect **pixelRects_;
     std::map<PixelT, std::vector<gridCoordinatePairT>> newPixelMap_;
     PixelT currentColor_ = 1;
     std::map<PixelT, std::string> colorPallete_;
     std::function<std::string(PixelT)> pixel2String_ = [](PixelT p) { return std::to_string(p); };
+    std::function<void(double, double)> mousePositionCallback_ = [](double x, double y){};
     shared_ptr<MouseSignal<std::pair<double, double>>> mouseClickSignal_ = nullptr;
     shared_ptr<MouseSignal<std::pair<double, double>>> mousePositionSignal_ = nullptr;
     shared_ptr<ObjectAcceptor<std::pair<double, double>, GridControl<PixelT>>>
@@ -61,13 +64,20 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     }
 
    public:
+    void createNewScreenBuffer() {
+        PixelT *pixels = new PixelT[gridWidth_ * gridHeight_];
+        Rect **rects = new Rect *[gridWidth_ * gridHeight_];
+        pixelBuffers_.push_back(pixels);
+        rectBuffers_.push_back(rects);
+    }
+
     void addColorToPallete(PixelT colorValue, const std::string &colorString) {
         colorPallete_[colorValue] = colorString;
     }
 
-    PixelT getPixelAt(int x, int y) {
+    PixelT getPixelAt(int x, int y, int layerNum = 0) {
         int pixelIndex = calculateGridCellIndex(x, y);
-        return pixels_[pixelIndex];
+        return pixelBuffers_[layerNum][pixelIndex];
     }
 
     /**
@@ -78,26 +88,27 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
      * @param pixelVal
      * @return PixelT
      */
-    PixelT setPixelAt(int x, int y, PixelT pixelVal, bool forceCreateNewRect = false) {
+    PixelT setPixelAt(int x, int y, PixelT pixelVal, bool forceCreateNewRect = false,
+                      int layerNum = 0) {
         val document = val::global("document");
         val svgDOMElement = document.call<val>("getElementById", val(svgid_));
         int pixelIndex = calculateGridCellIndex(x, y);
-        PixelT oldPixelVal = pixels_[pixelIndex];
-        pixels_[pixelIndex] = pixelVal;
+
+        PixelT oldPixelVal = pixelBuffers_[layerNum][pixelIndex];
+        pixelBuffers_[layerNum][pixelIndex] = pixelVal;
         // if (redraw) this->redraw();
 
-        std::string colorString = this->colorPallete_[this->pixels_[pixelIndex]];
+        std::string colorString = this->colorPallete_[this->pixelBuffers_[layerNum][pixelIndex]];
         // std::string colorString = "#ffff00";
 
-        Rect * rptr = pixelRects_[pixelIndex];
+        Rect *rptr = rectBuffers_[layerNum][pixelIndex];
 
         if (rptr == nullptr || forceCreateNewRect) {
             auto *rectptr =
                 new Rect("", x, y, 1, 1, colorString, "teal", 0.1, false, "", svgDOMElement);
-            pixelRects_[pixelIndex] = rectptr;
+            rectBuffers_[layerNum][pixelIndex] = rectptr;
         } else {
-            rptr->domElement_.call<void>("setAttribute", val("fill"),
-                                                            val(colorString));
+            rptr->domElement_.call<void>("setAttribute", val("fill"), val(colorString));
         }
 
         auto pos = std::make_pair(x, y);
@@ -111,7 +122,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                 val parentDOMElement = val::null())
         : gridWidth_(gridWidth), gridHeight_(gridHeight), signalBuilder_(signalBuilder) {
         id_ = id;
-        pixelRects_ = new Rect *[gridWidth_ * gridHeight_];
+        createNewScreenBuffer();
+        // pixelRects_ = new Rect *[gridWidth_ * gridHeight_];
         svgid_ = this->id_ + "-svg";
         auto svg = signalBuilder_->svg("svg1", pixelWidth, pixelHeight, svgid_, parentDOMElement);
         // svgDOMElement_ = svg.getDomElement();
@@ -125,7 +137,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                            {"style", val("border: 2px solid blue")},
                            {"preserveAspectRatio", val("none")}});
 
-        pixels_ = new PixelT[gridWidth_ * gridHeight_];
+        // pixels_ = new PixelT[gridWidth_ * gridHeight_];
         clearGridToValue(0, true);
 
         auto xyPairToString = [](std::pair<double, double> p) {
@@ -195,6 +207,10 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         this->newColorAcceptor_->update();
     }
 
+    void installMousePositionCallback(std::function<void(double x, double y)> callback) {
+        mousePositionCallback_ = callback;
+    }
+
     /**
      * @brief Better version of mod-in-place method above.
      *
@@ -212,19 +228,24 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     //     return std::pair(xp, yp);
     // }
 
-    void clearGridToValue(PixelT v = 0, bool forceCreateNewRect = false) {
+    void clearGridToValue(PixelT v = 0, bool forceCreateNewRect = false, int layerNum = 0) {
         int totalPixels = gridHeight_ * gridWidth_;
         while (totalPixels--) {
-            pixels_[totalPixels] = 0;
+            pixelBuffers_[layerNum][totalPixels] = v;
         }
-        clearNewPixelMap();
-        this->redraw(forceCreateNewRect);
+        if (layerNum == 0) {
+            clearNewPixelMap();
+            this->redraw(forceCreateNewRect);
+        } else {
+            // this->redraw(forceCreateNewRect, layerNum);
+            this->redraw(forceCreateNewRect, 0);
+        }
     }
 
-    void printNonZeroPixels(bool convertToIntBeforePrinting = true) {
+    void printNonZeroPixels(bool convertToIntBeforePrinting = true, int layerNum = 0) {
         int totalPixels = gridHeight_ * gridWidth_;
         while (totalPixels--) {
-            PixelT p = pixels_[totalPixels];
+            PixelT p = pixelBuffers_[layerNum][totalPixels];
 
             if (p > 0) {
                 if (convertToIntBeforePrinting)
@@ -245,25 +266,11 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         }
     }
 
-    void redraw(bool forceCreateNewRect = false) {
-        // val document = val::global("document");
-        // val svgDOMElement = document.call<val>("getElementById", val(svgid_));
-
+    void redraw(bool forceCreateNewRect = false, int layerNum = 0) {
         for (int i = 0; i < this->gridWidth_; i++) {
             for (int j = 0; j < this->gridHeight_; j++) {
                 int idx = calculateGridCellIndex(i, j);
-                // std::string colorString = this->colorPallete_[this->pixels_[idx]];
-                // // std::string colorString = "#ffff00";
-                setPixelAt(i, j, this->pixels_[idx], forceCreateNewRect);
-                // if (pixelRects_[idx] == nullptr) {
-                //     auto *rectptr = new Rect("", i, j, 1, 1, colorString, "teal", 0.1, false, "",
-                //                              svgDOMElement);
-                //     pixelRects_[idx] = rectptr;
-                // }
-                // else {
-                //     pixelRects_[idx]->domElement_.call<void>("setAttribute", val("fill"),
-                //     val(colorString));
-                // }
+                setPixelAt(i, j, this->pixelBuffers_[layerNum][idx], forceCreateNewRect, layerNum);
             }
         }
     }
@@ -275,6 +282,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     void mousePositionAcceptor(const std::pair<double, double> &mouseLocation) {
         cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
              << ", y = " << floor(mouseLocation.second) << endl;
+
+        mousePositionCallback_(mouseLocation.first, mouseLocation.second);
     }
 
     void mouseClickAcceptorMethod(const std::pair<double, double> &mouseLocation) {
