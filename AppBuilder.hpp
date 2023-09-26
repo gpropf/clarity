@@ -27,10 +27,10 @@ namespace cl3 {
 
 class Channel {};
 
-template <typename S>
-class Channel : public Channel {
-    S currentValue_;
-};
+// template <typename S>
+// class Channel : public Channel {
+//     S currentValue_;
+// };
 
 /**
  * @brief Factory class that creates WebElements and signals. Also connects signals to one another.

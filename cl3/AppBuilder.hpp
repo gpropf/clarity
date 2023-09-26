@@ -86,17 +86,23 @@ class Channel : public std::enable_shared_from_this<Channel> {
         for (auto c : this->channels_) {
             if (signalGeneration == 0) c->inject(s, signalGeneration + 1);
         }
-    }    
+    }
 };
 
-template<typename S>
-S valToCPP(val v) { return std::stoi(v.as<string>()); }
+template <typename S>
+S valToCPP(val v) {
+    return std::stoi(v.as<string>());
+}
 
-template<>
-int valToCPP(val v) { return std::stoi(v.as<string>()); }
+template <>
+int valToCPP(val v) {
+    return std::stoi(v.as<string>());
+}
 
-template<>
-double valToCPP(val v) { return std::stod(v.as<string>()); }
+template <>
+double valToCPP(val v) {
+    return std::stod(v.as<string>());
+}
 
 template <class ObjClass, typename S>
 class ObjectChannel : public Channel {
@@ -113,7 +119,7 @@ class ObjectChannel : public Channel {
         signalAcceptorMethod_ = signalAcceptorMethod;
     }
 
-    //S valToCPP(val v) { return std::stoi(v.as<string>()); }
+    // S valToCPP(val v) { return std::stoi(v.as<string>()); }
 
     val cppToVal(S s) { return val(s); }
 
@@ -156,7 +162,13 @@ class WebElementChannel : public Channel {
      *
      * @param weptr
      */
-    void installWebElement(shared_ptr<WebElement> weptr) { this->weptr_ = weptr; }
+    void installWebElement(shared_ptr<WebElement> weptr) {
+        this->weptr_ = weptr;
+        if (typeid(*weptr) == typeid(RangeInput)) {
+            eventListenerName_ = "input";
+            cout << "This is a range input, so we use the onInput listener!" << endl;
+        }
+    }
 };
 
 /**
@@ -255,6 +267,22 @@ class AppBuilder {
         const int tfid = cl3::TicketMachine::getNextSid();
         pushId(tfid);
         auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
+        // val tfDomEl = tf.getDomElement();
+        webElements_.insert({tfid, tf});
+        return tf;
+    }
+
+    /**
+     * @brief Creates a range control using the WebElements library
+     *
+     * @param name
+     * @param parentElement
+     * @return shared_ptr<TextField>
+     */
+    shared_ptr<RangeInput> rangeInput(const string& name, val parentElement = val::null()) {
+        const int tfid = cl3::TicketMachine::getNextSid();
+        pushId(tfid);
+        auto tf = make_shared<RangeInput>(name, to_string(tfid), parentElement);
         // val tfDomEl = tf.getDomElement();
         webElements_.insert({tfid, tf});
         return tf;

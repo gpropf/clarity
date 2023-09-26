@@ -100,7 +100,7 @@ int main() {
      auto objDblChannel = make_shared<ObjectChannel<TestObj, double>>(obj, &TestObj::setDblval, &TestObj::getDblval);
 
     auto widthInput = appBldr->textField("widthInput");
-    auto dblInput = appBldr->textField("dblInput");
+    auto dblInput = appBldr->rangeInput("dblInput");
     // auto textField2 = appBldr->textField("TF2");
     // auto textField3 = appBldr->textField("TF3");
 
@@ -135,7 +135,7 @@ int main() {
     // widthInput->addConnection(textField2);
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     appBldr->printGroup("g1");
-    auto range1 = make_shared<RangeInput>("R1", "R1-id");
+    //auto range1 = make_shared<RangeInput>("R1", "R1-id");
 
     return 0;
 }
