@@ -28,6 +28,12 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
     // val svgDOMElement_ = val::null();
     int gridWidth_, gridHeight_;
+
+    /**
+     * @brief Programs that use the GridControl can install their own callbacks here so they can get
+     * custom mouse-over behavior.
+     *
+     */
     std::function<void(double, double)> mousePositionCallback_ = [](double x, double y) {};
     std::string id_;
     std::string svgid_;
@@ -62,6 +68,12 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     }
 
    public:
+
+   /**
+    * @brief Users can use this method to install a custom mouse-over callback.
+    * 
+    * @param callback 
+    */
     void installMousePositionCallback(std::function<void(double x, double y)> callback) {
         mousePositionCallback_ = callback;
     }
@@ -279,7 +291,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     void mousePositionAcceptor(const std::pair<double, double> &mouseLocation) {
         // cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
         //      << ", y = " << floor(mouseLocation.second) << endl;
-         mousePositionCallback_(mouseLocation.first, mouseLocation.second);
+        mousePositionCallback_(mouseLocation.first, mouseLocation.second);
     }
 
     void mouseClickAcceptorMethod(const std::pair<double, double> &mouseLocation) {
