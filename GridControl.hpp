@@ -273,37 +273,21 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     void clearNewPixelMap() { newPixelMap_.clear(); }
 
     void mousePositionAcceptor(const std::pair<double, double> &mouseLocation) {
-        cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
-             << ", y = " << floor(mouseLocation.second) << endl;
+        // cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
+        //      << ", y = " << floor(mouseLocation.second) << endl;
     }
 
     void mouseClickAcceptorMethod(const std::pair<double, double> &mouseLocation) {
-        cout << "GridControl::mouseClickAcceptorMethod(): x = " << mouseLocation.first
-             << ", y = " << mouseLocation.second << endl;
+        // cout << "GridControl::mouseClickAcceptorMethod(): x = " << mouseLocation.first
+        //      << ", y = " << mouseLocation.second << endl;
 
-        val document = val::global("document");
-        // std::string svgid = this->id_ + "-svg";
-        // cout << "Looking for svgid: " << svgid_ << endl;
+        val document = val::global("document");        
         val svgDOMElement = document.call<val>("getElementById", val(svgid_));
         int floorX = floor(mouseLocation.first);
-        int floorY = floor(mouseLocation.second);
-        // std::string cursorSquareId = svgid_ + "_" + std::to_string(floorX) + ":" +
-        // std::to_string(floorY);
+        int floorY = floor(mouseLocation.second);        
         std::string cursorSquareId = "cursorSquareId";
-        std::string colorString = this->colorPallete_[this->currentColor_];
-        // cout << "Current Color: " << this->currentColor_ << endl;
-        // auto rect1 = Rect("", floorX, floorY, 1, 1, colorString, "purple", 0.1, false,
-        //                   cursorSquareId, svgDOMElement);
-
+        std::string colorString = this->colorPallete_[this->currentColor_];        
         setPixelAt(floorX, floorY, currentColor_);
-
-        // pixels_[calculateGridCellIndex(floorX, floorY)] = this->currentColor_;
-
-        // auto pos = std::make_pair(floorX, floorY);
-
-        // newPixelMap_[currentColor_].push_back(pos);
-        // printNonZeroPixels();
-        // printNewPixels();
     }
 
     void setCurrentColor(const std::string &c) {

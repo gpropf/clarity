@@ -1067,7 +1067,7 @@ struct PixelReactor {
         cout << "I'm a Pixelreactor. I need to be redone completely 9!" << endl;
         signalBuilder_ = make_shared<cl2::SignalBuilder>();
         mainBeaker_ =
-            make_shared<Beaker<unsigned char>>(signalBuilder_, 60, 40, 900, 600, "Beaker");
+            make_shared<Beaker<unsigned char>>(signalBuilder_, 120, 80, 1200, 800, "Beaker");
         mainBeaker_->finalize();
         BR();
 

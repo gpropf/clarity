@@ -108,7 +108,7 @@ class SignalEmitter : public Signal<S> {
     virtual void emit(const S& s) {
         this->currentValue_ = s;
         if (output_ != nullptr) {
-            cout << "SignalEmitter::emit called" << endl;
+            //cout << "SignalEmitter::emit called" << endl;
             output_->accept(s);
 
         } else {
