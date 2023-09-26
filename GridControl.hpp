@@ -28,6 +28,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
     // val svgDOMElement_ = val::null();
     int gridWidth_, gridHeight_;
+    std::function<void(double, double)> mousePositionCallback_ = [](double x, double y) {};
     std::string id_;
     std::string svgid_;
     PixelT *pixels_;
@@ -61,6 +62,10 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     }
 
    public:
+    void installMousePositionCallback(std::function<void(double x, double y)> callback) {
+        mousePositionCallback_ = callback;
+    }
+
     void addColorToPallete(PixelT colorValue, const std::string &colorString) {
         colorPallete_[colorValue] = colorString;
     }
@@ -89,15 +94,14 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         std::string colorString = this->colorPallete_[this->pixels_[pixelIndex]];
         // std::string colorString = "#ffff00";
 
-        Rect * rptr = pixelRects_[pixelIndex];
+        Rect *rptr = pixelRects_[pixelIndex];
 
         if (rptr == nullptr || forceCreateNewRect) {
             auto *rectptr =
                 new Rect("", x, y, 1, 1, colorString, "teal", 0.1, false, "", svgDOMElement);
             pixelRects_[pixelIndex] = rectptr;
         } else {
-            rptr->domElement_.call<void>("setAttribute", val("fill"),
-                                                            val(colorString));
+            rptr->domElement_.call<void>("setAttribute", val("fill"), val(colorString));
         }
 
         auto pos = std::make_pair(x, y);
@@ -275,18 +279,19 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     void mousePositionAcceptor(const std::pair<double, double> &mouseLocation) {
         // cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
         //      << ", y = " << floor(mouseLocation.second) << endl;
+         mousePositionCallback_(mouseLocation.first, mouseLocation.second);
     }
 
     void mouseClickAcceptorMethod(const std::pair<double, double> &mouseLocation) {
         // cout << "GridControl::mouseClickAcceptorMethod(): x = " << mouseLocation.first
         //      << ", y = " << mouseLocation.second << endl;
 
-        val document = val::global("document");        
+        val document = val::global("document");
         val svgDOMElement = document.call<val>("getElementById", val(svgid_));
         int floorX = floor(mouseLocation.first);
-        int floorY = floor(mouseLocation.second);        
+        int floorY = floor(mouseLocation.second);
         std::string cursorSquareId = "cursorSquareId";
-        std::string colorString = this->colorPallete_[this->currentColor_];        
+        std::string colorString = this->colorPallete_[this->currentColor_];
         setPixelAt(floorX, floorY, currentColor_);
     }
 

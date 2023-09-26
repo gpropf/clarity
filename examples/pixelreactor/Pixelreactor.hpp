@@ -276,6 +276,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             signalBuilder_->connect<std::string>(deleteRuleButton_, makeNewRuleAcceptor_);
 
         } else {
+            gridControl_->installMousePositionCallback(createGCMousePositionCallback());
+
             makeNewRuleAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
             makeNewRuleAcceptor_->setSignalAcceptorMethod(&Beaker::makeNewReactionRuleSignal);
             newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");
@@ -587,6 +589,24 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         else
             p.second = p.second % gridHeight_;
         // if (p.first < 0 || p.second < 0) cout << "NEGATIVE COORDS!!!!!!!!!" << endl;
+    }
+
+    void printSuccessionStackAt(gridCoordinateT x, gridCoordinateT y) {
+        auto vpstack = successionMap_[std::make_pair(x, y)];
+        for (auto vp : vpstack) {
+            auto [val, priority] = vp;
+            cout << "SS: " << x << ", " << y << ": val = " << int(val) << ", pri = " << priority
+                 << endl;
+        }
+    }
+
+    /**
+     * @brief Creates the lambda function that is then passed to the GC.
+     *
+     * @return auto
+     */
+    auto createGCMousePositionCallback() {
+        return [&](double x, double y) { this->printSuccessionStackAt(int(x), int(y)); };
     }
 
     bool matchAt(shared_ptr<Beaker<V>> reactionRule, gridCoordinateT x, gridCoordinateT y,
