@@ -108,15 +108,15 @@ template <class ObjClass, typename S>
 class ObjectChannel : public Channel {
     S signalValue_;
     shared_ptr<ObjClass> objPtr_;
-    void (ObjClass::*signalAcceptorMethod_)(const S& s);
-    S (ObjClass::*signalEmitterMethod_)() const;
+    void (ObjClass::*setter_)(const S& s);
+    S (ObjClass::*getter_)() const;
 
-    void setSignalEmitterMethod(S (ObjClass::*signalEmitterMethod)()) {
-        signalEmitterMethod_ = signalEmitterMethod;
+    void setGetterMethod(S (ObjClass::*getter)()) {
+        getter_ = getter;
     }
 
-    void setSignalAcceptorMethod(void (ObjClass::*signalAcceptorMethod)(const S& s)) {
-        signalAcceptorMethod_ = signalAcceptorMethod;
+    void setSetterMethod(void (ObjClass::*setter)(const S& s)) {
+        setter_ = setter;
     }
 
     // S valToCPP(val v) { return std::stoi(v.as<string>()); }
@@ -125,17 +125,17 @@ class ObjectChannel : public Channel {
 
    public:
     ObjectChannel(shared_ptr<ObjClass> objPtr,
-                  void (ObjClass::*signalAcceptorMethod)(const S& s) = nullptr,
-                  S (ObjClass::*signalEmitterMethod)() const = nullptr)
+                  void (ObjClass::*setter)(const S& s) = nullptr,
+                  S (ObjClass::*getter)() const = nullptr)
         : objPtr_(objPtr),
-          signalAcceptorMethod_(signalAcceptorMethod),
-          signalEmitterMethod_(signalEmitterMethod) {}
+          setter_(setter),
+          getter_(getter) {}
 
     virtual void inject(val v, int signalGeneration = 0) {
         Channel::inject(v, signalGeneration);
         S s = valToCPP<S>(v);
         cout << "Injected value treated as '" << typeid(s).name() << "'" << endl;
-        (*objPtr_.*signalAcceptorMethod_)(s);
+        (*objPtr_.*setter_)(s);
     }
 };
 
