@@ -27,17 +27,26 @@ using namespace cl3;
 
 namespace cl3 {
 
+class OtherClass {
+    int foo_ = 7;
+
+   public:
+    int getFoo() { return foo_; }
+
+    void setFoo(int f) { foo_ = f; }
+};
+
 /**
  * @brief This is a simple do-nothing class meant to test the `CppObjectSignalObject` class' ability
  * to use getter and setter method pointers to act as initiation points or endpoints for signals.
  *
  */
 class TestObj {
-    int i_ = 0;
-    double d_ = 0;
-    double dblval_ = 0;
+    int i_ = 3;
+    double d_ = 3.5;
+    double dblval_ = 3.14159;
     std::string s_ = "foo";
-    int width_ = 1;
+    int width_ = 13;
 
    public:
     void setS(const std::string &s) {
@@ -96,8 +105,10 @@ int main() {
 
     auto appBldr = make_shared<AppBuilder>();
     // obj->signalEmitterTestMethod();
-    auto objIntChannel = make_shared<ObjectChannel<TestObj, int>>(obj, &TestObj::setWidth, &TestObj::getWidth);
-     auto objDblChannel = make_shared<ObjectChannel<TestObj, double>>(obj, &TestObj::setDblval, &TestObj::getDblval);
+    auto objIntChannel =
+        make_shared<ObjectChannel<TestObj, int>>(obj, &TestObj::setWidth, &TestObj::getWidth);
+    auto objDblChannel =
+        make_shared<ObjectChannel<TestObj, double>>(obj, &TestObj::setDblval, &TestObj::getDblval);
 
     auto widthInput = appBldr->textField("widthInput");
     auto dblInput = appBldr->rangeInput("dblInput");
@@ -110,6 +121,10 @@ int main() {
     auto c4 = appBldr->makeChannel("c4");
     // c3->addConnection(c4);
 
+    std::function<int()> getWidthFromTestObjFn = [&]() { return obj->getWidth(); };
+    auto fnid = appBldr->addIntFunction(getWidthFromTestObjFn);
+
+    cout << "getWidthFromTestObjFn id is " << fnid << endl;
     // c4->addConnection(objIntChannel);
 
     // appBldr->printGroup("g1");
@@ -135,7 +150,35 @@ int main() {
     // widthInput->addConnection(textField2);
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     appBldr->printGroup("g1");
-    //auto range1 = make_shared<RangeInput>("R1", "R1-id");
+    // auto range1 = make_shared<RangeInput>("R1", "R1-id");
+
+    cout << "Calling the int function I installed earlier: " << appBldr->intFunctions_[6]() << endl;
+
+    // shared_ptr<void> getDoubleFromTestObjFnVptr =
+    //     make_shared<std::function<double()>>([&]() { return obj->getDblval(); });
+    // // shared_ptr<void> getDoubleFromTestObjFnVptr = getDoubleFromTestObjFn;
+    // auto dblFnId = appBldr->addObject(getDoubleFromTestObjFnVptr);
+
+    // std::function<double()> fn = appBldr->objects_[dblFnId];
+
+    // fn();
+
+    auto fooObj = make_shared<OtherClass>();
+
+    std::function<int()> getFoo = [&]() { return fooObj->getFoo(); };
+    auto fnidFoo = appBldr->addIntFunction(getFoo);
+
+    cout << "Calling the OTHER int function I installed earlier: "
+         << appBldr->intFunctions_[fnidFoo]() << endl;
+    // return 0;
+
+    std::function<void(int)> setFoo = [&](int i) { fooObj->setFoo(i); };
+    auto fnidSetFoo = appBldr->addSetIntFunction(setFoo);
+
+    appBldr->setIntFunctions_[fnidSetFoo](5);
+
+    cout << "Calling the OTHER int function I installed earlier (again): "
+         << appBldr->intFunctions_[fnidFoo]() << endl;
 
     return 0;
 }

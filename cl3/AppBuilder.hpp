@@ -111,25 +111,18 @@ class ObjectChannel : public Channel {
     void (ObjClass::*setter_)(const S& s);
     S (ObjClass::*getter_)() const;
 
-    void setGetterMethod(S (ObjClass::*getter)()) {
-        getter_ = getter;
-    }
+    void setGetterMethod(S (ObjClass::*getter)()) { getter_ = getter; }
 
-    void setSetterMethod(void (ObjClass::*setter)(const S& s)) {
-        setter_ = setter;
-    }
+    void setSetterMethod(void (ObjClass::*setter)(const S& s)) { setter_ = setter; }
 
     // S valToCPP(val v) { return std::stoi(v.as<string>()); }
 
     val cppToVal(S s) { return val(s); }
 
    public:
-    ObjectChannel(shared_ptr<ObjClass> objPtr,
-                  void (ObjClass::*setter)(const S& s) = nullptr,
+    ObjectChannel(shared_ptr<ObjClass> objPtr, void (ObjClass::*setter)(const S& s) = nullptr,
                   S (ObjClass::*getter)() const = nullptr)
-        : objPtr_(objPtr),
-          setter_(setter),
-          getter_(getter) {}
+        : objPtr_(objPtr), setter_(setter), getter_(getter) {}
 
     virtual void inject(val v, int signalGeneration = 0) {
         Channel::inject(v, signalGeneration);
@@ -180,7 +173,8 @@ class AppBuilder {
     vector<const int> currentGroupIds_;
     vector<const int> allIds_;
     map<const int, shared_ptr<Channel>> channels_;
-    map<const int, shared_ptr<void>> objects_;
+
+    
     map<const int, shared_ptr<WebElement>> webElements_;
     map<const string, vector<const int>> groups_;
 
@@ -201,6 +195,10 @@ class AppBuilder {
     }
 
    public:
+    map<const int, std::function<int()>> intFunctions_;
+    map<const int, std::function<void(int)>> setIntFunctions_;
+    map<const int, shared_ptr<void>> objects_;
+
     /**
      * @brief Construct a new App Builder object. This class is the central factory class and also
      * functions as an online registry and database for the various elements of the signal network
@@ -238,6 +236,20 @@ class AppBuilder {
     const int addObject(shared_ptr<void> obj) {
         const int objid = cl3::TicketMachine::getNextSid();
         objects_.insert({objid, obj});
+        pushId(objid);
+        return objid;
+    }
+
+    const int addIntFunction(std::function<int()> intfn) {
+        const int objid = cl3::TicketMachine::getNextSid();
+        intFunctions_.insert({objid, intfn});
+        pushId(objid);
+        return objid;
+    }
+
+    const int addSetIntFunction(std::function<void(int)> intfn) {
+        const int objid = cl3::TicketMachine::getNextSid();
+        setIntFunctions_.insert({objid, intfn});
         pushId(objid);
         return objid;
     }
