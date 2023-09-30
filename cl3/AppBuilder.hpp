@@ -81,12 +81,17 @@ class Channel : public std::enable_shared_from_this<Channel> {
      */
     virtual void inject(val s, int signalGeneration = 0) {
         val printVal = val::global("printVal");
-        cout << "Channel name: " << name_ << ", Signal: "
-             << ", signal generation = " << signalGeneration << endl;
+        cout << "Channel name: " << name_ << ", signal generation = " << signalGeneration << endl;
+        cout << "<SIGNAL>";
+        printVal(s);
+        cout << "</SIGNAL>" << endl;
         for (auto c : this->channels_) {
             if (signalGeneration == 0) c->inject(s, signalGeneration + 1);
         }
     }
+
+    virtual void syncFrom(){};
+    virtual void syncTo(){};
 };
 
 template <typename S>
@@ -130,6 +135,13 @@ class ObjectChannel : public Channel {
         cout << "Injected value treated as '" << typeid(s).name() << "'" << endl;
         (*objPtr_.*setter_)(s);
     }
+
+    virtual void syncFrom() {
+        cout << "ObjectChannel::syncFrom()" << endl;
+        val v = val(to_string((*objPtr_.*getter_)()));
+        inject(v);
+    };
+    virtual void syncTo(){};
 };
 
 /**
@@ -162,7 +174,17 @@ class WebElementChannel : public Channel {
             cout << "This is a range input, so we use the onInput listener!" << endl;
         }
     }
+
+    virtual void inject(val s, int signalGeneration = 0) {
+        auto domEl = weptr_->getDomElement();
+        if (signalGeneration > 0) {
+            domEl.set("value", s);
+        }
+    }
 };
+
+template <typename S>
+using getterSetterPair = std::pair<std::function<S()>, std::function<void(S)>>;
 
 /**
  * @brief
@@ -173,8 +195,10 @@ class AppBuilder {
     vector<const int> currentGroupIds_;
     vector<const int> allIds_;
     map<const int, shared_ptr<Channel>> channels_;
+    map<const int, std::function<int()>> intFunctions_;
+    map<const int, std::function<void(int)>> setIntFunctions_;
+    map<const int, shared_ptr<void>> objects_;
 
-    
     map<const int, shared_ptr<WebElement>> webElements_;
     map<const string, vector<const int>> groups_;
 
@@ -195,10 +219,6 @@ class AppBuilder {
     }
 
    public:
-    map<const int, std::function<int()>> intFunctions_;
-    map<const int, std::function<void(int)>> setIntFunctions_;
-    map<const int, shared_ptr<void>> objects_;
-
     /**
      * @brief Construct a new App Builder object. This class is the central factory class and also
      * functions as an online registry and database for the various elements of the signal network
@@ -227,6 +247,12 @@ class AppBuilder {
         // tm_ = TicketMachine(startId);
     }
 
+    void syncFrom() {
+        for (auto [id, c] : channels_) {
+            c->syncFrom();
+        }
+    }
+
     /**
      * @brief Adds a pre-existing object to the database.
      *
@@ -250,6 +276,19 @@ class AppBuilder {
     const int addSetIntFunction(std::function<void(int)> intfn) {
         const int objid = cl3::TicketMachine::getNextSid();
         setIntFunctions_.insert({objid, intfn});
+        pushId(objid);
+        return objid;
+    }
+
+    /**
+     * @brief Adds an existing channel to the database.
+     *
+     * @param c
+     * @return const int
+     */
+    const int addChannel(shared_ptr<Channel> c) {
+        const int objid = cl3::TicketMachine::getNextSid();
+        channels_.insert({objid, c});
         pushId(objid);
         return objid;
     }

@@ -80,7 +80,7 @@ class TestObj {
     }
 
     double getDblval() const {
-        cout << "TestObj::getDblval(): " << width_ << endl;
+        cout << "TestObj::getDblval(): " << dblval_ << endl;
         return dblval_;
     }
 
@@ -111,11 +111,15 @@ int main() {
         make_shared<ObjectChannel<TestObj, double>>(obj, &TestObj::setDblval, &TestObj::getDblval);
 
     auto widthInput = appBldr->textField("widthInput");
+    auto syncTestInput = appBldr->textField("syncTestInput");
     auto dblInput = appBldr->rangeInput("dblInput");
     // auto textField2 = appBldr->textField("TF2");
     // auto textField3 = appBldr->textField("TF3");
 
     appBldr->addObject(obj);
+    appBldr->addChannel(objDblChannel);
+
+    
 
     auto c3 = appBldr->makeChannel("c3");
     auto c4 = appBldr->makeChannel("c4");
@@ -133,6 +137,8 @@ int main() {
     auto dblChannel = make_shared<WebElementChannel>("dblChannel");
     widthChannel->installWebElement(widthInput);
     dblChannel->installWebElement(dblInput);
+    auto syncTestInputChannel = make_shared<WebElementChannel>("syncTestInputChannel");
+    syncTestInputChannel->installWebElement(syncTestInput);
     // val elg = val::global("elgCallMethodOnObjByName");
     // val onChangeFn = elg(*widthChannel, val("inject"));
     // widthInput->addEventListener(val("change"), onChangeFn);
@@ -145,6 +151,11 @@ int main() {
 
     dblChannel->finalize();
 
+    objDblChannel->addConnection(syncTestInputChannel);
+
+    objDblChannel->finalize();
+    syncTestInputChannel->finalize();
+
     // c3->inject(val("BOO"));
     c4->inject(val(5));
     // widthInput->addConnection(textField2);
@@ -152,7 +163,7 @@ int main() {
     appBldr->printGroup("g1");
     // auto range1 = make_shared<RangeInput>("R1", "R1-id");
 
-    cout << "Calling the int function I installed earlier: " << appBldr->intFunctions_[6]() << endl;
+   // cout << "Calling the int function I installed earlier: " << appBldr->intFunctions_[6]() << endl;
 
     // shared_ptr<void> getDoubleFromTestObjFnVptr =
     //     make_shared<std::function<double()>>([&]() { return obj->getDblval(); });
@@ -165,20 +176,23 @@ int main() {
 
     auto fooObj = make_shared<OtherClass>();
 
-    std::function<int()> getFoo = [&]() { return fooObj->getFoo(); };
-    auto fnidFoo = appBldr->addIntFunction(getFoo);
 
-    cout << "Calling the OTHER int function I installed earlier: "
-         << appBldr->intFunctions_[fnidFoo]() << endl;
+cout << "We have added our object channel!" << endl;
+    appBldr->syncFrom();
+    // std::function<int()> getFoo = [&]() { return fooObj->getFoo(); };
+    // auto fnidFoo = appBldr->addIntFunction(getFoo);
+
+    // cout << "Calling the OTHER int function I installed earlier: "
+    //      << appBldr->intFunctions_[fnidFoo]() << endl;
     // return 0;
 
-    std::function<void(int)> setFoo = [&](int i) { fooObj->setFoo(i); };
-    auto fnidSetFoo = appBldr->addSetIntFunction(setFoo);
+    // std::function<void(int)> setFoo = [&](int i) { fooObj->setFoo(i); };
+    // auto fnidSetFoo = appBldr->addSetIntFunction(setFoo);
 
-    appBldr->setIntFunctions_[fnidSetFoo](5);
+   // appBldr->setIntFunctions_[fnidSetFoo](5);
 
-    cout << "Calling the OTHER int function I installed earlier (again): "
-         << appBldr->intFunctions_[fnidFoo]() << endl;
+    // cout << "Calling the OTHER int function I installed earlier (again): "
+    //      << appBldr->intFunctions_[fnidFoo]() << endl;
 
     return 0;
 }
