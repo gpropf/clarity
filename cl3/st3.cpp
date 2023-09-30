@@ -53,15 +53,14 @@ class TestObj : public Ticker {
         // Ticker::tick();
         cout << "TestObj ticks!" << endl;
         dblval_ += 0.01;
-    }
+    }    
 
-    // virtual void refreshTickFunction(Ticker *t) {
-
-    // }
-
-    virtual void refreshTickFunction(Ticker *t) {
-        tickJS_ = val::global("TickerTick")(*this);
-    }
+    /**
+     * @brief This installs this class' `tick()` method to be called from the `setInterval()` JS
+     * function.
+     *
+     */
+    virtual void generateTickFunction() { tickJS_ = val::global("TickerTick")(*this); }
 
     void setS(const std::string &s) {
         s_ = s;
@@ -122,8 +121,8 @@ int main() {
 
     auto obj = make_shared<TestObj>();
 
-    obj->refreshTickFunction(&*obj);
-    obj->start(&*obj);
+    // obj->generateTickFunction();
+    obj->start();
 
     auto appBldr = make_shared<AppBuilder>();
     // obj->signalEmitterTestMethod();
@@ -228,7 +227,8 @@ EMSCRIPTEN_BINDINGS(TestObj) {
 
     emscripten::class_<TestObj>("TestObj")
         .function("signalEmitterTestMethod", &TestObj::signalEmitterTestMethod)
-        .function("tick", &TestObj::tick, emscripten::allow_raw_pointers());
+        //.function("tick", &TestObj::tick, emscripten::allow_raw_pointers());
+        .function("tick", &TestObj::tick);
 }
 
 EMSCRIPTEN_BINDINGS(Channel) {

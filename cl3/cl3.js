@@ -164,6 +164,7 @@ function printVal(v) {
 
 function TickerTick(ticker) {
     return function () {
+        //callMethodByName(ticker, "tick");
         ticker.tick();
     }
 }

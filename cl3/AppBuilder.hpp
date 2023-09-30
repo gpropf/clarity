@@ -33,30 +33,38 @@ using std::vector;
 namespace cl3 {
 
 class Ticker {
-    protected:
+   protected:
     val setInterval_ = val::global("setInterval");
     val clearInterval_ = val::global("clearInterval");
-    val tickJS_, timerId_;
+    val tickJS_ = val::null();
+    val timerId_;
     int tickInterval_ = 500;
     bool running_ = false;
 
    public:
     Ticker(int tickInterval = 500, bool running_ = false)
         : tickInterval_(tickInterval), running_(running_) {
-        //tickJS_ = val::global("TickerTick")(*this);
+        // tickJS_ = val::global("TickerTick")(*this);
         if (running_) start();
     }
 
-    virtual void refreshTickFunction(Ticker *t) {
-        tickJS_ = val::global("TickerTick")(*t);
-    }
+    virtual ~Ticker() {}
+
+    /**
+     * @brief Ideally we would have this method simply have this code to install the tick method
+     * `tickJS_ = val::global("TickerTick")(*this);`
+     *
+     * In practice this does not compile and produces errors about how `tick()` is a pure virtual
+     * method. Thus you need to overload this method in your subclass with the above line of code.
+     * The result will be that it will call your overloaded `tick()` method.
+     *
+     */
+    virtual void generateTickFunction() = 0;
 
     bool isRunning() { return running_; }
 
-    void start(Ticker *t = nullptr) {
-        if (t != nullptr) {
-            refreshTickFunction(t);
-        }
+    void start() {
+        if (tickJS_ == val::null()) generateTickFunction();
         timerId_ = setInterval_(tickJS_, val(tickInterval_));
         running_ = true;
     }
@@ -76,8 +84,8 @@ class Ticker {
         }
     }
 
-    virtual void tick() { cout << "TICKER TICKS!" << endl; }
-   // virtual void tick() = 0;
+    // virtual void tick() { cout << "TICKER TICKS!" << endl; }
+    virtual void tick() = 0;
 };
 
 class Channel : public std::enable_shared_from_this<Channel> {
@@ -301,7 +309,7 @@ class AppBuilder {
 
         val jsMethodCallerFn = val::global("elgCallMethodOnObjByName");
         val iterateOnceJS = jsMethodCallerFn(*this, val("tick"));
-         timerId_ = setInterval_(iterateOnceJS, val(tickInterval_));
+        timerId_ = setInterval_(iterateOnceJS, val(tickInterval_));
         //  iterateOnceJS();
         //  cout << "Called elgCallMethodOnObjByName..." << endl;
 
@@ -445,8 +453,8 @@ EMSCRIPTEN_BINDINGS(AppBuilder) {
     emscripten::class_<cl3::AppBuilder>("AppBuilder")
         .function("tick", &cl3::AppBuilder::tick, emscripten::allow_raw_pointers());
 
-    emscripten::class_<cl3::Ticker>("Ticker").function("tick", &cl3::Ticker::tick,
-                                                       emscripten::allow_raw_pointers());
+    // emscripten::class_<cl3::Ticker>("Ticker").function("tick", &cl3::Ticker::tick,
+    //                                                    emscripten::allow_raw_pointers());
 }
 
 #endif
