@@ -127,9 +127,9 @@ int main() {
     auto appBldr = make_shared<AppBuilder>();
     // obj->signalEmitterTestMethod();
     auto objIntChannel =
-        make_shared<ObjectChannel<TestObj, int>>(obj, &TestObj::setWidth, &TestObj::getWidth);
+        make_shared<ObjectChannel<TestObj, int>>(obj, "objIntChannel", &TestObj::setWidth, &TestObj::getWidth);
     auto objDblChannel =
-        make_shared<ObjectChannel<TestObj, double>>(obj, &TestObj::setDblval, &TestObj::getDblval);
+        make_shared<ObjectChannel<TestObj, double>>(obj, "objDblChannel", &TestObj::setDblval, &TestObj::getDblval);
 
     auto widthInput = appBldr->textField("widthInput");
     auto syncTestInput = appBldr->textField("syncTestInput");

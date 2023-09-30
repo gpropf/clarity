@@ -106,6 +106,7 @@ class Channel : public std::enable_shared_from_this<Channel> {
    public:
     Channel() {}
     Channel(string name) : name_(name) {}
+    string getName() { return name_; }
 
     virtual void finalize() {}
 
@@ -146,7 +147,7 @@ class Channel : public std::enable_shared_from_this<Channel> {
         }
     }
 
-    virtual void syncFrom(){};
+    virtual void syncFrom() { cout << "Channel::syncFrom() for '" << name_ << "'" << endl; };
     virtual void syncTo(){};
 };
 
@@ -181,9 +182,11 @@ class ObjectChannel : public Channel {
     val cppToVal(S s) { return val(s); }
 
    public:
-    ObjectChannel(shared_ptr<ObjClass> objPtr, void (ObjClass::*setter)(const S& s) = nullptr,
+    ObjectChannel(shared_ptr<ObjClass> objPtr, string name = "", void (ObjClass::*setter)(const S& s) = nullptr,
                   S (ObjClass::*getter)() const = nullptr)
-        : objPtr_(objPtr), setter_(setter), getter_(getter) {}
+        : objPtr_(objPtr), setter_(setter), getter_(getter) {
+            name_ = name;
+        }
 
     virtual void inject(val v, int signalGeneration = 0) {
         Channel::inject(v, signalGeneration);
@@ -193,7 +196,7 @@ class ObjectChannel : public Channel {
     }
 
     virtual void syncFrom() {
-        cout << "ObjectChannel::syncFrom()" << endl;
+        cout << "ObjectChannel::syncFrom() for '" << name_ << "'" << endl;
         val v = val(to_string((*objPtr_.*getter_)()));
         inject(v);
     };
@@ -237,6 +240,10 @@ class WebElementChannel : public Channel {
             domEl.set("value", s);
         }
     }
+
+    virtual void syncFrom() {
+        cout << "WebElementChannel::syncFrom() for '" << name_ << "'" << endl;
+    };
 };
 
 template <typename S>
@@ -324,6 +331,7 @@ class AppBuilder {
     void syncFrom() {
         cout << "AppBuilder::syncFrom()" << endl;
         for (auto [id, c] : channels_) {
+            cout << "Channel: '" << c->getName() << "'" << endl;
             c->syncFrom();
         }
     }
