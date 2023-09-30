@@ -32,6 +32,54 @@ using std::vector;
 
 namespace cl3 {
 
+class Ticker {
+    protected:
+    val setInterval_ = val::global("setInterval");
+    val clearInterval_ = val::global("clearInterval");
+    val tickJS_, timerId_;
+    int tickInterval_ = 500;
+    bool running_ = false;
+
+   public:
+    Ticker(int tickInterval = 500, bool running_ = false)
+        : tickInterval_(tickInterval), running_(running_) {
+        //tickJS_ = val::global("TickerTick")(*this);
+        if (running_) start();
+    }
+
+    virtual void refreshTickFunction(Ticker *t) {
+        tickJS_ = val::global("TickerTick")(*t);
+    }
+
+    bool isRunning() { return running_; }
+
+    void start(Ticker *t = nullptr) {
+        if (t != nullptr) {
+            refreshTickFunction(t);
+        }
+        timerId_ = setInterval_(tickJS_, val(tickInterval_));
+        running_ = true;
+    }
+
+    void stop() {
+        clearInterval_(timerId_);
+        running_ = false;
+    }
+
+    bool toggle() {
+        if (running_) {
+            stop();
+            return false;
+        } else {
+            start();
+            return true;
+        }
+    }
+
+    virtual void tick() { cout << "TICKER TICKS!" << endl; }
+   // virtual void tick() = 0;
+};
+
 class Channel : public std::enable_shared_from_this<Channel> {
     val currentValue_;
 
@@ -202,6 +250,11 @@ class AppBuilder {
     map<const int, shared_ptr<WebElement>> webElements_;
     map<const string, vector<const int>> groups_;
 
+    val setInterval_ = val::global("setInterval");
+    val tickJS_;
+    int tickInterval_ = 500;
+    val timerId_;
+
     // TicketMachine tm_;
     bool labelAllInputs_ = true;
     bool labelsSwallowTheirReferents_ = true;
@@ -245,12 +298,31 @@ class AppBuilder {
           labelsSwallowTheirReferents_(labelsSwallowTheirReferents),
           parentDOMElement_(parentDOMElement) {
         // tm_ = TicketMachine(startId);
+
+        val jsMethodCallerFn = val::global("elgCallMethodOnObjByName");
+        val iterateOnceJS = jsMethodCallerFn(*this, val("tick"));
+         timerId_ = setInterval_(iterateOnceJS, val(tickInterval_));
+        //  iterateOnceJS();
+        //  cout << "Called elgCallMethodOnObjByName..." << endl;
+
+        // val setInterval = val::global("setInterval");
+
+        // tickJS_ = val::global("appBuilderTick");
+        // val tickJSFn = tickJS_(*this);
+        //
+        // val timerId_ = setInterval_(tickJSFn, val(tickInterval_));
     }
 
     void syncFrom() {
+        cout << "AppBuilder::syncFrom()" << endl;
         for (auto [id, c] : channels_) {
             c->syncFrom();
         }
+    }
+
+    void tick() {
+        cout << "AppBuilder says TICK!" << endl;
+        syncFrom();
     }
 
     /**
@@ -368,5 +440,13 @@ class AppBuilder {
 };
 
 };  // namespace cl3
+
+EMSCRIPTEN_BINDINGS(AppBuilder) {
+    emscripten::class_<cl3::AppBuilder>("AppBuilder")
+        .function("tick", &cl3::AppBuilder::tick, emscripten::allow_raw_pointers());
+
+    emscripten::class_<cl3::Ticker>("Ticker").function("tick", &cl3::Ticker::tick,
+                                                       emscripten::allow_raw_pointers());
+}
 
 #endif

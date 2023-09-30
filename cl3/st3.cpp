@@ -41,7 +41,7 @@ class OtherClass {
  * to use getter and setter method pointers to act as initiation points or endpoints for signals.
  *
  */
-class TestObj {
+class TestObj : public Ticker {
     int i_ = 3;
     double d_ = 3.5;
     double dblval_ = 3.14159;
@@ -49,6 +49,20 @@ class TestObj {
     int width_ = 13;
 
    public:
+    virtual void tick() {
+        // Ticker::tick();
+        cout << "TestObj ticks!" << endl;
+        dblval_ += 0.01;
+    }
+
+    // virtual void refreshTickFunction(Ticker *t) {
+
+    // }
+
+    virtual void refreshTickFunction(Ticker *t) {
+        tickJS_ = val::global("TickerTick")(*this);
+    }
+
     void setS(const std::string &s) {
         s_ = s;
         cout << "TestObj.s_ has been set to: " << s_ << endl;
@@ -101,7 +115,15 @@ class TestObj {
 int main() {
     // We make a test object and then a signal wrapper for it.
     // TestObj tobj;
+
+    // auto ticker = Ticker(700, true);
+    // auto ticker = Ticker();
+    // ticker.start();
+
     auto obj = make_shared<TestObj>();
+
+    obj->refreshTickFunction(&*obj);
+    obj->start(&*obj);
 
     auto appBldr = make_shared<AppBuilder>();
     // obj->signalEmitterTestMethod();
@@ -118,8 +140,6 @@ int main() {
 
     appBldr->addObject(obj);
     appBldr->addChannel(objDblChannel);
-
-    
 
     auto c3 = appBldr->makeChannel("c3");
     auto c4 = appBldr->makeChannel("c4");
@@ -163,7 +183,8 @@ int main() {
     appBldr->printGroup("g1");
     // auto range1 = make_shared<RangeInput>("R1", "R1-id");
 
-   // cout << "Calling the int function I installed earlier: " << appBldr->intFunctions_[6]() << endl;
+    // cout << "Calling the int function I installed earlier: " << appBldr->intFunctions_[6]() <<
+    // endl;
 
     // shared_ptr<void> getDoubleFromTestObjFnVptr =
     //     make_shared<std::function<double()>>([&]() { return obj->getDblval(); });
@@ -176,8 +197,7 @@ int main() {
 
     auto fooObj = make_shared<OtherClass>();
 
-
-cout << "We have added our object channel!" << endl;
+    cout << "We have added our object channel!" << endl;
     appBldr->syncFrom();
     // std::function<int()> getFoo = [&]() { return fooObj->getFoo(); };
     // auto fnidFoo = appBldr->addIntFunction(getFoo);
@@ -189,7 +209,7 @@ cout << "We have added our object channel!" << endl;
     // std::function<void(int)> setFoo = [&](int i) { fooObj->setFoo(i); };
     // auto fnidSetFoo = appBldr->addSetIntFunction(setFoo);
 
-   // appBldr->setIntFunctions_[fnidSetFoo](5);
+    // appBldr->setIntFunctions_[fnidSetFoo](5);
 
     // cout << "Calling the OTHER int function I installed earlier (again): "
     //      << appBldr->intFunctions_[fnidFoo]() << endl;
@@ -206,15 +226,15 @@ EMSCRIPTEN_BINDINGS(TestObj) {
     //     .function("accept", &cl2::CppObjectSignalObject<std::string, TestObj>::accept,
     //               emscripten::allow_raw_pointers());
 
-    emscripten::class_<TestObj>("TestObj").function("signalEmitterTestMethod",
-                                                    &TestObj::signalEmitterTestMethod);
+    emscripten::class_<TestObj>("TestObj")
+        .function("signalEmitterTestMethod", &TestObj::signalEmitterTestMethod)
+        .function("tick", &TestObj::tick, emscripten::allow_raw_pointers());
 }
 
 EMSCRIPTEN_BINDINGS(Channel) {
     emscripten::class_<Channel>("Channel")
         .function("inject", &Channel::inject, emscripten::allow_raw_pointers())
         //.function("injectCppval", &Channel::injectCppval, emscripten::allow_raw_pointers())
-        //.function("injectForWEC", &Channel::injectForWEC, emscripten::allow_raw_pointers())
         .function("testMethod", &Channel::testMethod, emscripten::allow_raw_pointers());
     //     .function("accept", &WebElementSignalObject<std::string>::accept,
     //               emscripten::allow_raw_pointers());

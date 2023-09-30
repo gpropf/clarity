@@ -154,13 +154,21 @@ function printVal(v) {
     console.log(v);
 }
 
-function injectForWEC(channel) {
-    return function (ev) {
-        //let s = testObjCSO.getSignal();
-        console.log("injectForWEC generated fn called.");
-        channel.injectForWEC(ev.target.value);
-    };
+// function injectForWEC(channel) {
+//     return function (ev) {
+//         //let s = testObjCSO.getSignal();
+//         console.log("injectForWEC generated fn called.");
+//         channel.injectForWEC(ev.target.value);
+//     };
+// }
+
+function TickerTick(ticker) {
+    return function () {
+        ticker.tick();
+    }
 }
+
+
 
 function inject(channel) {
     return function (ev) {
