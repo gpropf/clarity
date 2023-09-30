@@ -182,11 +182,12 @@ class ObjectChannel : public Channel {
     val cppToVal(S s) { return val(s); }
 
    public:
-    ObjectChannel(shared_ptr<ObjClass> objPtr, string name = "", void (ObjClass::*setter)(const S& s) = nullptr,
+    ObjectChannel(shared_ptr<ObjClass> objPtr, string name = "",
+                  void (ObjClass::*setter)(const S& s) = nullptr,
                   S (ObjClass::*getter)() const = nullptr)
         : objPtr_(objPtr), setter_(setter), getter_(getter) {
-            name_ = name;
-        }
+        name_ = name;
+    }
 
     virtual void inject(val v, int signalGeneration = 0) {
         Channel::inject(v, signalGeneration);
@@ -314,9 +315,6 @@ class AppBuilder {
           parentDOMElement_(parentDOMElement) {
         // tm_ = TicketMachine(startId);
 
-        val jsMethodCallerFn = val::global("elgCallMethodOnObjByName");
-        val iterateOnceJS = jsMethodCallerFn(*this, val("tick"));
-        timerId_ = setInterval_(iterateOnceJS, val(tickInterval_));
         //  iterateOnceJS();
         //  cout << "Called elgCallMethodOnObjByName..." << endl;
 
@@ -326,6 +324,12 @@ class AppBuilder {
         // val tickJSFn = tickJS_(*this);
         //
         // val timerId_ = setInterval_(tickJSFn, val(tickInterval_));
+    }
+
+    void initTick() {
+        val jsMethodCallerFn = val::global("elgCallMethodOnObjByName");
+        val iterateOnceJS = jsMethodCallerFn(*this, val("tick"));
+        timerId_ = setInterval_(iterateOnceJS, val(tickInterval_));
     }
 
     void syncFrom() {

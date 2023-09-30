@@ -197,7 +197,7 @@ int main() {
     auto fooObj = make_shared<OtherClass>();
 
     cout << "We have added our object channel!" << endl;
-    appBldr->syncFrom();
+    appBldr->initTick();
     // std::function<int()> getFoo = [&]() { return fooObj->getFoo(); };
     // auto fnidFoo = appBldr->addIntFunction(getFoo);
 
