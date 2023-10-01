@@ -256,21 +256,22 @@ using getterSetterPair = std::pair<std::function<S()>, std::function<void(S)>>;
  *
  */
 // template <template <typename> class T>
-class AppBuilder {
+class AppBuilder : public Ticker {
     vector<const int> currentGroupIds_;
     vector<const int> allIds_;
     map<const int, shared_ptr<Channel>> channels_;
     map<const int, std::function<int()>> intFunctions_;
+    map<const int, std::function<void()>> hookFunctions_;
     map<const int, std::function<void(int)>> setIntFunctions_;
     map<const int, shared_ptr<void>> objects_;
 
     map<const int, shared_ptr<WebElement>> webElements_;
     map<const string, vector<const int>> groups_;
 
-    val setInterval_ = val::global("setInterval");
-    val tickJS_;
-    int tickInterval_ = 500;
-    val timerId_;
+    // val setInterval_ = val::global("setInterval");
+    // val tickJS_;
+    // int tickInterval_ = 500;
+    // val timerId_;
 
     // TicketMachine tm_;
     bool labelAllInputs_ = true;
@@ -327,11 +328,11 @@ class AppBuilder {
         // val timerId_ = setInterval_(tickJSFn, val(tickInterval_));
     }
 
-    void initTick() {
-        val jsMethodCallerFn = val::global("elgCallMethodOnObjByName");
-        val iterateOnceJS = jsMethodCallerFn(*this, val("tick"));
-        timerId_ = setInterval_(iterateOnceJS, val(tickInterval_));
-    }
+    // void initTick() {
+    //     val jsMethodCallerFn = val::global("elgCallMethodOnObjByName");
+    //     val iterateOnceJS = jsMethodCallerFn(*this, val("tick"));
+    //     timerId_ = setInterval_(iterateOnceJS, val(tickInterval_));
+    // }
 
     void syncFrom() {
         cout << "AppBuilder::syncFrom()" << endl;
@@ -341,10 +342,25 @@ class AppBuilder {
         }
     }
 
+    void runHookFns() {
+        for (auto [id, fn] : hookFunctions_) {
+            cout << "Calling Hook Function with id = " << id << endl;
+            fn();
+        }
+    }
+
     void tick() {
         cout << "AppBuilder says TICK!" << endl;
         syncFrom();
+        runHookFns();
     }
+
+    /**
+     * @brief This installs this class' `tick()` method to be called from the `setInterval()` JS
+     * function.
+     *
+     */
+    virtual void generateTickFunction() { tickJS_ = val::global("TickerTick")(*this); }
 
     /**
      * @brief Adds a pre-existing object to the database.
@@ -362,6 +378,13 @@ class AppBuilder {
     const int addIntFunction(std::function<int()> intfn) {
         const int objid = cl3::TicketMachine::getNextSid();
         intFunctions_.insert({objid, intfn});
+        pushId(objid);
+        return objid;
+    }
+
+    const int addHookFunction(std::function<void()> hookfn) {
+        const int objid = cl3::TicketMachine::getNextSid();
+        hookFunctions_.insert({objid, hookfn});
         pushId(objid);
         return objid;
     }

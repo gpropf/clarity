@@ -131,7 +131,7 @@ int main() {
     auto obj = make_shared<TestObj>();
 
     // obj->generateTickFunction();
-    obj->start(2000);
+    //obj->start(2000);
 
     auto appBldr = make_shared<AppBuilder>();
     // obj->signalEmitterTestMethod();
@@ -205,8 +205,11 @@ int main() {
 
     auto fooObj = make_shared<OtherClass>();
 
+    std::function<void()> callTickOnTestObjFn = [&]() { obj->tick(); };
+    auto tickerId = appBldr->addHookFunction(callTickOnTestObjFn);
+
     cout << "We have added our object channel!" << endl;
-    appBldr->initTick();
+    appBldr->start(2000);
     // std::function<int()> getFoo = [&]() { return fooObj->getFoo(); };
     // auto fnidFoo = appBldr->addIntFunction(getFoo);
 
