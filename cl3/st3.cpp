@@ -50,9 +50,12 @@ class TestObj : public Ticker {
 
    public:
     virtual void tick() {
-        // Ticker::tick();
-        cout << "TestObj ticks!" << endl;
-        dblval_ += 0.01;
+        //dblval_ += 0.1;
+        auto d = getDblval();
+        d+= 0.1;
+        setDblval(d);
+        cout << "TestObj ticks! " << dblval_ << endl;
+        
     }    
 
     /**
@@ -93,6 +96,12 @@ class TestObj : public Ticker {
     }
 
     double getDblval() const {
+        if (dblval_ > 3.5) {
+            cout << "This is one thread..." << endl;
+        }
+        else {
+            cout << "This is the other thread..." << endl;
+        }
         cout << "TestObj::getDblval(): " << dblval_ << endl;
         return dblval_;
     }
@@ -122,7 +131,7 @@ int main() {
     auto obj = make_shared<TestObj>();
 
     // obj->generateTickFunction();
-    obj->start();
+    obj->start(2000);
 
     auto appBldr = make_shared<AppBuilder>();
     // obj->signalEmitterTestMethod();

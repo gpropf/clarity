@@ -63,7 +63,8 @@ class Ticker {
 
     bool isRunning() { return running_; }
 
-    void start() {
+    void start(int tickInterval = -1) {
+        if (tickInterval != -1) tickInterval_ = tickInterval;
         if (tickJS_ == val::null()) generateTickFunction();
         timerId_ = setInterval_(tickJS_, val(tickInterval_));
         running_ = true;
@@ -463,7 +464,7 @@ class AppBuilder {
 
 EMSCRIPTEN_BINDINGS(AppBuilder) {
     emscripten::class_<cl3::AppBuilder>("AppBuilder")
-        .function("tick", &cl3::AppBuilder::tick, emscripten::allow_raw_pointers());
+        .function("tick", &cl3::AppBuilder::tick);
 
     // emscripten::class_<cl3::Ticker>("Ticker").function("tick", &cl3::Ticker::tick,
     //                                                    emscripten::allow_raw_pointers());
