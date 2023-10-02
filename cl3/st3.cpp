@@ -50,13 +50,24 @@ class TestObj : public Ticker {
 
    public:
     virtual void tick() {
-        //dblval_ += 0.1;
+        // dblval_ += 0.1;
         auto d = getDblval();
-        d+= 0.1;
+        d += 0.1;
         setDblval(d);
         cout << "TestObj ticks! " << dblval_ << endl;
-        
-    }    
+    }
+
+    /**
+     * @brief Does the same thing as tick() but calling it from a hook function doesn't seem to
+     * produce errors.
+     *
+     */
+    void update() {
+        auto d = getDblval();
+        d += 0.1;
+        setDblval(d);
+        cout << "TestObj updates! " << dblval_ << endl;
+    }
 
     /**
      * @brief This installs this class' `tick()` method to be called from the `setInterval()` JS
@@ -98,8 +109,7 @@ class TestObj : public Ticker {
     double getDblval() const {
         if (dblval_ > 3.5) {
             cout << "This is one thread..." << endl;
-        }
-        else {
+        } else {
             cout << "This is the other thread..." << endl;
         }
         cout << "TestObj::getDblval(): " << dblval_ << endl;
@@ -131,14 +141,14 @@ int main() {
     auto obj = make_shared<TestObj>();
 
     // obj->generateTickFunction();
-    //obj->start(2000);
+    // obj->start(2000);
 
     auto appBldr = make_shared<AppBuilder>();
     // obj->signalEmitterTestMethod();
-    auto objIntChannel =
-        make_shared<ObjectChannel<TestObj, int>>(obj, "objIntChannel", &TestObj::setWidth, &TestObj::getWidth);
-    auto objDblChannel =
-        make_shared<ObjectChannel<TestObj, double>>(obj, "objDblChannel", &TestObj::setDblval, &TestObj::getDblval);
+    auto objIntChannel = make_shared<ObjectChannel<TestObj, int>>(
+        obj, "objIntChannel", &TestObj::setWidth, &TestObj::getWidth);
+    auto objDblChannel = make_shared<ObjectChannel<TestObj, double>>(
+        obj, "objDblChannel", &TestObj::setDblval, &TestObj::getDblval);
 
     auto widthInput = appBldr->textField("widthInput");
     auto syncTestInput = appBldr->textField("syncTestInput");
@@ -205,7 +215,10 @@ int main() {
 
     auto fooObj = make_shared<OtherClass>();
 
-    std::function<void()> callTickOnTestObjFn = [&]() { obj->tick(); };
+    std::function<void()> callTickOnTestObjFn = [&]() {
+        obj->update();
+        return;
+    };
     auto tickerId = appBldr->addHookFunction(callTickOnTestObjFn);
 
     cout << "We have added our object channel!" << endl;
