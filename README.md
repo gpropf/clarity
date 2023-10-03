@@ -3,7 +3,7 @@
 
 ## Preface ##
 
-As I developed this library and the example apps that use it I realized my original "node centric" approach was both too limited and overly complex. In a few cases I added some features that were, in my opinion, kludges just to maintain momentum in app development. The `cycleButton()` method in the `CLNodeFactory` class exists because sometimes the "one value / one node" pairing didn't quite express everything we need to. As a result I've decide to create a new version of the library using an entirely new approach more in keeping with the pure functional reactive style.
+As I developed this library and the example apps that use it I realized my original "node centric" approach was both too limited and overly complex. In a few cases I added some features that were, in my opinion, kludges just to maintain momentum in app development. The `cycleButton()` method in the `CLNodeFactory` class exists because sometimes the "one value / one node" pairing didn't quite express everything we need to. As a result I've decide to create a new version of the library using an entirely new approach more in keeping with the pure functional reactive style. I have decided now (August-September 2023) to refactor the library again with the goal being to further simplify the programming interface and make the library even easier to develop with. I have also added a kind of "overseer" class (now called `AppBuilder`) that acts as both a factory class and runtime GUI manager. This new code is a separate branch called `cl3` and is present in a subdirectory of the same name. You will need to check out the `cl3` branch to see this directory.
 
 ## Description ##
 
