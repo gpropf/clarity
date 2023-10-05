@@ -19,6 +19,9 @@
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
 
+using std::ostringstream;
+using std::string;
+
 namespace cl2 {
 
 template <typename PixelT>
@@ -26,8 +29,38 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     typedef int gridCoordinateT;
     typedef std::pair<gridCoordinateT, gridCoordinateT> gridCoordinatePairT;
 
-    // val svgDOMElement_ = val::null();
-    int gridWidth_, gridHeight_;
+    struct FrameSet {
+        typedef std::tuple<gridCoordinateT, gridCoordinateT, PixelT> pixelTriplet;
+        typedef std::vector<pixelTriplet> frame;
+
+        frame currentFrame_;
+
+        void addPixel(gridCoordinateT x, gridCoordinateT y, PixelT p) {
+            pixelTriplet triplet = std::make_tuple(x, y, p);
+            currentFrame_.push_back(triplet);
+        }
+
+        void makeFrame(bool serialize = false) {
+            if (serialize) {
+                ostringstream os = serializeFrame(currentFrame_);
+                cout << os.str() << endl;
+            }
+            frames_.push_back(currentFrame_);
+            currentFrame_.clear();
+        }
+
+        ostringstream serializeFrame(frame fm) {
+            ostringstream os;
+            for (auto [x, y, p] : fm) {
+                os << x << "," << y << "," << int(p) << ";";
+            }
+            return os;
+        }
+
+        std::vector<frame> frames_;
+    };
+    bool recording_ = false;
+    gridCoordinateT gridWidth_, gridHeight_;
 
     /**
      * @brief Programs that use the GridControl can install their own callbacks here so they can get
@@ -53,6 +86,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     shared_ptr<ObjectEmitter<PixelT, GridControl<PixelT>>> colorEmitter_ = nullptr;
     shared_ptr<CppLambda<PixelT, std::string>> pixel2StringConverter_ = nullptr;
     shared_ptr<SignalBuilder> signalBuilder_ = nullptr;
+    FrameSet frameSet_;
 
    protected:
     int calculateGridCellAddress(int x, int y) const {
@@ -68,12 +102,11 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     }
 
    public:
-
-   /**
-    * @brief Users can use this method to install a custom mouse-over callback.
-    * 
-    * @param callback 
-    */
+    /**
+     * @brief Users can use this method to install a custom mouse-over callback.
+     *
+     * @param callback
+     */
     void installMousePositionCallback(std::function<void(double x, double y)> callback) {
         mousePositionCallback_ = callback;
     }
@@ -87,6 +120,14 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         return pixels_[pixelIndex];
     }
 
+    void setRecordingOn() {
+        recording_ = true;
+    }
+
+    void setRecordingOff() {
+        recording_ = false;
+    }
+
     /**
      * @brief Set the Pixel at (x,y) and return the value that was there before.
      *
@@ -96,6 +137,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
      * @return PixelT
      */
     PixelT setPixelAt(int x, int y, PixelT pixelVal, bool forceCreateNewRect = false) {
+        if (recording_) frameSet_.addPixel(x, y, pixelVal);
         val document = val::global("document");
         val svgDOMElement = document.call<val>("getElementById", val(svgid_));
         int pixelIndex = calculateGridCellIndex(x, y);
@@ -121,6 +163,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         if (pixelVal != oldPixelVal) newPixelMap_[pixelVal].push_back(pos);
         return oldPixelVal;
     }
+
+    void makeFrame(bool serialize = false) { frameSet_.makeFrame(serialize); }
 
     GridControl(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight,
                 shared_ptr<SignalBuilder> signalBuilder, const std::string &id = "",
@@ -231,7 +275,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     void clearGridToValue(PixelT v = 0, bool forceCreateNewRect = false) {
         int totalPixels = gridHeight_ * gridWidth_;
         while (totalPixels--) {
-            pixels_[totalPixels] = 0;
+            pixels_[totalPixels] = v;
         }
         clearNewPixelMap();
         this->redraw(forceCreateNewRect);

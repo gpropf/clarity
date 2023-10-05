@@ -667,7 +667,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
                             auto potentialMatchLoc =
                                 std::make_pair(potentialMatchX, potentialMatchY);
-                            //wrapCoordinates(potentialMatchLoc);
+                            // wrapCoordinates(potentialMatchLoc);
                             potentialMatchLocations.insert(potentialMatchLoc);
                         }
                         for (auto loc : potentialMatchLocations) {
@@ -680,7 +680,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 }
             }
         }
-        
+
         cout << endl;
     }
 
@@ -748,6 +748,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      */
     void update() {
+        //if (iterationCount_ > 0) gridControl_->setRecordingOn();
+        //if (iterationCount_ > 1) gridControl_->makeFrame(true);
         successionMap_.clear();
         buildPixelValueMaps();
         // printPixelValueMaps();
@@ -1087,7 +1089,7 @@ struct PixelReactor {
         cout << "I'm a Pixelreactor. I need to be redone completely 9!" << endl;
         signalBuilder_ = make_shared<cl2::SignalBuilder>();
         mainBeaker_ =
-            make_shared<Beaker<unsigned char>>(signalBuilder_, 120, 80, 1200, 800, "Beaker");
+            make_shared<Beaker<unsigned char>>(signalBuilder_, 90, 60, 900, 600, "Beaker");
         mainBeaker_->finalize();
         BR();
 
