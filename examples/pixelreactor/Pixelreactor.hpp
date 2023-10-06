@@ -180,11 +180,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     bool clean_ = true;  //!< We set this to false when the user modifies a rule or the main grid.
 
-    // typedef std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMapT;
+    val jsMethodCallerFn = val::global("elgCallMethodOnObjByName");
+    val iterateOnceJS;
 
-    // std::map<int, valueToCoordinateMapT> rotationToPixelListsMap_;
-    //  std::map<int, std::vector<std::pair<V, std::vector<gridCoordinatePairT>>>>
-    //      rotationToSortedPixelListsMap_;
+    val setInterval = val::global("setInterval");
+    val clearInterval = val::global("clearInterval");
 
     std::vector<gridCoordinatePairT> matchLists_[4];
     std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMaps_[4];
@@ -592,7 +592,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     void printSuccessionStackAt(gridCoordinateT x, gridCoordinateT y) {
-        //cout << "printSuccessionStackAt: " << x << ", " << y << endl;
+        // cout << "printSuccessionStackAt: " << x << ", " << y << endl;
         auto vpstack = successionMap_[std::make_pair(x, y)];
         for (auto vp : vpstack) {
             auto [val, priority] = vp;
@@ -749,8 +749,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      */
     void update() {
-        //if (iterationCount_ > 0) gridControl_->setRecordingOn();
-        //if (iterationCount_ > 1) gridControl_->makeFrame(true);
+        // if (iterationCount_ > 0) gridControl_->setRecordingOn();
+        // if (iterationCount_ > 1) gridControl_->makeFrame(true);
         successionMap_.clear();
         buildPixelValueMaps();
         // printPixelValueMaps();
@@ -901,23 +901,24 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     void iterateOnceSignalTarget(const std::string &s) {
-        if (iterationLock_) {
-            cout << "ITERATION LOCKED!" << endl;
-            return;
-        }
-        iterationLock_ = true;
+        iterateOnce();
+        // if (iterationLock_) {
+        //     cout << "ITERATION LOCKED!" << endl;
+        //     return;
+        // }
+        // iterationLock_ = true;
 
-        // cout << "THIS IS THE ITERATION WITHOUT TOGGLING THE PLAYING SETTING!!!" << endl;
-        auto start = high_resolution_clock::now();
-        this->update();
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<microseconds>(stop - start);
-        cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;
-        iterationCount_++;
-        cout << "RUNNING ITERATION: " << iterationCount_ << endl;
-        // updateGrid();
-        iterationLock_ = false;
-        // iterationCountSave_ = iterationCount_;
+        // // cout << "THIS IS THE ITERATION WITHOUT TOGGLING THE PLAYING SETTING!!!" << endl;
+        // auto start = high_resolution_clock::now();
+        // this->update();
+        // auto stop = high_resolution_clock::now();
+        // auto duration = duration_cast<microseconds>(stop - start);
+        // cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;
+        // iterationCount_++;
+        // cout << "RUNNING ITERATION: " << iterationCount_ << endl;
+        // // updateGrid();
+        // iterationLock_ = false;
+        // // iterationCountSave_ = iterationCount_;
     }
 
     /**
@@ -930,12 +931,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             // iterationCount_ = iterationCountSave_;
             cout << "STARTING RUN AT ITERATION: " << iterationCount_ << endl;
             // cout << "Calling elgCallMethodOnObjByName..." << endl;
-            val jsMethodCallerFn = val::global("elgCallMethodOnObjByName");
-            val iterateOnceJS = jsMethodCallerFn(*this, val("iterateOnce"));
-            // iterateOnceJS();
-            // cout << "Called elgCallMethodOnObjByName..." << endl;
-
-            val setInterval = val::global("setInterval");
+            iterateOnceJS = jsMethodCallerFn(*this, val("iterateOnce"));
             timerId_ = setInterval(iterateOnceJS, val(iterationInterval_));
             // SimpleObj s;
 
@@ -945,7 +941,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         } else {
             isPlaying_ = false;
             cout << "STOPPING RUN AT ITERATION: " << iterationCount_ << endl;
-            val clearInterval = val::global("clearInterval");
+
             clearInterval(timerId_);
         }
 
