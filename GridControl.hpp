@@ -333,8 +333,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     void clearNewPixelMap() { newPixelMap_.clear(); }
 
     void mousePositionAcceptor(const std::pair<double, double> &mouseLocation) {
-        // cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
-        //      << ", y = " << floor(mouseLocation.second) << endl;
+         cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
+              << ", y = " << floor(mouseLocation.second) << endl;
         mousePositionCallback_(mouseLocation.first, mouseLocation.second);
     }
 

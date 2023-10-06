@@ -592,6 +592,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     void printSuccessionStackAt(gridCoordinateT x, gridCoordinateT y) {
+        //cout << "printSuccessionStackAt: " << x << ", " << y << endl;
         auto vpstack = successionMap_[std::make_pair(x, y)];
         for (auto vp : vpstack) {
             auto [val, priority] = vp;
