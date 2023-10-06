@@ -180,11 +180,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
     bool clean_ = true;  //!< We set this to false when the user modifies a rule or the main grid.
 
-    val jsMethodCallerFn = val::global("elgCallMethodOnObjByName");
-    val iterateOnceJS;
+    val elgCallMethodOnObjByName_ = val::global("elgCallMethodOnObjByName");
+    val iterateOnceJS_;
 
-    val setInterval = val::global("setInterval");
-    val clearInterval = val::global("clearInterval");
+    val setInterval_ = val::global("setInterval");
+    val clearInterval_ = val::global("clearInterval");
 
     std::vector<gridCoordinatePairT> matchLists_[4];
     std::map<V, std::vector<gridCoordinatePairT>> valueToCoordinateMaps_[4];
@@ -931,18 +931,18 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             // iterationCount_ = iterationCountSave_;
             cout << "STARTING RUN AT ITERATION: " << iterationCount_ << endl;
             // cout << "Calling elgCallMethodOnObjByName..." << endl;
-            iterateOnceJS = jsMethodCallerFn(*this, val("iterateOnce"));
-            timerId_ = setInterval(iterateOnceJS, val(iterationInterval_));
+            iterateOnceJS_ = elgCallMethodOnObjByName_(*this, val("iterateOnce"));
+            timerId_ = setInterval_(iterateOnceJS_, val(iterationInterval_));
             // SimpleObj s;
 
             // val jsMethodCallerFn = val::global("callIterateMethodOnObject");
-            // val iterateOnceJS = jsMethodCallerFn(s);
-            // iterateOnceJS();
+            // val iterateOnceJS_ = jsMethodCallerFn(s);
+            // iterateOnceJS_();
         } else {
             isPlaying_ = false;
             cout << "STOPPING RUN AT ITERATION: " << iterationCount_ << endl;
 
-            clearInterval(timerId_);
+            clearInterval_(timerId_);
         }
 
         // auto start = high_resolution_clock::now();
