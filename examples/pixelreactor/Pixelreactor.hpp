@@ -67,10 +67,6 @@ const RotationMatrix2D r90 = RotationMatrix2D(0, -1, 1, 0, 90);
 const RotationMatrix2D r180 = RotationMatrix2D(-1, 0, 0, -1, 180);
 const RotationMatrix2D r270 = RotationMatrix2D(0, 1, -1, 0, 270);
 
-struct SimpleObj {
-    void iterateOnce() { cout << "FOO TO YOU" << endl; }
-};
-
 // template <typename U>
 // class Beaker;
 
@@ -932,26 +928,12 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             cout << "STARTING RUN AT ITERATION: " << iterationCount_ << endl;
             // cout << "Calling elgCallMethodOnObjByName..." << endl;
             iterateOnceJS_ = elgCallMethodOnObjByName_(*this, val("iterateOnce"));
-            timerId_ = setInterval_(iterateOnceJS_, val(iterationInterval_));
-            // SimpleObj s;
-
-            // val jsMethodCallerFn = val::global("callIterateMethodOnObject");
-            // val iterateOnceJS_ = jsMethodCallerFn(s);
-            // iterateOnceJS_();
+            timerId_ = setInterval_(iterateOnceJS_, val(iterationInterval_));            
         } else {
             isPlaying_ = false;
             cout << "STOPPING RUN AT ITERATION: " << iterationCount_ << endl;
-
             clearInterval_(timerId_);
         }
-
-        // auto start = high_resolution_clock::now();
-        // this->update();
-        // auto stop = high_resolution_clock::now();
-        // auto duration = duration_cast<microseconds>(stop - start);
-        // cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;
-        // this->iterationCount_++;
-        // updateGrid();
     }
 
     void rectifySuccessionMap() {
@@ -1064,9 +1046,6 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
 
     emscripten::class_<SignalBuilder>("SignalBuilder");
     emscripten::class_<GridControl<int>>("GridControl");
-
-    // emscripten::class_<SimpleObj>("SimpleObj")
-    // .function()
 
     emscripten::register_vector<Beaker<unsigned char>::gridCoordinatesValueTripletT>(
         "std::vector<gridCoordinatesValueTripletT>");
