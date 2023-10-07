@@ -155,6 +155,11 @@ function elgMouseSignal(mouseSignal, domElement) {
     };
 }
 
+function singletonIterationOnce() {
+    Module.Beaker.iterateOnceST();
+}
+
+
 function elgTestObjEmitter(testObjCSO) {
     return function () {
         let s = testObjCSO.getSignal();

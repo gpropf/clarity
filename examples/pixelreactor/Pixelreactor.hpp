@@ -202,6 +202,21 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      */
     std::shared_ptr<Beaker<V>> getptr() { return this->shared_from_this(); }
 
+    static Beaker<V> *singleton__;
+
+    static Beaker<V> *getSingleton() {
+        // shared_ptr<SignalBuilder> sb = make_shared<cl2::SignalBuilder>();
+        // auto b = make_shared<Beaker<V>>(sb, 90, 60, 900, 600, "JunkBeaker");
+        // b->finalize();
+
+        // if (singleton__ == nullptr) {
+        //     singleton__ = new Beaker<V>();
+        // }
+        return singleton__;
+    }
+
+    static void setSingleton(Beaker<V> *singleton) { singleton__ = singleton; }
+
     void deleteRule() { nameInput_.reset(); }
 
     /**
@@ -272,6 +287,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             signalBuilder_->connect<std::string>(deleteRuleButton_, makeNewRuleAcceptor_);
 
         } else {
+
+            Beaker<unsigned char>::singleton__ = &*this;
             gridControl_->installMousePositionCallback(createGCMousePositionCallback());
 
             makeNewRuleAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
@@ -394,6 +411,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // We need a way to destroy and remove elements!
     }
 
+    Beaker() {}
+
     Beaker(shared_ptr<cl2::SignalBuilder> signalBuilder, int gridWidth, int gridHeight,
            int gridPixelWidth, int gridPixelHeight, const std::string &name = "",
            bool isReactionRule = false)
@@ -423,6 +442,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         gridControl_->addColorToPallete(5, "#ffff00");
         gridControl_->addColorToPallete(6, "#00ffff");
         gridControl_->finalize();
+
+        // Beaker<unsigned char>::singleton__ = this;
     }
 
     void printBeakerStats() {
@@ -876,6 +897,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << json.as<std::string>() << endl;
     }
 
+    static void iterateOnceST() {
+        singleton__->iterateOnce();
+    }
+
     void iterateOnce() {
         if (iterationLock_) {
             cout << "ITERATION LOCKED!" << endl;
@@ -927,8 +952,12 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             // iterationCount_ = iterationCountSave_;
             cout << "STARTING RUN AT ITERATION: " << iterationCount_ << endl;
             // cout << "Calling elgCallMethodOnObjByName..." << endl;
-            iterateOnceJS_ = elgCallMethodOnObjByName_(*this, val("iterateOnce"));
-            timerId_ = setInterval_(iterateOnceJS_, val(iterationInterval_));            
+
+//Beaker<unsigned char>::singleton__ = &*this;
+
+            //iterateOnceJS_ = elgCallMethodOnObjByName_(*Beaker<unsigned char>::singleton__, val("iterateOnce"));
+            iterateOnceJS_ = val::global("singletonIterationOnce");
+            timerId_ = setInterval_(iterateOnceJS_, val(iterationInterval_));
         } else {
             isPlaying_ = false;
             cout << "STOPPING RUN AT ITERATION: " << iterationCount_ << endl;
@@ -1023,6 +1052,11 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 };
 
+// template <>
+// Beaker<unsigned char>::singleton__ = nullptr;
+template <>
+Beaker<unsigned char>* Beaker<unsigned char>::singleton__ = nullptr;
+
 template <>
 const RotationMatrix2D<Beaker<unsigned char>::gridCoordinateT>
     Beaker<unsigned char>::rotationMatrices[4] = {r0, r90, r180, r270};
@@ -1039,7 +1073,8 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
                   emscripten::allow_raw_pointers())
         .function("iterateOnce", &Beaker<unsigned char>::iterateOnce,
                   emscripten::allow_raw_pointers())
-        // .function("makePixelList", &Beaker<unsigned char>::makePixelList,
+        .class_function("iterateOnceST", &Beaker<unsigned char>::iterateOnceST, emscripten::allow_raw_pointers())
+        // .function("getSingleton", &Beaker<unsigned char>::getSingleton,
         //           emscripten::allow_raw_pointers())
         .function("makeNewReactionRule", &Beaker<unsigned char>::makeNewReactionRule,
                   emscripten::allow_raw_pointers());
@@ -1068,6 +1103,12 @@ struct PixelReactor {
             make_shared<Beaker<unsigned char>>(signalBuilder_, 90, 60, 900, 600, "Beaker");
         mainBeaker_->finalize();
         BR();
+
+        // Beaker<unsigned char>::setSingleton(&*mainBeaker_);
+
+        // Beaker<unsigned char>::singleton__ = &*mainBeaker_;
+
+        // Beaker<unsigned char> *singleton__ = nullptr;
 
         // jsonTextArea_ =
         //     signalBuilder_->textAreaWSS<std::string>("jsonText", 8, 60, "Json Input Area",

@@ -12,6 +12,7 @@
 #include "Pixelreactor.hpp"
 
 using namespace cl2;
+//static Beaker<unsigned char>* singleton__ = nullptr;
 
 int main() {
     cl2::SignalBuilder sb = cl2::SignalBuilder();
