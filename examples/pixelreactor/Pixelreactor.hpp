@@ -1021,8 +1021,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     void sortValuePriorityStack(std::vector<valuePriorityPairT> &vpStack) const {
-        sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairs);
         sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairsOnValue);
+        sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairs);
+        //sort(vpStack.begin(), vpStack.end(), compareValuePriorityPairsOnValue);
     }
 };
 
@@ -1062,14 +1063,12 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
 }
 
 /**
- * @brief The Pixelreactor app from the old ClojureScript site redone in C++.
+ * @brief This is really now just a wrapper around the main Beaker object.
  *
  */
 struct PixelReactor {
     shared_ptr<Beaker<unsigned char>> mainBeaker_;
-    shared_ptr<SignalBuilder> signalBuilder_;
-    // shared_ptr<WebElementSignal<std::string>> jsonTextArea_;
-    //  shared_ptr<WebElementSignal<std::string>> validationField_;
+    shared_ptr<SignalBuilder> signalBuilder_;    
 
     PixelReactor() {
         cout << "I'm a Pixelreactor. I need to be redone completely 9!" << endl;
@@ -1077,24 +1076,7 @@ struct PixelReactor {
         mainBeaker_ =
             make_shared<Beaker<unsigned char>>(signalBuilder_, 90, 60, 900, 600, "Beaker");
         mainBeaker_->finalize();
-        BR();
-
-        // Beaker<unsigned char>::setSingleton(&*mainBeaker_);
-
-        // Beaker<unsigned char>::singleton__ = &*mainBeaker_;
-
-        // Beaker<unsigned char> *singleton__ = nullptr;
-
-        // jsonTextArea_ =
-        //     signalBuilder_->textAreaWSS<std::string>("jsonText", 8, 60, "Json Input Area",
-        //     false);
-
-        // validationField_ =
-        //     signalBuilder_->withAttributes({{"class", val("medium_width")}})
-        //         .textInputWSS<std::string>("jsonInput",
-        //                                    "Text field to validate textAreaWSS control", false);
-        // signalBuilder_->connect<std::string>(validationField_, jsonTextArea_);
-        // signalBuilder_->connect<std::string>(jsonTextArea_, validationField_);
+        BR();        
     }
 };
 
