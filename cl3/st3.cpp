@@ -28,9 +28,8 @@ using namespace cl3;
 namespace cl3 {
 
 class OtherClass {
-    int foo_ = 7;
-
    public:
+    int foo_ = 7;
     int getFoo() { return foo_; }
 
     void setFoo(int f) { foo_ = f; }
@@ -130,6 +129,69 @@ class TestObj : public Ticker {
 };
 }  // namespace cl3
 
+void *thread_callback(void *arg) {
+    // while (true) {
+    //     sleep(1);
+    //     // printf("Inside the thread: %d\n", *(int *)arg);
+    //     AppBuilder *abptr = static_cast<AppBuilder *>(arg);
+    //     abptr->threadTestFn();
+    // }
+
+    sleep(1);
+    printf("Inside the thread: %d\n", *(int *)arg);
+    return NULL;
+}
+
+void *thread_callback2(void *arg) {
+    // sleep(1);
+    //  printf("Inside the thread: %d\n", *(int *)arg);
+    OtherClass *ocptr = static_cast<OtherClass *>(arg);
+
+    while (1) {
+        auto foo = ocptr->getFoo();
+        cout << "ocptr->getFoo(): " << foo << endl;
+        ocptr->foo_ += 3;
+        sleep(1);
+    }
+    return NULL;
+}
+
+void *thread_callback3(void *arg) {
+    // sleep(1);
+    //  printf("Inside the thread: %d\n", *(int *)arg);
+    // OtherClass *ocptr = static_cast<OtherClass *>(arg);
+    while (1) {
+        AppBuilder *abptr = static_cast<AppBuilder *>(arg);
+        abptr->threadTestFn();
+        sleep(1);
+    }
+    // while (1) {
+    //     auto foo = ocptr->getFoo();
+    //     cout << "ocptr->getFoo(): " << foo << endl;
+    //     ocptr->foo_ += 3;
+    //     sleep(1);
+    // }
+    return NULL;
+}
+
+void *thread_callback4(void *arg) {
+    // sleep(1);
+    //  printf("Inside the thread: %d\n", *(int *)arg);
+    // OtherClass *ocptr = static_cast<OtherClass *>(arg);
+    while (1) {
+        AppBuilder *abptr = static_cast<AppBuilder *>(arg);
+        abptr->doNothing();
+        sleep(1);
+    }
+    // while (1) {
+    //     auto foo = ocptr->getFoo();
+    //     cout << "ocptr->getFoo(): " << foo << endl;
+    //     ocptr->foo_ += 3;
+    //     sleep(1);
+    // }
+    return NULL;
+}
+
 int main() {
     // We make a test object and then a signal wrapper for it.
     // TestObj tobj;
@@ -156,20 +218,22 @@ int main() {
     // auto textField2 = appBldr->textField("TF2");
     // auto textField3 = appBldr->textField("TF3");
 
-    appBldr->addObject(obj);
-    appBldr->addChannel(objDblChannel);
+     appBldr->addObject(obj);
+     appBldr->addChannel(objDblChannel);
 
-    auto c3 = appBldr->makeChannel("c3");
-    auto c4 = appBldr->makeChannel("c4");
-    // c3->addConnection(c4);
+auto c3 = appBldr->makeChannel("c3");
+     auto c4 = appBldr->makeChannel("c4");
 
-    std::function<int()> getWidthFromTestObjFn = [&]() { return obj->getWidth(); };
-    auto fnid = appBldr->addIntFunction(getWidthFromTestObjFn);
 
-    cout << "getWidthFromTestObjFn id is " << fnid << endl;
+     c3->addConnection(c4);
+
+    // std::function<int()> getWidthFromTestObjFn = [&]() { return obj->getWidth(); };
+    // auto fnid = appBldr->addIntFunction(getWidthFromTestObjFn);
+
+   // cout << "getWidthFromTestObjFn id is " << fnid << endl;
     // c4->addConnection(objIntChannel);
 
-    // appBldr->printGroup("g1");
+     appBldr->printGroup("g1");
 
     auto widthChannel = make_shared<WebElementChannel>("widthChannel");
     auto dblChannel = make_shared<WebElementChannel>("dblChannel");
@@ -177,6 +241,8 @@ int main() {
     dblChannel->installWebElement(dblInput);
     auto syncTestInputChannel = make_shared<WebElementChannel>("syncTestInputChannel");
     syncTestInputChannel->installWebElement(syncTestInput);
+
+
     // val elg = val::global("elgCallMethodOnObjByName");
     // val onChangeFn = elg(*widthChannel, val("inject"));
     // widthInput->addEventListener(val("change"), onChangeFn);
@@ -185,20 +251,20 @@ int main() {
 
     widthChannel->finalize();
 
-    dblChannel->addConnection(objDblChannel);
+   dblChannel->addConnection(objDblChannel);
 
     dblChannel->finalize();
 
-    objDblChannel->addConnection(syncTestInputChannel);
+   objDblChannel->addConnection(syncTestInputChannel);
 
     objDblChannel->finalize();
     syncTestInputChannel->finalize();
 
     // c3->inject(val("BOO"));
-    c4->inject(val(5));
+   // c4->inject(val(5));
     // widthInput->addConnection(textField2);
-    vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
-    appBldr->printGroup("g1");
+    // vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
+    // appBldr->printGroup("g1");
     // auto range1 = make_shared<RangeInput>("R1", "R1-id");
 
     // cout << "Calling the int function I installed earlier: " << appBldr->intFunctions_[6]() <<
@@ -213,30 +279,57 @@ int main() {
 
     // fn();
 
-    auto fooObj = make_shared<OtherClass>();
+    auto otherClassObj = make_shared<OtherClass>();
 
-    std::function<void()> callTickOnTestObjFn = [&]() {
-        obj->update();
-        return;
-    };
-    auto tickerId = appBldr->addHookFunction(callTickOnTestObjFn);
+    // std::function<void()> callTickOnTestObjFn = [&]() {
+    //     obj->update();
+    //     return;
+    // };
+    // auto tickerId = appBldr->addHookFunction(callTickOnTestObjFn);
 
     cout << "We have added our object channel!" << endl;
-    appBldr->start(2000);
-    // std::function<int()> getFoo = [&]() { return fooObj->getFoo(); };
-    // auto fnidFoo = appBldr->addIntFunction(getFoo);
+    appBldr->start(1000);
+    //  std::function<int()> getFoo = [&]() { return otherClassObj->getFoo(); };
+    //  auto fnidFoo = appBldr->addIntFunction(getFoo);
 
     // cout << "Calling the OTHER int function I installed earlier: "
     //      << appBldr->intFunctions_[fnidFoo]() << endl;
     // return 0;
 
-    // std::function<void(int)> setFoo = [&](int i) { fooObj->setFoo(i); };
+    // std::function<void(int)> setFoo = [&](int i) { otherClassObj->setFoo(i); };
     // auto fnidSetFoo = appBldr->addSetIntFunction(setFoo);
 
     // appBldr->setIntFunctions_[fnidSetFoo](5);
 
     // cout << "Calling the OTHER int function I installed earlier (again): "
     //      << appBldr->intFunctions_[fnidFoo]() << endl;
+
+//     puts("Before the thread");
+
+//    // std::function<void()> tfunc = [&]() { cout << "HELLO FROM THREADLAND!!" << endl; };
+
+//     pthread_t thread_id, thread_id2;
+//     int arg = 42;
+//     AppBuilder *abptr = &*appBldr;
+
+//     // pthread_create(&thread_id, NULL, thread_callback, &arg);
+
+//     // pthread_create(&thread_id, NULL, thread_callback2, &*otherClassObj);
+//     pthread_create(&thread_id, NULL, thread_callback3, &*appBldr);
+
+//     pthread_detach(thread_id);
+
+//     pthread_create(&thread_id2, NULL, thread_callback4, &*appBldr);
+
+//     pthread_detach(thread_id2);
+//     // appBldr->threadTestFn();
+//     puts("After the thread");
+
+    //while (1) {
+       // appBldr->doNothing();
+       // sleep(2);
+        // cout << "Sleeping on the main thread!" << endl;
+    //}
 
     return 0;
 }

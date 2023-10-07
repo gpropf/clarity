@@ -352,7 +352,17 @@ class AppBuilder : public Ticker {
     void tick() {
         cout << "AppBuilder says TICK!" << endl;
         syncFrom();
-        runHookFns();
+        //runHookFns();
+    }
+
+    void threadTestFn() {
+       syncFrom();
+        cout << "AppBuilder says it works in pthreads now!" << endl;
+    }
+
+    void doNothing() {
+       // syncFrom();
+        cout << "AppBuilder says it's doing nothing right now!" << endl;
     }
 
     /**
@@ -417,9 +427,9 @@ class AppBuilder : public Ticker {
      */
     shared_ptr<Channel> makeChannel(string name = "") {
         auto c = make_shared<Channel>(name);
-        const int objid = cl3::TicketMachine::getNextSid();
-        channels_.insert({objid, c});
-        pushId(objid);
+         const int objid = cl3::TicketMachine::getNextSid();
+           channels_.insert({objid, c});
+           pushId(objid);
         return c;
     }
 
