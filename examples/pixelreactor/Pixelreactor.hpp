@@ -287,7 +287,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             signalBuilder_->connect<std::string>(deleteRuleButton_, makeNewRuleAcceptor_);
 
         } else {
-
             Beaker<unsigned char>::singleton__ = &*this;
             gridControl_->installMousePositionCallback(createGCMousePositionCallback());
 
@@ -411,7 +410,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         // We need a way to destroy and remove elements!
     }
 
-    Beaker() {}
+    // Beaker() {}
 
     Beaker(shared_ptr<cl2::SignalBuilder> signalBuilder, int gridWidth, int gridHeight,
            int gridPixelWidth, int gridPixelHeight, const std::string &name = "",
@@ -649,25 +648,30 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         return true;
     }
 
+    /**
+     * @brief Meant as sort of a logging tag line so you can keep data relating to the same
+     * iteration together.
+     *
+     */
+    inline void printIterationCount() { cout << "ITER: " << iterationCount_; }
+
     void populateMatchLists() {
         if (isReactionRule_) return;
 
         auto newPixelMap = gridControl_->getNewPixelMap();
         gridControl_->clearNewPixelMap();
-        // cout << "ITERATION: " << this->iterationCount_ << endl;
+
+        printIterationCount();
+
         if (newPixelMap.empty()) {
-            cout << "ITERATION: " << this->iterationCount_ << ", There are NO NEW PIXELS!" << endl;
+            cout << ", There are NO NEW PIXELS!" << endl;
             return;
         }
+        cout << ", Color stats: ";
         for (const auto &[anchorPixelColor, pixels] : newPixelMap) {
             cout << int(anchorPixelColor) << ":" << pixels.size() << ",";
-            // cout << "ITERATION: " << this->iterationCount_ << ", There are " << pixels.size()
-            //      << " new anchor pixels with index = " << int(anchorPixelColor) << endl;
-
-            // cout << "Anchor pixels: COLOR: " << int(anchorPixelColor) << endl;
             for (const auto &p : pixels) {
                 // cout << "\t" << p.first << ": " << p.second << endl;
-
                 for (auto reactionRule : reactionRules_) {
                     // cout << "\t\tRule name: " << reactionRule->name_ << endl;
                     if (reactionRule->successor_ == reactionRule ||
@@ -734,9 +738,9 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         for (auto reactionRule : reactionRules_) {
             if (reactionRule->successor_ == reactionRule || reactionRule->successor_ == nullptr)
                 continue;
-            cout << "Reaction rule '" << reactionRule->name_ << "'" << endl;
-            cout << "\tSuccessor rule '" << reactionRule->successorName_ << "'" << endl;
-            // shared_ptr<Beaker<V>> successor = reactionRule->successor_;
+            // cout << "Reaction rule '" << reactionRule->name_ << "'" << endl;
+            // cout << "\tSuccessor rule '" << reactionRule->successorName_ << "'" << endl;
+
             for (int i = 0; i < 4; i++) {
                 for (const auto &matchOffset : reactionRule->matchLists_[i]) {
                     auto x = matchOffset.first;
@@ -817,7 +821,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     }
 
     void buildPixelValueMaps() {
-        cout << "buildPixelValueMaps()" << endl;
+        // cout << "buildPixelValueMaps()" << endl;
         for (auto reactionRule : reactionRules_) {
             for (int i = 0; i < 4; i++) {
                 reactionRule->valueToCoordinateMaps_[i].clear();
@@ -897,9 +901,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << json.as<std::string>() << endl;
     }
 
-    static void iterateOnceST() {
-        singleton__->iterateOnce();
-    }
+    static void iterateOnceST() { singleton__->iterateOnce(); }
 
     void iterateOnce() {
         if (iterationLock_) {
@@ -907,40 +909,18 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             return;
         }
         iterationLock_ = true;
-
-        // cout << "THIS IS THE ITERATION WITHOUT TOGGLING THE PLAYING SETTING!!!" << endl;
         auto start = high_resolution_clock::now();
         this->update();
         auto stop = high_resolution_clock::now();
         auto duration = duration_cast<microseconds>(stop - start);
-        cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;
+        printIterationCount();
+        cout << ", Upd time: " << duration.count() << " ms" << endl;
         iterationCount_++;
-        cout << "RUNNING ITERATION: " << iterationCount_ << endl;
-        // updateGrid();
+        // cout << "ITER: " << iterationCount_ << endl;
         iterationLock_ = false;
-        // iterationCountSave_ = iterationCount_;
     }
 
-    void iterateOnceSignalTarget(const std::string &s) {
-        iterateOnce();
-        // if (iterationLock_) {
-        //     cout << "ITERATION LOCKED!" << endl;
-        //     return;
-        // }
-        // iterationLock_ = true;
-
-        // // cout << "THIS IS THE ITERATION WITHOUT TOGGLING THE PLAYING SETTING!!!" << endl;
-        // auto start = high_resolution_clock::now();
-        // this->update();
-        // auto stop = high_resolution_clock::now();
-        // auto duration = duration_cast<microseconds>(stop - start);
-        // cout << "Time taken by matching: " << duration.count() << " microseconds" << endl;
-        // iterationCount_++;
-        // cout << "RUNNING ITERATION: " << iterationCount_ << endl;
-        // // updateGrid();
-        // iterationLock_ = false;
-        // // iterationCountSave_ = iterationCount_;
-    }
+    void iterateOnceSignalTarget(const std::string &s) { iterateOnce(); }
 
     /**
      * @brief Apply replacement rules to main grid one time.
@@ -949,13 +929,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     void runSignalMethod(const std::string &s) {
         if (!isPlaying_) {
             isPlaying_ = true;
-            // iterationCount_ = iterationCountSave_;
             cout << "STARTING RUN AT ITERATION: " << iterationCount_ << endl;
-            // cout << "Calling elgCallMethodOnObjByName..." << endl;
-
-//Beaker<unsigned char>::singleton__ = &*this;
-
-            //iterateOnceJS_ = elgCallMethodOnObjByName_(*Beaker<unsigned char>::singleton__, val("iterateOnce"));
             iterateOnceJS_ = val::global("singletonIterationOnce");
             timerId_ = setInterval_(iterateOnceJS_, val(iterationInterval_));
         } else {
@@ -1055,7 +1029,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 // template <>
 // Beaker<unsigned char>::singleton__ = nullptr;
 template <>
-Beaker<unsigned char>* Beaker<unsigned char>::singleton__ = nullptr;
+Beaker<unsigned char> *Beaker<unsigned char>::singleton__ = nullptr;
 
 template <>
 const RotationMatrix2D<Beaker<unsigned char>::gridCoordinateT>
@@ -1073,7 +1047,8 @@ EMSCRIPTEN_BINDINGS(PixelReactor) {
                   emscripten::allow_raw_pointers())
         .function("iterateOnce", &Beaker<unsigned char>::iterateOnce,
                   emscripten::allow_raw_pointers())
-        .class_function("iterateOnceST", &Beaker<unsigned char>::iterateOnceST, emscripten::allow_raw_pointers())
+        .class_function("iterateOnceST", &Beaker<unsigned char>::iterateOnceST,
+                        emscripten::allow_raw_pointers())
         // .function("getSingleton", &Beaker<unsigned char>::getSingleton,
         //           emscripten::allow_raw_pointers())
         .function("makeNewReactionRule", &Beaker<unsigned char>::makeNewReactionRule,

@@ -37,4 +37,9 @@ There is already a small "showcase" type app called `signalTest` that allows you
 
 ## Misc
 
-The directory `Screenshots-from-original-app` shows the test patterns from the old app that should be tried to verify the behavior of the new app.
+The directory `examples/pixelreactor/Screenshots-from-original-app` shows the test patterns from the old PixelReactor app that should be tried to verify the behavior of the new app.
+
+## TODO
+
+1. The `Clarity.js` utility file contains stuff the only pertains to the example apps. This needs to be broken out into a separate file.
+2. The GridControl, in addition to needing to be updated in the `cl3` branch, needs a mode where it uses a Canvas object rather than SVG.
