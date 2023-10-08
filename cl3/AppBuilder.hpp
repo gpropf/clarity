@@ -261,9 +261,9 @@ class AppBuilder : public Ticker {
     vector<const int> currentGroupIds_;
     vector<const int> allIds_;
     map<const int, shared_ptr<Channel>> channels_;
-    map<const int, std::function<int()>> intFunctions_;
-    map<const int, std::function<void()>> hookFunctions_;
-    map<const int, std::function<void(int)>> setIntFunctions_;
+    // map<const int, std::function<int()>> intFunctions_;
+    // map<const int, std::function<void()>> hookFunctions_;
+    // map<const int, std::function<void(int)>> setIntFunctions_;
     map<const int, shared_ptr<void>> objects_;
 
     map<const int, shared_ptr<WebElement>> webElements_;
@@ -351,12 +351,12 @@ class AppBuilder : public Ticker {
         }
     }
 
-    void runHookFns() {
-        for (auto [id, fn] : hookFunctions_) {
-            cout << "Calling Hook Function with id = " << id << endl;
-            fn();
-        }
-    }
+    // void runHookFns() {
+    //     for (auto [id, fn] : hookFunctions_) {
+    //         cout << "Calling Hook Function with id = " << id << endl;
+    //         fn();
+    //     }
+    // }
 
     virtual void start(int tickInterval = -1) {
         Ticker::start(tickInterval);
@@ -398,26 +398,26 @@ class AppBuilder : public Ticker {
         return objid;
     }
 
-    const int addIntFunction(std::function<int()> intfn) {
-        const int objid = cl3::TicketMachine::getNextSid();
-        intFunctions_.insert({objid, intfn});
-        pushId(objid);
-        return objid;
-    }
+    // const int addIntFunction(std::function<int()> intfn) {
+    //     const int objid = cl3::TicketMachine::getNextSid();
+    //     intFunctions_.insert({objid, intfn});
+    //     pushId(objid);
+    //     return objid;
+    // }
 
-    const int addHookFunction(std::function<void()> hookfn) {
-        const int objid = cl3::TicketMachine::getNextSid();
-        hookFunctions_.insert({objid, hookfn});
-        pushId(objid);
-        return objid;
-    }
+    // const int addHookFunction(std::function<void()> hookfn) {
+    //     const int objid = cl3::TicketMachine::getNextSid();
+    //     hookFunctions_.insert({objid, hookfn});
+    //     pushId(objid);
+    //     return objid;
+    // }
 
-    const int addSetIntFunction(std::function<void(int)> intfn) {
-        const int objid = cl3::TicketMachine::getNextSid();
-        setIntFunctions_.insert({objid, intfn});
-        pushId(objid);
-        return objid;
-    }
+    // const int addSetIntFunction(std::function<void(int)> intfn) {
+    //     const int objid = cl3::TicketMachine::getNextSid();
+    //     setIntFunctions_.insert({objid, intfn});
+    //     pushId(objid);
+    //     return objid;
+    // }
 
     /**
      * @brief Adds an existing channel to the database.
