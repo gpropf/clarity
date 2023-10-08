@@ -106,7 +106,7 @@ class TestObj : public Ticker {
     }
 
     double getDblval() const {
-        if (dblval_ > 3.5) {
+        if (dblval_ > 4) {
             cout << "This is one thread..." << endl;
         } else {
             cout << "This is the other thread..." << endl;
@@ -205,7 +205,7 @@ int main() {
     auto obj = make_shared<TestObj>();
 
     // obj->generateTickFunction();
-    obj->start(2000);
+    //obj->start(1000);
 
     auto appBldr = make_shared<AppBuilder>();
     // obj->signalEmitterTestMethod();
@@ -214,17 +214,18 @@ int main() {
     auto objDblChannel = make_shared<ObjectChannel<TestObj, double>>(
         obj, "objDblChannel", &TestObj::setDblval, &TestObj::getDblval);
 
-    auto widthInput = appBldr->textField("widthInput");
-    auto syncTestInput = appBldr->textField("syncTestInput");
+    auto [widthInput, widthInputId] = appBldr->textField("widthInput");
+    auto [syncTestInput, syncTestInputId] = appBldr->textField("syncTestInput");
     auto dblInput = appBldr->rangeInput("dblInput");
     // auto textField2 = appBldr->textField("TF2");
     // auto textField3 = appBldr->textField("TF3");
 
-    appBldr->addObject(obj);
+    auto objId = appBldr->addObject(obj);
+    cout << "TestObj added to AppBuilder has id: " << objId << endl;
     appBldr->addChannel(objDblChannel);
 
-    auto c3 = appBldr->makeChannel("c3");
-    auto c4 = appBldr->makeChannel("c4");
+    auto [c3, c3id ]= appBldr->makeChannel("c3");
+    auto [c4, c4id] = appBldr->makeChannel("c4");
 
     c3->addConnection(c4);
 

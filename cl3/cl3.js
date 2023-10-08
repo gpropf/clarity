@@ -172,6 +172,7 @@ function TickerTick(ticker) {
 
 
 function inject(channel) {
+    console.log("On JS side creating inject listener for channel: ", channel);
     return function (ev) {
         //let s = testObjCSO.getSignal();
         console.log("inject generated fn called.");
@@ -179,6 +180,13 @@ function inject(channel) {
     };
 }
 
+function lockChannel(channel) {
+    return function (ev) {
+        //let s = testObjCSO.getSignal();
+        // console.log("inject generated fn called.");
+        // channel.inject(ev.target.value, 0);
+    };
+}
 
 /**
  * 

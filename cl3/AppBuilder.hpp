@@ -219,6 +219,7 @@ class WebElementChannel : public Channel {
 
     virtual void finalize() {
         val inject = val::global("inject");
+        cout << "WebElementChannel::finalize is creating the listener for channel with address: " << int(this) << endl;
         val onChangeFn = inject(*this->getptr());
         this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
     }
@@ -296,7 +297,7 @@ class AppBuilder : public Ticker {
 
     static void setSingleton(AppBuilder* singleton) { singleton__ = singleton; }
 
-    static void tick__() { singleton__->tick(); }
+    //static void tick__() { singleton__->tick(); }
 
     /**
      * @brief Construct a new App Builder object. This class is the central factory class and also
@@ -437,13 +438,21 @@ class AppBuilder : public Ticker {
      * @param name
      * @return shared_ptr<Channel>
      */
-    shared_ptr<Channel> makeChannel(string name = "") {
+    auto makeChannel(string name = "") {
         auto c = make_shared<Channel>(name);
-        const int objid = cl3::TicketMachine::getNextSid();
-        channels_.insert({objid, c});
-        pushId(objid);
-        return c;
+        const int cid = cl3::TicketMachine::getNextSid();
+        channels_.insert({cid, c});
+        pushId(cid);
+        return std::make_pair(c,cid);
     }
+
+    // auto makeWebElementChannel(string name = "") {
+    //     auto c = make_shared<WebElementChannel>(name);
+    //     const int cid = cl3::TicketMachine::getNextSid();
+    //     channels_.insert({cid, c});
+    //     pushId(cid);
+    //     return std::make_pair(c,cid);
+    // }
 
     /**
      * @brief Creates a text field HTML element using the WebElements library
@@ -452,13 +461,13 @@ class AppBuilder : public Ticker {
      * @param parentElement
      * @return shared_ptr<TextField>
      */
-    shared_ptr<TextField> textField(const string& name, val parentElement = val::null()) {
+    auto textField(const string& name, val parentElement = val::null()) {
         const int tfid = cl3::TicketMachine::getNextSid();
         pushId(tfid);
         auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
         // val tfDomEl = tf.getDomElement();
         webElements_.insert({tfid, tf});
-        return tf;
+        return std::make_pair(tf, tfid);
     }
 
     /**
