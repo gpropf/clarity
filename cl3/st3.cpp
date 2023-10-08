@@ -192,6 +192,8 @@ void *thread_callback4(void *arg) {
     return NULL;
 }
 
+AppBuilder *AppBuilder::singleton__ = nullptr;
+
 int main() {
     // We make a test object and then a signal wrapper for it.
     // TestObj tobj;
@@ -203,7 +205,7 @@ int main() {
     auto obj = make_shared<TestObj>();
 
     // obj->generateTickFunction();
-    // obj->start(2000);
+    obj->start(2000);
 
     auto appBldr = make_shared<AppBuilder>();
     // obj->signalEmitterTestMethod();
@@ -218,22 +220,21 @@ int main() {
     // auto textField2 = appBldr->textField("TF2");
     // auto textField3 = appBldr->textField("TF3");
 
-     appBldr->addObject(obj);
-     appBldr->addChannel(objDblChannel);
+    appBldr->addObject(obj);
+    appBldr->addChannel(objDblChannel);
 
-auto c3 = appBldr->makeChannel("c3");
-     auto c4 = appBldr->makeChannel("c4");
+    auto c3 = appBldr->makeChannel("c3");
+    auto c4 = appBldr->makeChannel("c4");
 
-
-     c3->addConnection(c4);
+    c3->addConnection(c4);
 
     // std::function<int()> getWidthFromTestObjFn = [&]() { return obj->getWidth(); };
     // auto fnid = appBldr->addIntFunction(getWidthFromTestObjFn);
 
-   // cout << "getWidthFromTestObjFn id is " << fnid << endl;
+    // cout << "getWidthFromTestObjFn id is " << fnid << endl;
     // c4->addConnection(objIntChannel);
 
-     appBldr->printGroup("g1");
+    appBldr->printGroup("g1");
 
     auto widthChannel = make_shared<WebElementChannel>("widthChannel");
     auto dblChannel = make_shared<WebElementChannel>("dblChannel");
@@ -241,7 +242,6 @@ auto c3 = appBldr->makeChannel("c3");
     dblChannel->installWebElement(dblInput);
     auto syncTestInputChannel = make_shared<WebElementChannel>("syncTestInputChannel");
     syncTestInputChannel->installWebElement(syncTestInput);
-
 
     // val elg = val::global("elgCallMethodOnObjByName");
     // val onChangeFn = elg(*widthChannel, val("inject"));
@@ -251,17 +251,17 @@ auto c3 = appBldr->makeChannel("c3");
 
     widthChannel->finalize();
 
-   dblChannel->addConnection(objDblChannel);
+    dblChannel->addConnection(objDblChannel);
 
     dblChannel->finalize();
 
-   objDblChannel->addConnection(syncTestInputChannel);
+    objDblChannel->addConnection(syncTestInputChannel);
 
     objDblChannel->finalize();
     syncTestInputChannel->finalize();
 
     // c3->inject(val("BOO"));
-   // c4->inject(val(5));
+    // c4->inject(val(5));
     // widthInput->addConnection(textField2);
     // vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     // appBldr->printGroup("g1");
@@ -288,9 +288,15 @@ auto c3 = appBldr->makeChannel("c3");
     // auto tickerId = appBldr->addHookFunction(callTickOnTestObjFn);
 
     cout << "We have added our object channel!" << endl;
-    appBldr->start(1000);
-    //  std::function<int()> getFoo = [&]() { return otherClassObj->getFoo(); };
-    //  auto fnidFoo = appBldr->addIntFunction(getFoo);
+
+    AppBuilder::setSingleton(&*appBldr);
+
+    val appBuilderSingletonStart = val::global("appBuilderSingletonStart");
+    appBuilderSingletonStart(1500);
+
+    // appBldr->start(1000);
+    //   std::function<int()> getFoo = [&]() { return otherClassObj->getFoo(); };
+    //   auto fnidFoo = appBldr->addIntFunction(getFoo);
 
     // cout << "Calling the OTHER int function I installed earlier: "
     //      << appBldr->intFunctions_[fnidFoo]() << endl;
@@ -304,31 +310,31 @@ auto c3 = appBldr->makeChannel("c3");
     // cout << "Calling the OTHER int function I installed earlier (again): "
     //      << appBldr->intFunctions_[fnidFoo]() << endl;
 
-//     puts("Before the thread");
+    //     puts("Before the thread");
 
-//    // std::function<void()> tfunc = [&]() { cout << "HELLO FROM THREADLAND!!" << endl; };
+    //    // std::function<void()> tfunc = [&]() { cout << "HELLO FROM THREADLAND!!" << endl; };
 
-//     pthread_t thread_id, thread_id2;
-//     int arg = 42;
-//     AppBuilder *abptr = &*appBldr;
+    //     pthread_t thread_id, thread_id2;
+    //     int arg = 42;
+    //     AppBuilder *abptr = &*appBldr;
 
-//     // pthread_create(&thread_id, NULL, thread_callback, &arg);
+    //     // pthread_create(&thread_id, NULL, thread_callback, &arg);
 
-//     // pthread_create(&thread_id, NULL, thread_callback2, &*otherClassObj);
-//     pthread_create(&thread_id, NULL, thread_callback3, &*appBldr);
+    //     // pthread_create(&thread_id, NULL, thread_callback2, &*otherClassObj);
+    //     pthread_create(&thread_id, NULL, thread_callback3, &*appBldr);
 
-//     pthread_detach(thread_id);
+    //     pthread_detach(thread_id);
 
-//     pthread_create(&thread_id2, NULL, thread_callback4, &*appBldr);
+    //     pthread_create(&thread_id2, NULL, thread_callback4, &*appBldr);
 
-//     pthread_detach(thread_id2);
-//     // appBldr->threadTestFn();
-//     puts("After the thread");
+    //     pthread_detach(thread_id2);
+    //     // appBldr->threadTestFn();
+    //     puts("After the thread");
 
-    //while (1) {
-       // appBldr->doNothing();
-       // sleep(2);
-        // cout << "Sleeping on the main thread!" << endl;
+    // while (1) {
+    //  appBldr->doNothing();
+    //  sleep(2);
+    //  cout << "Sleeping on the main thread!" << endl;
     //}
 
     return 0;

@@ -63,7 +63,7 @@ class Ticker {
 
     bool isRunning() { return running_; }
 
-    void start(int tickInterval = -1) {
+    virtual void start(int tickInterval = -1) {
         if (tickInterval != -1) tickInterval_ = tickInterval;
         if (tickJS_ == val::null()) generateTickFunction();
         timerId_ = setInterval_(tickJS_, val(tickInterval_));
@@ -289,7 +289,15 @@ class AppBuilder : public Ticker {
         allIds_.push_back(id);
     }
 
+    static AppBuilder* singleton__;
+
    public:
+    static AppBuilder* getSingleton() { return singleton__; }
+
+    static void setSingleton(AppBuilder* singleton) { singleton__ = singleton; }
+
+    static void tick__() { singleton__->tick(); }
+
     /**
      * @brief Construct a new App Builder object. This class is the central factory class and also
      * functions as an online registry and database for the various elements of the signal network
@@ -349,19 +357,23 @@ class AppBuilder : public Ticker {
         }
     }
 
+    virtual void start(int tickInterval = -1) {
+        Ticker::start(tickInterval);
+    }
+
     void tick() {
         cout << "AppBuilder says TICK!" << endl;
         syncFrom();
-        //runHookFns();
+        // runHookFns();
     }
 
     void threadTestFn() {
-       syncFrom();
+        syncFrom();
         cout << "AppBuilder says it works in pthreads now!" << endl;
     }
 
     void doNothing() {
-       // syncFrom();
+        // syncFrom();
         cout << "AppBuilder says it's doing nothing right now!" << endl;
     }
 
@@ -427,9 +439,9 @@ class AppBuilder : public Ticker {
      */
     shared_ptr<Channel> makeChannel(string name = "") {
         auto c = make_shared<Channel>(name);
-         const int objid = cl3::TicketMachine::getNextSid();
-           channels_.insert({objid, c});
-           pushId(objid);
+        const int objid = cl3::TicketMachine::getNextSid();
+        channels_.insert({objid, c});
+        pushId(objid);
         return c;
     }
 
@@ -497,10 +509,12 @@ class AppBuilder : public Ticker {
 
 EMSCRIPTEN_BINDINGS(AppBuilder) {
     emscripten::class_<cl3::AppBuilder>("AppBuilder")
-        .function("tick", &cl3::AppBuilder::tick);
+        .function("tick", &cl3::AppBuilder::tick)
+        .function("start", &cl3::AppBuilder::start)
+        .class_function("getSingleton", &cl3::AppBuilder::getSingleton,
+                        emscripten::allow_raw_pointers());
 
-    // emscripten::class_<cl3::Ticker>("Ticker").function("tick", &cl3::Ticker::tick,
-    //                                                    emscripten::allow_raw_pointers());
+    emscripten::class_<cl3::Ticker>("Ticker").function("start", &cl3::Ticker::start);
 }
 
 #endif

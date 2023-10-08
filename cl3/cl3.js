@@ -221,4 +221,17 @@ function generateEventListenerWithObjectMethodCall(obj, objMethodName) {
     // };
 }
 
+function appBuilderGetSingleton() {
+    return Module.AppBuilder.getSingleton();
+}
+
+function appBuilderSingletonStart(tickInterval = -1) {
+    appBuilderGetSingleton().start(tickInterval);
+}
+
+// function appBuilderSingletonStart(tickInterval = -1) {
+//     Module.AppBuilder.tick();
+// }
+
+
 window.WebElement = WebElement
