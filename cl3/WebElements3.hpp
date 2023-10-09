@@ -23,14 +23,13 @@
 #include <map>
 #include <sstream>
 
-//#include "SignalPrimitives.hpp"
+// #include "SignalPrimitives.hpp"
 
 using emscripten::val;
 using std::cout;
 using std::endl;
 
 namespace cl3 {
-
 
 class Channel;
 
@@ -48,6 +47,9 @@ struct WebElement {
     void forceDeleteDomElementOnExit() { deleteDomElementOnExit_ = true; }
 
     void deleteDomElement() { domElement_.call<void>("remove"); }
+
+
+
 
     val getId() const { return domElement_["id"]; }
 
@@ -98,8 +100,6 @@ struct WebElement {
     void addEventListener(val ev, val listenerFn) {
         domElement_.call<void>("addEventListener", ev, listenerFn);
     }
-
-    
 };
 
 /**
@@ -224,5 +224,14 @@ struct Button : public WebElement {
 };
 
 }  // namespace cl3
+
+EMSCRIPTEN_BINDINGS(WebElement) {
+    emscripten::class_<cl3::WebElement>("WebElement")
+        .function("getName", &cl3::WebElement::getName, emscripten::allow_raw_pointers())
+        .function("getDomElement", &cl3::WebElement::getDomElement, emscripten::allow_raw_pointers())
+        .smart_ptr<std::shared_ptr<cl3::WebElement>>("WebElement");
+    emscripten::class_<cl3::TextField>("TextField")
+        .smart_ptr<std::shared_ptr<cl3::TextField>>("TextField");
+}
 
 #endif

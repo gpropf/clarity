@@ -233,6 +233,21 @@ function appBuilderGetSingleton() {
     return Module.AppBuilder.getSingleton();
 }
 
+function pairChannelWithElement(channelId, elementId) {
+    var abSingleton = appBuilderGetSingleton();
+    var webEl = abSingleton.getWebElement(elementId);
+    var domEl = webEl.getDomElement();
+    var channel = abSingleton.getChannel(channelId);
+
+    var evListener = function(ev) {
+        console.log("EVLISTENER in pairing method called!!!!!")
+        channel.inject(ev.target.value, 0);
+    }
+
+    domEl.addEventListener("change", evListener);
+
+}
+
 function appBuilderSingletonStart(tickInterval = -1) {
     appBuilderGetSingleton().start(tickInterval);
 }
@@ -240,6 +255,18 @@ function appBuilderSingletonStart(tickInterval = -1) {
 // function appBuilderSingletonStart(tickInterval = -1) {
 //     Module.AppBuilder.tick();
 // }
+
+function testObjSetDblval(obj, v) {
+    obj.setDblval(v);
+}
+
+function testObjGetDblval(obj) {
+    return obj.getDblval();
+}
+
+function setDblvalOnObj(obj, v) {
+    Module.TestObj.setDblvalOnObj(obj,v);
+}
 
 
 window.WebElement = WebElement

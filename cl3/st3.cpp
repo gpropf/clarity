@@ -105,12 +105,14 @@ class TestObj : public Ticker {
         dblval_ = w;
     }
 
+    static void setDblvalOnObj(TestObj *tptr, double v) { tptr->setDblval(v); }
+
     double getDblval() const {
-        if (dblval_ > 4) {
-            cout << "This is one thread..." << endl;
-        } else {
-            cout << "This is the other thread..." << endl;
-        }
+        // if (dblval_ > 4) {
+        //     cout << "This is one thread..." << endl;
+        // } else {
+        //     cout << "This is the other thread..." << endl;
+        // }
         cout << "TestObj::getDblval(): " << dblval_ << endl;
         return dblval_;
     }
@@ -205,66 +207,91 @@ int main() {
     auto obj = make_shared<TestObj>();
 
     // obj->generateTickFunction();
-    //obj->start(1000);
+    // obj->start(1000);
 
     auto appBldr = make_shared<AppBuilder>();
+    cout << "Our AppBuilder is now the singleton!" << endl;
+    AppBuilder::setSingleton(&*appBldr);
     // obj->signalEmitterTestMethod();
-    auto objIntChannel = make_shared<ObjectChannel<TestObj, int>>(
-        obj, "objIntChannel", &TestObj::setWidth, &TestObj::getWidth);
-    auto objDblChannel = make_shared<ObjectChannel<TestObj, double>>(
-        obj, "objDblChannel", &TestObj::setDblval, &TestObj::getDblval);
+    // auto [fup, fupid] = appBldr->textField("fup");
+    // cout << "fupid: " << fupid << endl;
 
     auto [widthInput, widthInputId] = appBldr->textField("widthInput");
+    cout << "widthInputId: " << widthInputId << endl;
     auto [syncTestInput, syncTestInputId] = appBldr->textField("syncTestInput");
-    auto dblInput = appBldr->rangeInput("dblInput");
-    // auto textField2 = appBldr->textField("TF2");
-    // auto textField3 = appBldr->textField("TF3");
+    cout << "syncTestInputId: " << syncTestInputId << endl;
 
-    auto objId = appBldr->addObject(obj);
-    cout << "TestObj added to AppBuilder has id: " << objId << endl;
-    appBldr->addChannel(objDblChannel);
+    // BEGIN DISABLED BLOCK
 
-    auto [c3, c3id ]= appBldr->makeChannel("c3");
-    auto [c4, c4id] = appBldr->makeChannel("c4");
+    // auto objIntChannel = make_shared<ObjectChannel<TestObj, int>>(
+    //     obj, "objIntChannel", &TestObj::setWidth, &TestObj::getWidth);
+    // auto objDblChannel = make_shared<ObjectChannel<TestObj, double>>(
+    //     obj, "objDblChannel", &TestObj::setDblval, &TestObj::getDblval);
 
-    c3->addConnection(c4);
+    // auto dblInput = appBldr->rangeInput("dblInput");
+    // // auto textField2 = appBldr->textField("TF2");
+    // // auto textField3 = appBldr->textField("TF3");
 
-    // std::function<int()> getWidthFromTestObjFn = [&]() { return obj->getWidth(); };
-    // auto fnid = appBldr->addIntFunction(getWidthFromTestObjFn);
+    // auto objId = appBldr->addObject(obj);
+    // cout << "TestObj added to AppBuilder has id: " << objId << endl;
+    // appBldr->addChannel(objDblChannel);
 
-    // cout << "getWidthFromTestObjFn id is " << fnid << endl;
-    // c4->addConnection(objIntChannel);
+    // END DISABLED BLOCK
 
-    appBldr->printGroup("g1");
+    auto [pairingChannel, pairingChannelId] = appBldr->makeChannel("pairingChannel");
+    cout << "pairingChannelId: " << pairingChannelId << endl;
 
-    auto widthChannel = make_shared<WebElementChannel>("widthChannel");
-    auto dblChannel = make_shared<WebElementChannel>("dblChannel");
-    widthChannel->installWebElement(widthInput);
-    dblChannel->installWebElement(dblInput);
-    auto syncTestInputChannel = make_shared<WebElementChannel>("syncTestInputChannel");
-    syncTestInputChannel->installWebElement(syncTestInput);
+    // BEGIN DISABLED BLOCK
+
+    // auto [c3, c3id] = appBldr->makeChannel("c3");
+    // auto [c4, c4id] = appBldr->makeChannel("c4");
+
+    // c3->addConnection(c4);
+
+    // // std::function<int()> getWidthFromTestObjFn = [&]() { return obj->getWidth(); };
+    // // auto fnid = appBldr->addIntFunction(getWidthFromTestObjFn);
+
+    // // cout << "getWidthFromTestObjFn id is " << fnid << endl;
+    // // c4->addConnection(objIntChannel);
+
+    // auto widthChannel = make_shared<WebElementChannel>("widthChannel");
+    // auto dblChannel = make_shared<WebElementChannel>("dblChannel");
+    // widthChannel->installWebElement(widthInput);
+    // dblChannel->installWebElement(dblInput);
+    // auto syncTestInputChannel = make_shared<WebElementChannel>("syncTestInputChannel");
+    // syncTestInputChannel->installWebElement(syncTestInput);
 
     // val elg = val::global("elgCallMethodOnObjByName");
     // val onChangeFn = elg(*widthChannel, val("inject"));
     // widthInput->addEventListener(val("change"), onChangeFn);
 
-    widthChannel->addConnection(objIntChannel);
+    // END DISABLED BLOCK
 
-    widthChannel->finalize();
+    val pairChannelWithElement = val::global("pairChannelWithElement");
+    pairChannelWithElement(3, 2);
 
-    dblChannel->addConnection(objDblChannel);
+    // BEGIN DISABLED BLOCK
 
-    dblChannel->finalize();
+    // widthChannel->addConnection(objIntChannel);
 
-    objDblChannel->addConnection(syncTestInputChannel);
+    // widthChannel->finalize();
 
-    objDblChannel->finalize();
-    syncTestInputChannel->finalize();
+    // dblChannel->addConnection(objDblChannel);
+
+    // dblChannel->finalize();
+
+    // objDblChannel->addConnection(syncTestInputChannel);
+
+    // objDblChannel->finalize();
+
+    // syncTestInputChannel->finalize();
+
+    // END DISABLED BLOCK
 
     // c3->inject(val("BOO"));
     // c4->inject(val(5));
     // widthInput->addConnection(textField2);
-    // vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
+    vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     // appBldr->printGroup("g1");
     // auto range1 = make_shared<RangeInput>("R1", "R1-id");
 
@@ -288,12 +315,8 @@ int main() {
     // };
     // auto tickerId = appBldr->addHookFunction(callTickOnTestObjFn);
 
-    cout << "We have added our object channel!" << endl;
-
-    AppBuilder::setSingleton(&*appBldr);
-
     val appBuilderSingletonStart = val::global("appBuilderSingletonStart");
-    appBuilderSingletonStart(1500);
+    // appBuilderSingletonStart(1500);
 
     // appBldr->start(1000);
     //   std::function<int()> getFoo = [&]() { return otherClassObj->getFoo(); };
@@ -338,6 +361,23 @@ int main() {
     //  cout << "Sleeping on the main thread!" << endl;
     //}
 
+    val testObjSetDblval = val::global("testObjSetDblval");
+    val testObjGetDblval = val::global("testObjGetDblval");
+
+    val setDblvalOnObj = val::global("setDblvalOnObj");
+
+   
+    obj->setDblval(5.0);
+
+    testObjSetDblval(*obj, 4.0);
+
+    cout << "obj->getDblVal(): " << obj->getDblval();
+
+    cout << "testObjGetDblval(): " << testObjGetDblval(*obj).as<double>();
+
+    cout << "Printing contents of group g1." << endl;
+    appBldr->printGroup("g1", "\t");
+
     return 0;
 }
 
@@ -353,16 +393,20 @@ EMSCRIPTEN_BINDINGS(TestObj) {
     emscripten::class_<TestObj>("TestObj")
         .function("signalEmitterTestMethod", &TestObj::signalEmitterTestMethod)
         //.function("tick", &TestObj::tick, emscripten::allow_raw_pointers());
+        .function("setDblval", &TestObj::setDblval, emscripten::allow_raw_pointers())
+        .function("getDblval", &TestObj::getDblval, emscripten::allow_raw_pointers())
+        .class_function("setDblvalOnObj", &TestObj::setDblvalOnObj,
+                         emscripten::allow_raw_pointers())
         .function("tick", &TestObj::tick);
 }
 
 EMSCRIPTEN_BINDINGS(Channel) {
-    emscripten::class_<Channel>("Channel")
-        .function("inject", &Channel::inject, emscripten::allow_raw_pointers())
-        //.function("injectCppval", &Channel::injectCppval, emscripten::allow_raw_pointers())
-        .function("testMethod", &Channel::testMethod, emscripten::allow_raw_pointers());
-    //     .function("accept", &WebElementSignalObject<std::string>::accept,
-    //               emscripten::allow_raw_pointers());
+    // emscripten::class_<Channel>("Channel")
+    //     .function("inject", &Channel::inject, emscripten::allow_raw_pointers())
+    //     //.function("injectCppval", &Channel::injectCppval, emscripten::allow_raw_pointers())
+    //     .function("testMethod", &Channel::testMethod, emscripten::allow_raw_pointers());
+    // //     .function("accept", &WebElementSignalObject<std::string>::accept,
+    // //               emscripten::allow_raw_pointers());
 
     emscripten::class_<WebElementChannel>("WebElementChannel")
         .function("inject", &WebElementChannel::inject, emscripten::allow_raw_pointers());

@@ -152,6 +152,12 @@ class Channel : public std::enable_shared_from_this<Channel> {
     virtual void syncTo(){};
 };
 
+EMSCRIPTEN_BINDINGS(AppBuilder) {
+    emscripten::class_<Channel>("Channel")
+        .function("inject", &Channel::inject)
+        .smart_ptr<std::shared_ptr<cl3::Channel>>("Channel");
+}
+
 template <typename S>
 S valToCPP(val v) {
     return std::stoi(v.as<string>());
@@ -219,7 +225,8 @@ class WebElementChannel : public Channel {
 
     virtual void finalize() {
         val inject = val::global("inject");
-        cout << "WebElementChannel::finalize is creating the listener for channel with address: " << int(this) << endl;
+        cout << "WebElementChannel::finalize is creating the listener for channel with address: "
+             << int(this) << endl;
         val onChangeFn = inject(*this->getptr());
         this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
     }
@@ -261,6 +268,7 @@ class AppBuilder : public Ticker {
     vector<const int> currentGroupIds_;
     vector<const int> allIds_;
     map<const int, shared_ptr<Channel>> channels_;
+    map<const int, shared_ptr<WebElementChannel>> webElementChannels_;
     // map<const int, std::function<int()>> intFunctions_;
     // map<const int, std::function<void()>> hookFunctions_;
     // map<const int, std::function<void(int)>> setIntFunctions_;
@@ -297,7 +305,7 @@ class AppBuilder : public Ticker {
 
     static void setSingleton(AppBuilder* singleton) { singleton__ = singleton; }
 
-    //static void tick__() { singleton__->tick(); }
+    // static void tick__() { singleton__->tick(); }
 
     /**
      * @brief Construct a new App Builder object. This class is the central factory class and also
@@ -358,9 +366,7 @@ class AppBuilder : public Ticker {
     //     }
     // }
 
-    virtual void start(int tickInterval = -1) {
-        Ticker::start(tickInterval);
-    }
+    virtual void start(int tickInterval = -1) { Ticker::start(tickInterval); }
 
     void tick() {
         cout << "AppBuilder says TICK!" << endl;
@@ -432,6 +438,12 @@ class AppBuilder : public Ticker {
         return objid;
     }
 
+    // void insertWebElement(const int id, shared_ptr<WebElement> weptr) {
+    //     if (auto search = webElements_.find(id); search != webElements_.end()) {
+
+    //     }
+    // }
+
     /**
      * @brief Creates a basic channel and ads it to the database.
      *
@@ -443,16 +455,16 @@ class AppBuilder : public Ticker {
         const int cid = cl3::TicketMachine::getNextSid();
         channels_.insert({cid, c});
         pushId(cid);
-        return std::make_pair(c,cid);
+        return std::make_pair(c, cid);
     }
 
-    // auto makeWebElementChannel(string name = "") {
-    //     auto c = make_shared<WebElementChannel>(name);
-    //     const int cid = cl3::TicketMachine::getNextSid();
-    //     channels_.insert({cid, c});
-    //     pushId(cid);
-    //     return std::make_pair(c,cid);
-    // }
+    auto makeWebElementChannel(string name = "") {
+        auto c = make_shared<WebElementChannel>(name);
+        const int cid = cl3::TicketMachine::getNextSid();
+        webElementChannels_.insert({cid, c});
+        pushId(cid);
+        return std::make_pair(c, cid);
+    }
 
     /**
      * @brief Creates a text field HTML element using the WebElements library
@@ -464,6 +476,7 @@ class AppBuilder : public Ticker {
     auto textField(const string& name, val parentElement = val::null()) {
         const int tfid = cl3::TicketMachine::getNextSid();
         pushId(tfid);
+        cout << "tfid: " << tfid << endl;
         auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
         // val tfDomEl = tf.getDomElement();
         webElements_.insert({tfid, tf});
@@ -486,6 +499,23 @@ class AppBuilder : public Ticker {
         return tf;
     }
 
+    bool pairWebElementWithChannel(const int wId, const int cId) { return false; }
+
+    shared_ptr<WebElement> getWebElement(int id) const { return webElements_.at(id); }
+
+    shared_ptr<Channel> getChannel(const int id) { return channels_.at(id); }
+
+    int getNumWebElements() { return webElements_.size(); }
+
+    void listWebElements() {
+        // for (int i = 2; i < 3; i++) {
+        //     cout << getWebElement(i)->getName() << endl;
+        // }
+        for (auto [id, el] : webElements_) {
+            cout << "ID: " << id << ", " << el->getName() << endl;
+        }
+    }
+
     /**
      * @brief When called, assigns a name, which can then be used as a unique identifier, to the
      * most recent set of objects that have been created or added. This is meant as a way to keep
@@ -504,12 +534,12 @@ class AppBuilder : public Ticker {
         return groupIds;
     }
 
-    void printGroup(const string& groupName) {
+    void printGroup(const string& groupName, string prefixTabs = "") {
         auto ids = groups_[groupName];
         while (!ids.empty()) {
             int id = ids.back();
             ids.pop_back();
-            cout << "ID: " << id << endl;
+            cout << prefixTabs << "ID: " << id << endl;
         }
     }
 };
@@ -520,6 +550,13 @@ EMSCRIPTEN_BINDINGS(AppBuilder) {
     emscripten::class_<cl3::AppBuilder>("AppBuilder")
         .function("tick", &cl3::AppBuilder::tick)
         .function("start", &cl3::AppBuilder::start)
+        .function("getChannel", &cl3::AppBuilder::getChannel, emscripten::allow_raw_pointers())
+        .function("getWebElement", &cl3::AppBuilder::getWebElement,
+                  emscripten::allow_raw_pointers())
+        .function("listWebElements", &cl3::AppBuilder::listWebElements,
+                  emscripten::allow_raw_pointers())
+        .function("getNumWebElements", &cl3::AppBuilder::getNumWebElements,
+                  emscripten::allow_raw_pointers())
         .class_function("getSingleton", &cl3::AppBuilder::getSingleton,
                         emscripten::allow_raw_pointers());
 
