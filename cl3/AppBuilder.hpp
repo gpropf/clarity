@@ -354,8 +354,8 @@ class AppBuilder : public Ticker {
     void syncFrom() {
         cout << "AppBuilder::syncFrom()" << endl;
         for (auto [id, c] : channels_) {
-            cout << "Channel: '" << c->getName() << "'" << endl;
-            c->syncFrom();
+            cout << "AppBuilder::syncFrom(), Channel: '" << c->getName() << "'" << ", id: " << id << endl;
+             c->syncFrom();
         }
     }
 
@@ -371,12 +371,13 @@ class AppBuilder : public Ticker {
     void tick() {
         cout << "AppBuilder says TICK!" << endl;
         syncFrom();
-        // runHookFns();
+        //  runHookFns();
     }
 
     void threadTestFn() {
-        syncFrom();
-        cout << "AppBuilder says it works in pthreads now!" << endl;
+        // syncFrom();
+        printGroup("g1", "button callback\t:");
+        cout << "AppBuilder says hello from the button click!" << endl;
     }
 
     void doNothing() {
@@ -483,6 +484,22 @@ class AppBuilder : public Ticker {
         return std::make_pair(tf, tfid);
     }
 
+    const int getNewId() {
+        const int id = cl3::TicketMachine::getNextSid();
+        pushId(id);
+        return id;
+    }
+
+    auto button(const string& name, const std::string& displayedText, val onClickFn,
+                val parentElement = val::null()) {
+        const int id = getNewId();
+        auto btn =
+            make_shared<Button>(name, displayedText, onClickFn, to_string(id), parentElement);
+        // val tfDomEl = tf.getDomElement();
+        webElements_.insert({id, btn});
+        return std::make_pair(btn, id);
+    }
+
     /**
      * @brief Creates a range control using the WebElements library
      *
@@ -516,6 +533,17 @@ class AppBuilder : public Ticker {
         }
     }
 
+    void listChannels() {
+        // for (int i = 2; i < 3; i++) {
+        //     cout << getWebElement(i)->getName() << endl;
+        // }
+        cout << "Listing channels..." << endl;
+        for (auto [id, el] : channels_) {
+            //if (id > 0)
+            cout << "ID: " << id << ", " << el->getName() << endl;
+        }
+    }
+
     /**
      * @brief When called, assigns a name, which can then be used as a unique identifier, to the
      * most recent set of objects that have been created or added. This is meant as a way to keep
@@ -527,7 +555,9 @@ class AppBuilder : public Ticker {
     vector<const int> defineCurrentGroup(const string groupName) {
         vector<const int> groupIds;
         while (!currentGroupIds_.empty()) {
-            groupIds.push_back(currentGroupIds_.back());
+            auto id = currentGroupIds_.back();
+            cout << "ADDING " << id << " to group " << groupName << endl;
+            groupIds.push_back(id);
             currentGroupIds_.pop_back();
         }
         groups_.insert({groupName, groupIds});
@@ -536,6 +566,9 @@ class AppBuilder : public Ticker {
 
     void printGroup(const string& groupName, string prefixTabs = "") {
         auto ids = groups_[groupName];
+        if (ids.empty()) {
+            cout << "Group " << groupName << " not found or is empty." << endl;
+        }
         while (!ids.empty()) {
             int id = ids.back();
             ids.pop_back();
@@ -548,13 +581,17 @@ class AppBuilder : public Ticker {
 
 EMSCRIPTEN_BINDINGS(AppBuilder) {
     emscripten::class_<cl3::AppBuilder>("AppBuilder")
-        .function("tick", &cl3::AppBuilder::tick)
+        .function("tick", &cl3::AppBuilder::tick, emscripten::allow_raw_pointers())
+        .function("threadTestFn", &cl3::AppBuilder::threadTestFn, emscripten::allow_raw_pointers())
+
         .function("start", &cl3::AppBuilder::start)
+        .function("printGroup", &cl3::AppBuilder::printGroup)
         .function("getChannel", &cl3::AppBuilder::getChannel, emscripten::allow_raw_pointers())
         .function("getWebElement", &cl3::AppBuilder::getWebElement,
                   emscripten::allow_raw_pointers())
         .function("listWebElements", &cl3::AppBuilder::listWebElements,
                   emscripten::allow_raw_pointers())
+        .function("listChannels", &cl3::AppBuilder::listChannels, emscripten::allow_raw_pointers())
         .function("getNumWebElements", &cl3::AppBuilder::getNumWebElements,
                   emscripten::allow_raw_pointers())
         .class_function("getSingleton", &cl3::AppBuilder::getSingleton,

@@ -53,9 +53,9 @@ class WebElement {
     }
 }
 
-// function sayHello() {
-//     console.log("This just prints HELLO to the console.");
-// }
+function sayHello() {
+    console.log("This just prints HELLO to the console.");
+}
 
 // function callIterateMethodOnObject(obj) {
 //     return function() {
@@ -234,6 +234,7 @@ function appBuilderGetSingleton() {
 }
 
 function pairChannelWithElement(channelId, elementId) {
+    console.log("pairChannelWithElement()", channelId, elementId);
     var abSingleton = appBuilderGetSingleton();
     var webEl = abSingleton.getWebElement(elementId);
     var domEl = webEl.getDomElement();
@@ -252,9 +253,27 @@ function appBuilderSingletonStart(tickInterval = -1) {
     appBuilderGetSingleton().start(tickInterval);
 }
 
-// function appBuilderSingletonStart(tickInterval = -1) {
-//     Module.AppBuilder.tick();
-// }
+function appBuilderSingletonTick() {
+    //return function(ev) {
+        console.log("TICK!");
+        //appBuilderGetSingleton().start(1000);
+        var abs = Module.AppBuilder.getSingleton();
+        abs.threadTestFn();
+        console.log("TOCK!");
+        abs.listChannels();
+    //}    
+}
+
+function delayedTick() {
+    pairChannelWithElement(5,2);
+    //window.setTimeout(appBuilderSingletonTick, 3000);
+}
+
+function installTickCallback() {
+    console.log("installTickCallback():");
+    var tickbtn = document.getElementById("6");
+    tickbtn.addEventListener("click", appBuilderSingletonTick);
+}
 
 function testObjSetDblval(obj, v) {
     obj.setDblval(v);

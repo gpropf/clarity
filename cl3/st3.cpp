@@ -221,25 +221,24 @@ int main() {
     auto [syncTestInput, syncTestInputId] = appBldr->textField("syncTestInput");
     cout << "syncTestInputId: " << syncTestInputId << endl;
 
-    // BEGIN DISABLED BLOCK
+    // auto dblInput = appBldr->rangeInput("dblInput");
 
     // auto objIntChannel = make_shared<ObjectChannel<TestObj, int>>(
     //     obj, "objIntChannel", &TestObj::setWidth, &TestObj::getWidth);
-    // auto objDblChannel = make_shared<ObjectChannel<TestObj, double>>(
-    //     obj, "objDblChannel", &TestObj::setDblval, &TestObj::getDblval);
 
-    // auto dblInput = appBldr->rangeInput("dblInput");
+    auto objDblChannel = make_shared<ObjectChannel<TestObj, double>>(
+        obj, "objDblChannel", &TestObj::setDblval, &TestObj::getDblval);
     // // auto textField2 = appBldr->textField("TF2");
     // // auto textField3 = appBldr->textField("TF3");
 
-    // auto objId = appBldr->addObject(obj);
-    // cout << "TestObj added to AppBuilder has id: " << objId << endl;
-    // appBldr->addChannel(objDblChannel);
-
-    // END DISABLED BLOCK
+    auto objId = appBldr->addObject(obj);
+    cout << "TestObj added to AppBuilder has id: " << objId << endl;
+    appBldr->addChannel(objDblChannel);
 
     auto [pairingChannel, pairingChannelId] = appBldr->makeChannel("pairingChannel");
     cout << "pairingChannelId: " << pairingChannelId << endl;
+
+    pairingChannel->addConnection(objDblChannel);
 
     // BEGIN DISABLED BLOCK
 
@@ -268,8 +267,20 @@ int main() {
     // END DISABLED BLOCK
 
     val pairChannelWithElement = val::global("pairChannelWithElement");
-    pairChannelWithElement(3, 2);
+    pairChannelWithElement(pairingChannelId, syncTestInputId);
 
+    val onClickFn = val::global("sayHello");
+
+    val appBuilderSingletonTick = val::global("appBuilderSingletonTick");
+    appBuilderSingletonTick();
+
+    auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", appBuilderSingletonTick);
+
+    // val tickBtnDomEl = tickBtn->getDomElement();
+    // tickBtnDomEl.call<void>("addEventListener", val("click"), appBuilderSingletonTick);
+
+    // val installTickCallback = val::global("installTickCallback");
+    // installTickCallback();
     // BEGIN DISABLED BLOCK
 
     // widthChannel->addConnection(objIntChannel);
@@ -291,7 +302,7 @@ int main() {
     // c3->inject(val("BOO"));
     // c4->inject(val(5));
     // widthInput->addConnection(textField2);
-    vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
+
     // appBldr->printGroup("g1");
     // auto range1 = make_shared<RangeInput>("R1", "R1-id");
 
@@ -316,7 +327,7 @@ int main() {
     // auto tickerId = appBldr->addHookFunction(callTickOnTestObjFn);
 
     val appBuilderSingletonStart = val::global("appBuilderSingletonStart");
-    // appBuilderSingletonStart(1500);
+    appBuilderSingletonStart(1500);
 
     // appBldr->start(1000);
     //   std::function<int()> getFoo = [&]() { return otherClassObj->getFoo(); };
@@ -366,7 +377,6 @@ int main() {
 
     val setDblvalOnObj = val::global("setDblvalOnObj");
 
-   
     obj->setDblval(5.0);
 
     testObjSetDblval(*obj, 4.0);
@@ -375,9 +385,16 @@ int main() {
 
     cout << "testObjGetDblval(): " << testObjGetDblval(*obj).as<double>();
 
+    vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     cout << "Printing contents of group g1." << endl;
     appBldr->printGroup("g1", "\t");
 
+
+    appBldr->listWebElements();
+    // while(1) {
+    //     sleep(1);
+    //     cout << "zzzz....." << endl;
+    // }
     return 0;
 }
 
@@ -396,7 +413,7 @@ EMSCRIPTEN_BINDINGS(TestObj) {
         .function("setDblval", &TestObj::setDblval, emscripten::allow_raw_pointers())
         .function("getDblval", &TestObj::getDblval, emscripten::allow_raw_pointers())
         .class_function("setDblvalOnObj", &TestObj::setDblvalOnObj,
-                         emscripten::allow_raw_pointers())
+                        emscripten::allow_raw_pointers())
         .function("tick", &TestObj::tick);
 }
 
