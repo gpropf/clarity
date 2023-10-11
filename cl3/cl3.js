@@ -165,6 +165,8 @@ function printVal(v) {
 function TickerTick(ticker) {
     return function () {
         //callMethodByName(ticker, "tick");
+        console.log("TICKING THE TICKER!", ticker.getDblval());
+
         ticker.tick();
     }
 }
@@ -243,7 +245,7 @@ function pairChannelWithElement(channelId, elementId) {
     var evListener = function(ev) {
         console.log("EVLISTENER in pairing method called!!!!!")
         channel.inject(ev.target.value, 0);
-        //abSingleton.threadTestFn();
+        //abSingleton.tick();
         staticTick();
     }
 

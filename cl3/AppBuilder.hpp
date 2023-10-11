@@ -295,12 +295,25 @@ class AppBuilder : public Ticker {
     // map<string, val> attrs_;
     bool attrsResetAfterSingleUse_ = true;
 
+   public:
+    static map<const string, vector<const int>> groups__;
+    static map<const int, shared_ptr<WebElement>> webElements__;
+    static map<const int, shared_ptr<Channel>> channels__;
+    static vector<const int> currentGroupIds__;
+    static vector<const int> allIds__;
+
     void pushId(const int id) {
         currentGroupIds_.push_back(id);
+        currentGroupIds__.push_back(id);
         allIds_.push_back(id);
+        allIds__.push_back(id);
     }
 
-   public:
+    static void pushId__(const int id) {
+        AppBuilder::singleton__->currentGroupIds_.push_back(id);
+        AppBuilder::singleton__->allIds_.push_back(id);
+    }
+
     static AppBuilder* singleton__;
     static AppBuilder* getSingleton() { return singleton__; }
 
@@ -361,6 +374,15 @@ class AppBuilder : public Ticker {
         }
     }
 
+    static void syncFrom__(string prefix = "") {
+        cout << "STATIC AppBuilder::syncFrom()" << endl;
+        for (auto [id, c] : channels__) {
+            cout << "STATIC AppBuilder::syncFrom(), Channel: '" << c->getName() << "'"
+                 << ", id: " << id << endl;
+            c->syncFrom("\tAB: " + prefix);
+        }
+    }
+
     // void runHookFns() {
     //     for (auto [id, fn] : hookFunctions_) {
     //         cout << "Calling Hook Function with id = " << id << endl;
@@ -380,6 +402,7 @@ class AppBuilder : public Ticker {
         cout << "Static AppBuilder says TICK!" << endl;
         // singleton__->syncFrom("static tick: ");
         //   runHookFns();
+        syncFrom__("STATIC tick: ");
         singleton__->printGroup("g1", "button callback\t:");
     }
 
@@ -444,6 +467,7 @@ class AppBuilder : public Ticker {
     const int addChannel(shared_ptr<Channel> c) {
         const int objid = cl3::TicketMachine::getNextSid();
         channels_.insert({objid, c});
+        channels__.insert({objid, c});
         pushId(objid);
         return objid;
     }
@@ -464,6 +488,7 @@ class AppBuilder : public Ticker {
         auto c = make_shared<Channel>(name);
         const int cid = cl3::TicketMachine::getNextSid();
         channels_.insert({cid, c});
+        channels__.insert({cid, c});
         pushId(cid);
         return std::make_pair(c, cid);
     }
@@ -490,6 +515,16 @@ class AppBuilder : public Ticker {
         auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
         // val tfDomEl = tf.getDomElement();
         webElements_.insert({tfid, tf});
+        return std::make_pair(tf, tfid);
+    }
+
+    static auto textField__(const string& name, val parentElement = val::null()) {
+        const int tfid = cl3::TicketMachine::getNextSid();
+        pushId__(tfid);
+        cout << "tfid: " << tfid << endl;
+        auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
+        // val tfDomEl = tf.getDomElement();
+        AppBuilder::webElements__.insert({tfid, tf});
         return std::make_pair(tf, tfid);
     }
 
@@ -570,14 +605,17 @@ class AppBuilder : public Ticker {
             currentGroupIds_.pop_back();
         }
         groups_.insert({groupName, groupIds});
+        groups__.insert({groupName, groupIds});
         return groupIds;
     }
 
     void printGroup(const string& groupName, string prefixTabs = "") {
-        auto ids = groups_[groupName];
+        auto ids = groups__[groupName];
         if (ids.empty()) {
             cout << "Group " << groupName << " not found or is empty." << endl;
+            return;
         }
+        cout << "Group " << groupName << " contents:" << endl;
         while (!ids.empty()) {
             int id = ids.back();
             ids.pop_back();
@@ -604,6 +642,9 @@ EMSCRIPTEN_BINDINGS(AppBuilder) {
         .function("getNumWebElements", &cl3::AppBuilder::getNumWebElements,
                   emscripten::allow_raw_pointers())
         .class_function("tick__", &cl3::AppBuilder::tick__, emscripten::allow_raw_pointers())
+        .class_function("pushId__", &cl3::AppBuilder::pushId__, emscripten::allow_raw_pointers())
+        .class_function("textField__", &cl3::AppBuilder::textField__,
+                        emscripten::allow_raw_pointers())
         .class_function("getSingleton", &cl3::AppBuilder::getSingleton,
                         emscripten::allow_raw_pointers());
 

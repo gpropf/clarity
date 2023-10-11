@@ -195,15 +195,32 @@ void *thread_callback4(void *arg) {
 }
 
 AppBuilder *AppBuilder::singleton__ = nullptr;
+map<const string, vector<const int>> AppBuilder::groups__;
+map<const int, shared_ptr<WebElement>> AppBuilder::webElements__;
+map<const int, shared_ptr<Channel>> AppBuilder::channels__;
+vector<const int> AppBuilder::currentGroupIds__;
+vector<const int> AppBuilder::allIds__;
 
 int main() {
     // We make a test object and then a signal wrapper for it.
-    
-    auto obj = make_shared<TestObj>();    
+
+    auto obj = make_shared<TestObj>();
+
+    TestObj tobj1;
+    TestObj &tref = tobj1;
+    // TestObj &tref = *obj;
+
+    tobj1.setDblval(7.8);
+
+    val TickerTick = val::global("TickerTick");
+    val tickfn = TickerTick(tref);
+    tickfn();
+
+    cout << "After the tickfn() call: " << tobj1.getDblval();
 
     auto appBldr = make_shared<AppBuilder>();
     cout << "Our AppBuilder is now the singleton!" << endl;
-    AppBuilder::setSingleton(&*appBldr);   
+    AppBuilder::setSingleton(&*appBldr);
 
     auto [widthInput, widthInputId] = appBldr->textField("widthInput");
     cout << "widthInputId: " << widthInputId << endl;
@@ -228,7 +245,7 @@ int main() {
     val onClickFn = val::global("sayHello");
 
     val appBuilderSingletonTick = val::global("appBuilderSingletonTick");
-    //appBuilderSingletonTick();
+    // appBuilderSingletonTick();
 
     auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", onClickFn);
     cout << "tickBtnId: " << tickBtnId << endl;
@@ -236,13 +253,10 @@ int main() {
     val installEventListenerById = val::global("installEventListenerById");
     installEventListenerById(tickBtnId);
 
-   
     auto otherClassObj = make_shared<OtherClass>();
 
-
     val appBuilderSingletonStart = val::global("appBuilderSingletonStart");
-    // appBuilderSingletonStart(1000);
-   
+    //appBuilderSingletonStart(1000);
 
     val testObjSetDblval = val::global("testObjSetDblval");
     val testObjGetDblval = val::global("testObjGetDblval");
@@ -261,17 +275,15 @@ int main() {
     cout << "Printing contents of group g1." << endl;
     appBldr->printGroup("g1", "\t");
 
-
-
-     val pairChannelWithElement = val::global("pairChannelWithElement");
+    val pairChannelWithElement = val::global("pairChannelWithElement");
     pairChannelWithElement(pairingChannelId, syncTestInputId);
 
     appBldr->listWebElements();
 
-//AppBuilder::setSingleton(&*appBldr);
+    // AppBuilder::setSingleton(&*appBldr);
 
     AppBuilder::tick__();
-  
+
     return 0;
 }
 
