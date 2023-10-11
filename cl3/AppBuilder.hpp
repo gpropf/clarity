@@ -148,7 +148,9 @@ class Channel : public std::enable_shared_from_this<Channel> {
         }
     }
 
-    virtual void syncFrom() { cout << "Channel::syncFrom() for '" << name_ << "'" << endl; };
+    virtual void syncFrom(string tabs = "") {
+        cout << tabs << "Channel::syncFrom() for '" << name_ << "'" << endl;
+    };
     virtual void syncTo(){};
 };
 
@@ -203,8 +205,8 @@ class ObjectChannel : public Channel {
         (*objPtr_.*setter_)(s);
     }
 
-    virtual void syncFrom() {
-        cout << "ObjectChannel::syncFrom() for '" << name_ << "'" << endl;
+    virtual void syncFrom(string tabs = "") {
+        cout << tabs << "ObjectChannel::syncFrom() for '" << name_ << "'" << endl;
         val v = val(to_string((*objPtr_.*getter_)()));
         inject(v);
     };
@@ -224,11 +226,11 @@ class WebElementChannel : public Channel {
     WebElementChannel(string name) : Channel(name) {}
 
     virtual void finalize() {
-        val inject = val::global("inject");
-        cout << "WebElementChannel::finalize is creating the listener for channel with address: "
-             << int(this) << endl;
-        val onChangeFn = inject(*this->getptr());
-        this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
+        // val inject = val::global("inject");
+        // cout << "WebElementChannel::finalize is creating the listener for channel with address: "
+        //      << int(this) << endl;
+        // val onChangeFn = inject(*this->getptr());
+        // this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
     }
 
     /**
@@ -251,8 +253,8 @@ class WebElementChannel : public Channel {
         }
     }
 
-    virtual void syncFrom() {
-        cout << "WebElementChannel::syncFrom() for '" << name_ << "'" << endl;
+    virtual void syncFrom(string tabs = "") {
+        cout << tabs << "WebElementChannel::syncFrom() for '" << name_ << "'" << endl;
     };
 };
 
@@ -298,9 +300,8 @@ class AppBuilder : public Ticker {
         allIds_.push_back(id);
     }
 
-    static AppBuilder* singleton__;
-
    public:
+    static AppBuilder* singleton__;
     static AppBuilder* getSingleton() { return singleton__; }
 
     static void setSingleton(AppBuilder* singleton) { singleton__ = singleton; }
@@ -351,11 +352,12 @@ class AppBuilder : public Ticker {
     //     timerId_ = setInterval_(iterateOnceJS, val(tickInterval_));
     // }
 
-    void syncFrom() {
+    void syncFrom(string prefix = "") {
         cout << "AppBuilder::syncFrom()" << endl;
         for (auto [id, c] : channels_) {
-            cout << "AppBuilder::syncFrom(), Channel: '" << c->getName() << "'" << ", id: " << id << endl;
-             c->syncFrom();
+            cout << "AppBuilder::syncFrom(), Channel: '" << c->getName() << "'"
+                 << ", id: " << id << endl;
+            c->syncFrom("\tAB: " + prefix);
         }
     }
 
@@ -370,14 +372,21 @@ class AppBuilder : public Ticker {
 
     void tick() {
         cout << "AppBuilder says TICK!" << endl;
-        syncFrom();
+        syncFrom("tick: ");
         //  runHookFns();
     }
 
+    static void tick__() {
+        cout << "Static AppBuilder says TICK!" << endl;
+        // singleton__->syncFrom("static tick: ");
+        //   runHookFns();
+        singleton__->printGroup("g1", "button callback\t:");
+    }
+
     void threadTestFn() {
-        // syncFrom();
-        printGroup("g1", "button callback\t:");
         cout << "AppBuilder says hello from the button click!" << endl;
+        syncFrom("threadTestFn: ");
+        printGroup("g1", "button callback\t:");
     }
 
     void doNothing() {
@@ -539,7 +548,7 @@ class AppBuilder : public Ticker {
         // }
         cout << "Listing channels..." << endl;
         for (auto [id, el] : channels_) {
-            //if (id > 0)
+            // if (id > 0)
             cout << "ID: " << id << ", " << el->getName() << endl;
         }
     }
@@ -594,6 +603,7 @@ EMSCRIPTEN_BINDINGS(AppBuilder) {
         .function("listChannels", &cl3::AppBuilder::listChannels, emscripten::allow_raw_pointers())
         .function("getNumWebElements", &cl3::AppBuilder::getNumWebElements,
                   emscripten::allow_raw_pointers())
+        .class_function("tick__", &cl3::AppBuilder::tick__, emscripten::allow_raw_pointers())
         .class_function("getSingleton", &cl3::AppBuilder::getSingleton,
                         emscripten::allow_raw_pointers());
 

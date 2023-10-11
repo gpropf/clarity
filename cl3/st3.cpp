@@ -198,38 +198,20 @@ AppBuilder *AppBuilder::singleton__ = nullptr;
 
 int main() {
     // We make a test object and then a signal wrapper for it.
-    // TestObj tobj;
-
-    // auto ticker = Ticker(700, true);
-    // auto ticker = Ticker();
-    // ticker.start();
-
-    auto obj = make_shared<TestObj>();
-
-    // obj->generateTickFunction();
-    // obj->start(1000);
+    
+    auto obj = make_shared<TestObj>();    
 
     auto appBldr = make_shared<AppBuilder>();
     cout << "Our AppBuilder is now the singleton!" << endl;
-    AppBuilder::setSingleton(&*appBldr);
-    // obj->signalEmitterTestMethod();
-    // auto [fup, fupid] = appBldr->textField("fup");
-    // cout << "fupid: " << fupid << endl;
+    AppBuilder::setSingleton(&*appBldr);   
 
     auto [widthInput, widthInputId] = appBldr->textField("widthInput");
     cout << "widthInputId: " << widthInputId << endl;
     auto [syncTestInput, syncTestInputId] = appBldr->textField("syncTestInput");
     cout << "syncTestInputId: " << syncTestInputId << endl;
 
-    // auto dblInput = appBldr->rangeInput("dblInput");
-
-    // auto objIntChannel = make_shared<ObjectChannel<TestObj, int>>(
-    //     obj, "objIntChannel", &TestObj::setWidth, &TestObj::getWidth);
-
     auto objDblChannel = make_shared<ObjectChannel<TestObj, double>>(
         obj, "objDblChannel", &TestObj::setDblval, &TestObj::getDblval);
-    // // auto textField2 = appBldr->textField("TF2");
-    // // auto textField3 = appBldr->textField("TF3");
 
     auto objId = appBldr->addObject(obj);
     cout << "TestObj added to AppBuilder has id: " << objId << endl;
@@ -240,137 +222,27 @@ int main() {
 
     pairingChannel->addConnection(objDblChannel);
 
-    // BEGIN DISABLED BLOCK
-
-    // auto [c3, c3id] = appBldr->makeChannel("c3");
-    // auto [c4, c4id] = appBldr->makeChannel("c4");
-
-    // c3->addConnection(c4);
-
-    // // std::function<int()> getWidthFromTestObjFn = [&]() { return obj->getWidth(); };
-    // // auto fnid = appBldr->addIntFunction(getWidthFromTestObjFn);
-
-    // // cout << "getWidthFromTestObjFn id is " << fnid << endl;
-    // // c4->addConnection(objIntChannel);
-
-    // auto widthChannel = make_shared<WebElementChannel>("widthChannel");
-    // auto dblChannel = make_shared<WebElementChannel>("dblChannel");
-    // widthChannel->installWebElement(widthInput);
-    // dblChannel->installWebElement(dblInput);
-    // auto syncTestInputChannel = make_shared<WebElementChannel>("syncTestInputChannel");
-    // syncTestInputChannel->installWebElement(syncTestInput);
-
-    // val elg = val::global("elgCallMethodOnObjByName");
-    // val onChangeFn = elg(*widthChannel, val("inject"));
-    // widthInput->addEventListener(val("change"), onChangeFn);
-
-    // END DISABLED BLOCK
-
-    val pairChannelWithElement = val::global("pairChannelWithElement");
-    pairChannelWithElement(pairingChannelId, syncTestInputId);
+    objDblChannel->finalize();
+    pairingChannel->finalize();
 
     val onClickFn = val::global("sayHello");
 
     val appBuilderSingletonTick = val::global("appBuilderSingletonTick");
-    appBuilderSingletonTick();
+    //appBuilderSingletonTick();
 
-    auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", appBuilderSingletonTick);
+    auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", onClickFn);
+    cout << "tickBtnId: " << tickBtnId << endl;
 
-    // val tickBtnDomEl = tickBtn->getDomElement();
-    // tickBtnDomEl.call<void>("addEventListener", val("click"), appBuilderSingletonTick);
+    val installEventListenerById = val::global("installEventListenerById");
+    installEventListenerById(tickBtnId);
 
-    // val installTickCallback = val::global("installTickCallback");
-    // installTickCallback();
-    // BEGIN DISABLED BLOCK
-
-    // widthChannel->addConnection(objIntChannel);
-
-    // widthChannel->finalize();
-
-    // dblChannel->addConnection(objDblChannel);
-
-    // dblChannel->finalize();
-
-    // objDblChannel->addConnection(syncTestInputChannel);
-
-    // objDblChannel->finalize();
-
-    // syncTestInputChannel->finalize();
-
-    // END DISABLED BLOCK
-
-    // c3->inject(val("BOO"));
-    // c4->inject(val(5));
-    // widthInput->addConnection(textField2);
-
-    // appBldr->printGroup("g1");
-    // auto range1 = make_shared<RangeInput>("R1", "R1-id");
-
-    // cout << "Calling the int function I installed earlier: " << appBldr->intFunctions_[6]() <<
-    // endl;
-
-    // shared_ptr<void> getDoubleFromTestObjFnVptr =
-    //     make_shared<std::function<double()>>([&]() { return obj->getDblval(); });
-    // // shared_ptr<void> getDoubleFromTestObjFnVptr = getDoubleFromTestObjFn;
-    // auto dblFnId = appBldr->addObject(getDoubleFromTestObjFnVptr);
-
-    // std::function<double()> fn = appBldr->objects_[dblFnId];
-
-    // fn();
-
+   
     auto otherClassObj = make_shared<OtherClass>();
 
-    // std::function<void()> callTickOnTestObjFn = [&]() {
-    //     obj->update();
-    //     return;
-    // };
-    // auto tickerId = appBldr->addHookFunction(callTickOnTestObjFn);
 
     val appBuilderSingletonStart = val::global("appBuilderSingletonStart");
-    appBuilderSingletonStart(1500);
-
-    // appBldr->start(1000);
-    //   std::function<int()> getFoo = [&]() { return otherClassObj->getFoo(); };
-    //   auto fnidFoo = appBldr->addIntFunction(getFoo);
-
-    // cout << "Calling the OTHER int function I installed earlier: "
-    //      << appBldr->intFunctions_[fnidFoo]() << endl;
-    // return 0;
-
-    // std::function<void(int)> setFoo = [&](int i) { otherClassObj->setFoo(i); };
-    // auto fnidSetFoo = appBldr->addSetIntFunction(setFoo);
-
-    // appBldr->setIntFunctions_[fnidSetFoo](5);
-
-    // cout << "Calling the OTHER int function I installed earlier (again): "
-    //      << appBldr->intFunctions_[fnidFoo]() << endl;
-
-    //     puts("Before the thread");
-
-    //    // std::function<void()> tfunc = [&]() { cout << "HELLO FROM THREADLAND!!" << endl; };
-
-    //     pthread_t thread_id, thread_id2;
-    //     int arg = 42;
-    //     AppBuilder *abptr = &*appBldr;
-
-    //     // pthread_create(&thread_id, NULL, thread_callback, &arg);
-
-    //     // pthread_create(&thread_id, NULL, thread_callback2, &*otherClassObj);
-    //     pthread_create(&thread_id, NULL, thread_callback3, &*appBldr);
-
-    //     pthread_detach(thread_id);
-
-    //     pthread_create(&thread_id2, NULL, thread_callback4, &*appBldr);
-
-    //     pthread_detach(thread_id2);
-    //     // appBldr->threadTestFn();
-    //     puts("After the thread");
-
-    // while (1) {
-    //  appBldr->doNothing();
-    //  sleep(2);
-    //  cout << "Sleeping on the main thread!" << endl;
-    //}
+    // appBuilderSingletonStart(1000);
+   
 
     val testObjSetDblval = val::global("testObjSetDblval");
     val testObjGetDblval = val::global("testObjGetDblval");
@@ -390,11 +262,16 @@ int main() {
     appBldr->printGroup("g1", "\t");
 
 
+
+     val pairChannelWithElement = val::global("pairChannelWithElement");
+    pairChannelWithElement(pairingChannelId, syncTestInputId);
+
     appBldr->listWebElements();
-    // while(1) {
-    //     sleep(1);
-    //     cout << "zzzz....." << endl;
-    // }
+
+//AppBuilder::setSingleton(&*appBldr);
+
+    AppBuilder::tick__();
+  
     return 0;
 }
 

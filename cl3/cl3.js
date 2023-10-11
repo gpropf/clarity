@@ -243,25 +243,47 @@ function pairChannelWithElement(channelId, elementId) {
     var evListener = function(ev) {
         console.log("EVLISTENER in pairing method called!!!!!")
         channel.inject(ev.target.value, 0);
+        //abSingleton.threadTestFn();
+        staticTick();
     }
 
     domEl.addEventListener("change", evListener);
 
 }
 
-function appBuilderSingletonStart(tickInterval = -1) {
-    appBuilderGetSingleton().start(tickInterval);
+function installEventListenerById(elementId) {
+    console.log("installEventListenerById: ", elementId);
+    var abSingleton = appBuilderGetSingleton();
+    var webEl = abSingleton.getWebElement(elementId);
+    var domEl = webEl.getDomElement();
+
+    var evListener = function(ev) {
+        console.log("EVLISTENER in installEventListenerById method called!!!!!")
+        staticTick();
+        //abSingleton.threadTestFn();
+    }
+
+    domEl.addEventListener("click", evListener);
+}
+
+function appBuilderSingletonStart(tickInterval = 1000) {
+    setInterval(staticTick, tickInterval);
+    //appBuilderGetSingleton().start(tickInterval);
 }
 
 function appBuilderSingletonTick() {
     //return function(ev) {
-        console.log("TICK!");
+        console.log("TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!");
         //appBuilderGetSingleton().start(1000);
-        var abs = Module.AppBuilder.getSingleton();
-        abs.threadTestFn();
-        console.log("TOCK!");
-        abs.listChannels();
+        //var abs = Module.AppBuilder.getSingleton();
+        //abs.tick();
+        console.log("TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!");
+        //abs.listChannels();
     //}    
+}
+
+function staticTick() {
+    Module.AppBuilder.tick__();
 }
 
 function delayedTick() {
@@ -269,9 +291,9 @@ function delayedTick() {
     //window.setTimeout(appBuilderSingletonTick, 3000);
 }
 
-function installTickCallback() {
-    console.log("installTickCallback():");
-    var tickbtn = document.getElementById("6");
+function installTickCallback(tickBtnId) {
+    console.log("installTickCallback():", tickBtnId);
+    var tickbtn = document.getElementById(tickBtnId);
     tickbtn.addEventListener("click", appBuilderSingletonTick);
 }
 
