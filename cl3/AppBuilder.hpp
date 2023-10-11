@@ -89,7 +89,7 @@ class Ticker {
     virtual void tick() = 0;
 };
 
-class Channel : public std::enable_shared_from_this<Channel> {
+class Channel : public std::enable_shared_from_this<Channel>, public Identifiable {
     val currentValue_;
 
    protected:

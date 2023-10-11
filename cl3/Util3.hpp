@@ -5,8 +5,8 @@
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
 
-#include <string>
 #include <iostream>
+#include <string>
 
 using emscripten::val;
 using std::cout;
@@ -26,6 +26,21 @@ int setInterval(val jsFunc, int delay) {
     val setInterval = val::global("setInterval");
     return setInterval(jsFunc, val(delay)).as<int>();
 }
+
+class Identifiable {
+    int uid_;
+
+   public:
+    Identifiable(int uid = -1) : uid_(uid) {}
+
+    int getUid() { return uid_; }
+
+    int setUid(int id) {
+        int oldId = uid_;
+        uid_ = id;
+        return oldId;
+    }
+};
 
 /**
  * @brief Hands out (presumably) unique int ids with a simply incrementing
@@ -74,5 +89,5 @@ int getId(int initVal = 0, bool reset = false) {
 std::string getStrId(int initVal = 0, bool reset = false) {
     return std::to_string(getId(initVal, reset));
 }
-}  // namespace cl2
+}  // namespace cl3
 #endif

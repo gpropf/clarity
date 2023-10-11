@@ -23,6 +23,8 @@
 #include <map>
 #include <sstream>
 
+#include "Util3.hpp"
+
 // #include "SignalPrimitives.hpp"
 
 using emscripten::val;
@@ -38,7 +40,7 @@ class Channel;
  * using const.
  *
  */
-struct WebElement {
+struct WebElement: public Identifiable {
     val domElement_;
 
     bool deleteDomElementOnExit_ = false;
