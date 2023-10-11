@@ -204,7 +204,7 @@ vector<const int> AppBuilder::allIds__;
 int main() {
     // We make a test object and then a signal wrapper for it.
 
-    auto obj = make_shared<TestObj>();    
+    auto obj = make_shared<TestObj>();
 
     auto appBldr = make_shared<AppBuilder>();
     cout << "Our AppBuilder is now the singleton!" << endl;
@@ -213,8 +213,9 @@ int main() {
     auto [widthInput, widthInputId] = appBldr->textField("widthInput");
     cout << "widthInputId: " << widthInputId << endl;
 
-auto [widthInputChannel, widthInputChannelId] = appBldr->makeWebElementChannel("widthInputChannel");
-widthInputChannel->installWebElement(widthInput);
+    auto [widthInputChannel, widthInputChannelId] =
+        appBldr->makeWebElementChannel("widthInputChannel");
+    widthInputChannel->installWebElement(widthInput);
 
     auto [syncTestInput, syncTestInputId] = appBldr->textField("syncTestInput");
     cout << "syncTestInputId: " << syncTestInputId << endl;
@@ -228,17 +229,18 @@ widthInputChannel->installWebElement(widthInput);
     auto objId = appBldr->addObject(obj);
     cout << "TestObj added to AppBuilder has id: " << objId << endl;
     appBldr->addChannel(objDblChannel);
-     appBldr->addChannel(objIntChannel);
+    appBldr->addChannel(objIntChannel);
 
-    auto [pairingChannel, pairingChannelId] = appBldr->makeChannel("pairingChannel");
+    auto [pairingChannel, pairingChannelId] = appBldr->makeWebElementChannel("pairingChannel");
     cout << "pairingChannelId: " << pairingChannelId << endl;
+     pairingChannel->installWebElement(syncTestInput);
 
     pairingChannel->addConnection(objDblChannel);
     widthInputChannel->addConnection(objIntChannel);
 
     objDblChannel->finalize();
     pairingChannel->finalize();
-     widthInputChannel->finalize();
+    widthInputChannel->finalize();
 
     val onClickFn = val::global("sayHello");
 
@@ -254,7 +256,7 @@ widthInputChannel->installWebElement(widthInput);
     auto otherClassObj = make_shared<OtherClass>();
 
     val appBuilderSingletonStart = val::global("appBuilderSingletonStart");
-    //appBuilderSingletonStart(1000);
+    // appBuilderSingletonStart(1000);
 
     val testObjSetDblval = val::global("testObjSetDblval");
     val testObjGetDblval = val::global("testObjGetDblval");
@@ -273,8 +275,8 @@ widthInputChannel->installWebElement(widthInput);
     cout << "Printing contents of group g1." << endl;
     appBldr->printGroup("g1", "\t");
 
-    val pairChannelWithElement = val::global("pairChannelWithElement");
-    pairChannelWithElement(pairingChannelId, syncTestInputId);
+    // val pairChannelWithElement = val::global("pairChannelWithElement");
+    // pairChannelWithElement(pairingChannelId, syncTestInputId);
 
     appBldr->listWebElements();
 
