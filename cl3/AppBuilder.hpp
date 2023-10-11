@@ -226,11 +226,11 @@ class WebElementChannel : public Channel {
     WebElementChannel(string name) : Channel(name) {}
 
     virtual void finalize() {
-        // val inject = val::global("inject");
-        // cout << "WebElementChannel::finalize is creating the listener for channel with address: "
-        //      << int(this) << endl;
-        // val onChangeFn = inject(*this->getptr());
-        // this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
+        val inject = val::global("inject");
+        cout << "WebElementChannel::finalize is creating the listener for channel with address: "
+             << int(this) << endl;
+        val onChangeFn = inject(*this->getptr());
+        this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
     }
 
     /**
@@ -496,7 +496,9 @@ class AppBuilder : public Ticker {
     auto makeWebElementChannel(string name = "") {
         auto c = make_shared<WebElementChannel>(name);
         const int cid = cl3::TicketMachine::getNextSid();
-        webElementChannels_.insert({cid, c});
+        //webElementChannels_.insert({cid, c});
+        channels_.insert({cid, c});
+        channels__.insert({cid, c});
         pushId(cid);
         return std::make_pair(c, cid);
     }
