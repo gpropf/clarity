@@ -266,7 +266,7 @@ using getterSetterPair = std::pair<std::function<S()>, std::function<void(S)>>;
  *
  */
 // template <template <typename> class T>
-class AppBuilder : public Ticker {
+class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticker {
     vector<const int> currentGroupIds_;
     vector<const int> allIds_;
     map<const int, shared_ptr<Channel>> channels_;
@@ -296,6 +296,8 @@ class AppBuilder : public Ticker {
     bool attrsResetAfterSingleUse_ = true;
 
    public:
+    std::shared_ptr<AppBuilder> getptr() { return this->shared_from_this(); }
+
     static map<const string, vector<const int>> groups__;
     static map<const int, shared_ptr<WebElement>> webElements__;
     static map<const int, shared_ptr<Channel>> channels__;
@@ -422,7 +424,10 @@ class AppBuilder : public Ticker {
      * function.
      *
      */
-    virtual void generateTickFunction() { tickJS_ = val::global("TickerTick")(*this); }
+    virtual void generateTickFunction() {
+        val TickerTick = val::global("TickerTick");
+        tickJS_ = TickerTick(this->getptr());
+    }
 
     /**
      * @brief Adds a pre-existing object to the database.
@@ -496,7 +501,7 @@ class AppBuilder : public Ticker {
     auto makeWebElementChannel(string name = "") {
         auto c = make_shared<WebElementChannel>(name);
         const int cid = cl3::TicketMachine::getNextSid();
-        //webElementChannels_.insert({cid, c});
+        // webElementChannels_.insert({cid, c});
         channels_.insert({cid, c});
         channels__.insert({cid, c});
         pushId(cid);
@@ -516,8 +521,8 @@ class AppBuilder : public Ticker {
         cout << "tfid: " << tfid << endl;
         auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
 
-        //int oldid = tf->setUid(tfid);
-       // cout << "OLDID: " << oldid <<endl;
+        // int oldid = tf->setUid(tfid);
+        // cout << "OLDID: " << oldid <<endl;
         // val tfDomEl = tf.getDomElement();
         webElements_.insert({tfid, tf});
         return std::make_pair(tf, tfid);
@@ -530,7 +535,7 @@ class AppBuilder : public Ticker {
         auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
 
         int oldid = tf->setUid(tfid);
-        cout << "OLDID: " << oldid <<endl;
+        cout << "OLDID: " << oldid << endl;
         // val tfDomEl = tf.getDomElement();
         AppBuilder::webElements__.insert({tfid, tf});
         return std::make_pair(tf, tfid);
@@ -636,6 +641,7 @@ class AppBuilder : public Ticker {
 
 EMSCRIPTEN_BINDINGS(AppBuilder) {
     emscripten::class_<cl3::AppBuilder>("AppBuilder")
+        .smart_ptr<std::shared_ptr<cl3::AppBuilder>>("AppBuilder")
         .function("tick", &cl3::AppBuilder::tick, emscripten::allow_raw_pointers())
         .function("threadTestFn", &cl3::AppBuilder::threadTestFn, emscripten::allow_raw_pointers())
 

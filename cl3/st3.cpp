@@ -296,11 +296,13 @@ int main() {
 
     val badfn = val::global("getTickerFn")(rawt);
     // val tickfn = getClosureOnObj(newt);
-    setInterval(badfn, val(3000));
+    //setInterval(badfn, val(3000));
     // tickfn();
     cout << "On the C++ side newt says: " << newt->getDblval() << endl;
 
     AppBuilder::tick__();
+
+    appBldr->start(2000);
 
     return 0;
 }
