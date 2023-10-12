@@ -291,9 +291,12 @@ int main() {
 
     val setInterval = val::global("setInterval");
     val getClosureOnObj = val::global("getTickerFn");
-    val badfn = val::global("getTickerFn")(newt);
+
+    TestObj *rawt = obj.get();
+
+    val badfn = val::global("getTickerFn")(rawt);
     // val tickfn = getClosureOnObj(newt);
-    //setInterval(badfn, val(1000));
+    setInterval(badfn, val(3000));
     // tickfn();
     cout << "On the C++ side newt says: " << newt->getDblval() << endl;
 
