@@ -173,11 +173,11 @@ function TickerTick(ticker) {
 
 
 
-function inject(channel) {
+function generateInjectFn(channel) {
     console.log("On JS side creating inject listener for channel: ", channel);
     return function (ev) {
         //let s = testObjCSO.getSignal();
-        console.log("inject generated fn called.");
+        console.log("inject generated fn called for channel at: ", channel);
         channel.inject(ev.target.value, 0);
     };
 }
@@ -242,7 +242,7 @@ function pairChannelWithElement(channelId, elementId) {
     var domEl = webEl.getDomElement();
     var channel = abSingleton.getChannel(channelId);
 
-    var evListener = function(ev) {
+    var evListener = function (ev) {
         console.log("EVLISTENER in pairing method called!!!!!")
         channel.inject(ev.target.value, 0);
         //abSingleton.tick();
@@ -259,7 +259,7 @@ function installEventListenerById(elementId) {
     var webEl = abSingleton.getWebElement(elementId);
     var domEl = webEl.getDomElement();
 
-    var evListener = function(ev) {
+    var evListener = function (ev) {
         console.log("EVLISTENER in installEventListenerById method called!!!!!")
         staticTick();
         //abSingleton.threadTestFn();
@@ -275,12 +275,12 @@ function appBuilderSingletonStart(tickInterval = 1000) {
 
 function appBuilderSingletonTick() {
     //return function(ev) {
-        console.log("TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!");
-        //appBuilderGetSingleton().start(1000);
-        //var abs = Module.AppBuilder.getSingleton();
-        //abs.tick();
-        console.log("TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!");
-        //abs.listChannels();
+    console.log("TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!");
+    //appBuilderGetSingleton().start(1000);
+    //var abs = Module.AppBuilder.getSingleton();
+    //abs.tick();
+    console.log("TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!");
+    //abs.listChannels();
     //}    
 }
 
@@ -289,7 +289,7 @@ function staticTick() {
 }
 
 function delayedTick() {
-    pairChannelWithElement(5,2);
+    pairChannelWithElement(5, 2);
     //window.setTimeout(appBuilderSingletonTick, 3000);
 }
 
@@ -308,7 +308,31 @@ function testObjGetDblval(obj) {
 }
 
 function setDblvalOnObj(obj, v) {
-    Module.TestObj.setDblvalOnObj(obj,v);
+    Module.TestObj.setDblvalOnObj(obj, v);
+}
+
+function getClosureOnObj(obj) {
+    var objWrapped = Module.TestObj.transfer(obj);
+    return function () {
+
+        var d = objWrapped.getDblval();
+        d += 1.5;
+        objWrapped.setDblval(d);
+        console.log("Double val from wrapped obj is: ", objWrapped.getDblval())
+    }
+}
+
+
+function getTickerFn(obj) {
+    //var objWrapped = obj;
+    return function () {
+
+        var d = obj.getDblval();
+        d += 1.5;
+        obj.setDblval(d);
+        console.log("Double val from wrapped obj is: ", obj.getDblval())
+        obj.tick();
+    }
 }
 
 

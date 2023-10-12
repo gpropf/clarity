@@ -48,6 +48,8 @@ class TestObj : public Ticker {
     int width_ = 13;
 
    public:
+    static TestObj *transfer(TestObj *t) { return t; }
+
     virtual void tick() {
         // dblval_ += 0.1;
         auto d = getDblval();
@@ -210,14 +212,14 @@ int main() {
     cout << "Our AppBuilder is now the singleton!" << endl;
     AppBuilder::setSingleton(&*appBldr);
 
-    auto [widthInput, widthInputId] = appBldr->textField("widthInput");
+    auto [widthInput, widthInputId] = AppBuilder::textField__("widthInput");
     cout << "widthInputId: " << widthInputId << endl;
 
     auto [widthInputChannel, widthInputChannelId] =
         appBldr->makeWebElementChannel("widthInputChannel");
     widthInputChannel->installWebElement(widthInput);
 
-    auto [syncTestInput, syncTestInputId] = appBldr->textField("syncTestInput");
+    auto [syncTestInput, syncTestInputId] = AppBuilder::textField__("syncTestInput");
     cout << "syncTestInputId: " << syncTestInputId << endl;
 
     auto objDblChannel = make_shared<ObjectChannel<TestObj, double>>(
@@ -233,7 +235,7 @@ int main() {
 
     auto [pairingChannel, pairingChannelId] = appBldr->makeWebElementChannel("pairingChannel");
     cout << "pairingChannelId: " << pairingChannelId << endl;
-     pairingChannel->installWebElement(syncTestInput);
+    pairingChannel->installWebElement(syncTestInput);
 
     pairingChannel->addConnection(objDblChannel);
     widthInputChannel->addConnection(objIntChannel);
@@ -265,7 +267,9 @@ int main() {
 
     obj->setDblval(5.0);
 
-    testObjSetDblval(*obj, 4.0);
+    setDblvalOnObj(*obj, 1.3);
+
+    // testObjSetDblval(obj, 4.0);
 
     cout << "obj->getDblVal(): " << obj->getDblval();
 
@@ -280,7 +284,18 @@ int main() {
 
     appBldr->listWebElements();
 
-    // AppBuilder::setSingleton(&*appBldr);
+    TestObj *newt = new TestObj();
+    // val transfer = val::global("Module.TestObj.transfer");
+    //  val newtJS = transfer(*newt);
+    //   AppBuilder::setSingleton(&*appBldr);
+
+    val setInterval = val::global("setInterval");
+    val getClosureOnObj = val::global("getTickerFn");
+    val badfn = val::global("getTickerFn")(newt);
+    // val tickfn = getClosureOnObj(newt);
+    //setInterval(badfn, val(1000));
+    // tickfn();
+    cout << "On the C++ side newt says: " << newt->getDblval() << endl;
 
     AppBuilder::tick__();
 
@@ -303,6 +318,7 @@ EMSCRIPTEN_BINDINGS(TestObj) {
         .function("getDblval", &TestObj::getDblval, emscripten::allow_raw_pointers())
         .class_function("setDblvalOnObj", &TestObj::setDblvalOnObj,
                         emscripten::allow_raw_pointers())
+        .class_function("transfer", &TestObj::transfer, emscripten::allow_raw_pointers())
         .function("tick", &TestObj::tick);
 }
 

@@ -226,10 +226,10 @@ class WebElementChannel : public Channel {
     WebElementChannel(string name) : Channel(name) {}
 
     virtual void finalize() {
-        val inject = val::global("inject");
+        val generateInjectFn = val::global("generateInjectFn");
         cout << "WebElementChannel::finalize is creating the listener for channel with address: "
              << int(this) << endl;
-        val onChangeFn = inject(*this->getptr());
+        val onChangeFn = generateInjectFn(this->getptr());
         this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
     }
 
@@ -515,6 +515,9 @@ class AppBuilder : public Ticker {
         pushId(tfid);
         cout << "tfid: " << tfid << endl;
         auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
+
+        //int oldid = tf->setUid(tfid);
+       // cout << "OLDID: " << oldid <<endl;
         // val tfDomEl = tf.getDomElement();
         webElements_.insert({tfid, tf});
         return std::make_pair(tf, tfid);
@@ -525,6 +528,9 @@ class AppBuilder : public Ticker {
         pushId__(tfid);
         cout << "tfid: " << tfid << endl;
         auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
+
+        int oldid = tf->setUid(tfid);
+        cout << "OLDID: " << oldid <<endl;
         // val tfDomEl = tf.getDomElement();
         AppBuilder::webElements__.insert({tfid, tf});
         return std::make_pair(tf, tfid);
