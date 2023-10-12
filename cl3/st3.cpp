@@ -197,9 +197,9 @@ void *thread_callback4(void *arg) {
 }
 
 AppBuilder *AppBuilder::singleton__ = nullptr;
-map<const string, vector<const int>> AppBuilder::groups__;
-map<const int, shared_ptr<WebElement>> AppBuilder::webElements__;
-map<const int, shared_ptr<Channel>> AppBuilder::channels__;
+//map<const string, vector<const int>> AppBuilder::groups__;
+//map<const int, shared_ptr<WebElement>> AppBuilder::webElements__;
+//map<const int, shared_ptr<Channel>> AppBuilder::channels__;
 vector<const int> AppBuilder::currentGroupIds__;
 vector<const int> AppBuilder::allIds__;
 
@@ -212,14 +212,14 @@ int main() {
     cout << "Our AppBuilder is now the singleton!" << endl;
     AppBuilder::setSingleton(&*appBldr);
 
-    auto [widthInput, widthInputId] = AppBuilder::textField__("widthInput");
+    auto [widthInput, widthInputId] = appBldr->textField("widthInput");
     cout << "widthInputId: " << widthInputId << endl;
 
     auto [widthInputChannel, widthInputChannelId] =
         appBldr->makeWebElementChannel("widthInputChannel");
     widthInputChannel->installWebElement(widthInput);
 
-    auto [syncTestInput, syncTestInputId] = AppBuilder::textField__("syncTestInput");
+    auto [syncTestInput, syncTestInputId] = appBldr->textField("syncTestInput");
     cout << "syncTestInputId: " << syncTestInputId << endl;
 
     auto objDblChannel = make_shared<ObjectChannel<TestObj, double>>(
@@ -252,8 +252,13 @@ int main() {
     auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", onClickFn);
     cout << "tickBtnId: " << tickBtnId << endl;
 
-    val installEventListenerById = val::global("installEventListenerById");
-    installEventListenerById(tickBtnId);
+    //val installEventListenerById = val::global("installEventListenerById");
+    //installEventListenerById(tickBtnId);
+
+    val getTickFn = val::global("getTickFn");
+    val appBldrTickFn = getTickFn(appBldr);
+
+    tickBtn->addEventListener(val("click"), appBldrTickFn);
 
     auto otherClassObj = make_shared<OtherClass>();
 
@@ -300,9 +305,9 @@ int main() {
     // tickfn();
     cout << "On the C++ side newt says: " << newt->getDblval() << endl;
 
-    AppBuilder::tick__();
+    //AppBuilder::tick__();
 
-    appBldr->start(2000);
+    //appBldr->start(2000);
 
     return 0;
 }

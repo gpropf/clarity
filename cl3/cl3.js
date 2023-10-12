@@ -336,4 +336,17 @@ function getTickerFn(obj) {
 }
 
 
+function getTickFn(obj) {
+    //var objWrapped = obj;
+    return function () {
+
+        // var d = obj.getDblval();
+        // d += 1.5;
+        // obj.setDblval(d);
+        console.log("Generated tick fn has object at address: ", obj)
+        obj.tick();
+    }
+}
+
+
 window.WebElement = WebElement

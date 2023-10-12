@@ -247,6 +247,8 @@ class WebElementChannel : public Channel {
     }
 
     virtual void inject(val s, int signalGeneration = 0) {
+        cout << "WebElementChannel::inject() called!" << endl;
+        Channel::inject(s, signalGeneration);
         auto domEl = weptr_->getDomElement();
         if (signalGeneration > 0) {
             domEl.set("value", s);
@@ -298,9 +300,9 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
    public:
     std::shared_ptr<AppBuilder> getptr() { return this->shared_from_this(); }
 
-    static map<const string, vector<const int>> groups__;
-    static map<const int, shared_ptr<WebElement>> webElements__;
-    static map<const int, shared_ptr<Channel>> channels__;
+    // static map<const string, vector<const int>> groups__;
+    // static map<const int, shared_ptr<WebElement>> webElements__;
+    // static map<const int, shared_ptr<Channel>> channels__;
     static vector<const int> currentGroupIds__;
     static vector<const int> allIds__;
 
@@ -376,14 +378,14 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         }
     }
 
-    static void syncFrom__(string prefix = "") {
-        cout << "STATIC AppBuilder::syncFrom()" << endl;
-        for (auto [id, c] : channels__) {
-            cout << "STATIC AppBuilder::syncFrom(), Channel: '" << c->getName() << "'"
-                 << ", id: " << id << endl;
-            c->syncFrom("\tAB: " + prefix);
-        }
-    }
+    // static void syncFrom__(string prefix = "") {
+    //     cout << "STATIC AppBuilder::syncFrom()" << endl;
+    //     for (auto [id, c] : channels__) {
+    //         cout << "STATIC AppBuilder::syncFrom(), Channel: '" << c->getName() << "'"
+    //              << ", id: " << id << endl;
+    //         c->syncFrom("\tAB: " + prefix);
+    //     }
+    // }
 
     // void runHookFns() {
     //     for (auto [id, fn] : hookFunctions_) {
@@ -400,13 +402,13 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         //  runHookFns();
     }
 
-    static void tick__() {
-        cout << "Static AppBuilder says TICK!" << endl;
-        // singleton__->syncFrom("static tick: ");
-        //   runHookFns();
-        syncFrom__("STATIC tick: ");
-        singleton__->printGroup("g1", "button callback\t:");
-    }
+    // static void tick__() {
+    //     cout << "Static AppBuilder says TICK!" << endl;
+    //     // singleton__->syncFrom("static tick: ");
+    //     //   runHookFns();
+    //     syncFrom__("STATIC tick: ");
+    //     singleton__->printGroup("g1", "button callback\t:");
+    // }
 
     void threadTestFn() {
         cout << "AppBuilder says hello from the button click!" << endl;
@@ -472,7 +474,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     const int addChannel(shared_ptr<Channel> c) {
         const int objid = cl3::TicketMachine::getNextSid();
         channels_.insert({objid, c});
-        channels__.insert({objid, c});
+        // channels__.insert({objid, c});
         pushId(objid);
         return objid;
     }
@@ -493,7 +495,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         auto c = make_shared<Channel>(name);
         const int cid = cl3::TicketMachine::getNextSid();
         channels_.insert({cid, c});
-        channels__.insert({cid, c});
+        // channels__.insert({cid, c});
         pushId(cid);
         return std::make_pair(c, cid);
     }
@@ -503,7 +505,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         const int cid = cl3::TicketMachine::getNextSid();
         // webElementChannels_.insert({cid, c});
         channels_.insert({cid, c});
-        channels__.insert({cid, c});
+        // channels__.insert({cid, c});
         pushId(cid);
         return std::make_pair(c, cid);
     }
@@ -528,18 +530,18 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         return std::make_pair(tf, tfid);
     }
 
-    static auto textField__(const string& name, val parentElement = val::null()) {
-        const int tfid = cl3::TicketMachine::getNextSid();
-        pushId__(tfid);
-        cout << "tfid: " << tfid << endl;
-        auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
+    // static auto textField__(const string& name, val parentElement = val::null()) {
+    //     const int tfid = cl3::TicketMachine::getNextSid();
+    //     pushId__(tfid);
+    //     cout << "tfid: " << tfid << endl;
+    //     auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
 
-        int oldid = tf->setUid(tfid);
-        cout << "OLDID: " << oldid << endl;
-        // val tfDomEl = tf.getDomElement();
-        AppBuilder::webElements__.insert({tfid, tf});
-        return std::make_pair(tf, tfid);
-    }
+    //     int oldid = tf->setUid(tfid);
+    //     cout << "OLDID: " << oldid << endl;
+    //     // val tfDomEl = tf.getDomElement();
+    //     AppBuilder::webElements__.insert({tfid, tf});
+    //     return std::make_pair(tf, tfid);
+    // }
 
     const int getNewId() {
         const int id = cl3::TicketMachine::getNextSid();
@@ -618,12 +620,12 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
             currentGroupIds_.pop_back();
         }
         groups_.insert({groupName, groupIds});
-        groups__.insert({groupName, groupIds});
+        // groups__.insert({groupName, groupIds});
         return groupIds;
     }
 
     void printGroup(const string& groupName, string prefixTabs = "") {
-        auto ids = groups__[groupName];
+        auto ids = groups_[groupName];
         if (ids.empty()) {
             cout << "Group " << groupName << " not found or is empty." << endl;
             return;
@@ -655,10 +657,10 @@ EMSCRIPTEN_BINDINGS(AppBuilder) {
         .function("listChannels", &cl3::AppBuilder::listChannels, emscripten::allow_raw_pointers())
         .function("getNumWebElements", &cl3::AppBuilder::getNumWebElements,
                   emscripten::allow_raw_pointers())
-        .class_function("tick__", &cl3::AppBuilder::tick__, emscripten::allow_raw_pointers())
+        // .class_function("tick__", &cl3::AppBuilder::tick__, emscripten::allow_raw_pointers())
         .class_function("pushId__", &cl3::AppBuilder::pushId__, emscripten::allow_raw_pointers())
-        .class_function("textField__", &cl3::AppBuilder::textField__,
-                        emscripten::allow_raw_pointers())
+        // .class_function("textField__", &cl3::AppBuilder::textField__,
+        //                 emscripten::allow_raw_pointers())
         .class_function("getSingleton", &cl3::AppBuilder::getSingleton,
                         emscripten::allow_raw_pointers());
 
