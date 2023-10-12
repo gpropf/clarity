@@ -168,6 +168,7 @@ function TickerTick(ticker) {
         //console.log("TICKING THE TICKER!", ticker.getDblval());
 
         ticker.tick();
+        //ticker.printGroup("g1");
     }
 }
 
@@ -345,6 +346,7 @@ function getTickFn(obj) {
         // obj.setDblval(d);
         console.log("Generated tick fn has object at address: ", obj)
         obj.tick();
+        //obj.printGroup("g1", "getTickFn:\t");
     }
 }
 

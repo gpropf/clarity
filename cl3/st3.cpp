@@ -40,7 +40,7 @@ class OtherClass {
  * to use getter and setter method pointers to act as initiation points or endpoints for signals.
  *
  */
-class TestObj : public Ticker {
+class TestObj : public std::enable_shared_from_this<TestObj>, public Ticker {
     int i_ = 3;
     double d_ = 3.5;
     double dblval_ = 3.14159;
@@ -49,6 +49,7 @@ class TestObj : public Ticker {
 
    public:
     static TestObj *transfer(TestObj *t) { return t; }
+    std::shared_ptr<TestObj> getptr() { return this->shared_from_this(); }
 
     virtual void tick() {
         // dblval_ += 0.1;
@@ -75,7 +76,7 @@ class TestObj : public Ticker {
      * function.
      *
      */
-    virtual void generateTickFunction() { tickJS_ = val::global("TickerTick")(*this); }
+    virtual void generateTickFunction() { tickJS_ = val::global("TickerTick")(this->getptr()); }
 
     void setS(const std::string &s) {
         s_ = s;
@@ -196,12 +197,12 @@ void *thread_callback4(void *arg) {
     return NULL;
 }
 
-AppBuilder *AppBuilder::singleton__ = nullptr;
+//AppBuilder *AppBuilder::singleton__ = nullptr;
 //map<const string, vector<const int>> AppBuilder::groups__;
 //map<const int, shared_ptr<WebElement>> AppBuilder::webElements__;
 //map<const int, shared_ptr<Channel>> AppBuilder::channels__;
-vector<const int> AppBuilder::currentGroupIds__;
-vector<const int> AppBuilder::allIds__;
+//vector<const int> AppBuilder::currentGroupIds__;
+//vector<const int> AppBuilder::allIds__;
 
 int main() {
     // We make a test object and then a signal wrapper for it.
@@ -210,7 +211,7 @@ int main() {
 
     auto appBldr = make_shared<AppBuilder>();
     cout << "Our AppBuilder is now the singleton!" << endl;
-    AppBuilder::setSingleton(&*appBldr);
+    //AppBuilder::setSingleton(&*appBldr);
 
     auto [widthInput, widthInputId] = appBldr->textField("widthInput");
     cout << "widthInputId: " << widthInputId << endl;
@@ -307,8 +308,8 @@ int main() {
 
     //AppBuilder::tick__();
 
-    //appBldr->start(2000);
-
+    appBldr->start(3000);
+    obj->start(1000);
     return 0;
 }
 
@@ -322,6 +323,7 @@ EMSCRIPTEN_BINDINGS(TestObj) {
     //               emscripten::allow_raw_pointers());
 
     emscripten::class_<TestObj>("TestObj")
+     .smart_ptr<std::shared_ptr<TestObj>>("TestObj")
         .function("signalEmitterTestMethod", &TestObj::signalEmitterTestMethod)
         //.function("tick", &TestObj::tick, emscripten::allow_raw_pointers());
         .function("setDblval", &TestObj::setDblval, emscripten::allow_raw_pointers())
