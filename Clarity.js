@@ -159,6 +159,12 @@ function singletonIterationOnce() {
     Module.Beaker.iterateOnceST();
 }
 
+function makeIterateCallback(beaker) {
+    return function () {
+        beaker.iterateOnce();
+    }
+}
+
 
 function elgTestObjEmitter(testObjCSO) {
     return function () {
