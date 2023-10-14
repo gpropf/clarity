@@ -34,6 +34,7 @@ using std::endl;
 namespace cl3 {
 
 class Channel;
+class WebElementChannel;
 
 /**
  * @brief Represents a single web element. Defined as a struct because this is meant to defined
@@ -51,7 +52,9 @@ struct WebElement: public Identifiable {
     void deleteDomElement() { domElement_.call<void>("remove"); }
 
 
-
+    virtual val generateEventListenerForChannel(shared_ptr<WebElementChannel> wec) {
+        return val(wec);
+    }
 
     val getId() const { return domElement_["id"]; }
 

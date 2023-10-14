@@ -9,8 +9,14 @@
 #include <string>
 
 using emscripten::val;
-using std::cout;
 using std::endl;
+using std::cout;
+using std::map;
+using std::shared_ptr;
+using std::string;
+using std::to_string;
+using std::vector;
+
 
 namespace cl3 {
 
