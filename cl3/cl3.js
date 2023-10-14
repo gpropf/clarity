@@ -57,6 +57,178 @@ function sayHello() {
     console.log("This just prints HELLO to the console.");
 }
 
+function printVal(v) {
+    console.log(v);
+}
+
+function TickerTick(ticker) {
+    return function () {
+        //callMethodByName(ticker, "tick");
+        //console.log("TICKING THE TICKER!", ticker.getDblval());
+
+        ticker.tick();
+        //ticker.printGroup("g1");
+    }
+}
+
+function generateInjectFn(channel) {
+    console.log("On JS side creating inject listener for channel: ", channel);
+    return function (ev) {
+        //let s = testObjCSO.getSignal();
+        console.log("inject generated fn called for channel at: ", channel);
+        channel.inject(ev.target.value, 0);
+    };
+}
+
+function lockChannel(channel) {
+    return function (ev) {
+        //let s = testObjCSO.getSignal();
+        // console.log("inject generated fn called.");
+        // channel.inject(ev.target.value, 0);
+    };
+}
+
+/**
+ * 
+ * @param {bound C++ object} obj 
+ * @param {string} objMethodName 
+ * @returns whatever the named method returns
+ */
+function callMethodByName(obj, objMethodName) {
+    var fn = obj[objMethodName];
+    if (typeof fn === "function") {
+        return fn.apply(obj);
+    }
+}
+
+/**
+ * 
+ * @param {bound C++ object} obj 
+ * @param {string} objMethodName 
+ * @returns a function that calls the method on the provided object.
+ * This is useful for buttons that simply need to fire off a zero-argument
+ *  method on some arbitrary C++ object.
+ */
+function elgCallMethodOnObjByName(obj, objMethodName) {
+    return function () {        
+        console.log("elgCallMethodOnObjByName generated fn called.");
+        callMethodByName(obj, objMethodName);        
+    };
+}
+
+function installTickCallback(tickBtnId) {
+    console.log("installTickCallback():", tickBtnId);
+    var tickbtn = document.getElementById(tickBtnId);
+    tickbtn.addEventListener("click", appBuilderSingletonTick);
+}
+
+function getTickFn(obj) {    
+    return function () {        
+        console.log("Generated tick fn has object at address: ", obj)
+        obj.tick();        
+    }
+}
+
+// DEPRECATED BELOW -----------------------------------------
+
+// function appBuilderGetSingleton() {
+//     return Module.AppBuilder.getSingleton();
+// }
+
+// function installEventListenerById(elementId) {
+//     console.log("installEventListenerById: ", elementId);
+//     var abSingleton = appBuilderGetSingleton();
+//     var webEl = abSingleton.getWebElement(elementId);
+//     var domEl = webEl.getDomElement();
+
+//     var evListener = function (ev) {
+//         console.log("EVLISTENER in installEventListenerById method called!!!!!")
+//         staticTick();
+//         //abSingleton.threadTestFn();
+//     }
+
+//     domEl.addEventListener("click", evListener);
+// }
+
+// function appBuilderSingletonStart(tickInterval = 1000) {
+//     setInterval(staticTick, tickInterval);
+//     //appBuilderGetSingleton().start(tickInterval);
+// }
+
+// function appBuilderSingletonTick() {
+//     //return function(ev) {
+//     console.log("TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!");
+//     //appBuilderGetSingleton().start(1000);
+//     //var abs = Module.AppBuilder.getSingleton();
+//     //abs.tick();
+//     console.log("TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!");
+//     //abs.listChannels();
+//     //}    
+// }
+
+// function staticTick() {
+//     Module.AppBuilder.tick__();
+// }
+
+//function testObjSetDblval(obj, v) {
+//     obj.setDblval(v);
+// }
+
+// function testObjGetDblval(obj) {
+//     return obj.getDblval();
+// }
+
+
+// function getTickerFn(obj) {
+//     //var objWrapped = obj;
+//     return function () {
+
+//         var d = obj.getDblval();
+//         d += 1.5;
+//         obj.setDblval(d);
+//         console.log("Double val from wrapped obj is: ", obj.getDblval())
+//         obj.tick();
+//     }
+// }
+
+
+// function pairChannelWithElement(channelId, elementId) {
+//     console.log("pairChannelWithElement()", channelId, elementId);
+//     var abSingleton = appBuilderGetSingleton();
+//     var webEl = abSingleton.getWebElement(elementId);
+//     var domEl = webEl.getDomElement();
+//     var channel = abSingleton.getChannel(channelId);
+
+//     var evListener = function (ev) {
+//         console.log("EVLISTENER in pairing method called!!!!!")
+//         channel.inject(ev.target.value, 0);
+//         //abSingleton.tick();
+//         staticTick();
+//     }
+
+//     domEl.addEventListener("change", evListener);
+
+// }
+
+//function getClosureOnObj(obj) {
+    //     var objWrapped = Module.TestObj.transfer(obj);
+    //     return function () {
+    
+    //         var d = objWrapped.getDblval();
+    //         d += 1.5;
+    //         objWrapped.setDblval(d);
+    //         console.log("Double val from wrapped obj is: ", objWrapped.getDblval())
+    //     }
+    // }
+
+
+// function setDblvalOnObj(obj, v) {
+//     Module.TestObj.setDblvalOnObj(obj, v);
+// }
+
+
+// REALLY OLD STUFF BELOW -----------------------------------------
+
 // function callIterateMethodOnObject(obj) {
 //     return function() {
 //         obj.iterateOnce();
@@ -150,10 +322,6 @@ function sayHello() {
 //     };
 // }
 
-function printVal(v) {
-    console.log(v);
-}
-
 // function injectForWEC(channel) {
 //     return function (ev) {
 //         //let s = testObjCSO.getSignal();
@@ -161,196 +329,5 @@ function printVal(v) {
 //         channel.injectForWEC(ev.target.value);
 //     };
 // }
-
-function TickerTick(ticker) {
-    return function () {
-        //callMethodByName(ticker, "tick");
-        //console.log("TICKING THE TICKER!", ticker.getDblval());
-
-        ticker.tick();
-        //ticker.printGroup("g1");
-    }
-}
-
-
-
-function generateInjectFn(channel) {
-    console.log("On JS side creating inject listener for channel: ", channel);
-    return function (ev) {
-        //let s = testObjCSO.getSignal();
-        console.log("inject generated fn called for channel at: ", channel);
-        channel.inject(ev.target.value, 0);
-    };
-}
-
-function lockChannel(channel) {
-    return function (ev) {
-        //let s = testObjCSO.getSignal();
-        // console.log("inject generated fn called.");
-        // channel.inject(ev.target.value, 0);
-    };
-}
-
-/**
- * 
- * @param {bound C++ object} obj 
- * @param {string} objMethodName 
- * @returns whatever the named method returns
- */
-function callMethodByName(obj, objMethodName) {
-    var fn = obj[objMethodName];
-    if (typeof fn === "function") {
-        return fn.apply(obj);
-    }
-}
-
-/**
- * 
- * @param {bound C++ object} obj 
- * @param {string} objMethodName 
- * @returns a function that calls the method on the provided object.
- * This is useful for buttons that simply need to fire off a zero-argument
- *  method on some arbitrary C++ object.
- */
-function elgCallMethodOnObjByName(obj, objMethodName) {
-    return function () {
-        //let s = testObjCSO.getSignal();
-        console.log("elgCallMethodOnObjByName generated fn called.");
-        callMethodByName(obj, objMethodName);
-        //obj.printTest();
-    };
-}
-
-
-function generateEventListenerWithObjectMethodCall(obj, objMethodName) {
-    var elfn = callMethodByName(obj, objMethodName)("fooooo");
-    // return function (ev) {
-    //     //let s = testObjCSO.getSignal();
-    //     console.log("generateEventListenerWithObjectMethodCall generated fn called.");
-    //     //elfn(ev.target.value);
-    //     //obj.printTest();
-    // };
-}
-
-
-
-function pairChannelWithElement(channelId, elementId) {
-    console.log("pairChannelWithElement()", channelId, elementId);
-    var abSingleton = appBuilderGetSingleton();
-    var webEl = abSingleton.getWebElement(elementId);
-    var domEl = webEl.getDomElement();
-    var channel = abSingleton.getChannel(channelId);
-
-    var evListener = function (ev) {
-        console.log("EVLISTENER in pairing method called!!!!!")
-        channel.inject(ev.target.value, 0);
-        //abSingleton.tick();
-        staticTick();
-    }
-
-    domEl.addEventListener("change", evListener);
-
-}
-
-
-function installTickCallback(tickBtnId) {
-    console.log("installTickCallback():", tickBtnId);
-    var tickbtn = document.getElementById(tickBtnId);
-    tickbtn.addEventListener("click", appBuilderSingletonTick);
-}
-
-
-function setDblvalOnObj(obj, v) {
-    Module.TestObj.setDblvalOnObj(obj, v);
-}
-
-function getClosureOnObj(obj) {
-    var objWrapped = Module.TestObj.transfer(obj);
-    return function () {
-
-        var d = objWrapped.getDblval();
-        d += 1.5;
-        objWrapped.setDblval(d);
-        console.log("Double val from wrapped obj is: ", objWrapped.getDblval())
-    }
-}
-
-
-
-function getTickFn(obj) {
-    //var objWrapped = obj;
-    return function () {
-
-        // var d = obj.getDblval();
-        // d += 1.5;
-        // obj.setDblval(d);
-        console.log("Generated tick fn has object at address: ", obj)
-        obj.tick();
-        //obj.printGroup("g1", "getTickFn:\t");
-    }
-}
-
-// DEPRECATED BELOW -----------------------------------------
-
-// function appBuilderGetSingleton() {
-//     return Module.AppBuilder.getSingleton();
-// }
-
-// function installEventListenerById(elementId) {
-//     console.log("installEventListenerById: ", elementId);
-//     var abSingleton = appBuilderGetSingleton();
-//     var webEl = abSingleton.getWebElement(elementId);
-//     var domEl = webEl.getDomElement();
-
-//     var evListener = function (ev) {
-//         console.log("EVLISTENER in installEventListenerById method called!!!!!")
-//         staticTick();
-//         //abSingleton.threadTestFn();
-//     }
-
-//     domEl.addEventListener("click", evListener);
-// }
-
-// function appBuilderSingletonStart(tickInterval = 1000) {
-//     setInterval(staticTick, tickInterval);
-//     //appBuilderGetSingleton().start(tickInterval);
-// }
-
-// function appBuilderSingletonTick() {
-//     //return function(ev) {
-//     console.log("TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!");
-//     //appBuilderGetSingleton().start(1000);
-//     //var abs = Module.AppBuilder.getSingleton();
-//     //abs.tick();
-//     console.log("TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!");
-//     //abs.listChannels();
-//     //}    
-// }
-
-// function staticTick() {
-//     Module.AppBuilder.tick__();
-// }
-
-//function testObjSetDblval(obj, v) {
-//     obj.setDblval(v);
-// }
-
-// function testObjGetDblval(obj) {
-//     return obj.getDblval();
-// }
-
-
-// function getTickerFn(obj) {
-//     //var objWrapped = obj;
-//     return function () {
-
-//         var d = obj.getDblval();
-//         d += 1.5;
-//         obj.setDblval(d);
-//         console.log("Double val from wrapped obj is: ", obj.getDblval())
-//         obj.tick();
-//     }
-// }
-
 
 window.WebElement = WebElement

@@ -203,8 +203,8 @@ EMSCRIPTEN_BINDINGS(TestObj) {
         //.function("tick", &TestObj::tick, emscripten::allow_raw_pointers());
         .function("setDblval", &TestObj::setDblval, emscripten::allow_raw_pointers())
         .function("getDblval", &TestObj::getDblval, emscripten::allow_raw_pointers())
-        .class_function("setDblvalOnObj", &TestObj::setDblvalOnObj,
-                        emscripten::allow_raw_pointers())
+        // .class_function("setDblvalOnObj", &TestObj::setDblvalOnObj,
+        //                 emscripten::allow_raw_pointers())
         .class_function("transfer", &TestObj::transfer, emscripten::allow_raw_pointers())
         .function("tick", &TestObj::tick);
 }
