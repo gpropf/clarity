@@ -229,7 +229,10 @@ class WebElementChannel : public Channel {
         val generateInjectFn = val::global("generateInjectFn");
         cout << "WebElementChannel::finalize is creating the listener for channel with address: "
              << int(this) << endl;
-        val onChangeFn = generateInjectFn(this->getptr());
+        // val onChangeFn = generateInjectFn(this->getptr());
+
+        val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
+
         this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
     }
 
@@ -303,14 +306,14 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     // static map<const string, vector<const int>> groups__;
     // static map<const int, shared_ptr<WebElement>> webElements__;
     // static map<const int, shared_ptr<Channel>> channels__;
-    //static vector<const int> currentGroupIds__;
-    //static vector<const int> allIds__;
+    // static vector<const int> currentGroupIds__;
+    // static vector<const int> allIds__;
 
     void pushId(const int id) {
         currentGroupIds_.push_back(id);
-        //currentGroupIds__.push_back(id);
+        // currentGroupIds__.push_back(id);
         allIds_.push_back(id);
-        //allIds__.push_back(id);
+        // allIds__.push_back(id);
     }
 
     // static void pushId__(const int id) {
@@ -318,10 +321,10 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     //     AppBuilder::singleton__->allIds_.push_back(id);
     // }
 
-    //static AppBuilder* singleton__;
-    //static AppBuilder* getSingleton() { return singleton__; }
+    // static AppBuilder* singleton__;
+    // static AppBuilder* getSingleton() { return singleton__; }
 
-    //static void setSingleton(AppBuilder* singleton) { singleton__ = singleton; }
+    // static void setSingleton(AppBuilder* singleton) { singleton__ = singleton; }
 
     // static void tick__() { singleton__->tick(); }
 
@@ -657,12 +660,12 @@ EMSCRIPTEN_BINDINGS(AppBuilder) {
         .function("listChannels", &cl3::AppBuilder::listChannels, emscripten::allow_raw_pointers())
         .function("getNumWebElements", &cl3::AppBuilder::getNumWebElements,
                   emscripten::allow_raw_pointers());
-        // .class_function("tick__", &cl3::AppBuilder::tick__, emscripten::allow_raw_pointers())
-        // .class_function("pushId__", &cl3::AppBuilder::pushId__, emscripten::allow_raw_pointers())
-        // .class_function("textField__", &cl3::AppBuilder::textField__,
-        //                 emscripten::allow_raw_pointers())
-        // .class_function("getSingleton", &cl3::AppBuilder::getSingleton,
-        //                 emscripten::allow_raw_pointers());
+    // .class_function("tick__", &cl3::AppBuilder::tick__, emscripten::allow_raw_pointers())
+    // .class_function("pushId__", &cl3::AppBuilder::pushId__, emscripten::allow_raw_pointers())
+    // .class_function("textField__", &cl3::AppBuilder::textField__,
+    //                 emscripten::allow_raw_pointers())
+    // .class_function("getSingleton", &cl3::AppBuilder::getSingleton,
+    //                 emscripten::allow_raw_pointers());
 
     emscripten::class_<cl3::Ticker>("Ticker").function("start", &cl3::Ticker::start);
 }

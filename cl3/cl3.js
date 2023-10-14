@@ -80,6 +80,15 @@ function generateInjectFn(channel) {
     };
 }
 
+function generateEventListenerForChannel_TextField(channel) {
+    console.log("generateEventListenerForChannel_TextField: ", channel);
+    return function (ev) {
+        //let s = testObjCSO.getSignal();
+        console.log("generateEventListenerForChannel_TextField --> inject generated fn called for channel at: ", channel);
+        channel.inject(ev.target.value, 0);
+    };
+}
+
 function lockChannel(channel) {
     return function (ev) {
         //let s = testObjCSO.getSignal();

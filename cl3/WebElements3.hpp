@@ -41,7 +41,7 @@ class WebElementChannel;
  * using const.
  *
  */
-struct WebElement: public Identifiable {
+struct WebElement : public Identifiable {
     val domElement_;
 
     bool deleteDomElementOnExit_ = false;
@@ -51,8 +51,7 @@ struct WebElement: public Identifiable {
 
     void deleteDomElement() { domElement_.call<void>("remove"); }
 
-
-    virtual val generateEventListenerForChannel(shared_ptr<WebElementChannel> wec) {
+    virtual val generateEventListenerForChannel(shared_ptr<Channel> wec) {
         return val(wec);
     }
 
@@ -125,6 +124,13 @@ struct InputElement : public WebElement {
 struct TextField : public InputElement {
     TextField(const std::string& name, const std::string& id = "", val parentElement = val::null())
         : InputElement(name, "text", id, parentElement) {}
+
+    virtual val generateEventListenerForChannel(shared_ptr<Channel> wec) {
+        val generateEventListenerForChannel_TextField =
+            val::global("generateEventListenerForChannel_TextField");
+        val evListenerFn = generateEventListenerForChannel_TextField(wec);
+        return evListenerFn;
+    }
 };
 
 struct RangeInput : public InputElement {
@@ -233,7 +239,8 @@ struct Button : public WebElement {
 EMSCRIPTEN_BINDINGS(WebElement) {
     emscripten::class_<cl3::WebElement>("WebElement")
         .function("getName", &cl3::WebElement::getName, emscripten::allow_raw_pointers())
-        .function("getDomElement", &cl3::WebElement::getDomElement, emscripten::allow_raw_pointers())
+        .function("getDomElement", &cl3::WebElement::getDomElement,
+                  emscripten::allow_raw_pointers())
         .smart_ptr<std::shared_ptr<cl3::WebElement>>("WebElement");
     emscripten::class_<cl3::TextField>("TextField")
         .smart_ptr<std::shared_ptr<cl3::TextField>>("TextField");
