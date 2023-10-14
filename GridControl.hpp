@@ -57,7 +57,7 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
             endFrame += frameCount;
             while (frameIndex < endFrame) {
                 auto fm = frames_[frameIndex++];
-                os << "\t" << (serializeFrame(fm)).str() << endl;
+                os << "    " << (serializeFrame(fm)).str() << endl;
             }
             os << "]";
             return os;
@@ -67,9 +67,9 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
             ostringstream os;
             os << "[";
             for (auto [x, y, p] : fm) {
-                os << x << "," << y << "," << int(p) << ";";
+                os << "[" << x << ", " << y << ", " << int(p) << "],  ";
             }
-            os << "]";
+            os << "],";
             return os;
         }
 
