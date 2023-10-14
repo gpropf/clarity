@@ -289,10 +289,10 @@ function staticTick() {
     Module.AppBuilder.tick__();
 }
 
-function delayedTick() {
-    pairChannelWithElement(5, 2);
-    //window.setTimeout(appBuilderSingletonTick, 3000);
-}
+// function delayedTick() {
+//     pairChannelWithElement(5, 2);
+//     //window.setTimeout(appBuilderSingletonTick, 3000);
+// }
 
 function installTickCallback(tickBtnId) {
     console.log("installTickCallback():", tickBtnId);
