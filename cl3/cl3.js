@@ -232,9 +232,7 @@ function generateEventListenerWithObjectMethodCall(obj, objMethodName) {
     // };
 }
 
-function appBuilderGetSingleton() {
-    return Module.AppBuilder.getSingleton();
-}
+
 
 function pairChannelWithElement(channelId, elementId) {
     console.log("pairChannelWithElement()", channelId, elementId);
@@ -254,45 +252,6 @@ function pairChannelWithElement(channelId, elementId) {
 
 }
 
-function installEventListenerById(elementId) {
-    console.log("installEventListenerById: ", elementId);
-    var abSingleton = appBuilderGetSingleton();
-    var webEl = abSingleton.getWebElement(elementId);
-    var domEl = webEl.getDomElement();
-
-    var evListener = function (ev) {
-        console.log("EVLISTENER in installEventListenerById method called!!!!!")
-        staticTick();
-        //abSingleton.threadTestFn();
-    }
-
-    domEl.addEventListener("click", evListener);
-}
-
-function appBuilderSingletonStart(tickInterval = 1000) {
-    setInterval(staticTick, tickInterval);
-    //appBuilderGetSingleton().start(tickInterval);
-}
-
-function appBuilderSingletonTick() {
-    //return function(ev) {
-    console.log("TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!");
-    //appBuilderGetSingleton().start(1000);
-    //var abs = Module.AppBuilder.getSingleton();
-    //abs.tick();
-    console.log("TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!");
-    //abs.listChannels();
-    //}    
-}
-
-function staticTick() {
-    Module.AppBuilder.tick__();
-}
-
-// function delayedTick() {
-//     pairChannelWithElement(5, 2);
-//     //window.setTimeout(appBuilderSingletonTick, 3000);
-// }
 
 function installTickCallback(tickBtnId) {
     console.log("installTickCallback():", tickBtnId);
@@ -300,13 +259,6 @@ function installTickCallback(tickBtnId) {
     tickbtn.addEventListener("click", appBuilderSingletonTick);
 }
 
-function testObjSetDblval(obj, v) {
-    obj.setDblval(v);
-}
-
-function testObjGetDblval(obj) {
-    return obj.getDblval();
-}
 
 function setDblvalOnObj(obj, v) {
     Module.TestObj.setDblvalOnObj(obj, v);
@@ -324,18 +276,6 @@ function getClosureOnObj(obj) {
 }
 
 
-function getTickerFn(obj) {
-    //var objWrapped = obj;
-    return function () {
-
-        var d = obj.getDblval();
-        d += 1.5;
-        obj.setDblval(d);
-        console.log("Double val from wrapped obj is: ", obj.getDblval())
-        obj.tick();
-    }
-}
-
 
 function getTickFn(obj) {
     //var objWrapped = obj;
@@ -349,6 +289,68 @@ function getTickFn(obj) {
         //obj.printGroup("g1", "getTickFn:\t");
     }
 }
+
+// DEPRECATED BELOW -----------------------------------------
+
+// function appBuilderGetSingleton() {
+//     return Module.AppBuilder.getSingleton();
+// }
+
+// function installEventListenerById(elementId) {
+//     console.log("installEventListenerById: ", elementId);
+//     var abSingleton = appBuilderGetSingleton();
+//     var webEl = abSingleton.getWebElement(elementId);
+//     var domEl = webEl.getDomElement();
+
+//     var evListener = function (ev) {
+//         console.log("EVLISTENER in installEventListenerById method called!!!!!")
+//         staticTick();
+//         //abSingleton.threadTestFn();
+//     }
+
+//     domEl.addEventListener("click", evListener);
+// }
+
+// function appBuilderSingletonStart(tickInterval = 1000) {
+//     setInterval(staticTick, tickInterval);
+//     //appBuilderGetSingleton().start(tickInterval);
+// }
+
+// function appBuilderSingletonTick() {
+//     //return function(ev) {
+//     console.log("TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!TICK!");
+//     //appBuilderGetSingleton().start(1000);
+//     //var abs = Module.AppBuilder.getSingleton();
+//     //abs.tick();
+//     console.log("TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!TOCK!");
+//     //abs.listChannels();
+//     //}    
+// }
+
+// function staticTick() {
+//     Module.AppBuilder.tick__();
+// }
+
+//function testObjSetDblval(obj, v) {
+//     obj.setDblval(v);
+// }
+
+// function testObjGetDblval(obj) {
+//     return obj.getDblval();
+// }
+
+
+// function getTickerFn(obj) {
+//     //var objWrapped = obj;
+//     return function () {
+
+//         var d = obj.getDblval();
+//         d += 1.5;
+//         obj.setDblval(d);
+//         console.log("Double val from wrapped obj is: ", obj.getDblval())
+//         obj.tick();
+//     }
+// }
 
 
 window.WebElement = WebElement
