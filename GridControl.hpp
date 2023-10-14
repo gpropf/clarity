@@ -49,11 +49,27 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
             currentFrame_.clear();
         }
 
+        ostringstream serializeFrames(int frameIndex = 0, int endFrame = 0) {
+            int frameCount = frames_.size();
+            ostringstream os;
+            os << "[\n";
+            //ostringstream frmos;
+            endFrame += frameCount;
+            while (frameIndex < endFrame) {
+                auto fm = frames_[frameIndex++];
+                os << "\t" << (serializeFrame(fm)).str() << endl;
+            }
+            os << "]";
+            return os;
+        }
+
         ostringstream serializeFrame(frame fm) {
             ostringstream os;
+            os << "[";
             for (auto [x, y, p] : fm) {
                 os << x << "," << y << "," << int(p) << ";";
             }
+            os << "]";
             return os;
         }
 
@@ -120,13 +136,9 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         return pixels_[pixelIndex];
     }
 
-    void setRecordingOn() {
-        recording_ = true;
-    }
+    void setRecordingOn() { recording_ = true; }
 
-    void setRecordingOff() {
-        recording_ = false;
-    }
+    void setRecordingOff() { recording_ = false; }
 
     /**
      * @brief Set the Pixel at (x,y) and return the value that was there before.
@@ -165,6 +177,10 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     }
 
     void makeFrame(bool serialize = false) { frameSet_.makeFrame(serialize); }
+
+    ostringstream serializeFrames(int frameIndex = 0, int endFrame = 0) {
+        return frameSet_.serializeFrames(frameIndex, endFrame);
+    }
 
     GridControl(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight,
                 shared_ptr<SignalBuilder> signalBuilder, const std::string &id = "",
@@ -333,8 +349,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
     void clearNewPixelMap() { newPixelMap_.clear(); }
 
     void mousePositionAcceptor(const std::pair<double, double> &mouseLocation) {
-         cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
-              << ", y = " << floor(mouseLocation.second) << endl;
+        cout << "GridControl::mousePositionAcceptor(): x = " << floor(mouseLocation.first)
+             << ", y = " << floor(mouseLocation.second) << endl;
         mousePositionCallback_(mouseLocation.first, mouseLocation.second);
     }
 

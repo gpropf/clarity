@@ -202,7 +202,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      */
     std::shared_ptr<Beaker<V>> getptr() { return this->shared_from_this(); }
 
-   // static Beaker<V> *singleton__;
+    // static Beaker<V> *singleton__;
 
     // static Beaker<V> *getSingleton() {
     //     // shared_ptr<SignalBuilder> sb = make_shared<cl2::SignalBuilder>();
@@ -215,7 +215,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     //     return singleton__;
     // }
 
-  //  static void setSingleton(Beaker<V> *singleton) { singleton__ = singleton; }
+    //  static void setSingleton(Beaker<V> *singleton) { singleton__ = singleton; }
 
     void deleteRule() { nameInput_.reset(); }
 
@@ -287,7 +287,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             signalBuilder_->connect<std::string>(deleteRuleButton_, makeNewRuleAcceptor_);
 
         } else {
-           // Beaker<unsigned char>::singleton__ = &*this;
+            // Beaker<unsigned char>::singleton__ = &*this;
             gridControl_->installMousePositionCallback(createGCMousePositionCallback());
 
             makeNewRuleAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
@@ -770,8 +770,8 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      */
     void update() {
-        // if (iterationCount_ > 0) gridControl_->setRecordingOn();
-        // if (iterationCount_ > 1) gridControl_->makeFrame(true);
+        if (iterationCount_ == 0) gridControl_->setRecordingOn();
+        if (iterationCount_ > 0) gridControl_->makeFrame();
         successionMap_.clear();
         buildPixelValueMaps();
         // printPixelValueMaps();
@@ -891,7 +891,10 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     void serialize(const std::string &s) {
         cout << "Serializing reactor and reaction rules..." << endl;
         val putJSONIntoDomElement = val::global("putJSONIntoDomElement");
-        putJSONIntoDomElement(val("Serializing reactor and reaction rules..."));
+        
+        ostringstream os = gridControl_->serializeFrames();
+        string frameString = os.str();
+        putJSONIntoDomElement(val(frameString));
     }
 
     void deserialize(const std::string &s) {
@@ -901,7 +904,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         cout << json.as<std::string>() << endl;
     }
 
-  //  static void iterateOnceST() { singleton__->iterateOnce(); }
+    //  static void iterateOnceST() { singleton__->iterateOnce(); }
 
     void iterateOnce() {
         if (iterationLock_) {
