@@ -24,76 +24,6 @@ using std::vector;
 
 using namespace cl3;
 
-void *thread_callback(void *arg) {
-    // while (true) {
-    //     sleep(1);
-    //     // printf("Inside the thread: %d\n", *(int *)arg);
-    //     AppBuilder *abptr = static_cast<AppBuilder *>(arg);
-    //     abptr->threadTestFn();
-    // }
-
-    sleep(1);
-    printf("Inside the thread: %d\n", *(int *)arg);
-    return NULL;
-}
-
-void *thread_callback2(void *arg) {
-    // sleep(1);
-    //  printf("Inside the thread: %d\n", *(int *)arg);
-    OtherClass *ocptr = static_cast<OtherClass *>(arg);
-
-    while (1) {
-        auto foo = ocptr->getFoo();
-        cout << "ocptr->getFoo(): " << foo << endl;
-        ocptr->foo_ += 3;
-        sleep(1);
-    }
-    return NULL;
-}
-
-void *thread_callback3(void *arg) {
-    // sleep(1);
-    //  printf("Inside the thread: %d\n", *(int *)arg);
-    // OtherClass *ocptr = static_cast<OtherClass *>(arg);
-    while (1) {
-        AppBuilder *abptr = static_cast<AppBuilder *>(arg);
-        abptr->threadTestFn();
-        sleep(1);
-    }
-    // while (1) {
-    //     auto foo = ocptr->getFoo();
-    //     cout << "ocptr->getFoo(): " << foo << endl;
-    //     ocptr->foo_ += 3;
-    //     sleep(1);
-    // }
-    return NULL;
-}
-
-void *thread_callback4(void *arg) {
-    // sleep(1);
-    //  printf("Inside the thread: %d\n", *(int *)arg);
-    // OtherClass *ocptr = static_cast<OtherClass *>(arg);
-    while (1) {
-        AppBuilder *abptr = static_cast<AppBuilder *>(arg);
-        abptr->doNothing();
-        sleep(1);
-    }
-    // while (1) {
-    //     auto foo = ocptr->getFoo();
-    //     cout << "ocptr->getFoo(): " << foo << endl;
-    //     ocptr->foo_ += 3;
-    //     sleep(1);
-    // }
-    return NULL;
-}
-
-// AppBuilder *AppBuilder::singleton__ = nullptr;
-// map<const string, vector<const int>> AppBuilder::groups__;
-// map<const int, shared_ptr<WebElement>> AppBuilder::webElements__;
-// map<const int, shared_ptr<Channel>> AppBuilder::channels__;
-// vector<const int> AppBuilder::currentGroupIds__;
-// vector<const int> AppBuilder::allIds__;
-
 int main() {
     auto appBldr = make_shared<AppBuilder>();
 
@@ -141,47 +71,14 @@ int main() {
     val appBldrTickFn = getTickFn(appBldr);
 
     tickBtn->addEventListener(val("click"), appBldrTickFn);    
-    
-
-    // val setDblvalOnObj = val::global("setDblvalOnObj");
-
-    // obj->setDblval(5.0);
-
-    // setDblvalOnObj(*obj, 1.3);
-    // ------------------
-
-    // testObjSetDblval(obj, 4.0);
-
-   // cout << "obj->getDblVal(): " << obj->getDblval();
-
-    // cout << "testObjGetDblval(): " << testObjGetDblval(*obj).as<double>();
+   
 
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     cout << "Printing contents of group g1." << endl;
     appBldr->printGroup("g1", "\t");
 
-    // val pairChannelWithElement = val::global("pairChannelWithElement");
-    // pairChannelWithElement(heightInputChannelId, syncTestInputId);
 
     appBldr->listWebElements();
-
-   // TestObj *newt = new TestObj();
-    // val transfer = val::global("Module.TestObj.transfer");
-    //  val newtJS = transfer(*newt);
-    //   AppBuilder::setSingleton(&*appBldr);
-
-    // val setInterval = val::global("setInterval");
-    // val getClosureOnObj = val::global("getTickerFn");
-
-    //TestObj *rawt = obj.get();
-
-    // val badfn = val::global("getTickerFn")(rawt);
-    //  val tickfn = getClosureOnObj(newt);
-    // setInterval(badfn, val(3000));
-    //  tickfn();
-  //  cout << "On the C++ side newt says: " << newt->getDblval() << endl;
-
-    // AppBuilder::tick__();
 
     appBldr->start(3000);
     obj->start(1000);
@@ -227,3 +124,68 @@ EMSCRIPTEN_BINDINGS(Channel) {
     //               emscripten::allow_raw_pointers());
 }
 // namespace cl3
+
+// DEPRECATED THREAD STUFF BELOW -----------------------------------------
+
+//void *thread_callback(void *arg) {
+//     // while (true) {
+//     //     sleep(1);
+//     //     // printf("Inside the thread: %d\n", *(int *)arg);
+//     //     AppBuilder *abptr = static_cast<AppBuilder *>(arg);
+//     //     abptr->threadTestFn();
+//     // }
+
+//     sleep(1);
+//     printf("Inside the thread: %d\n", *(int *)arg);
+//     return NULL;
+// }
+
+// void *thread_callback2(void *arg) {
+//     // sleep(1);
+//     //  printf("Inside the thread: %d\n", *(int *)arg);
+//     OtherClass *ocptr = static_cast<OtherClass *>(arg);
+
+//     while (1) {
+//         auto foo = ocptr->getFoo();
+//         cout << "ocptr->getFoo(): " << foo << endl;
+//         ocptr->foo_ += 3;
+//         sleep(1);
+//     }
+//     return NULL;
+// }
+
+// void *thread_callback3(void *arg) {
+//     // sleep(1);
+//     //  printf("Inside the thread: %d\n", *(int *)arg);
+//     // OtherClass *ocptr = static_cast<OtherClass *>(arg);
+//     while (1) {
+//         AppBuilder *abptr = static_cast<AppBuilder *>(arg);
+//         abptr->threadTestFn();
+//         sleep(1);
+//     }
+//     // while (1) {
+//     //     auto foo = ocptr->getFoo();
+//     //     cout << "ocptr->getFoo(): " << foo << endl;
+//     //     ocptr->foo_ += 3;
+//     //     sleep(1);
+//     // }
+//     return NULL;
+// }
+
+// void *thread_callback4(void *arg) {
+//     // sleep(1);
+//     //  printf("Inside the thread: %d\n", *(int *)arg);
+//     // OtherClass *ocptr = static_cast<OtherClass *>(arg);
+//     while (1) {
+//         AppBuilder *abptr = static_cast<AppBuilder *>(arg);
+//         abptr->doNothing();
+//         sleep(1);
+//     }
+//     // while (1) {
+//     //     auto foo = ocptr->getFoo();
+//     //     cout << "ocptr->getFoo(): " << foo << endl;
+//     //     ocptr->foo_ += 3;
+//     //     sleep(1);
+//     // }
+//     return NULL;
+// }
