@@ -90,7 +90,7 @@ int main() {
     appBldr->listWebElements();
 
     // appBldr->start(3000);
-     obj->start(1000);
+     obj->start(300);
     return 0;
 }
 

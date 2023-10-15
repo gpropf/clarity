@@ -620,16 +620,22 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     int getNumWebElements() { return webElements_.size(); }
 
     string getState() const {
-        //return state_;
-        return "";
+        return state_;
+        //return "";
     }
 
     void setState(const string &newState) {
         //string oldState = state_;
-        state_ = newState;
+        //state_ = newState;
 
         if (newState == "CLICK") {
             toggle();
+            if (running_) {
+                state_ = "RUNNING";
+            }
+            else {
+                state_ = "NOT_RUNNING";
+            }
         }
 
         //return oldState;
