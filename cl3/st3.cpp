@@ -51,8 +51,8 @@ int main() {
     auto objWidthChannel = make_shared<ObjectChannel<TestObj, int>>(
         obj, "objWidthChannel", &TestObj::setWidth, &TestObj::getWidth);
 
-    // auto appBldrCommandChannel = make_shared<ObjectChannel<AppBuilder, string>>(
-    //     appBldr, "appBldrCommandChannel", &AppBuilder::setState, &AppBuilder::getState);
+    auto appBldrCommandChannel = make_shared<ObjectChannel<AppBuilder, string>>(
+        appBldr, "appBldrCommandChannel", &AppBuilder::setState, &AppBuilder::getState);
 
     appBldr->addChannel(objHeightChannel);
     appBldr->addChannel(objWidthChannel);
@@ -87,8 +87,8 @@ int main() {
 
     appBldr->listWebElements();
 
-    appBldr->start(3000);
-    obj->start(1000);
+    //appBldr->start(3000);
+    //obj->start(1000);
     return 0;
 }
 

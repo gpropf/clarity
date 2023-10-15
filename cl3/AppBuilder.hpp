@@ -180,6 +180,16 @@ double valToCPP(val v) {
     return std::stod(v.as<string>());
 }
 
+template<typename S>
+val cppToVal(S s) {
+    return val(to_string(s));
+}
+
+template <>
+val cppToVal(string s) {
+    return val(s);
+}
+
 template <class ObjClass, typename S>
 class ObjectChannel : public Channel {
     S signalValue_;
@@ -193,7 +203,7 @@ class ObjectChannel : public Channel {
 
     // S valToCPP(val v) { return std::stoi(v.as<string>()); }
 
-    val cppToVal(S s) { return val(s); }
+    //val cppToVal(S s) { return val(s); }
 
    public:
     ObjectChannel(shared_ptr<ObjClass> objPtr, string name = "",
@@ -212,8 +222,8 @@ class ObjectChannel : public Channel {
 
     virtual void syncFrom(string tabs = "") {
         cout << tabs << "ObjectChannel::syncFrom() for '" << name_ << "'" << endl;
-        val v = val(to_string((*objPtr_.*getter_)()));
-        //val v = cppToVal((*objPtr_.*getter_)());
+        //val v = val(to_string((*objPtr_.*getter_)()));
+        val v = cppToVal((*objPtr_.*getter_)());
         inject(v);
     };
 
