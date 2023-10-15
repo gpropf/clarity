@@ -63,7 +63,8 @@ class Ticker {
 
     bool isRunning() { return running_; }
 
-    virtual void start(int tickInterval = -1) {
+    virtual void start(int tickInterval = 3000) {
+         cout << "DBG AppBuilder::start()" << endl;
         if (tickInterval != -1) tickInterval_ = tickInterval;
         if (tickJS_ == val::null()) generateTickFunction();
         timerId_ = setInterval_(tickJS_, val(tickInterval_));
@@ -71,6 +72,7 @@ class Ticker {
     }
 
     void stop() {
+        cout << "DBG AppBuilder::stop()" << endl;
         clearInterval_(timerId_);
         running_ = false;
     }
@@ -428,7 +430,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     //     }
     // }
 
-    virtual void start(int tickInterval = -1) { Ticker::start(tickInterval); }
+    virtual void start(int tickInterval = 3000) { Ticker::start(tickInterval); }
 
     void tick() {
         cout << "AppBuilder says TICK!" << endl;
@@ -618,7 +620,8 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     int getNumWebElements() { return webElements_.size(); }
 
     string getState() const {
-        return state_;
+        //return state_;
+        return "";
     }
 
     void setState(const string &newState) {

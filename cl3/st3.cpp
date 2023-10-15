@@ -54,6 +54,8 @@ int main() {
     auto appBldrCommandChannel = make_shared<ObjectChannel<AppBuilder, string>>(
         appBldr, "appBldrCommandChannel", &AppBuilder::setState, &AppBuilder::getState);
 
+    appBldr->addChannel(appBldrCommandChannel);
+
     appBldr->addChannel(objHeightChannel);
     appBldr->addChannel(objWidthChannel);
 
@@ -68,10 +70,10 @@ int main() {
     val onClickFn = val::global("sayHello");
 
     auto [testBtn, testBtnId] = appBldr->button("testButton", "Test Me", onClickFn);
-    testBtn->setClickCommand("100");
+    testBtn->setClickCommand("CLICK");
     auto [testBtnChannel, testBtnChannelId] = appBldr->makeWebElementChannel("testBtnChannel");
     testBtnChannel->installWebElement(testBtn);
-    testBtnChannel->addConnection(objWidthChannel);
+    testBtnChannel->addConnection(appBldrCommandChannel);
 
     auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", onClickFn);
     cout << "tickBtnId: " << tickBtnId << endl;
@@ -87,8 +89,8 @@ int main() {
 
     appBldr->listWebElements();
 
-    //appBldr->start(3000);
-    //obj->start(1000);
+    // appBldr->start(3000);
+     obj->start(1000);
     return 0;
 }
 
