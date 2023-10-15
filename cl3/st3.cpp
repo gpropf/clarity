@@ -68,18 +68,19 @@ int main() {
     widthInputChannel->finalize();
 
     val onClickFn = val::global("sayHello");
+    val getTickFn = val::global("getTickFn");
+    val appBldrTickFn = getTickFn(appBldr);
 
-    auto [testBtn, testBtnId] = appBldr->button("testButton", "Test Me", onClickFn);
+    auto [testBtn, testBtnId] = appBldr->button("testButton", "Toggle Monitor", onClickFn);
     testBtn->setClickCommand("CLICK");
     auto [testBtnChannel, testBtnChannelId] = appBldr->makeWebElementChannel("testBtnChannel");
     testBtnChannel->installWebElement(testBtn);
     testBtnChannel->addConnection(appBldrCommandChannel);
 
-    auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", onClickFn);
+    auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", appBldrTickFn);
     cout << "tickBtnId: " << tickBtnId << endl;
 
-    val getTickFn = val::global("getTickFn");
-    val appBldrTickFn = getTickFn(appBldr);
+    
 
     tickBtn->addEventListener(val("click"), appBldrTickFn);
 
