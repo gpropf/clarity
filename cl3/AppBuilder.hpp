@@ -166,6 +166,11 @@ S valToCPP(val v) {
 }
 
 template <>
+string valToCPP(val v) {
+    return v.as<string>();
+}
+
+template <>
 int valToCPP(val v) {
     return std::stoi(v.as<string>());
 }
@@ -208,8 +213,11 @@ class ObjectChannel : public Channel {
     virtual void syncFrom(string tabs = "") {
         cout << tabs << "ObjectChannel::syncFrom() for '" << name_ << "'" << endl;
         val v = val(to_string((*objPtr_.*getter_)()));
+        //val v = cppToVal((*objPtr_.*getter_)());
         inject(v);
     };
+
+    
     virtual void syncTo(){};
 };
 
@@ -599,19 +607,19 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
 
     int getNumWebElements() { return webElements_.size(); }
 
-    string getState() {
+    string getState() const {
         return state_;
     }
 
-    string setState(string newState) {
-        string oldState = state_;
+    void setState(const string &newState) {
+        //string oldState = state_;
         state_ = newState;
 
         if (newState == "CLICK") {
             toggle();
         }
 
-        return oldState;
+        //return oldState;
     }
 
     void listWebElements() {
