@@ -61,6 +61,12 @@ struct WebElement : public Identifiable {
 
     val getId() const { return domElement_["id"]; }
 
+    virtual int setUid(int id) {
+        int oldId = Identifiable::setUid(id);
+        domElement_.set("id", id);
+        return oldId;
+    }
+
     val getDomElement() const { return domElement_; }
 
     std::string getName() const {

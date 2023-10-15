@@ -39,9 +39,9 @@ class Identifiable {
    public:
     Identifiable(int uid = -1) : uid_(uid) {}
 
-    int getUid() { return uid_; }
+    int getUid() const { return uid_; }
 
-    int setUid(int id) {
+    virtual int setUid(int id) {
         int oldId = uid_;
         uid_ = id;
         return oldId;
