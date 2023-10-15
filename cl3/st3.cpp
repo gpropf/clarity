@@ -62,7 +62,13 @@ int main() {
     heightInputChannel->finalize();
     widthInputChannel->finalize();
 
-    val onClickFn = val::global("sayHello");    
+    val onClickFn = val::global("sayHello");
+
+    auto [testBtn, testBtnId] = appBldr->button("testButton", "Test Me", onClickFn);
+    testBtn->setClickCommand("100");
+    auto [testBtnChannel, testBtnChannelId] = appBldr->makeWebElementChannel("testBtnChannel");
+    testBtnChannel->installWebElement(testBtn);
+    testBtnChannel->addConnection(objWidthChannel);
 
     auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", onClickFn);
     cout << "tickBtnId: " << tickBtnId << endl;
@@ -70,18 +76,16 @@ int main() {
     val getTickFn = val::global("getTickFn");
     val appBldrTickFn = getTickFn(appBldr);
 
-    tickBtn->addEventListener(val("click"), appBldrTickFn);    
-   
+    tickBtn->addEventListener(val("click"), appBldrTickFn);
 
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     cout << "Printing contents of group g1." << endl;
     appBldr->printGroup("g1", "\t");
 
-
     appBldr->listWebElements();
 
-    appBldr->start(3000);
-    obj->start(1000);
+    //appBldr->start(3000);
+    //obj->start(1000);
     return 0;
 }
 
@@ -127,13 +131,13 @@ EMSCRIPTEN_BINDINGS(Channel) {
 
 // DEPRECATED THREAD STUFF BELOW -----------------------------------------
 
-//void *thread_callback(void *arg) {
-//     // while (true) {
-//     //     sleep(1);
-//     //     // printf("Inside the thread: %d\n", *(int *)arg);
-//     //     AppBuilder *abptr = static_cast<AppBuilder *>(arg);
-//     //     abptr->threadTestFn();
-//     // }
+// void *thread_callback(void *arg) {
+//      // while (true) {
+//      //     sleep(1);
+//      //     // printf("Inside the thread: %d\n", *(int *)arg);
+//      //     AppBuilder *abptr = static_cast<AppBuilder *>(arg);
+//      //     abptr->threadTestFn();
+//      // }
 
 //     sleep(1);
 //     printf("Inside the thread: %d\n", *(int *)arg);

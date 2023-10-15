@@ -226,14 +226,14 @@ class WebElementChannel : public Channel {
     WebElementChannel(string name) : Channel(name) {}
 
     virtual void finalize() {
-        val generateInjectFn = val::global("generateInjectFn");
-        cout << "WebElementChannel::finalize is creating the listener for channel with address: "
-             << int(this) << endl;
-        // val onChangeFn = generateInjectFn(this->getptr());
+        //val generateInjectFn = val::global("generateInjectFn");
+        // cout << "WebElementChannel::finalize is creating the listener for channel with address: "
+        //      << int(this) << endl;
+        // // val onChangeFn = generateInjectFn(this->getptr());
 
-        val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
+        // val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
 
-        this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
+        // this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
     }
 
     /**
@@ -243,10 +243,21 @@ class WebElementChannel : public Channel {
      */
     void installWebElement(shared_ptr<WebElement> weptr) {
         this->weptr_ = weptr;
-        if (typeid(*weptr) == typeid(RangeInput)) {
-            eventListenerName_ = "input";
-            cout << "This is a range input, so we use the onInput listener!" << endl;
-        }
+
+        cout << "WebElementChannel::installWebElement()"
+             << int(this) << endl;
+        // val onChangeFn = generateInjectFn(this->getptr());
+
+        val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
+
+        this->weptr_->setChannelEventListener(onChangeFn) ;
+
+       // this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
+
+        // if (typeid(*weptr) == typeid(RangeInput)) {
+        //     eventListenerName_ = "input";
+        //     cout << "This is a range input, so we use the onInput listener!" << endl;
+        // }
     }
 
     virtual void inject(val s, int signalGeneration = 0) {
@@ -288,6 +299,8 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     // val tickJS_;
     // int tickInterval_ = 500;
     // val timerId_;
+
+    string state_ = "";
 
     // TicketMachine tm_;
     bool labelAllInputs_ = true;
@@ -585,6 +598,21 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     shared_ptr<Channel> getChannel(const int id) { return channels_.at(id); }
 
     int getNumWebElements() { return webElements_.size(); }
+
+    string getState() {
+        return state_;
+    }
+
+    string setState(string newState) {
+        string oldState = state_;
+        state_ = newState;
+
+        if (newState == "CLICK") {
+            toggle();
+        }
+
+        return oldState;
+    }
 
     void listWebElements() {
         // for (int i = 2; i < 3; i++) {

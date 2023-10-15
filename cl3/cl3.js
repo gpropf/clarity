@@ -89,6 +89,19 @@ function generateEventListenerForChannel_TextField(channel) {
     };
 }
 
+
+function generateEventListenerForChannel_Button(channel, clickCommand = "CLICK") {
+    console.log("generateEventListenerForChannel_Button: ", channel);
+    return function (ev) {
+        //let s = testObjCSO.getSignal();
+        console.log("generateEventListenerForChannel_Button --> inject generated fn called for channel at: ", channel);
+        channel.inject(clickCommand, 0);
+        
+    };
+}
+
+
+
 function lockChannel(channel) {
     return function (ev) {
         //let s = testObjCSO.getSignal();
