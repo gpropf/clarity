@@ -501,8 +501,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     const int addWebElement(shared_ptr<WebElement> wel) {
         const int id = cl3::TicketMachine::getNextSid();
         wel->setUid(id);
-        webElements_.insert({id, wel});
-       
+        webElements_.insert({id, wel});       
         pushId(id);
         return id;
     }
@@ -539,15 +538,8 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
      * @return shared_ptr<TextField>
      */
     auto textField(const string& name, val parentElement = val::null()) {
-        const int tfid = cl3::TicketMachine::getNextSid();
-        pushId(tfid);
-        cout << "tfid: " << tfid << endl;
-        auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
-
-        // int oldid = tf->setUid(tfid);
-        // cout << "OLDID: " << oldid <<endl;
-        // val tfDomEl = tf.getDomElement();
-        webElements_.insert({tfid, tf});
+        auto tf = make_shared<TextField>(name, to_string(-2), parentElement);
+        const int tfid = addWebElement(tf);
         return std::make_pair(tf, tfid);
     }
 
