@@ -481,7 +481,6 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         pushId(objid);
         return objid;
     }
-    
 
     /**
      * @brief Adds an existing channel to the database.
@@ -501,7 +500,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     const int addWebElement(shared_ptr<WebElement> wel) {
         const int id = cl3::TicketMachine::getNextSid();
         wel->setUid(id);
-        webElements_.insert({id, wel});       
+        webElements_.insert({id, wel});
         pushId(id);
         return id;
     }
@@ -555,22 +554,20 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         return id;
     }
 
-/**
- * @brief Uses the WebElements library to make a button element.
- * 
- * @param name 
- * @param displayedText 
- * @param onClickFn 
- * @param parentElement 
- * @return auto 
- */
+    /**
+     * @brief Uses the WebElements library to make a button element.
+     *
+     * @param name
+     * @param displayedText
+     * @param onClickFn
+     * @param parentElement
+     * @return auto
+     */
     auto button(const string& name, const std::string& displayedText, val onClickFn,
                 val parentElement = val::null()) {
-        const int id = getNewId();
         auto btn =
-            make_shared<Button>(name, displayedText, onClickFn, to_string(id), parentElement);
-        // val tfDomEl = tf.getDomElement();
-        webElements_.insert({id, btn});
+            make_shared<Button>(name, displayedText, onClickFn, to_string(-3), parentElement);
+        const int id = addWebElement(btn);
         return std::make_pair(btn, id);
     }
 
@@ -581,16 +578,13 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
      * @param parentElement
      * @return shared_ptr<TextField>
      */
-    shared_ptr<RangeInput> rangeInput(const string& name, val parentElement = val::null()) {
-        const int tfid = cl3::TicketMachine::getNextSid();
-        pushId(tfid);
-        auto tf = make_shared<RangeInput>(name, to_string(tfid), parentElement);
-        // val tfDomEl = tf.getDomElement();
-        webElements_.insert({tfid, tf});
-        return tf;
+    auto rangeInput(const string& name, val parentElement = val::null()) {
+        auto tf = make_shared<RangeInput>(name, to_string(-4), parentElement);
+        const int tfid = addWebElement(tf);
+        return std::make_pair(tf, tfid);
     }
 
-    bool pairWebElementWithChannel(const int wId, const int cId) { return false; }
+   // bool pairWebElementWithChannel(const int wId, const int cId) { return false; }
 
     shared_ptr<WebElement> getWebElement(int id) const { return webElements_.at(id); }
 
