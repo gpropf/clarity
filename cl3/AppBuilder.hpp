@@ -64,7 +64,7 @@ class Ticker {
     bool isRunning() { return running_; }
 
     virtual void start(int tickInterval = 3000) {
-         cout << "DBG AppBuilder::start()" << endl;
+        cout << "DBG AppBuilder::start()" << endl;
         if (tickInterval != -1) tickInterval_ = tickInterval;
         if (tickJS_ == val::null()) generateTickFunction();
         timerId_ = setInterval_(tickJS_, val(tickInterval_));
@@ -151,7 +151,8 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
     }
 
     virtual void syncFrom(string tabs = "") {
-        cout << tabs << "Channel::syncFrom() for '" << name_ << "'" << endl;
+        cout << tabs << "Channel::syncFrom() for '" << name_ << "', uid: " << getUid()
+             << " DOES NOTHING." << endl;
     };
     virtual void syncTo(){};
 };
@@ -182,7 +183,7 @@ double valToCPP(val v) {
     return std::stod(v.as<string>());
 }
 
-template<typename S>
+template <typename S>
 val cppToVal(S s) {
     return val(to_string(s));
 }
@@ -205,7 +206,7 @@ class ObjectChannel : public Channel {
 
     // S valToCPP(val v) { return std::stoi(v.as<string>()); }
 
-    //val cppToVal(S s) { return val(s); }
+    // val cppToVal(S s) { return val(s); }
 
    public:
     ObjectChannel(shared_ptr<ObjClass> objPtr, string name = "",
@@ -223,13 +224,13 @@ class ObjectChannel : public Channel {
     }
 
     virtual void syncFrom(string tabs = "") {
-        cout << tabs << "ObjectChannel::syncFrom() for '" << name_ << "'" << endl;
-        //val v = val(to_string((*objPtr_.*getter_)()));
+        cout << tabs << "ObjectChannel::syncFrom() for '" << name_ << "', uid: " << getUid()
+             << " DOES NOTHING." << endl;
+        // val v = val(to_string((*objPtr_.*getter_)()));
         val v = cppToVal((*objPtr_.*getter_)());
         inject(v);
     };
 
-    
     virtual void syncTo(){};
 };
 
@@ -246,10 +247,11 @@ class WebElementChannel : public Channel {
     WebElementChannel(string name) : Channel(name) {}
 
     virtual void finalize() {
-        //val generateInjectFn = val::global("generateInjectFn");
-        // cout << "WebElementChannel::finalize is creating the listener for channel with address: "
-        //      << int(this) << endl;
-        // // val onChangeFn = generateInjectFn(this->getptr());
+        // val generateInjectFn = val::global("generateInjectFn");
+        //  cout << "WebElementChannel::finalize is creating the listener for channel with address:
+        //  "
+        //       << int(this) << endl;
+        //  // val onChangeFn = generateInjectFn(this->getptr());
 
         // val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
 
@@ -264,15 +266,14 @@ class WebElementChannel : public Channel {
     void installWebElement(shared_ptr<WebElement> weptr) {
         this->weptr_ = weptr;
 
-        cout << "WebElementChannel::installWebElement()"
-             << int(this) << endl;
+        cout << "WebElementChannel::installWebElement()" << int(this) << endl;
         // val onChangeFn = generateInjectFn(this->getptr());
 
         val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
 
-        this->weptr_->setChannelEventListener(onChangeFn) ;
+        this->weptr_->setChannelEventListener(onChangeFn);
 
-       // this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
+        // this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
 
         // if (typeid(*weptr) == typeid(RangeInput)) {
         //     eventListenerName_ = "input";
@@ -290,7 +291,8 @@ class WebElementChannel : public Channel {
     }
 
     virtual void syncFrom(string tabs = "") {
-        cout << tabs << "WebElementChannel::syncFrom() for '" << name_ << "'" << endl;
+        cout << tabs << "WebElementChannel::syncFrom() for '" << name_ << "', uid: " << getUid()
+             << " DOES NOTHING." << endl;
     };
 };
 
@@ -306,10 +308,10 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     vector<const int> currentGroupIds_;
     vector<const int> allIds_;
     map<const int, shared_ptr<Channel>> channels_;
-    map<const int, shared_ptr<WebElementChannel>> webElementChannels_;
-    // map<const int, std::function<int()>> intFunctions_;
-    // map<const int, std::function<void()>> hookFunctions_;
-    // map<const int, std::function<void(int)>> setIntFunctions_;
+    // map<const int, shared_ptr<WebElementChannel>> webElementChannels_;
+    //  map<const int, std::function<int()>> intFunctions_;
+    //  map<const int, std::function<void()>> hookFunctions_;
+    //  map<const int, std::function<void(int)>> setIntFunctions_;
     map<const int, shared_ptr<void>> objects_;
 
     map<const int, shared_ptr<WebElement>> webElements_;
@@ -479,27 +481,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         pushId(objid);
         return objid;
     }
-
-    // const int addIntFunction(std::function<int()> intfn) {
-    //     const int objid = cl3::TicketMachine::getNextSid();
-    //     intFunctions_.insert({objid, intfn});
-    //     pushId(objid);
-    //     return objid;
-    // }
-
-    // const int addHookFunction(std::function<void()> hookfn) {
-    //     const int objid = cl3::TicketMachine::getNextSid();
-    //     hookFunctions_.insert({objid, hookfn});
-    //     pushId(objid);
-    //     return objid;
-    // }
-
-    // const int addSetIntFunction(std::function<void(int)> intfn) {
-    //     const int objid = cl3::TicketMachine::getNextSid();
-    //     setIntFunctions_.insert({objid, intfn});
-    //     pushId(objid);
-    //     return objid;
-    // }
+    
 
     /**
      * @brief Adds an existing channel to the database.
@@ -508,18 +490,22 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
      * @return const int
      */
     const int addChannel(shared_ptr<Channel> c) {
-        const int objid = cl3::TicketMachine::getNextSid();
-        channels_.insert({objid, c});
+        const int cid = cl3::TicketMachine::getNextSid();
+        c->setUid(cid);
+        channels_.insert({cid, c});
         // channels__.insert({objid, c});
-        pushId(objid);
-        return objid;
+        pushId(cid);
+        return cid;
     }
 
-    // void insertWebElement(const int id, shared_ptr<WebElement> weptr) {
-    //     if (auto search = webElements_.find(id); search != webElements_.end()) {
-
-    //     }
-    // }
+    const int addWebElement(shared_ptr<WebElement> wel) {
+        const int id = cl3::TicketMachine::getNextSid();
+        wel->setUid(id);
+        webElements_.insert({id, wel});
+       
+        pushId(id);
+        return id;
+    }
 
     /**
      * @brief Creates a basic channel and ads it to the database.
@@ -529,20 +515,19 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
      */
     auto makeChannel(string name = "") {
         auto c = make_shared<Channel>(name);
-        const int cid = cl3::TicketMachine::getNextSid();
-        channels_.insert({cid, c});
-        // channels__.insert({cid, c});
-        pushId(cid);
+        const int cid = addChannel(c);
         return std::make_pair(c, cid);
     }
 
+    /**
+     * @brief Same kind of factory method as above but for a WEC.
+     *
+     * @param name
+     * @return auto
+     */
     auto makeWebElementChannel(string name = "") {
         auto c = make_shared<WebElementChannel>(name);
-        const int cid = cl3::TicketMachine::getNextSid();
-        // webElementChannels_.insert({cid, c});
-        channels_.insert({cid, c});
-        // channels__.insert({cid, c});
-        pushId(cid);
+        const int cid = addChannel(c);
         return std::make_pair(c, cid);
     }
 
@@ -566,25 +551,27 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         return std::make_pair(tf, tfid);
     }
 
-    // static auto textField__(const string& name, val parentElement = val::null()) {
-    //     const int tfid = cl3::TicketMachine::getNextSid();
-    //     pushId__(tfid);
-    //     cout << "tfid: " << tfid << endl;
-    //     auto tf = make_shared<TextField>(name, to_string(tfid), parentElement);
-
-    //     int oldid = tf->setUid(tfid);
-    //     cout << "OLDID: " << oldid << endl;
-    //     // val tfDomEl = tf.getDomElement();
-    //     AppBuilder::webElements__.insert({tfid, tf});
-    //     return std::make_pair(tf, tfid);
-    // }
-
+    /**
+     * @brief Get's a (hopefully) unique id from the TicketMachine. Also adds that id to the stack
+     * of ids that will become the next group when you create one.
+     *
+     * @return const int
+     */
     const int getNewId() {
         const int id = cl3::TicketMachine::getNextSid();
         pushId(id);
         return id;
     }
 
+/**
+ * @brief Uses the WebElements library to make a button element.
+ * 
+ * @param name 
+ * @param displayedText 
+ * @param onClickFn 
+ * @param parentElement 
+ * @return auto 
+ */
     auto button(const string& name, const std::string& displayedText, val onClickFn,
                 val parentElement = val::null()) {
         const int id = getNewId();
@@ -621,24 +608,23 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
 
     string getState() const {
         return state_;
-        //return "";
+        // return "";
     }
 
-    void setState(const string &newState) {
-        //string oldState = state_;
-        //state_ = newState;
+    void setState(const string& newState) {
+        // string oldState = state_;
+        // state_ = newState;
 
         if (newState == "CLICK") {
             toggle();
             if (running_) {
                 state_ = "RUNNING";
-            }
-            else {
+            } else {
                 state_ = "NOT_RUNNING";
             }
         }
 
-        //return oldState;
+        // return oldState;
     }
 
     void listWebElements() {
