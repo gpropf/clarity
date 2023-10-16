@@ -3,7 +3,7 @@
  * @author Greg Propf (gpropf@gmail.com)
  * @brief Some simple classes to test the cl3 object integrations.
  * @version 0.1
- * @date 2023-10-14
+ * @date 2023-10-15
  *
  * @copyright Copyright (c) 2023
  *
@@ -31,7 +31,6 @@ class OtherClass {
    public:
     int foo_ = 7;
     int getFoo() { return foo_; }
-
     void setFoo(int f) { foo_ = f; }
 };
 
@@ -51,25 +50,12 @@ class TestObj : public std::enable_shared_from_this<TestObj>, public Ticker {
     static TestObj *transfer(TestObj *t) { return t; }
     std::shared_ptr<TestObj> getptr() { return this->shared_from_this(); }
 
-    virtual void tick() {
-        // dblval_ += 0.1;
+    virtual void tick() {        
         auto d = getDblval();
         d += 0.1;
         setDblval(d);
         cout << "TestObj ticks! " << dblval_ << endl;
-    }
-
-    /**
-     * @brief Does the same thing as tick() but calling it from a hook function doesn't seem to
-     * produce errors.
-     *
-     */
-    void update() {
-        auto d = getDblval();
-        d += 0.1;
-        setDblval(d);
-        cout << "TestObj updates! " << dblval_ << endl;
-    }
+    }    
 
     /**
      * @brief This installs this class' `tick()` method to be called from the `setInterval()` JS
@@ -110,12 +96,7 @@ class TestObj : public std::enable_shared_from_this<TestObj>, public Ticker {
 
     static void setDblvalOnObj(TestObj *tptr, double v) { tptr->setDblval(v); }
 
-    double getDblval() const {
-        // if (dblval_ > 4) {
-        //     cout << "This is one thread..." << endl;
-        // } else {
-        //     cout << "This is the other thread..." << endl;
-        // }
+    double getDblval() const {        
         cout << "TestObj::getDblval(): " << dblval_ << endl;
         return dblval_;
     }

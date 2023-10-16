@@ -1,9 +1,9 @@
 /**
- * @file signalTest.cpp
+ * @file st3.cpp
  * @author Greg Propf (gpropf@gmail.com)
  * @brief A test program to try out and debug the library.
- * @version 0.2
- * @date 2023-10-14
+ * @version 0.3
+ * @date 2023-10-15
  *
  * @copyright Copyright (c) 2023
  *

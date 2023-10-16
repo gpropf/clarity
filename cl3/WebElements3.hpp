@@ -25,8 +25,6 @@
 
 #include "Util3.hpp"
 
-// #include "SignalPrimitives.hpp"
-
 using emscripten::val;
 using std::cout;
 using std::endl;
@@ -38,7 +36,7 @@ class WebElementChannel;
 
 /**
  * @brief Represents a single web element. Defined as a struct because this is meant to defined
- * using const.
+ * usually as const.
  *
  */
 struct WebElement : public Identifiable {

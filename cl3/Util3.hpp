@@ -1,3 +1,14 @@
+/**
+ * @file Util3.hpp
+ * @author Greg Propf (gpropf@gmail.com)
+ * @brief Utility code and classes for the CL3 revision of Clarity.
+ * @version 0.1
+ * @date 2023-10-15
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
+
 #ifndef Util3_hpp
 #define Util3_hpp
 
