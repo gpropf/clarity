@@ -1,9 +1,9 @@
 /**
- * @file SignalBuilder.hpp
+ * @file AppBuilder.hpp
  * @author Greg Propf (gpropf@gmail.com)
  * @brief This is the factory class that creates and then connects the signals.
- * @version 0.1
- * @date 2023-03-05
+ * @version 0.2
+ * @date 2023-10-15
  *
  * @copyright Copyright (c) 2023
  *
@@ -12,11 +12,8 @@
 #ifndef AppBuilder3_hpp
 #define AppBuilder3_hpp
 
-// #include "SignalPrimitives.hpp"
 #include "Util3.hpp"
-// #include "WebElementSignals.hpp"
 #include <memory>
-
 #include "WebElements3.hpp"
 
 using std::cout;
@@ -43,8 +40,7 @@ class Ticker {
 
    public:
     Ticker(int tickInterval = 500, bool running_ = false)
-        : tickInterval_(tickInterval), running_(running_) {
-        // tickJS_ = val::global("TickerTick")(*this);
+        : tickInterval_(tickInterval), running_(running_) {        
         if (running_) start();
     }
 
@@ -86,8 +82,7 @@ class Ticker {
             return true;
         }
     }
-
-    // virtual void tick() { cout << "TICKER TICKS!" << endl; }
+    
     virtual void tick() = 0;
 };
 
@@ -201,12 +196,7 @@ class ObjectChannel : public Channel {
     S (ObjClass::*getter_)() const;
 
     void setGetterMethod(S (ObjClass::*getter)()) { getter_ = getter; }
-
-    void setSetterMethod(void (ObjClass::*setter)(const S& s)) { setter_ = setter; }
-
-    // S valToCPP(val v) { return std::stoi(v.as<string>()); }
-
-    // val cppToVal(S s) { return val(s); }
+    void setSetterMethod(void (ObjClass::*setter)(const S& s)) { setter_ = setter; }    
 
    public:
     ObjectChannel(shared_ptr<ObjClass> objPtr, string name = "",
@@ -265,20 +255,9 @@ class WebElementChannel : public Channel {
      */
     void installWebElement(shared_ptr<WebElement> weptr) {
         this->weptr_ = weptr;
-
         cout << "WebElementChannel::installWebElement()" << int(this) << endl;
-        // val onChangeFn = generateInjectFn(this->getptr());
-
         val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
-
         this->weptr_->setChannelEventListener(onChangeFn);
-
-        // this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
-
-        // if (typeid(*weptr) == typeid(RangeInput)) {
-        //     eventListenerName_ = "input";
-        //     cout << "This is a range input, so we use the onInput listener!" << endl;
-        // }
     }
 
     virtual void inject(val s, int signalGeneration = 0) {
@@ -299,69 +278,33 @@ class WebElementChannel : public Channel {
 template <typename S>
 using getterSetterPair = std::pair<std::function<S()>, std::function<void(S)>>;
 
-/**
- * @brief
- *
- */
-// template <template <typename> class T>
+
 class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticker {
     vector<const int> currentGroupIds_;
     vector<const int> allIds_;
     map<const int, shared_ptr<Channel>> channels_;
-    // map<const int, shared_ptr<WebElementChannel>> webElementChannels_;
-    //  map<const int, std::function<int()>> intFunctions_;
-    //  map<const int, std::function<void()>> hookFunctions_;
-    //  map<const int, std::function<void(int)>> setIntFunctions_;
     map<const int, shared_ptr<void>> objects_;
-
     map<const int, shared_ptr<WebElement>> webElements_;
     map<const string, vector<const int>> groups_;
 
-    // val setInterval_ = val::global("setInterval");
-    // val tickJS_;
-    // int tickInterval_ = 500;
-    // val timerId_;
-
     string state_ = "";
 
-    // TicketMachine tm_;
     bool labelAllInputs_ = true;
     bool labelsSwallowTheirReferents_ = true;
     bool addBRAfterAllCalls_ =
         true;  //!< add a '<BR>' tag after each call so everything goes on its own line.
     val parentDOMElement_ = val::null();
-    // map<const string, const WebElement*>
-    //     elementMap_;  //!< a map of elements we've created so we can re-use them.
-    // map<string, val> attrs_;
+
+    // map<string, val> webElementAttrs_;
     bool attrsResetAfterSingleUse_ = true;
 
    public:
     std::shared_ptr<AppBuilder> getptr() { return this->shared_from_this(); }
 
-    // static map<const string, vector<const int>> groups__;
-    // static map<const int, shared_ptr<WebElement>> webElements__;
-    // static map<const int, shared_ptr<Channel>> channels__;
-    // static vector<const int> currentGroupIds__;
-    // static vector<const int> allIds__;
-
     void pushId(const int id) {
         currentGroupIds_.push_back(id);
-        // currentGroupIds__.push_back(id);
         allIds_.push_back(id);
-        // allIds__.push_back(id);
     }
-
-    // static void pushId__(const int id) {
-    //     AppBuilder::singleton__->currentGroupIds_.push_back(id);
-    //     AppBuilder::singleton__->allIds_.push_back(id);
-    // }
-
-    // static AppBuilder* singleton__;
-    // static AppBuilder* getSingleton() { return singleton__; }
-
-    // static void setSingleton(AppBuilder* singleton) { singleton__ = singleton; }
-
-    // static void tick__() { singleton__->tick(); }
 
     /**
      * @brief Construct a new App Builder object. This class is the central factory class and also
@@ -387,25 +330,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
                val parentDOMElement = val::null())
         : labelAllInputs_(labelAllInputs),
           labelsSwallowTheirReferents_(labelsSwallowTheirReferents),
-          parentDOMElement_(parentDOMElement) {
-        // tm_ = TicketMachine(startId);
-
-        //  iterateOnceJS();
-        //  cout << "Called elgCallMethodOnObjByName..." << endl;
-
-        // val setInterval = val::global("setInterval");
-
-        // tickJS_ = val::global("appBuilderTick");
-        // val tickJSFn = tickJS_(*this);
-        //
-        // val timerId_ = setInterval_(tickJSFn, val(tickInterval_));
-    }
-
-    // void initTick() {
-    //     val jsMethodCallerFn = val::global("elgCallMethodOnObjByName");
-    //     val iterateOnceJS = jsMethodCallerFn(*this, val("tick"));
-    //     timerId_ = setInterval_(iterateOnceJS, val(tickInterval_));
-    // }
+          parentDOMElement_(parentDOMElement) {}
 
     void syncFrom(string prefix = "") {
         cout << "AppBuilder::syncFrom()" << endl;
@@ -416,37 +341,12 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         }
     }
 
-    // static void syncFrom__(string prefix = "") {
-    //     cout << "STATIC AppBuilder::syncFrom()" << endl;
-    //     for (auto [id, c] : channels__) {
-    //         cout << "STATIC AppBuilder::syncFrom(), Channel: '" << c->getName() << "'"
-    //              << ", id: " << id << endl;
-    //         c->syncFrom("\tAB: " + prefix);
-    //     }
-    // }
-
-    // void runHookFns() {
-    //     for (auto [id, fn] : hookFunctions_) {
-    //         cout << "Calling Hook Function with id = " << id << endl;
-    //         fn();
-    //     }
-    // }
-
     virtual void start(int tickInterval = 3000) { Ticker::start(tickInterval); }
 
     void tick() {
         cout << "AppBuilder says TICK!" << endl;
         syncFrom("tick: ");
-        //  runHookFns();
     }
-
-    // static void tick__() {
-    //     cout << "Static AppBuilder says TICK!" << endl;
-    //     // singleton__->syncFrom("static tick: ");
-    //     //   runHookFns();
-    //     syncFrom__("STATIC tick: ");
-    //     singleton__->printGroup("g1", "button callback\t:");
-    // }
 
     void threadTestFn() {
         cout << "AppBuilder says hello from the button click!" << endl;
@@ -492,11 +392,16 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         const int cid = cl3::TicketMachine::getNextSid();
         c->setUid(cid);
         channels_.insert({cid, c});
-        // channels__.insert({objid, c});
         pushId(cid);
         return cid;
     }
 
+    /**
+     * @brief Adds an existing web element to the database.
+     *
+     * @param wel
+     * @return const int
+     */
     const int addWebElement(shared_ptr<WebElement> wel) {
         const int id = cl3::TicketMachine::getNextSid();
         wel->setUid(id);
@@ -534,7 +439,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
      *
      * @param name
      * @param parentElement
-     * @return shared_ptr<TextField>
+     * @return auto
      */
     auto textField(const string& name, val parentElement = val::null()) {
         auto tf = make_shared<TextField>(name, to_string(-2), parentElement);
@@ -576,15 +481,13 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
      *
      * @param name
      * @param parentElement
-     * @return shared_ptr<TextField>
+     * @return auto
      */
     auto rangeInput(const string& name, val parentElement = val::null()) {
         auto tf = make_shared<RangeInput>(name, to_string(-4), parentElement);
         const int tfid = addWebElement(tf);
         return std::make_pair(tf, tfid);
-    }
-
-   // bool pairWebElementWithChannel(const int wId, const int cId) { return false; }
+    }    
 
     shared_ptr<WebElement> getWebElement(int id) const { return webElements_.at(id); }
 
@@ -593,14 +496,10 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     int getNumWebElements() { return webElements_.size(); }
 
     string getState() const {
-        return state_;
-        // return "";
+        return state_;        
     }
 
     void setState(const string& newState) {
-        // string oldState = state_;
-        // state_ = newState;
-
         if (newState == "CLICK") {
             toggle();
             if (running_) {
@@ -609,26 +508,17 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
                 state_ = "NOT_RUNNING";
             }
         }
-
-        // return oldState;
     }
 
     void listWebElements() {
-        // for (int i = 2; i < 3; i++) {
-        //     cout << getWebElement(i)->getName() << endl;
-        // }
         for (auto [id, el] : webElements_) {
             cout << "ID: " << id << ", " << el->getName() << endl;
         }
     }
 
     void listChannels() {
-        // for (int i = 2; i < 3; i++) {
-        //     cout << getWebElement(i)->getName() << endl;
-        // }
         cout << "Listing channels..." << endl;
-        for (auto [id, el] : channels_) {
-            // if (id > 0)
+        for (auto [id, el] : channels_) {            
             cout << "ID: " << id << ", " << el->getName() << endl;
         }
     }
