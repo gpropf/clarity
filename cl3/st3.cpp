@@ -24,7 +24,13 @@ using std::vector;
 
 using namespace cl3;
 
+int Debug::LEVEL = 0;
+
 int main() {
+
+    // Debug dout;
+    // dout << 42 << std::endl;
+
     auto appBldr = make_shared<AppBuilder>();
 
     // We make a test object and then tell the appBldr about it.
@@ -91,7 +97,7 @@ int main() {
     appBldr->listWebElements();
 
     // appBldr->start(3000);
-     obj->start(300);
+    // obj->start(300);
     return 0;
 }
 

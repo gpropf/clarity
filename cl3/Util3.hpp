@@ -20,16 +20,43 @@
 #include <string>
 
 using emscripten::val;
-using std::endl;
 using std::cout;
+using std::endl;
 using std::map;
 using std::shared_ptr;
 using std::string;
 using std::to_string;
 using std::vector;
 
-
 namespace cl3 {
+
+/**
+ * @brief I'm attempting to overload 'cout' in hopes of making a debug function that prints
+ * conditionally. I does't work yet.
+ *
+ */
+struct Debug : public std::ostream {
+    Debug() = default;
+    static const int INFO = 1;
+    static const int WARNING = 2;
+    static const int ERROR = 4;
+
+    static int LEVEL;
+
+    Debug& operator<<(int input) {
+        // do something with input
+        cout << (input + 1);
+        return *this;
+    }
+
+    Debug& operator<<(char e) {
+        // do something with input
+        cout << e;
+        return *this;
+    }
+
+    // static void dout
+};
 
 /**
  * @brief Basic wrapper around the JS function of this name since I anticipate needing this a lot.
@@ -44,6 +71,10 @@ int setInterval(val jsFunc, int delay) {
     return setInterval(jsFunc, val(delay)).as<int>();
 }
 
+/**
+ * @brief Used as a base class for things that need a unique identifier.
+ *
+ */
 class Identifiable {
     int uid_;
 
