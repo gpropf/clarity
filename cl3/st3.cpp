@@ -62,10 +62,10 @@ int main() {
     heightInputChannel->addConnection(objHeightChannel);
     widthInputChannel->addConnection(objWidthChannel);
 
-    objWidthChannel->finalize();
-    objHeightChannel->finalize();
-    heightInputChannel->finalize();
-    widthInputChannel->finalize();
+    // objWidthChannel->finalize();
+    // objHeightChannel->finalize();
+    // heightInputChannel->finalize();
+    // widthInputChannel->finalize();
 
     val onClickFn = val::global("sayHello");
     val getTickFn = val::global("getTickFn");

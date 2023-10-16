@@ -12,8 +12,9 @@
 #ifndef AppBuilder3_hpp
 #define AppBuilder3_hpp
 
-#include "Util3.hpp"
 #include <memory>
+
+#include "Util3.hpp"
 #include "WebElements3.hpp"
 
 using std::cout;
@@ -40,22 +41,23 @@ class Ticker {
 
    public:
     Ticker(int tickInterval = 500, bool running_ = false)
-        : tickInterval_(tickInterval), running_(running_) {        
+        : tickInterval_(tickInterval), running_(running_) {
         if (running_) start();
     }
 
     virtual ~Ticker() {}
 
     /**
-     * @brief Ideally we would have this method simply have this code to install the tick method
-     * `tickJS_ = val::global("TickerTick")(*this);`
-     *
-     * In practice this does not compile and produces errors about how `tick()` is a pure virtual
-     * method. Thus you need to overload this method in your subclass with the above line of code.
-     * The result will be that it will call your overloaded `tick()` method.
+     * @brief We overload this in subclasses to create the tick callback for each class.
      *
      */
     virtual void generateTickFunction() = 0;
+
+    /**
+     * @brief Must be overloaded to define tick behavior.
+     *
+     */
+    virtual void tick() = 0;
 
     bool isRunning() { return running_; }
 
@@ -82,8 +84,6 @@ class Ticker {
             return true;
         }
     }
-    
-    virtual void tick() = 0;
 };
 
 class Channel : public std::enable_shared_from_this<Channel>, public Identifiable {
@@ -106,7 +106,7 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
     Channel(string name) : name_(name) {}
     string getName() { return name_; }
 
-    virtual void finalize() {}
+    //virtual void finalize() {}
 
     virtual void testMethod() { cout << "Channel::testMethod()" << endl; }
 
@@ -196,7 +196,7 @@ class ObjectChannel : public Channel {
     S (ObjClass::*getter_)() const;
 
     void setGetterMethod(S (ObjClass::*getter)()) { getter_ = getter; }
-    void setSetterMethod(void (ObjClass::*setter)(const S& s)) { setter_ = setter; }    
+    void setSetterMethod(void (ObjClass::*setter)(const S& s)) { setter_ = setter; }
 
    public:
     ObjectChannel(shared_ptr<ObjClass> objPtr, string name = "",
@@ -236,17 +236,17 @@ class WebElementChannel : public Channel {
    public:
     WebElementChannel(string name) : Channel(name) {}
 
-    virtual void finalize() {
-        // val generateInjectFn = val::global("generateInjectFn");
-        //  cout << "WebElementChannel::finalize is creating the listener for channel with address:
-        //  "
-        //       << int(this) << endl;
-        //  // val onChangeFn = generateInjectFn(this->getptr());
+    // virtual void finalize() {
+    //     // val generateInjectFn = val::global("generateInjectFn");
+    //     //  cout << "WebElementChannel::finalize is creating the listener for channel with address:
+    //     //  "
+    //     //       << int(this) << endl;
+    //     //  // val onChangeFn = generateInjectFn(this->getptr());
 
-        // val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
+    //     // val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
 
-        // this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
-    }
+    //     // this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
+    // }
 
     /**
      * @brief Assigns the provided WebElement to this channel
@@ -277,7 +277,6 @@ class WebElementChannel : public Channel {
 
 template <typename S>
 using getterSetterPair = std::pair<std::function<S()>, std::function<void(S)>>;
-
 
 class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticker {
     vector<const int> currentGroupIds_;
@@ -487,7 +486,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         auto tf = make_shared<RangeInput>(name, to_string(-4), parentElement);
         const int tfid = addWebElement(tf);
         return std::make_pair(tf, tfid);
-    }    
+    }
 
     shared_ptr<WebElement> getWebElement(int id) const { return webElements_.at(id); }
 
@@ -495,9 +494,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
 
     int getNumWebElements() { return webElements_.size(); }
 
-    string getState() const {
-        return state_;        
-    }
+    string getState() const { return state_; }
 
     void setState(const string& newState) {
         if (newState == "CLICK") {
@@ -518,7 +515,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
 
     void listChannels() {
         cout << "Listing channels..." << endl;
-        for (auto [id, el] : channels_) {            
+        for (auto [id, el] : channels_) {
             cout << "ID: " << id << ", " << el->getName() << endl;
         }
     }
