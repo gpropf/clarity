@@ -93,11 +93,14 @@ int main() {
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     cout << "Printing contents of group g1." << endl;
     appBldr->printGroup("g1", "\t");
-
     appBldr->listWebElements();
 
+
+    appBldr->listWebElements();
+    appBldr->listChannels();
+
     // appBldr->start(3000);
-    // obj->start(300);
+    obj->start(3000);
     return 0;
 }
 
