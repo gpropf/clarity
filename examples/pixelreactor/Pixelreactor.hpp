@@ -316,7 +316,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             signalBuilder_->connect<std::string>(clearButton_, clearAcceptor_);
 
             loadButton_ = signalBuilder_->buttonWSS<std::string>("Load Rules");
-            saveButton_ = signalBuilder_->buttonWSS<std::string>("Save Rules");
+            saveButton_ = signalBuilder_->buttonWSS<std::string>("Save Run");
             saveAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
             saveAcceptor_->setSignalAcceptorMethod(&Beaker::serialize);
 
@@ -990,25 +990,6 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         }
         // gridControl_->redraw();
     }
-
-    /**
-     * <<< This block of repeats is meant to be easy for me to see on the right scroll control in
-     * VScode.
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
-     * HERE <<< OLD CODE BELOW HERE
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
-     * HERE <<< OLD CODE BELOW HERE
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
-     * HERE <<< OLD CODE BELOW HERE
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
-     * HERE <<< OLD CODE BELOW HERE
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
-     * HERE <<< OLD CODE BELOW HERE
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
-     * HERE <<< OLD CODE BELOW HERE
-     * <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW HERE <<< OLD CODE BELOW
-     * HERE <<< OLD CODE BELOW HERE
-     */
 
     void clearGrid(const std::string &s) {
         // cout << "clearGrid()" << endl;
