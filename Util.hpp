@@ -4,14 +4,59 @@
 #include <emscripten.h>
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
-
 #include <string>
+#include <sstream>
+#include <iostream>
 
 using emscripten::val;
 using std::cout;
 using std::endl;
+using std::string;
+using std::ostringstream;
 
 namespace cl2 {
+
+union MapValUnion {
+    int i_;
+    double d_;
+    shared_ptr<string> s_;
+    MapValUnion() : s_{} {};
+    ~MapValUnion() {}
+};
+
+// MapValUnion::MapValUnion(shared_ptr<string> s) :s_(s) {}
+
+struct MapVal {
+    enum selector { INT = 1, DBL = 2, STR = 3 };
+    selector type_ = STR;
+    MapValUnion mvu_;
+    MapVal(shared_ptr<string> s) {
+        mvu_.s_ = s;
+        type_ = STR;
+    }
+    MapVal(int i) {
+        mvu_.i_ = i;
+        type_ = INT;
+    }
+    MapVal(double d) {
+        mvu_.d_ = d;
+        type_ = DBL;
+    }
+    string toJson() {
+        ostringstream os;
+        switch (type_) {
+            case INT:
+                os << mvu_.i_;
+                return os.str();
+            case DBL:
+                os << mvu_.d_;
+                return os.str();
+            case STR:
+                os << *(mvu_.s_);
+                return os.str();
+        }
+    }
+};
 
 /**
  * @brief Basic wrapper around the JS function of this name since I anticipate needing this a lot.

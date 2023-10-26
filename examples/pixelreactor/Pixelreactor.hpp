@@ -893,8 +893,22 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         val putJSONIntoDomElement = val::global("putJSONIntoDomElement");
         
         ostringstream os = gridControl_->serializeFrames();
+        os << endl << serializeBeaker() << endl;
         string frameString = os.str();
         putJSONIntoDomElement(val(frameString));
+    }
+
+    //string toJson(std::map<string,)
+
+    string serializeBeaker() {
+        ostringstream os;
+        MapVal gridWidth  (gridWidth_);
+        shared_ptr<string> gridWidthStr = make_shared<string>("gridWidth");
+        MapVal gridWidthMV  (gridWidthStr);
+        MapVal gridHeight  (gridHeight_);
+        os << gridWidthMV.toJson() << ":" << gridWidth.toJson();
+        return os.str();
+
     }
 
     void deserialize(const std::string &s) {
