@@ -23,7 +23,7 @@ union MapValUnion {
     double d_;
     string* s_;
     MapValUnion() : s_{} {};
-    ~MapValUnion() {}
+    ~MapValUnion(){};
 };
 
 // MapValUnion::MapValUnion(shared_ptr<string> s) :s_(s) {}
@@ -36,8 +36,16 @@ struct MapVal {
         mvu_.s_ = s;
         type_ = STR;
     }
+
+    /**
+     * @brief Construct a new Map Val object from a char ptr. If you use this to create values in a
+     * map though, the temporary MapVal string will be disposed of before you can use it, for
+     * instance in the mapToJson methods here.
+     *
+     * @param c
+     */
     // MapVal(const char* c) {
-    //     //mvu_.s_ = &string(c);
+    //     mvu_.s_ = new string(c);
     //     type_ = STR;
     // }
     MapVal(int i) {
@@ -49,8 +57,14 @@ struct MapVal {
         type_ = DBL;
     }
 
-bool operator<( MapVal const & rhs ) const {
-    switch (type_) {
+    ~MapVal() {
+        if (type_ == STR) {
+            delete mvu_.s_;
+        }
+    }
+
+    bool operator<(MapVal const& rhs) const {
+        switch (type_) {
             case INT:
                 return mvu_.i_ < rhs.mvu_.i_;
             case DBL:
@@ -59,21 +73,21 @@ bool operator<( MapVal const & rhs ) const {
                 return *(mvu_.s_) < *(rhs.mvu_.s_);
         }
         return false;
-}
+    }
 
     string toJson() const {
         ostringstream os;
-        //string stringVal;
+        // string stringVal;
         os << "\"";
         switch (type_) {
             case INT:
                 os << mvu_.i_;
-                //stringVal = os.str();
+                // stringVal = os.str();
                 break;
             case DBL:
                 os << mvu_.d_;
                 break;
-                
+
             case STR:
                 os << *(mvu_.s_);
                 break;
@@ -93,7 +107,7 @@ bool operator<( MapVal const & rhs ) const {
     static string mapToJson(map<MapVal, MapVal>& m) {
         ostringstream os;
         for (const auto& [key, value] : m) {
-            os << "\t\"" << key.toJson() << "\" : " << value.toJson() << "," << endl;
+            os << "\t" << key.toJson() << " : " << value.toJson() << "," << endl;
         }
         return os.str();
     }

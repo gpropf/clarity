@@ -898,23 +898,29 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         putJSONIntoDomElement(val(frameString));
     }
 
-    // string toJson(std::map<string,)
-
+    /**
+     * @brief writes a JSON representation of the structure of this Beaker.
+     *
+     * @return string
+     */
     string serializeBeaker() {
         ostringstream os;
-        MapVal gridWidth(gridWidth_);      
+        MapVal gridWidth(gridWidth_);
         string gridWidthStr = "gridWidth";
         const MapVal gridWidthMV(&gridWidthStr);
-        MapVal gridHeight(gridHeight_); 
-        string fooStr = "FOO";       
+        MapVal gridHeight(gridHeight_);
+        //MapVal gw("GW");
+        string fooStr = "FOO";
         MapVal foo(&fooStr);
         MapVal name(&name_);
-        
-        std::map<string, MapVal> m{{"gridWidth", gridWidth}, {"gridHeight", gridHeight}, {"name", name}};
-        std::map<MapVal, MapVal> m2{{gridWidthMV, gridWidth}};
-        //std::map<MapVal, MapVal> m3{{MapVal("gridWidth"), gridWidth}};
-        // m[gridWidthMV] = gridWidth;
+
+        std::map<string, MapVal> m{
+            {"gridWidth", gridWidth}, {"gridHeight", gridHeight}, {"name", name}};
+        //std::map<MapVal, MapVal> m2{{gridWidthMV, gridWidth}};
+        // std::map<MapVal, MapVal> m3{{MapVal("gridWidth"), gridWidth}};
+        //  m[gridWidthMV] = gridWidth;
         os << "{" << endl << MapVal::mapToJson(m) << "}" << endl;
+        //os << "{" << endl << MapVal::mapToJson(m2) << "}" << endl;
         return os.str();
     }
 
