@@ -36,6 +36,10 @@ struct MapVal {
         mvu_.s_ = s;
         type_ = STR;
     }
+    // MapVal(const char* c) {
+    //     //mvu_.s_ = &string(c);
+    //     type_ = STR;
+    // }
     MapVal(int i) {
         mvu_.i_ = i;
         type_ = INT;
@@ -44,26 +48,52 @@ struct MapVal {
         mvu_.d_ = d;
         type_ = DBL;
     }
+
+bool operator<( MapVal const & rhs ) const {
+    switch (type_) {
+            case INT:
+                return mvu_.i_ < rhs.mvu_.i_;
+            case DBL:
+                return mvu_.d_ < rhs.mvu_.d_;
+            case STR:
+                return *(mvu_.s_) < *(rhs.mvu_.s_);
+        }
+        return false;
+}
+
     string toJson() const {
         ostringstream os;
-        string stringVal;
+        //string stringVal;
+        os << "\"";
         switch (type_) {
             case INT:
                 os << mvu_.i_;
-                return os.str();
+                //stringVal = os.str();
+                break;
             case DBL:
                 os << mvu_.d_;
-                return os.str();
+                break;
+                
             case STR:
                 os << *(mvu_.s_);
-                return os.str();
+                break;
         }
+        os << "\"";
+        return os.str();
     }
 
     static string mapToJson(map<string, MapVal>& m) {
         ostringstream os;
         for (const auto& [key, value] : m) {
-            os << "\t" << key << " : " << value.toJson() << "," << endl;
+            os << "\t\"" << key << "\" : " << value.toJson() << "," << endl;
+        }
+        return os.str();
+    }
+
+    static string mapToJson(map<MapVal, MapVal>& m) {
+        ostringstream os;
+        for (const auto& [key, value] : m) {
+            os << "\t\"" << key.toJson() << "\" : " << value.toJson() << "," << endl;
         }
         return os.str();
     }

@@ -903,13 +903,16 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     string serializeBeaker() {
         ostringstream os;
         MapVal gridWidth(gridWidth_);      
-        
+        string gridWidthStr = "gridWidth";
+        const MapVal gridWidthMV(&gridWidthStr);
         MapVal gridHeight(gridHeight_); 
         string fooStr = "FOO";       
         MapVal foo(&fooStr);
         MapVal name(&name_);
         
-        std::map<string, MapVal> m{{"gridWidth", gridWidth}, {"gridHeight", gridHeight}, {"foo", foo}, {"name", name}};
+        std::map<string, MapVal> m{{"gridWidth", gridWidth}, {"gridHeight", gridHeight}, {"name", name}};
+        std::map<MapVal, MapVal> m2{{gridWidthMV, gridWidth}};
+        //std::map<MapVal, MapVal> m3{{MapVal("gridWidth"), gridWidth}};
         // m[gridWidthMV] = gridWidth;
         os << "{" << endl << MapVal::mapToJson(m) << "}" << endl;
         return os.str();
