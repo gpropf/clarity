@@ -12,6 +12,7 @@
 #include <memory>
 
 #include "AppBuilder.hpp"
+#include "WebElementChannel.hpp"
 #include "TestClasses.hpp"
 #include "Util3.hpp"
 
