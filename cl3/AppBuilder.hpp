@@ -17,6 +17,7 @@
 #include "Util3.hpp"
 #include "WebElements3.hpp"
 #include "Channel.hpp"
+#include "ObjectChannel.hpp"
 #include "WebElementChannel.hpp"
 
 
