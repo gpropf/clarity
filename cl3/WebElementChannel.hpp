@@ -16,6 +16,7 @@
 
 #include "Util3.hpp"
 #include "WebElements3.hpp"
+#include "Channel.hpp"
 
 using std::cout;
 using std::map;
@@ -37,22 +38,15 @@ namespace cl3 {
  */
 class WebElementChannel : public Channel {
     shared_ptr<WebElement> weptr_;
-    string eventListenerName_ = "change";
+    // string eventListenerName_ = "change";
+
+   protected:
+    string channelEventListenerName_ = "change";
 
    public:
     WebElementChannel(string name) : Channel(name) {}
 
-    // virtual void finalize() {
-    //     // val generateInjectFn = val::global("generateInjectFn");
-    //     //  cout << "WebElementChannel::finalize is creating the listener for channel with address:
-    //     //  "
-    //     //       << int(this) << endl;
-    //     //  // val onChangeFn = generateInjectFn(this->getptr());
-
-    //     // val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
-
-    //     // this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
-    // }
+    virtual val generateEventListenerForChannel2(shared_ptr<Channel> wec) { return val(wec); }
 
     /**
      * @brief Assigns the provided WebElement to this channel
@@ -81,11 +75,43 @@ class WebElementChannel : public Channel {
     };
 };
 
+class TextFieldChannel : public WebElementChannel, public TextField {
+    // virtual val generateEventListenerForChannel(shared_ptr<Channel> wec) {
+    //     val generateEventListenerForChannel_TextField =
+    //         val::global("generateEventListenerForChannel_TextField");
+    //     val evListenerFn = generateEventListenerForChannel_TextField(wec);
+    //     return evListenerFn;
+    // }
+
+    virtual void syncFrom(string tabs = "") {
+        cout << tabs << "TextFieldChannel::syncFrom() for '" << name_
+             << "', uid: " << Channel::getUid() << " DOES NOTHING." << endl;
+    };
+
+   public:
+
+ std::shared_ptr<Channel> getptr() { return this->shared_from_this(); }
+
+    TextFieldChannel(const std::string& name, const std::string& id = "",
+                     val parentElement = val::null())
+        : TextField(name, id, parentElement), WebElementChannel(name) {
+        WebElementChannel::channelEventListenerName_ = "change";
+         //val onChangeFn = generateEventListenerForChannel(this->getptr());
+         //setChannelEventListener(onChangeFn);
+         //val generateEventListenerForChannel_TextField =
+         //   val::global("generateEventListenerForChannel_TextField");
+        //val evListenerFn = TextField::generateEventListenerForChannel(this->getptr());
+       // setChannelEventListener(evListenerFn);
+    }
+};
 
 };  // namespace cl3
 
 EMSCRIPTEN_BINDINGS(WebElementChannel) {
-   
+    emscripten::class_<cl3::WebElementChannel>("WebElementChannel")
+        .smart_ptr<std::shared_ptr<cl3::WebElementChannel>>("WebElementChannel");
+    emscripten::class_<cl3::TextFieldChannel>("TextFieldChannel")
+        .smart_ptr<std::shared_ptr<cl3::TextFieldChannel>>("TextFieldChannel");
 }
 
 #endif

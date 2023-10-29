@@ -14,12 +14,11 @@
 
 #include <memory>
 
-#include "Util3.hpp"
-#include "WebElements3.hpp"
 #include "Channel.hpp"
 #include "ObjectChannel.hpp"
+#include "Util3.hpp"
 #include "WebElementChannel.hpp"
-
+#include "WebElements3.hpp"
 
 using std::cout;
 using std::map;
@@ -89,7 +88,6 @@ class Ticker {
         }
     }
 };
-
 
 template <typename S>
 using getterSetterPair = std::pair<std::function<S()>, std::function<void(S)>>;
@@ -260,6 +258,12 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         auto tf = make_shared<TextField>(name, to_string(-2), parentElement);
         const int tfid = addWebElement(tf);
         return std::make_pair(tf, tfid);
+    }
+
+    auto textFieldChannel(const string& name, val parentElement = val::null()) {
+        auto c = make_shared<TextFieldChannel>(name, to_string(-2), parentElement);
+        const int cid = addChannel(c);
+        return std::make_pair(c, cid);
     }
 
     /**

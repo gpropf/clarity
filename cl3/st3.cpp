@@ -39,6 +39,10 @@ int main() {
     auto objId = appBldr->addObject(obj);
     cout << "TestObj added to AppBuilder has id: " << objId << endl;
 
+    auto [tfcInput, tfcInputId] = appBldr->textFieldChannel("tfcInput");
+    val onChangeFn = tfcInput->generateEventListenerForChannel(tfcInput);
+    tfcInput->setChannelEventListener(onChangeFn);
+
     // Code to create the width field and associate it with a channel.
     auto [widthInput, widthInputId] = appBldr->textField("widthInput");
     auto [widthInputChannel, widthInputChannelId] =
@@ -134,8 +138,8 @@ EMSCRIPTEN_BINDINGS(Channel) {
     // //     .function("accept", &WebElementSignalObject<std::string>::accept,
     // //               emscripten::allow_raw_pointers());
 
-    emscripten::class_<WebElementChannel>("WebElementChannel")
-        .function("inject", &WebElementChannel::inject, emscripten::allow_raw_pointers());
+    // emscripten::class_<WebElementChannel>("WebElementChannel")
+    //     .function("inject", &WebElementChannel::inject, emscripten::allow_raw_pointers());
     //  .function("injectCppval", &WebElementChannel::injectCppval,
     //  emscripten::allow_raw_pointers());
     // emscripten::class_<WebElementSignal<std::string>>("WebElementSignal")
