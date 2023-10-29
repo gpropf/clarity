@@ -99,6 +99,8 @@ struct WebElement : public Identifiable {
         domElement_ = document.call<val>("getElementById", val(id));
     }
 
+    WebElement() {}
+
     void setAttribute(const std::string& attr, const val& value) const {
         domElement_.call<void>("setAttribute", attr, value);
     }

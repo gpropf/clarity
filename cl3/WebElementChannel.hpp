@@ -36,7 +36,7 @@ namespace cl3 {
  * originate signals that are then injected into the network.
  *
  */
-class WebElementChannel : public Channel {
+class WebElementChannel : public Channel, public WebElement {
     // string eventListenerName_ = "change";
 
    protected:
@@ -47,6 +47,10 @@ class WebElementChannel : public Channel {
     WebElementChannel(string name) : Channel(name) {}
 
     virtual val generateEventListenerForChannel2(shared_ptr<Channel> wec) { return val(wec); }
+
+    virtual void setChannelEventListener2(val evListener) {
+        weptr_->addEventListener(val(channelEventListenerName_), evListener);
+    }
 
     /**
      * @brief Assigns the provided WebElement to this channel
@@ -70,7 +74,7 @@ class WebElementChannel : public Channel {
     }
 
     virtual void syncFrom(string tabs = "") {
-        cout << tabs << "WebElementChannel::syncFrom() for '" << name_ << "', uid: " << getUid()
+        cout << tabs << "WebElementChannel::syncFrom() for '" << name_ << "', uid: " << Channel::getUid()
              << " DOES NOTHING." << endl;
     };
 };
@@ -98,13 +102,13 @@ class TextFieldChannel : public WebElementChannel, public TextField {
     }
 
     virtual void finalize() {
-        WebElement *thisAsWE = dynamic_cast<WebElement*>(this);
+        WebElement* thisAsWE =  dynamic_cast<TextField*>(this);
         std::shared_ptr<WebElement> newWeptr(thisAsWE);
         weptr_ = newWeptr;
         val generateEventListenerForChannel =
             val::global("generateEventListenerForChannel_TextField");
         val onChangeFn = generateEventListenerForChannel(this->getptr());
-        setChannelEventListener(onChangeFn);
+        setChannelEventListener2(onChangeFn);
     }
 };
 
