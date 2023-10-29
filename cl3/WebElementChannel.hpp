@@ -37,10 +37,10 @@ namespace cl3 {
  *
  */
 class WebElementChannel : public Channel {
-    shared_ptr<WebElement> weptr_;
     // string eventListenerName_ = "change";
 
    protected:
+    shared_ptr<WebElement> weptr_;
     string channelEventListenerName_ = "change";
 
    public:
@@ -94,10 +94,13 @@ class TextFieldChannel : public WebElementChannel, public TextField {
     TextFieldChannel(const std::string& name, const std::string& id = "",
                      val parentElement = val::null())
         : TextField(name, id, parentElement), WebElementChannel(name) {
-        WebElementChannel::channelEventListenerName_ = "change";        
+        WebElementChannel::channelEventListenerName_ = "change";
     }
 
     virtual void finalize() {
+        WebElement *thisAsWE = dynamic_cast<WebElement*>(this);
+        std::shared_ptr<WebElement> newWeptr(thisAsWE);
+        weptr_ = newWeptr;
         val generateEventListenerForChannel =
             val::global("generateEventListenerForChannel_TextField");
         val onChangeFn = generateEventListenerForChannel(this->getptr());

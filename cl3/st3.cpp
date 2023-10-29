@@ -12,9 +12,9 @@
 #include <memory>
 
 #include "AppBuilder.hpp"
-#include "WebElementChannel.hpp"
 #include "TestClasses.hpp"
 #include "Util3.hpp"
+#include "WebElementChannel.hpp"
 
 using std::cout;
 using std::make_shared;
@@ -28,7 +28,6 @@ using namespace cl3;
 int Debug::LEVEL = 0;
 
 int main() {
-
     // Debug dout;
     // dout << 42 << std::endl;
 
@@ -40,9 +39,9 @@ int main() {
     cout << "TestObj added to AppBuilder has id: " << objId << endl;
 
     auto [tfcInput, tfcInputId] = appBldr->textFieldChannel("tfcInput");
-    //tfcInput->finalize();
-    // val onChangeFn = tfcInput->generateEventListenerForChannel(tfcInput);
-    // tfcInput->setChannelEventListener(onChangeFn);
+    // tfcInput->finalize();
+    //  val onChangeFn = tfcInput->generateEventListenerForChannel(tfcInput);
+    //  tfcInput->setChannelEventListener(onChangeFn);
 
     // Code to create the width field and associate it with a channel.
     auto [widthInput, widthInputId] = appBldr->textField("widthInput");
@@ -51,11 +50,13 @@ int main() {
     widthInputChannel->installWebElement(widthInput);
 
     // Code to create the height field and associate it with a channel.
-    auto [heightInput, heightInputId] = appBldr->textField("heightInput");
-    auto [heightInputChannel, heightInputChannelId] =
-        appBldr->makeWebElementChannel("heightInputChannel");
-    heightInputChannel->installWebElement(heightInput);
+    // auto [heightInput, heightInputId] = appBldr->textField("heightInput");
+    // auto [heightInputChannel, heightInputChannelId] =
+    //     appBldr->makeWebElementChannel("heightInputChannel");
+    // heightInputChannel->installWebElement(heightInput);
 
+    auto [heightInputChannel, heightInputChannelId] =
+        appBldr->textFieldChannel("heightInputChannel");
     // These are the endpoints that allow the values we input in the text fields to actually reach
     // and update the corresponding values in TestObj.
     auto objHeightChannel = make_shared<ObjectChannel<TestObj, double>>(
@@ -92,15 +93,12 @@ int main() {
     auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", appBldrTickFn);
     cout << "tickBtnId: " << tickBtnId << endl;
 
-    
-
     tickBtn->addEventListener(val("click"), appBldrTickFn);
 
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     cout << "Printing contents of group g1." << endl;
     appBldr->printGroup("g1", "\t");
     appBldr->listWebElements();
-
 
     appBldr->listWebElements();
     appBldr->listChannels();
