@@ -91,7 +91,7 @@ int main() {
     // testBtnChannel->addConnection(appBldrCommandChannel);
 
     auto [toggleMonBtn, toggleMonBtnId] =
-        appBldr->buttonChannel("toggleMonBtn", "Toggle Monitor (NEW)", onClickFn, "CLICK");
+        appBldr->buttonChannel("toggleMonBtn", "Toggle Monitor", onClickFn, "CLICK");
 
     toggleMonBtn->addConnection(appBldrCommandChannel);
 
@@ -109,7 +109,7 @@ int main() {
     appBldr->listChannels();
 
     // appBldr->start(3000);
-    obj->start(3000);
+    obj->start(1500);
     return 0;
 }
 
