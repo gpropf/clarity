@@ -57,12 +57,12 @@ class WebElementChannel : public Channel, public WebElement {
      *
      * @param weptr
      */
-    void installWebElement(shared_ptr<WebElement> weptr) {
-        this->weptr_ = weptr;
-        cout << "WebElementChannel::installWebElement()" << int(this) << endl;
-        val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
-        this->weptr_->setChannelEventListener(onChangeFn);
-    }
+    // void installWebElement(shared_ptr<WebElement> weptr) {
+    //     this->weptr_ = weptr;
+    //     cout << "WebElementChannel::installWebElement()" << int(this) << endl;
+    //     val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
+    //     this->weptr_->setChannelEventListener(onChangeFn);
+    // }
 
     virtual void inject(val s, int signalGeneration = 0) {
         cout << "WebElementChannel::inject() called!" << endl;

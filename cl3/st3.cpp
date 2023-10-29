@@ -44,10 +44,12 @@ int main() {
     //  tfcInput->setChannelEventListener(onChangeFn);
 
     // Code to create the width field and associate it with a channel.
-    auto [widthInput, widthInputId] = appBldr->textField("widthInput");
-    auto [widthInputChannel, widthInputChannelId] =
-        appBldr->makeWebElementChannel("widthInputChannel");
-    widthInputChannel->installWebElement(widthInput);
+    // auto [widthInput, widthInputId] = appBldr->textField("widthInput");
+    // auto [widthInputChannel, widthInputChannelId] =
+    //     appBldr->makeWebElementChannel("widthInputChannel");
+    // widthInputChannel->installWebElement(widthInput);
+
+     auto [widthInputChannel, widthInputChannelId] = appBldr->textFieldChannel("widthInputChannel");
 
     // Code to create the height field and associate it with a channel.
     // auto [heightInput, heightInputId] = appBldr->textField("heightInput");
