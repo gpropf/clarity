@@ -14,9 +14,9 @@
 
 #include <memory>
 
+#include "Channel.hpp"
 #include "Util3.hpp"
 #include "WebElements3.hpp"
-#include "Channel.hpp"
 
 using std::cout;
 using std::map;
@@ -89,19 +89,19 @@ class TextFieldChannel : public WebElementChannel, public TextField {
     };
 
    public:
-
- std::shared_ptr<Channel> getptr() { return this->shared_from_this(); }
+    // std::shared_ptr<TextFieldChannel> getptr() { return this->shared_from_this(); }
 
     TextFieldChannel(const std::string& name, const std::string& id = "",
                      val parentElement = val::null())
         : TextField(name, id, parentElement), WebElementChannel(name) {
-        WebElementChannel::channelEventListenerName_ = "change";
-         //val onChangeFn = generateEventListenerForChannel(this->getptr());
-         //setChannelEventListener(onChangeFn);
-         //val generateEventListenerForChannel_TextField =
-         //   val::global("generateEventListenerForChannel_TextField");
-        //val evListenerFn = TextField::generateEventListenerForChannel(this->getptr());
-       // setChannelEventListener(evListenerFn);
+        WebElementChannel::channelEventListenerName_ = "change";        
+    }
+
+    virtual void finalize() {
+        val generateEventListenerForChannel =
+            val::global("generateEventListenerForChannel_TextField");
+        val onChangeFn = generateEventListenerForChannel(this->getptr());
+        setChannelEventListener(onChangeFn);
     }
 };
 

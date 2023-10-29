@@ -204,6 +204,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     const int addChannel(shared_ptr<Channel> c) {
         const int cid = cl3::TicketMachine::getNextSid();
         c->setUid(cid);
+        c->finalize();
         channels_.insert({cid, c});
         pushId(cid);
         return cid;

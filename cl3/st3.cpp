@@ -40,8 +40,9 @@ int main() {
     cout << "TestObj added to AppBuilder has id: " << objId << endl;
 
     auto [tfcInput, tfcInputId] = appBldr->textFieldChannel("tfcInput");
-    val onChangeFn = tfcInput->generateEventListenerForChannel(tfcInput);
-    tfcInput->setChannelEventListener(onChangeFn);
+    //tfcInput->finalize();
+    // val onChangeFn = tfcInput->generateEventListenerForChannel(tfcInput);
+    // tfcInput->setChannelEventListener(onChangeFn);
 
     // Code to create the width field and associate it with a channel.
     auto [widthInput, widthInputId] = appBldr->textField("widthInput");
