@@ -38,7 +38,7 @@ int main() {
     auto objId = appBldr->addObject(obj);
     cout << "TestObj added to AppBuilder has id: " << objId << endl;
 
-    auto [tfcInput, tfcInputId] = appBldr->textFieldChannel("tfcInput");
+    //auto [tfcInput, tfcInputId] = appBldr->textFieldChannel("tfcInput");
     // tfcInput->finalize();
     //  val onChangeFn = tfcInput->generateEventListenerForChannel(tfcInput);
     //  tfcInput->setChannelEventListener(onChangeFn);
@@ -84,11 +84,16 @@ int main() {
     val getTickFn = val::global("getTickFn");
     val appBldrTickFn = getTickFn(appBldr);
 
-    auto [testBtn, testBtnId] = appBldr->button("testButton", "Toggle Monitor", onClickFn);
-    testBtn->setClickCommand("CLICK");
-    auto [testBtnChannel, testBtnChannelId] = appBldr->makeWebElementChannel("testBtnChannel");
-    testBtnChannel->installWebElement(testBtn);
-    testBtnChannel->addConnection(appBldrCommandChannel);
+    // auto [testBtn, testBtnId] = appBldr->button("testButton", "Toggle Monitor", onClickFn);
+    // testBtn->setClickCommand("CLICK");
+    // auto [testBtnChannel, testBtnChannelId] = appBldr->makeWebElementChannel("testBtnChannel");
+    // testBtnChannel->installWebElement(testBtn);
+    // testBtnChannel->addConnection(appBldrCommandChannel);
+
+    auto [toggleMonBtn, toggleMonBtnId] =
+        appBldr->buttonChannel("toggleMonBtn", "Toggle Monitor (NEW)", onClickFn, "CLICK");
+
+    toggleMonBtn->addConnection(appBldrCommandChannel);
 
     auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", appBldrTickFn);
     cout << "tickBtnId: " << tickBtnId << endl;

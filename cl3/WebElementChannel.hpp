@@ -74,8 +74,8 @@ class WebElementChannel : public Channel, public WebElement {
     }
 
     virtual void syncFrom(string tabs = "") {
-        cout << tabs << "WebElementChannel::syncFrom() for '" << name_ << "', uid: " << Channel::getUid()
-             << " DOES NOTHING." << endl;
+        cout << tabs << "WebElementChannel::syncFrom() for '" << name_
+             << "', uid: " << Channel::getUid() << " DOES NOTHING." << endl;
     };
 };
 
@@ -102,13 +102,38 @@ class TextFieldChannel : public WebElementChannel, public TextField {
     }
 
     virtual void finalize() {
-        WebElement* thisAsWE =  dynamic_cast<TextField*>(this);
+        WebElement* thisAsWE = dynamic_cast<TextField*>(this);
         std::shared_ptr<WebElement> newWeptr(thisAsWE);
         weptr_ = newWeptr;
         val generateEventListenerForChannel =
             val::global("generateEventListenerForChannel_TextField");
         val onChangeFn = generateEventListenerForChannel(this->getptr());
         setChannelEventListener2(onChangeFn);
+    }
+};
+
+class ButtonChannel : public WebElementChannel, public Button {
+    string clickCommand_ = "";
+
+   public:
+    void setClickCommand(string clickCommand) { clickCommand_ = clickCommand; }
+
+    ButtonChannel(const std::string& name, const std::string& displayedText, val onClickFn,
+                  const std::string& id = "", const std::string& clickCommand = "", val parentElement = val::null())
+        : Button(name, displayedText, onClickFn, id, parentElement), WebElementChannel(name) {
+        WebElementChannel::channelEventListenerName_ = "click";
+        ButtonChannel::clickCommand_ = clickCommand;
+    }
+
+    virtual void finalize() {
+        WebElement* thisAsWE = dynamic_cast<Button*>(this);
+        std::shared_ptr<WebElement> newWeptr(thisAsWE);
+        weptr_ = newWeptr;
+
+        val generateEventListenerForChannel = val::global("generateEventListenerForChannel_Button");
+
+        val listenerFn = generateEventListenerForChannel(this->getptr(), val(ButtonChannel::clickCommand_));
+        setChannelEventListener2(listenerFn);
     }
 };
 

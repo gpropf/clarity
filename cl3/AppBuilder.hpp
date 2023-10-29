@@ -296,6 +296,19 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         return std::make_pair(btn, id);
     }
 
+    auto buttonChannel(const string& name, const std::string& displayedText, val onClickFn,
+                       const std::string& clickCommand, val parentElement = val::null()) {
+        auto c = make_shared<ButtonChannel>(name, displayedText, onClickFn, to_string(-3),
+                                            clickCommand, parentElement);
+        const int cid = addChannel(c);
+        return std::make_pair(c, cid);
+
+        // auto btn =
+        //     make_shared<Button>(name, displayedText, onClickFn, to_string(-3), parentElement);
+        // const int id = addWebElement(btn);
+        // return std::make_pair(btn, id);
+    }
+
     /**
      * @brief Creates a range control using the WebElements library
      *
