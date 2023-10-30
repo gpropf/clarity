@@ -42,6 +42,7 @@ class WebElementChannel : public Channel, public WebElement {
    protected:
     shared_ptr<WebElement> weptr_;
     string channelEventListenerName_ = "change";
+    string channelAttributeName_ = "value";
 
    public:
     WebElementChannel(string name) : Channel(name) {}
@@ -69,7 +70,7 @@ class WebElementChannel : public Channel, public WebElement {
         Channel::inject(s, signalGeneration);
         auto domEl = weptr_->getDomElement();
         if (signalGeneration > 0) {
-            domEl.set("value", s);
+            domEl.set(channelAttributeName_, s);
         }
     }
 

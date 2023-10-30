@@ -86,6 +86,12 @@ struct WebElement : public Identifiable {
         }
     }
 
+    WebElement(const WebElement& weref) {
+        domElement_ = weref.getDomElement();
+        deleteDomElementOnExit_ = weref.deleteDomElementOnExit_;
+        setUid(weref.getUid());
+    }
+
     /**
      * @brief This constructor is specifically designed to make use of a pre-existing element such
      * as from a static HTML page that someone has already laid out.
