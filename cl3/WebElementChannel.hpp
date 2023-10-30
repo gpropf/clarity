@@ -46,9 +46,9 @@ class WebElementChannel : public Channel, public WebElement {
    public:
     WebElementChannel(string name) : Channel(name) {}
 
-    virtual val generateEventListenerForChannel2(shared_ptr<Channel> wec) { return val(wec); }
+    virtual val generateEventListenerForChannel(shared_ptr<Channel> wec) { return val(wec); }
 
-    virtual void setChannelEventListener2(val evListener) {
+    virtual void setChannelEventListener(val evListener) {
         weptr_->addEventListener(val(channelEventListenerName_), evListener);
     }
 
@@ -108,7 +108,7 @@ class TextFieldChannel : public WebElementChannel, public TextField {
         val generateEventListenerForChannel =
             val::global("generateEventListenerForChannel_TextField");
         val onChangeFn = generateEventListenerForChannel(this->getptr());
-        setChannelEventListener2(onChangeFn);
+        setChannelEventListener(onChangeFn);
     }
 };
 
@@ -133,7 +133,7 @@ class ButtonChannel : public WebElementChannel, public Button {
         val generateEventListenerForChannel = val::global("generateEventListenerForChannel_Button");
 
         val listenerFn = generateEventListenerForChannel(this->getptr(), val(ButtonChannel::clickCommand_));
-        setChannelEventListener2(listenerFn);
+        setChannelEventListener(listenerFn);
     }
 };
 

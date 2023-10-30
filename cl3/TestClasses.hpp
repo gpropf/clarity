@@ -9,7 +9,6 @@
  *
  */
 
-
 #include <memory>
 
 #include "AppBuilder.hpp"
@@ -23,7 +22,6 @@ using std::to_string;
 using std::vector;
 
 using namespace cl3;
-
 
 namespace cl3 {
 
@@ -50,12 +48,15 @@ class TestObj : public std::enable_shared_from_this<TestObj>, public Ticker {
     static TestObj *transfer(TestObj *t) { return t; }
     std::shared_ptr<TestObj> getptr() { return this->shared_from_this(); }
 
-    virtual void tick() {        
+    virtual void tick() {
         auto d = getDblval();
         d += 0.1;
         setDblval(d);
+        auto w = getWidth();
+        w++;
+        setWidth(w);
         cout << "TestObj ticks! " << dblval_ << endl;
-    }    
+    }
 
     /**
      * @brief This installs this class' `tick()` method to be called from the `setInterval()` JS
@@ -96,7 +97,7 @@ class TestObj : public std::enable_shared_from_this<TestObj>, public Ticker {
 
     static void setDblvalOnObj(TestObj *tptr, double v) { tptr->setDblval(v); }
 
-    double getDblval() const {        
+    double getDblval() const {
         cout << "TestObj::getDblval(): " << dblval_ << endl;
         return dblval_;
     }
