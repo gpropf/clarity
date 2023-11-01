@@ -14,12 +14,11 @@
 
 #include <memory>
 
-#include "Util3.hpp"
-#include "WebElements3.hpp"
 #include "Channel.hpp"
 #include "ObjectChannel.hpp"
+#include "Util3.hpp"
 #include "WebElementChannel.hpp"
-
+#include "WebElements3.hpp"
 
 using std::cout;
 using std::map;
@@ -89,7 +88,6 @@ class Ticker {
         }
     }
 };
-
 
 template <typename S>
 using getterSetterPair = std::pair<std::function<S()>, std::function<void(S)>>;
@@ -260,6 +258,21 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         auto tf = make_shared<TextField>(name, to_string(-2), parentElement);
         const int tfid = addWebElement(tf);
         return std::make_pair(tf, tfid);
+    }
+
+    auto svg(const std::string& name, int width, int height, const std::string& id = "",
+             val parentElement = val::null()) {
+        auto svg = make_shared<SVG>(name, width, height, to_string(-3), parentElement);
+        if (addBRAfterAllCalls_) BR();
+        const int svgid = addWebElement(svg);
+        return std::make_pair(svg, svgid);
+    }
+
+    auto ellipse(const std::string& name, double cx, double cy, double rx, double ry,
+                  val parentElement = val::null()) {
+        auto ellipse = make_shared<Ellipse>(name, cx, cy, rx, ry, to_string(-4), parentElement);
+        const int ellipseId = addWebElement(ellipse);
+        return std::make_pair(ellipse, ellipseId);
     }
 
     /**

@@ -203,6 +203,17 @@ struct SVG : public WebElement {
     }
 };
 
+struct Ellipse : public WebElement {
+    Ellipse(const std::string& name, double cx, double cy, double rx, double ry,
+            const std::string& id = "", val parentElement = val::null())
+        : WebElement("ellipse", name, id, parentElement) {
+        domElement_.call<void>("setAttribute", val("cx"), val(cx));
+        domElement_.call<void>("setAttribute", val("cy"), val(cy));
+        domElement_.call<void>("setAttribute", val("rx"), val(rx));
+        domElement_.call<void>("setAttribute", val("ry"), val(ry));
+    }
+};
+
 struct Rect : public WebElement {
     Rect(const std::string& name, double x, double y, double width, double height,
          const std::string& fill, const std::string& stroke = "", double strokeWidth = 0.5,
@@ -238,12 +249,9 @@ struct Label : public WebElement {
 };
 
 struct Button : public WebElement {
-
     string clickCommand_ = "CLICK";
 
-    void setClickCommand(string clickCommand) {
-        clickCommand_ = clickCommand;
-    }
+    void setClickCommand(string clickCommand) { clickCommand_ = clickCommand; }
 
     Button(const std::string& name, const std::string& displayedText, val onClickFn,
            const std::string& id = "", val parentElement = val::null())
@@ -257,7 +265,7 @@ struct Button : public WebElement {
     virtual val generateEventListenerForChannel(shared_ptr<Channel> wec) {
         val generateEventListenerForChannel_Button =
             val::global("generateEventListenerForChannel_Button");
-        val evListenerFn = generateEventListenerForChannel_Button(wec , val(clickCommand_));
+        val evListenerFn = generateEventListenerForChannel_Button(wec, val(clickCommand_));
         return evListenerFn;
     }
 };

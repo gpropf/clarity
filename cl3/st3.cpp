@@ -12,9 +12,9 @@
 #include <memory>
 
 #include "AppBuilder.hpp"
-#include "WebElementChannel.hpp"
 #include "TestClasses.hpp"
 #include "Util3.hpp"
+#include "WebElementChannel.hpp"
 
 using std::cout;
 using std::make_shared;
@@ -28,11 +28,14 @@ using namespace cl3;
 int Debug::LEVEL = 0;
 
 int main() {
-
-    // Debug dout;
-    // dout << 42 << std::endl;
-
     auto appBldr = make_shared<AppBuilder>();
+
+    auto [svg, svgId] = appBldr->svg("svgArea1", 600, 400);
+    auto [ellipse, ellipseId] =
+        appBldr->ellipse("ellipse1", 200, 100, 80, 55, svg->getDomElement());
+    auto [ellipseChannel, ellipseChannelId] = appBldr->makeWebElementChannel("ellipseChannel");
+    ellipseChannel->installWebElement(ellipse);
+    ellipseChannel->setChannelAttributeName("rx");
 
     // We make a test object and then tell the appBldr about it.
     auto obj = make_shared<TestObj>();
@@ -68,6 +71,7 @@ int main() {
 
     heightInputChannel->addConnection(objHeightChannel);
     widthInputChannel->addConnection(objWidthChannel);
+    widthInputChannel->addConnection(ellipseChannel);
 
     // objWidthChannel->finalize();
     // objHeightChannel->finalize();
@@ -87,15 +91,12 @@ int main() {
     auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", appBldrTickFn);
     cout << "tickBtnId: " << tickBtnId << endl;
 
-    
-
     tickBtn->addEventListener(val("click"), appBldrTickFn);
 
     vector<const int> groupIds = appBldr->defineCurrentGroup("g1");
     cout << "Printing contents of group g1." << endl;
     appBldr->printGroup("g1", "\t");
     appBldr->listWebElements();
-
 
     appBldr->listWebElements();
     appBldr->listChannels();

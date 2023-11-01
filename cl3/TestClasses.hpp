@@ -54,6 +54,8 @@ class TestObj : public std::enable_shared_from_this<TestObj>, public Ticker {
         auto d = getDblval();
         d += 0.1;
         setDblval(d);
+        auto w = getWidth();
+        setWidth(++w);
         cout << "TestObj ticks! " << dblval_ << endl;
     }    
 

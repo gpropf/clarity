@@ -38,13 +38,17 @@ namespace cl3 {
 class WebElementChannel : public Channel {
     shared_ptr<WebElement> weptr_;
     string eventListenerName_ = "change";
+    string channelAttributeName_ = "value";
 
    public:
     WebElementChannel(string name) : Channel(name) {}
 
+    void setChannelAttributeName(const string &s) { channelAttributeName_ = s; }
+
     // virtual void finalize() {
     //     // val generateInjectFn = val::global("generateInjectFn");
-    //     //  cout << "WebElementChannel::finalize is creating the listener for channel with address:
+    //     //  cout << "WebElementChannel::finalize is creating the listener for channel with
+    //     address:
     //     //  "
     //     //       << int(this) << endl;
     //     //  // val onChangeFn = generateInjectFn(this->getptr());
@@ -71,7 +75,8 @@ class WebElementChannel : public Channel {
         Channel::inject(s, signalGeneration);
         auto domEl = weptr_->getDomElement();
         if (signalGeneration > 0) {
-            domEl.set("value", s);
+            domEl.set(channelAttributeName_, s);
+            domEl.call<void>("setAttribute", val(channelAttributeName_), s);
         }
     }
 
@@ -81,11 +86,8 @@ class WebElementChannel : public Channel {
     };
 };
 
-
 };  // namespace cl3
 
-EMSCRIPTEN_BINDINGS(WebElementChannel) {
-   
-}
+EMSCRIPTEN_BINDINGS(WebElementChannel) {}
 
 #endif
