@@ -23,6 +23,7 @@
 using std::cout;
 using std::map;
 using std::shared_ptr;
+using std::make_shared;
 using std::string;
 using std::to_string;
 using std::vector;
@@ -263,6 +264,13 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
 
     auto textFieldChannel(const string& name, val parentElement = val::null()) {
         auto c = make_shared<TextFieldChannel>(name, to_string(-2), parentElement);
+        const int cid = addChannel(c);
+        return std::make_pair(c, cid);
+    }
+
+    auto textFieldChannel2(const string& name, val parentElement = val::null()) {
+        auto [tf, tfid] = textField(name, parentElement);
+        auto c = make_shared<WebElementChannel>(*tf);
         const int cid = addChannel(c);
         return std::make_pair(c, cid);
     }

@@ -51,6 +51,8 @@ int main() {
 
      auto [widthInputChannel, widthInputChannelId] = appBldr->textFieldChannel("widthInputChannel");
 
+    auto [widthInputChannel2, widthInputChannelId2] = appBldr->textFieldChannel2("widthInputChannel2");
+
     // Code to create the height field and associate it with a channel.
     // auto [heightInput, heightInputId] = appBldr->textField("heightInput");
     // auto [heightInputChannel, heightInputChannelId] =

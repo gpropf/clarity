@@ -42,7 +42,8 @@ class WebElementChannel;
 struct WebElement : public Identifiable {
     val domElement_;
 
-    //string channelEventListenerName_ = "change";
+    string channelEventName_ = "change";
+    string channelEventListenerGeneratorName_ = "foo";
 
     bool deleteDomElementOnExit_ = false;
     // bool deleteDomElementOnExit_ = true;
@@ -89,6 +90,7 @@ struct WebElement : public Identifiable {
     WebElement(const WebElement& weref) {
         domElement_ = weref.getDomElement();
         deleteDomElementOnExit_ = weref.deleteDomElementOnExit_;
+        chann
         setUid(weref.getUid());
     }
 
@@ -141,6 +143,8 @@ struct TextField : public InputElement {
     TextField(const std::string& name, const std::string& id = "", val parentElement = val::null())
         : InputElement(name, "text", id, parentElement) {
         //channelEventListenerName_ = "change";
+
+        channelEventListenerGeneratorName_ = "generateEventListenerForChannel_TextField";
     }
 
     // virtual val generateEventListenerForChannel(shared_ptr<Channel> wec) {

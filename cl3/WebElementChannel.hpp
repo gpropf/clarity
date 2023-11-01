@@ -43,14 +43,38 @@ class WebElementChannel : public Channel, public WebElement {
     shared_ptr<WebElement> weptr_;
     string channelEventListenerName_ = "change";
     string channelAttributeName_ = "value";
+    val channelEventListenerGeneratorFn_ = val::null();
+    val channelEventListenerFn_ = val::null();
 
    public:
     WebElementChannel(string name) : Channel(name) {}
 
-    virtual val generateEventListenerForChannel(shared_ptr<Channel> wec) { return val(wec); }
+    WebElementChannel(const WebElement& weref) : WebElement(weref) {}
+
+    virtual val generateEventListenerForChannel(shared_ptr<Channel> wec) { return channelEventListenerGeneratorFn_(wec); }
 
     virtual void setChannelEventListener(val evListener) {
         weptr_->addEventListener(val(channelEventListenerName_), evListener);
+    }
+
+    virtual void setChannelEventListener2(val evListener) {
+        addEventListener(val(channelEventListenerName_), evListener);
+    }
+
+    virtual void finalize() {        
+        cout << "WEC finalize() " << this->channelEventListenerGeneratorName_.c_str() << endl;
+         channelEventListenerGeneratorFn_ =
+            val::global(channelEventListenerGeneratorName_.c_str());
+         channelEventListenerFn_ = channelEventListenerGeneratorFn_(this->getptr());
+       setChannelEventListener2(channelEventListenerFn_);
+
+//  val generateEventListenerForChannel =
+//             val::global("generateEventListenerForChannel_TextField");
+//         val onChangeFn = generateEventListenerForChannel(this->getptr());
+//         setChannelEventListener2(onChangeFn);
+
+
+
     }
 
     /**
@@ -120,7 +144,8 @@ class ButtonChannel : public WebElementChannel, public Button {
     void setClickCommand(string clickCommand) { clickCommand_ = clickCommand; }
 
     ButtonChannel(const std::string& name, const std::string& displayedText, val onClickFn,
-                  const std::string& id = "", const std::string& clickCommand = "", val parentElement = val::null())
+                  const std::string& id = "", const std::string& clickCommand = "",
+                  val parentElement = val::null())
         : Button(name, displayedText, onClickFn, id, parentElement), WebElementChannel(name) {
         WebElementChannel::channelEventListenerName_ = "click";
         ButtonChannel::clickCommand_ = clickCommand;
@@ -133,7 +158,8 @@ class ButtonChannel : public WebElementChannel, public Button {
 
         val generateEventListenerForChannel = val::global("generateEventListenerForChannel_Button");
 
-        val listenerFn = generateEventListenerForChannel(this->getptr(), val(ButtonChannel::clickCommand_));
+        val listenerFn =
+            generateEventListenerForChannel(this->getptr(), val(ButtonChannel::clickCommand_));
         setChannelEventListener(listenerFn);
     }
 };
