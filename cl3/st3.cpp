@@ -33,9 +33,9 @@ int main() {
     auto [svg, svgId] = appBldr->svg("svgArea1", 600, 400);
     auto [ellipse, ellipseId] =
         appBldr->ellipse("ellipse1", 200, 100, 80, 55, svg->getDomElement());
-    auto [ellipseChannel, ellipseChannelId] = appBldr->makeWebElementChannel("ellipseChannel");
-    ellipseChannel->installWebElement(ellipse);
-    ellipseChannel->setChannelAttributeName("rx");
+    auto [rxChannel, rxChannelId] = appBldr->makeWebElementChannel("rxChannel");
+    rxChannel->installWebElement(ellipse);
+    rxChannel->setChannelAttributeName("rx");
 
     // We make a test object and then tell the appBldr about it.
     auto obj = make_shared<TestObj>();
@@ -43,6 +43,13 @@ int main() {
     cout << "TestObj added to AppBuilder has id: " << objId << endl;
 
     auto [cxRange, cxRangeId] = appBldr->rangeInput("cxInput", "Ellipse center (X value)");
+    auto [cxChannel, cxChannelId] = appBldr->makeWebElementChannel("cxChannel");
+    cxChannel->installWebElement(cxRange);
+
+    auto [cxValChannel, cxValChannelId] = appBldr->makeWebElementChannel("cxValChannel");
+    cxValChannel->installWebElement(ellipse);
+    cxValChannel->setChannelAttributeName("cx");
+    // cxChannel->setChannelAttributeName("cx");
 
     // Code to create the width field and associate it with a channel.
     auto [widthInput, widthInputId] = appBldr->textField("widthInput", "Width (int)");
@@ -73,8 +80,8 @@ int main() {
 
     heightInputChannel->addConnection(objHeightChannel);
     widthInputChannel->addConnection(objWidthChannel);
-    objWidthChannel->addConnection(ellipseChannel);
-
+    objWidthChannel->addConnection(rxChannel);
+    cxChannel->addConnection(cxValChannel);
     // objWidthChannel->finalize();
     // objHeightChannel->finalize();
     // heightInputChannel->finalize();

@@ -148,6 +148,13 @@ struct RangeInput : public InputElement {
         : InputElement(name, "range", id, parentElement) {
         channelEventListenerName_ = "input";
     }
+
+    virtual val generateEventListenerForChannel(shared_ptr<Channel> wec) {
+        val generateEventListenerForChannel_RangeInput =
+            val::global("generateEventListenerForChannel_RangeInput");
+        val evListenerFn = generateEventListenerForChannel_RangeInput(wec);
+        return evListenerFn;
+    }
 };
 
 // OLD STUFF BELOW
