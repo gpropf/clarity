@@ -42,14 +42,16 @@ int main() {
     auto objId = appBldr->addObject(obj);
     cout << "TestObj added to AppBuilder has id: " << objId << endl;
 
+    auto [cxRange, cxRangeId] = appBldr->rangeInput("cxInput", "Ellipse center (X value)");
+
     // Code to create the width field and associate it with a channel.
-    auto [widthInput, widthInputId] = appBldr->textField("widthInput");
+    auto [widthInput, widthInputId] = appBldr->textField("widthInput", "Width (int)");
     auto [widthInputChannel, widthInputChannelId] =
         appBldr->makeWebElementChannel("widthInputChannel");
     widthInputChannel->installWebElement(widthInput);
 
     // Code to create the height field and associate it with a channel.
-    auto [heightInput, heightInputId] = appBldr->textField("heightInput");
+    auto [heightInput, heightInputId] = appBldr->textField("heightInput", "Height (double)");
     auto [heightInputChannel, heightInputChannelId] =
         appBldr->makeWebElementChannel("heightInputChannel");
     heightInputChannel->installWebElement(heightInput);
@@ -71,7 +73,7 @@ int main() {
 
     heightInputChannel->addConnection(objHeightChannel);
     widthInputChannel->addConnection(objWidthChannel);
-    widthInputChannel->addConnection(ellipseChannel);
+    objWidthChannel->addConnection(ellipseChannel);
 
     // objWidthChannel->finalize();
     // objHeightChannel->finalize();

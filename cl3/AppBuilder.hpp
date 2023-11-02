@@ -89,8 +89,8 @@ class Ticker {
     }
 };
 
-template <typename S>
-using getterSetterPair = std::pair<std::function<S()>, std::function<void(S)>>;
+// template <typename S>
+// using getterSetterPair = std::pair<std::function<S()>, std::function<void(S)>>;
 
 class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticker {
     vector<const int> currentGroupIds_;
@@ -114,6 +114,11 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
    public:
     std::shared_ptr<AppBuilder> getptr() { return this->shared_from_this(); }
 
+    /**
+     * @brief Push an id onto the "stack" for later grouping with other ids.
+     *
+     * @param id
+     */
     void pushId(const int id) {
         currentGroupIds_.push_back(id);
         allIds_.push_back(id);
@@ -145,6 +150,14 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
           labelsSwallowTheirReferents_(labelsSwallowTheirReferents),
           parentDOMElement_(parentDOMElement) {}
 
+    /**
+     * @brief Could probably also have been called "pull". Basically, this method calls the method
+     * of the same name in the channels. Some of these are going to be pulling values ib from
+     * objects and this ultimately how those values are pulled into the signal network.
+     *
+     * @param prefix during testing we sometimes call this method from methods besides `tick()`.
+     * This allows us to see what called the method in the debug output.
+     */
     void syncFrom(string prefix = "") {
         cout << "AppBuilder::syncFrom()" << endl;
         for (auto [id, c] : channels_) {
@@ -161,11 +174,11 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         syncFrom("tick: ");
     }
 
-    void threadTestFn() {
-        cout << "AppBuilder says hello from the button click!" << endl;
-        syncFrom("threadTestFn: ");
-        printGroup("g1", "button callback\t:");
-    }
+    // void threadTestFn() {
+    //     cout << "AppBuilder says hello from the button click!" << endl;
+    //     syncFrom("threadTestFn: ");
+    //     printGroup("g1", "button callback\t:");
+    // }
 
     void doNothing() {
         // syncFrom();
@@ -248,6 +261,30 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     }
 
     /**
+     * @brief Adds a <br> tag contingent on the setting of the `addBRAfterAllCalls_` value.
+     *
+     */
+    void maybeBR() {
+        if (addBRAfterAllCalls_) BR();
+    }
+
+    /**
+     * @brief Convenience method to allow you to wrap an element with a label tag.
+     *
+     * @param descriptionText
+     * @param wel
+     * @param parentElement
+     * @return auto
+     */
+    auto label(const std::string& descriptionText, const WebElement& wel,
+               val parentElement = val::null()) {
+        auto label = make_shared<Label>(descriptionText, wel, labelsSwallowTheirReferents_,
+                                        to_string(-10), parentElement);
+        const int labelId = addWebElement(label);
+        return std::make_pair(label, labelId);
+    }
+
+    /**
      * @brief Creates a text field HTML element using the WebElements library
      *
      * @param name
@@ -257,19 +294,62 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     auto textField(const string& name, val parentElement = val::null()) {
         auto tf = make_shared<TextField>(name, to_string(-2), parentElement);
         const int tfid = addWebElement(tf);
+        maybeBR();
         return std::make_pair(tf, tfid);
     }
 
+    /**
+     * @brief Creates a labelled text field HTML element using the WebElements library. Note that,
+     * while the AB records the id of the label element, it does not return the label element or its
+     * id.
+     *
+     * @param name
+     * @param parentElement
+     * @return auto
+     */
+    auto textField(const string& name, const string& descriptionText,
+                   val parentElement = val::null()) {
+        auto tf = make_shared<TextField>(name, to_string(-2), parentElement);
+        const int tfid = addWebElement(tf);
+
+        auto label = make_shared<Label>(descriptionText, *tf, labelsSwallowTheirReferents_,
+                                        to_string(-10), parentElement);
+        const int labelId = addWebElement(label);
+        maybeBR();
+        return std::make_pair(tf, tfid);
+    }
+
+    /**
+     * @brief Create an SVG area using the WebElements library.
+     *
+     * @param name
+     * @param width
+     * @param height
+     * @param id
+     * @param parentElement
+     * @return auto
+     */
     auto svg(const std::string& name, int width, int height, const std::string& id = "",
              val parentElement = val::null()) {
         auto svg = make_shared<SVG>(name, width, height, to_string(-3), parentElement);
-        if (addBRAfterAllCalls_) BR();
         const int svgid = addWebElement(svg);
+        maybeBR();
         return std::make_pair(svg, svgid);
     }
 
+    /**
+     * @brief Create an ellipse area using the WebElements library.
+     *
+     * @param name
+     * @param cx
+     * @param cy
+     * @param rx
+     * @param ry
+     * @param parentElement
+     * @return auto
+     */
     auto ellipse(const std::string& name, double cx, double cy, double rx, double ry,
-                  val parentElement = val::null()) {
+                 val parentElement = val::null()) {
         auto ellipse = make_shared<Ellipse>(name, cx, cy, rx, ry, to_string(-4), parentElement);
         const int ellipseId = addWebElement(ellipse);
         return std::make_pair(ellipse, ellipseId);
@@ -301,6 +381,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         auto btn =
             make_shared<Button>(name, displayedText, onClickFn, to_string(-3), parentElement);
         const int id = addWebElement(btn);
+        maybeBR();
         return std::make_pair(btn, id);
     }
 
@@ -314,7 +395,24 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     auto rangeInput(const string& name, val parentElement = val::null()) {
         auto tf = make_shared<RangeInput>(name, to_string(-4), parentElement);
         const int tfid = addWebElement(tf);
+        maybeBR();
         return std::make_pair(tf, tfid);
+    }
+
+    /**
+     * @brief This is the labelled form of rangeInput.
+     *
+     * @param name
+     * @param descriptionText
+     * @param parentElement
+     * @return auto
+     */
+    auto rangeInput(const string& name, const string& descriptionText,
+                    val parentElement = val::null()) {
+        auto [range, rangeId] = rangeInput(name, parentElement);
+        auto [lbl, lblId] = label(descriptionText, *range, parentElement);
+        maybeBR();
+        return std::make_pair(range, rangeId);
     }
 
     shared_ptr<WebElement> getWebElement(int id) const { return webElements_.at(id); }
@@ -325,6 +423,13 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
 
     string getState() const { return state_; }
 
+    /**
+     * @brief Manipulates the AppBuilder's state machine. By defining an object channel that can set
+     * or get the string state value and then connecting that channel to a button channel, you can
+     * create a nice toggle control for the AppBuilder. This is illustrated in the demo app.
+     *
+     * @param newState
+     */
     void setState(const string& newState) {
         if (newState == "CLICK") {
             toggle();
@@ -336,12 +441,20 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         }
     }
 
+    /**
+     * @brief Basically for debugging.
+     *
+     */
     void listWebElements() {
         for (auto [id, el] : webElements_) {
             cout << "ID: " << id << ", " << el->getName() << endl;
         }
     }
 
+    /**
+     * @brief Basically for debugging.
+     *
+     */
     void listChannels() {
         cout << "Listing channels..." << endl;
         for (auto [id, el] : channels_) {
@@ -370,6 +483,12 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         return groupIds;
     }
 
+    /**
+     * @brief Print details of the named group to the console.
+     *
+     * @param groupName
+     * @param prefixTabs
+     */
     void printGroup(const string& groupName, string prefixTabs = "") {
         auto ids = groups_[groupName];
         if (ids.empty()) {
@@ -391,7 +510,8 @@ EMSCRIPTEN_BINDINGS(AppBuilder) {
     emscripten::class_<cl3::AppBuilder>("AppBuilder")
         .smart_ptr<std::shared_ptr<cl3::AppBuilder>>("AppBuilder")
         .function("tick", &cl3::AppBuilder::tick, emscripten::allow_raw_pointers())
-        .function("threadTestFn", &cl3::AppBuilder::threadTestFn, emscripten::allow_raw_pointers())
+        //.function("threadTestFn", &cl3::AppBuilder::threadTestFn,
+        // emscripten::allow_raw_pointers())
 
         .function("start", &cl3::AppBuilder::start)
         .function("printGroup", &cl3::AppBuilder::printGroup)
