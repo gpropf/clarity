@@ -42,7 +42,9 @@ int main() {
     auto objId = appBldr->addObject(obj);
     cout << "TestObj added to AppBuilder has id: " << objId << endl;
 
+    // Create a range input to control the horizontal position of the ellipse.
     auto [cxRange, cxRangeId] = appBldr->rangeInput("cxInput", "Ellipse center (X value)");
+    cxRange->setAttribute("max", val(600));
     auto [cxChannel, cxChannelId] = appBldr->makeWebElementChannel("cxChannel");
     cxChannel->installWebElement(cxRange);
 

@@ -57,9 +57,14 @@ function sayHello() {
     console.log("This just prints HELLO to the console.");
 }
 
-function printVal(v) {
-    console.log(v);
-}
+// /**
+//  * I created this to print JS values from C++ but 
+//  * 
+//  * @param {*} v 
+//  */
+// function printVal(v) {
+//     console.log(v);    
+// }
 
 function TickerTick(ticker) {
     return function () {

@@ -16,7 +16,7 @@
 
 #include "Util3.hpp"
 #include "WebElements3.hpp"
-//#include "WebElementChannel.hpp"
+// #include "WebElementChannel.hpp"
 
 using std::cout;
 using std::map;
@@ -51,7 +51,7 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
     Channel(string name) : name_(name) {}
     string getName() { return name_; }
 
-    //virtual void finalize() {}
+    // virtual void finalize() {}
 
     virtual void testMethod() { cout << "Channel::testMethod()" << endl; }
 
@@ -82,9 +82,7 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
     virtual void inject(val s, int signalGeneration = 0) {
         val printVal = val::global("printVal");
         cout << "Channel name: " << name_ << ", signal generation = " << signalGeneration << endl;
-        cout << "<SIGNAL>";
-        printVal(s);
-        cout << "</SIGNAL>" << endl;
+        cout << "<SIGNAL>" << s.as<string>() << "</SIGNAL>" << endl;
         for (auto c : this->channels_) {
             if (signalGeneration == 0) c->inject(s, signalGeneration + 1);
         }
@@ -104,6 +102,5 @@ EMSCRIPTEN_BINDINGS(AppBuilder) {
 }
 
 };  // namespace cl3
-
 
 #endif
