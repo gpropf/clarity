@@ -25,10 +25,12 @@ using std::vector;
 
 using namespace cl3;
 
+//using AB = shared_ptr<cl3::AppBuilder>;
+
 int Debug::LEVEL = 0;
 
 int main() {
-    auto appBldr = make_shared<AppBuilder>();
+    std::shared_ptr<cl3::AppBuilder> appBldr = std::make_shared<AppBuilder>();
 
     auto [svg, svgId] = appBldr->svg("svgArea1", 600, 400);
     auto [ellipse, ellipseId] =
@@ -84,6 +86,9 @@ int main() {
     widthInputChannel->addConnection(objWidthChannel);
     objWidthChannel->addConnection(rxChannel);
     cxChannel->addConnection(cxValChannel);
+
+    
+    
     // objWidthChannel->finalize();
     // objHeightChannel->finalize();
     // heightInputChannel->finalize();

@@ -88,6 +88,12 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
         }
     }
 
+    /**
+     * @brief Basic "pull" method called from `AppBuilder::syncFrom`. Currently a do-nothing
+     * placeholder.
+     *
+     * @param tabs
+     */
     virtual void syncFrom(string tabs = "") {
         cout << tabs << "Channel::syncFrom() for '" << name_ << "', uid: " << getUid()
              << " DOES NOTHING." << endl;

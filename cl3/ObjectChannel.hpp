@@ -14,10 +14,10 @@
 
 #include <memory>
 
+#include "Channel.hpp"
 #include "Util3.hpp"
 #include "WebElements3.hpp"
-#include "Channel.hpp"
-//#include "WebElementChannel.hpp"
+// #include "WebElementChannel.hpp"
 
 using std::cout;
 using std::map;
@@ -80,6 +80,13 @@ class ObjectChannel : public Channel {
         name_ = name;
     }
 
+    /**
+     * @brief This injected value will be used to call the designated setter method and update the
+     * values on the encapsulated object.
+     *
+     * @param v
+     * @param signalGeneration
+     */
     virtual void inject(val v, int signalGeneration = 0) {
         Channel::inject(v, signalGeneration);
         S s = valToCPP<S>(v);
@@ -87,10 +94,15 @@ class ObjectChannel : public Channel {
         (*objPtr_.*setter_)(s);
     }
 
+    /**
+     * @brief This method pulls the value from the encapsulated object and injects it into the
+     * channel.
+     *
+     * @param tabs
+     */
     virtual void syncFrom(string tabs = "") {
         cout << tabs << "ObjectChannel::syncFrom() for '" << name_ << "', uid: " << getUid()
-             << " DOES NOTHING." << endl;
-        // val v = val(to_string((*objPtr_.*getter_)()));
+             << endl;
         val v = cppToVal((*objPtr_.*getter_)());
         inject(v);
     };
@@ -98,6 +110,5 @@ class ObjectChannel : public Channel {
     virtual void syncTo(){};
 };
 };  // namespace cl3
-
 
 #endif
