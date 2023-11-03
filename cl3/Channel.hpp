@@ -93,7 +93,7 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
      *
      * @param predecessor
      */
-    void printPipeline(shared_ptr<Channel> predecessor = nullptr) {
+    void printPipeline(shared_ptr<Channel> predecessor) {
         cout << "Channel::printPipeline(): " << getName() << endl;
         for (auto c : this->channels_) {
             if (c == predecessor) continue;

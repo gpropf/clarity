@@ -172,13 +172,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     void tick() {
         cout << "AppBuilder says TICK!" << endl;
         syncFrom("tick: ");
-    }
-
-    // void threadTestFn() {
-    //     cout << "AppBuilder says hello from the button click!" << endl;
-    //     syncFrom("threadTestFn: ");
-    //     printGroup("g1", "button callback\t:");
-    // }
+    }   
 
     void doNothing() {
         // syncFrom();
@@ -510,9 +504,6 @@ EMSCRIPTEN_BINDINGS(AppBuilder) {
     emscripten::class_<cl3::AppBuilder>("AppBuilder")
         .smart_ptr<std::shared_ptr<cl3::AppBuilder>>("AppBuilder")
         .function("tick", &cl3::AppBuilder::tick, emscripten::allow_raw_pointers())
-        //.function("threadTestFn", &cl3::AppBuilder::threadTestFn,
-        // emscripten::allow_raw_pointers())
-
         .function("start", &cl3::AppBuilder::start)
         .function("printGroup", &cl3::AppBuilder::printGroup)
         .function("getChannel", &cl3::AppBuilder::getChannel, emscripten::allow_raw_pointers())
@@ -523,13 +514,7 @@ EMSCRIPTEN_BINDINGS(AppBuilder) {
         .function("listChannels", &cl3::AppBuilder::listChannels, emscripten::allow_raw_pointers())
         .function("getNumWebElements", &cl3::AppBuilder::getNumWebElements,
                   emscripten::allow_raw_pointers());
-    // .class_function("tick__", &cl3::AppBuilder::tick__, emscripten::allow_raw_pointers())
-    // .class_function("pushId__", &cl3::AppBuilder::pushId__, emscripten::allow_raw_pointers())
-    // .class_function("textField__", &cl3::AppBuilder::textField__,
-    //                 emscripten::allow_raw_pointers())
-    // .class_function("getSingleton", &cl3::AppBuilder::getSingleton,
-    //                 emscripten::allow_raw_pointers());
-
+   
     emscripten::class_<cl3::Ticker>("Ticker").function("start", &cl3::Ticker::start);
 }
 
