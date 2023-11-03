@@ -370,7 +370,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
      * @param parentElement
      * @return auto
      */
-    auto button(const string& name, const std::string& displayedText, val onClickFn,
+    auto button(const string& name, const std::string& displayedText, val onClickFn = val::null(),
                 val parentElement = val::null()) {
         auto btn =
             make_shared<Button>(name, displayedText, onClickFn, to_string(-3), parentElement);

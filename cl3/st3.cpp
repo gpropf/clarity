@@ -96,7 +96,7 @@ int main() {
     val getTickFn = val::global("getTickFn");
     val appBldrTickFn = getTickFn(appBldr);
 
-    auto [abMonBtn, abMonBtnId] = appBldr->button("testButton", "Toggle Monitor", onClickFn);
+    auto [abMonBtn, abMonBtnId] = appBldr->button("abMonBtn", "Toggle Monitor");
     abMonBtn->setClickCommand("CLICK");
     auto [testBtnChannel, testBtnChannelId] = appBldr->makeWebElementChannel("testBtnChannel");
     testBtnChannel->installWebElement(abMonBtn);
