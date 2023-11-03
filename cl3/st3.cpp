@@ -96,10 +96,10 @@ int main() {
     val getTickFn = val::global("getTickFn");
     val appBldrTickFn = getTickFn(appBldr);
 
-    auto [testBtn, testBtnId] = appBldr->button("testButton", "Toggle Monitor", onClickFn);
-    testBtn->setClickCommand("CLICK");
+    auto [abMonBtn, abMonBtnId] = appBldr->button("testButton", "Toggle Monitor", onClickFn);
+    abMonBtn->setClickCommand("CLICK");
     auto [testBtnChannel, testBtnChannelId] = appBldr->makeWebElementChannel("testBtnChannel");
-    testBtnChannel->installWebElement(testBtn);
+    testBtnChannel->installWebElement(abMonBtn);
     testBtnChannel->addConnection(appBldrCommandChannel);
 
     auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", appBldrTickFn);
