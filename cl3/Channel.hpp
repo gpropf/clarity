@@ -89,6 +89,20 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
     }
 
     /**
+     * @brief Allows you to print out the whole chain of channels in a pipeline.
+     *
+     * @param predecessor
+     */
+    void printPipeline(shared_ptr<Channel> predecessor = nullptr) {
+        cout << "Channel::printPipeline(): " << getName() << endl;
+        for (auto c : this->channels_) {
+            if (c == predecessor) continue;
+            cout << "\t";
+            c->printPipeline(getptr());
+        }
+    }
+
+    /**
      * @brief Basic "pull" method called from `AppBuilder::syncFrom`. Currently a do-nothing
      * placeholder.
      *

@@ -25,7 +25,7 @@ using std::vector;
 
 using namespace cl3;
 
-//using AB = shared_ptr<cl3::AppBuilder>;
+// using AB = shared_ptr<cl3::AppBuilder>;
 
 int Debug::LEVEL = 0;
 
@@ -87,8 +87,6 @@ int main() {
     objWidthChannel->addConnection(rxChannel);
     cxChannel->addConnection(cxValChannel);
 
-    
-    
     // objWidthChannel->finalize();
     // objHeightChannel->finalize();
     // heightInputChannel->finalize();
@@ -114,8 +112,10 @@ int main() {
     appBldr->printGroup("g1", "\t");
     appBldr->listWebElements();
 
-    appBldr->listWebElements();
+    // appBldr->listWebElements();
     appBldr->listChannels();
+    cout << "Printing one of the pipelines..." << endl;
+    cxChannel->printPipeline(nullptr);
 
     // appBldr->start(3000);
     obj->start(3000);
