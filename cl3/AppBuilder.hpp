@@ -41,6 +41,7 @@ class Ticker {
     val timerId_;
     int tickInterval_ = 500;
     bool running_ = false;
+    string state_ = "";
 
    public:
     Ticker(int tickInterval = 500, bool running_ = false)
@@ -49,6 +50,27 @@ class Ticker {
     }
 
     virtual ~Ticker() {}
+
+    /**
+     * @brief Manipulates the Ticker's state machine. By defining an object channel that can set
+     * or get the string state value and then connecting that channel to a button channel, you can
+     * create a nice toggle control for the Ticker. This is illustrated in the demo app.
+     *
+     * @param newState
+     */
+    virtual void setState(const string& newState) {
+        if (newState == "CLICK") {
+            toggle();
+            if (running_) {
+                state_ = "RUNNING";
+            } else {
+                state_ = "NOT_RUNNING";
+            }
+        }
+    }
+
+
+    string getState() const { return state_; }
 
     /**
      * @brief We overload this in subclasses to create the tick callback for each class.
@@ -100,7 +122,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     map<const int, shared_ptr<WebElement>> webElements_;
     map<const string, vector<const int>> groups_;
 
-    string state_ = "";
+   // string state_ = "";
 
     bool labelAllInputs_ = true;
     bool labelsSwallowTheirReferents_ = true;
@@ -172,7 +194,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     void tick() {
         cout << "AppBuilder says TICK!" << endl;
         syncFrom("tick: ");
-    }   
+    }
 
     void doNothing() {
         // syncFrom();
@@ -415,25 +437,25 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
 
     int getNumWebElements() { return webElements_.size(); }
 
-    string getState() const { return state_; }
+    
 
-    /**
-     * @brief Manipulates the AppBuilder's state machine. By defining an object channel that can set
-     * or get the string state value and then connecting that channel to a button channel, you can
-     * create a nice toggle control for the AppBuilder. This is illustrated in the demo app.
-     *
-     * @param newState
-     */
-    void setState(const string& newState) {
-        if (newState == "CLICK") {
-            toggle();
-            if (running_) {
-                state_ = "RUNNING";
-            } else {
-                state_ = "NOT_RUNNING";
-            }
-        }
-    }
+    // /**
+    //  * @brief Manipulates the AppBuilder's state machine. By defining an object channel that can set
+    //  * or get the string state value and then connecting that channel to a button channel, you can
+    //  * create a nice toggle control for the AppBuilder. This is illustrated in the demo app.
+    //  *
+    //  * @param newState
+    //  */
+    // void setState(const string& newState) {
+    //     if (newState == "CLICK") {
+    //         toggle();
+    //         if (running_) {
+    //             state_ = "RUNNING";
+    //         } else {
+    //             state_ = "NOT_RUNNING";
+    //         }
+    //     }
+    // }
 
     /**
      * @brief Basically for debugging.
@@ -514,7 +536,7 @@ EMSCRIPTEN_BINDINGS(AppBuilder) {
         .function("listChannels", &cl3::AppBuilder::listChannels, emscripten::allow_raw_pointers())
         .function("getNumWebElements", &cl3::AppBuilder::getNumWebElements,
                   emscripten::allow_raw_pointers());
-   
+
     emscripten::class_<cl3::Ticker>("Ticker").function("start", &cl3::Ticker::start);
 }
 
