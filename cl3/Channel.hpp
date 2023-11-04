@@ -50,9 +50,7 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
    public:
     Channel() {}
     Channel(string name) : name_(name) {}
-    string getName() { return name_; }
-
-    // virtual void finalize() {}
+    string getName() { return name_; }    
 
     virtual void testMethod() { cout << "Channel::testMethod()" << endl; }
 

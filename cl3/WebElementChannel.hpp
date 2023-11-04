@@ -45,20 +45,7 @@ class WebElementChannel : public Channel {
     WebElementChannel(string name) : Channel(name) {}
 
     void setChannelAttributeName(const string &s) { channelAttributeName_ = s; }
-
-    // virtual void finalize() {
-    //     // val generateInjectFn = val::global("generateInjectFn");
-    //     //  cout << "WebElementChannel::finalize is creating the listener for channel with
-    //     address:
-    //     //  "
-    //     //       << int(this) << endl;
-    //     //  // val onChangeFn = generateInjectFn(this->getptr());
-
-    //     // val onChangeFn = this->weptr_->generateEventListenerForChannel(this->getptr());
-
-    //     // this->weptr_->addEventListener(val(eventListenerName_), onChangeFn);
-    // }
-
+    
     /**
      * @brief Assigns the provided WebElement to this channel
      *
