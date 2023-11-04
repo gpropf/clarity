@@ -9,8 +9,8 @@
  *
  */
 
-#ifndef Util.hpp
-#define Util.hpp
+#ifndef Util_hpp
+#define Util_hpp
 
 #include <emscripten.h>
 #include <emscripten/bind.h>
