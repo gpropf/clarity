@@ -31,12 +31,12 @@ SRC = $(wildcard *.cpp)
 # %.o : %.hpp
 # 	$(ENV) $(CXX) $(CXXFLAGS) $< -o $@ -c
 
-all: st3
+all: demo
 	make -C ../examples
 
 
-st3: st3.o
-	$(ENV) $(CXX) $(CXXFLAGS) -lembind st3.o -o st3.js -sALLOW_MEMORY_GROWTH
+demo: demo.o
+	$(ENV) $(CXX) $(CXXFLAGS) -lembind demo.o -o demo.js -sALLOW_MEMORY_GROWTH
 
 
 # docsclean:
