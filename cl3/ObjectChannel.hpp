@@ -1,7 +1,8 @@
 /**
- * @file AppBuilder.hpp
+ * @file ObjectChannel.hpp
  * @author Greg Propf (gpropf@gmail.com)
- * @brief This is the factory class that creates and then connects the signals.
+ * @brief This class allows you "embed" an arbitrary object along with setter and getter methods in
+ * a channel. Essentially, it connects objects to the signal pipeline.
  * @version 0.2
  * @date 2023-10-15
  *

@@ -1,7 +1,8 @@
 /**
- * @file AppBuilder.hpp
+ * @file WebElementChannel.hpp
  * @author Greg Propf (gpropf@gmail.com)
- * @brief This is the factory class that creates and then connects the signals.
+ * @brief An interface between web elements such as textfields and a channel. This is how you
+ * connect your GUI elements to the signal pipeline.
  * @version 0.2
  * @date 2023-10-15
  *

@@ -1,7 +1,8 @@
 /**
- * @file AppBuilder.hpp
+ * @file Channel.hpp
  * @author Greg Propf (gpropf@gmail.com)
- * @brief This is the factory class that creates and then connects the signals.
+ * @brief Base class for channels. The most important methods are `inject()` and `syncFrom()`.
+ * Basically, those are the push and pull behaviors respectively.
  * @version 0.2
  * @date 2023-10-15
  *
