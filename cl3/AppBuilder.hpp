@@ -86,7 +86,7 @@ class Ticker {
 
     bool isRunning() { return running_; }
 
-    virtual void start(int tickInterval = 250) {
+    virtual void start(int tickInterval = -1) {
         cout << "DBG AppBuilder::start()" << endl;
         if (tickInterval != -1) tickInterval_ = tickInterval;
         if (tickJS_ == val::null()) generateTickFunction();
@@ -189,7 +189,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         }
     }
 
-    virtual void start(int tickInterval = 250) { Ticker::start(tickInterval); }
+    //virtual void start(int tickInterval = 250) { Ticker::start(tickInterval); }
 
     void tick() {
         cout << "AppBuilder says TICK!" << endl;

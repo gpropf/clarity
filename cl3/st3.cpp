@@ -77,6 +77,9 @@ int main() {
     auto appBldrCommandChannel = make_shared<ObjectChannel<AppBuilder, string>>(
         appBldr, "appBldrCommandChannel", &AppBuilder::setState, &AppBuilder::getState);
 
+    auto tickerCommandChannel = make_shared<ObjectChannel<Ticker, string>>(
+        obj, "tickerCommandChannel", &Ticker::setState, &Ticker::getState);
+
     appBldr->addChannel(appBldrCommandChannel);
 
     appBldr->addChannel(objHeightChannel);
@@ -98,9 +101,16 @@ int main() {
 
     auto [abMonBtn, abMonBtnId] = appBldr->button("abMonBtn", "Toggle Monitor");
     abMonBtn->setClickCommand("CLICK");
-    auto [testBtnChannel, testBtnChannelId] = appBldr->makeWebElementChannel("testBtnChannel");
-    testBtnChannel->installWebElement(abMonBtn);
-    testBtnChannel->addConnection(appBldrCommandChannel);
+    auto [abMonChannel, abMonChannelId] = appBldr->makeWebElementChannel("abMonChannel");
+    abMonChannel->installWebElement(abMonBtn);
+    abMonChannel->addConnection(appBldrCommandChannel);
+
+    auto [tickerBtn, tickerBtnId] = appBldr->button("tickerBtn", "Toggle Ticker");
+    tickerBtn->setClickCommand("CLICK");
+    auto [tickerBtnChannel, tickerBtnChannelId] =
+        appBldr->makeWebElementChannel("tickerBtnChannel");
+    tickerBtnChannel->installWebElement(tickerBtn);
+    tickerBtnChannel->addConnection(tickerCommandChannel);
 
     auto [tickBtn, tickBtnId] = appBldr->button("tickButton", "Tick Once!", appBldrTickFn);
     cout << "tickBtnId: " << tickBtnId << endl;
@@ -118,7 +128,7 @@ int main() {
     cxChannel->printPipeline(nullptr);
 
     // appBldr->start(3000);
-    obj->start(3000);
+    // obj->start(3000);
     return 0;
 }
 
