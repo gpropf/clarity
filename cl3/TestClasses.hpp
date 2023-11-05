@@ -2,7 +2,7 @@
  * @file TestClasses.hpp
  * @author Greg Propf (gpropf@gmail.com)
  * @brief Some simple classes to test the cl3 object integrations.
- * @version 0.1
+ * @version 0.3
  * @date 2023-10-15
  *
  * @copyright Copyright (c) 2023

@@ -3,7 +3,7 @@
  * @author Greg Propf (gpropf@gmail.com)
  * @brief Base class for channels. The most important methods are `inject()` and `syncFrom()`.
  * Basically, those are the push and pull behaviors respectively.
- * @version 0.2
+ * @version 0.3
  * @date 2023-10-15
  *
  * @copyright Copyright (c) 2023

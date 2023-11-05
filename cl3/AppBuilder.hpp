@@ -2,7 +2,7 @@
  * @file AppBuilder.hpp
  * @author Greg Propf (gpropf@gmail.com)
  * @brief This is the factory class that creates and then connects the signals.
- * @version 0.2
+ * @version 0.3
  * @date 2023-10-15
  *
  * @copyright Copyright (c) 2023

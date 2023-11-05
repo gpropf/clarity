@@ -3,7 +3,7 @@
  * @author Greg Propf (gpropf@gmail.com)
  * @brief This class allows you "embed" an arbitrary object along with setter and getter methods in
  * a channel. Essentially, it connects objects to the signal pipeline.
- * @version 0.2
+ * @version 0.3
  * @date 2023-10-15
  *
  * @copyright Copyright (c) 2023

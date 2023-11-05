@@ -2,7 +2,7 @@
  * @file WebElements.hpp
  * @author Greg Propf (gpropf@gmail.com)
  * @brief Basic HTML classes. Essentially, these are a quick way to create HTML tags.
- * @version 0.1
+ * @version 0.3
  * @date 2023-03-01
  *
  * @copyright Copyright (c) 2023
