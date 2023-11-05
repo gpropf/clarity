@@ -164,8 +164,11 @@ EMSCRIPTEN_BINDINGS(Channel) {
     // //     .function("accept", &WebElementSignalObject<std::string>::accept,
     // //               emscripten::allow_raw_pointers());
 
-    emscripten::class_<WebElementChannel>("WebElementChannel")
-        .function("inject", &WebElementChannel::inject, emscripten::allow_raw_pointers());
+    // emscripten::class_<WebElementChannel>("WebElementChannel")
+    //     .function("inject", &WebElementChannel::inject, emscripten::allow_raw_pointers())
+    //     .class_function("makeDoublePair", &WebElementChannel::makeDoublePair);
+
+    
     //  .function("injectCppval", &WebElementChannel::injectCppval,
     //  emscripten::allow_raw_pointers());
     // emscripten::class_<WebElementSignal<std::string>>("WebElementSignal")

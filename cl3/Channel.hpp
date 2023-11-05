@@ -81,12 +81,12 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
     virtual void inject(val s, int signalGeneration = 0) {
         val printVal = val::global("printVal");
         cout << "Channel name: " << name_ << ", signal generation = " << signalGeneration << endl;
-        try {
-            cout << "<SIGNAL>" << s.as<string>() << "</SIGNAL>" << endl;
-        } catch (...) {
-            cout << "EXCEPTION THROWN BY INJECTED SIGNAL!!!" << endl;
-        }
-
+        val signalType = s.typeof();
+        if (signalType.as<string>() == "string")
+            cout << "<SIGNAL>" << s.as<string>() << "</SIGNAL> type: " << signalType.as<string>()
+                 << endl;
+        else
+            cout << "<SIGNAL></SIGNAL> type: " << signalType.as<string>() << endl;
         for (auto c : this->channels_) {
             if (signalGeneration == 0) c->inject(s, signalGeneration + 1);
         }

@@ -45,7 +45,7 @@ class WebElementChannel : public Channel {
     WebElementChannel(string name) : Channel(name) {}
 
     void setChannelAttributeName(const string &s) { channelAttributeName_ = s; }
-    
+
     /**
      * @brief Assigns the provided WebElement to this channel
      *
@@ -71,11 +71,31 @@ class WebElementChannel : public Channel {
     virtual void syncFrom(string tabs = "") {
         cout << tabs << "WebElementChannel::syncFrom() for '" << name_ << "', uid: " << getUid()
              << " DOES NOTHING." << endl;
-    };
+    }
+
+    /**
+     * @brief Intended to be called from JS event handlers that return a location value.
+     *
+     * @param x
+     * @param y
+     * @return std::pair<double, double>
+     */
+    static std::pair<double, double> makeDoublePair(double x, double y) { return std::pair(x, y); }
 };
+
+EMSCRIPTEN_BINDINGS(WebElementChannel) {
+    emscripten::class_<std::pair<double, double>>("pair");
+
+    emscripten::class_<WebElementChannel>("WebElementChannel")
+        .function("inject", &WebElementChannel::inject, emscripten::allow_raw_pointers())
+        .class_function("makeDoublePair", &WebElementChannel::makeDoublePair);
+    // emscripten::class_<cl3::WebElementChannel>("WebElementChannel")
+    //     .class_function("makeDoublePair", &cl3::WebElementChannel::makeDoublePair);
+}
+
 
 };  // namespace cl3
 
-EMSCRIPTEN_BINDINGS(WebElementChannel) {}
+
 
 #endif
