@@ -207,6 +207,14 @@ struct SVG : public WebElement {
         : WebElement("svg", name, id, parentElement) {
         domElement_.call<void>("setAttribute", val("width"), val(width));
         domElement_.call<void>("setAttribute", val("height"), val(height));
+        channelEventListenerName_ = "click";
+    }
+
+    virtual val generateEventListenerForChannel(shared_ptr<Channel> wec) {
+        val generateEventListenerForChannel_AreaElement =
+            val::global("generateEventListenerForChannel_AreaElement");
+        val evListenerFn = generateEventListenerForChannel_AreaElement(wec, domElement_);
+        return evListenerFn;
     }
 };
 

@@ -50,7 +50,7 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
    public:
     Channel() {}
     Channel(string name) : name_(name) {}
-    string getName() { return name_; }    
+    string getName() { return name_; }
 
     virtual void testMethod() { cout << "Channel::testMethod()" << endl; }
 
@@ -81,7 +81,12 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
     virtual void inject(val s, int signalGeneration = 0) {
         val printVal = val::global("printVal");
         cout << "Channel name: " << name_ << ", signal generation = " << signalGeneration << endl;
-        cout << "<SIGNAL>" << s.as<string>() << "</SIGNAL>" << endl;
+        try {
+            cout << "<SIGNAL>" << s.as<string>() << "</SIGNAL>" << endl;
+        } catch (...) {
+            cout << "EXCEPTION THROWN BY INJECTED SIGNAL!!!" << endl;
+        }
+
         for (auto c : this->channels_) {
             if (signalGeneration == 0) c->inject(s, signalGeneration + 1);
         }

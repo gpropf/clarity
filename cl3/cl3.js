@@ -59,21 +59,34 @@ function sayHello() {
 
 function TickerTick(ticker) {
     return function () {
-        ticker.tick();        
+        ticker.tick();
     }
 }
 
 function generateInjectFn(channel) {
     console.log("On JS side creating inject listener for channel: ", channel);
-    return function (ev) {        
+    return function (ev) {
         console.log("inject generated fn called for channel at: ", channel);
         channel.inject(ev.target.value, 0);
     };
 }
 
+function generateEventListenerForChannel_AreaElement(channel, domElement) {
+    console.log("generateEventListenerForChannel_AreaElement: ", channel);
+    return function (ev) {
+        //let text = ev.target.value;
+        var boundingBox = domElement.getBoundingClientRect();
+        // console.log("boundingBox: ", boundingBox);
+        //var viewBox = domElement.getAttribute("viewBox");
+        let relX = ev.clientX - boundingBox.x;
+        let relY = ev.clientY - boundingBox.y;
+        channel.inject([relX, relY], 0);
+    }
+}
+
 function generateEventListenerForChannel_TextField(channel) {
     console.log("generateEventListenerForChannel_TextField: ", channel);
-    return function (ev) {        
+    return function (ev) {
         console.log("generateEventListenerForChannel_TextField --> inject generated fn called for channel at: ", channel);
         channel.inject(ev.target.value, 0);
     };
@@ -93,7 +106,7 @@ function generateEventListenerForChannel_Button(channel, clickCommand = "CLICK")
         //let s = testObjCSO.getSignal();
         console.log("generateEventListenerForChannel_Button --> inject generated fn called for channel at: ", channel);
         channel.inject(clickCommand, 0);
-        
+
     };
 }
 
@@ -119,9 +132,9 @@ function callMethodByName(obj, objMethodName) {
  *  method on some arbitrary C++ object.
  */
 function elgCallMethodOnObjByName(obj, objMethodName) {
-    return function () {        
+    return function () {
         console.log("elgCallMethodOnObjByName generated fn called.");
-        callMethodByName(obj, objMethodName);        
+        callMethodByName(obj, objMethodName);
     };
 }
 
@@ -131,10 +144,10 @@ function installTickCallback(tickBtnId) {
     tickbtn.addEventListener("click", appBuilderSingletonTick);
 }
 
-function getTickFn(obj) {    
-    return function () {        
+function getTickFn(obj) {
+    return function () {
         console.log("Generated tick fn has object at address: ", obj)
-        obj.tick();        
+        obj.tick();
     }
 }
 

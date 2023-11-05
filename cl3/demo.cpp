@@ -33,6 +33,9 @@ int main() {
     std::shared_ptr<cl3::AppBuilder> appBldr = std::make_shared<AppBuilder>();
 
     auto [svg, svgId] = appBldr->svg("svgArea1", 600, 400);
+    auto [svgChannel, svgChannelId] = appBldr->makeWebElementChannel("svgChannel");
+    svgChannel->installWebElement(svg);
+
     auto [ellipse, ellipseId] =
         appBldr->ellipse("ellipse1", 200, 100, 80, 55, svg->getDomElement());
     auto [rxChannel, rxChannelId] = appBldr->makeWebElementChannel("rxChannel");
