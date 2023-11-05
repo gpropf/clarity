@@ -85,8 +85,10 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
         if (signalType.as<string>() == "string")
             cout << "<SIGNAL>" << s.as<string>() << "</SIGNAL> type: " << signalType.as<string>()
                  << endl;
-        else
-            cout << "<SIGNAL></SIGNAL> type: " << signalType.as<string>() << endl;
+        else {
+            auto [x,y] = s.as<std::pair<double, double>>();
+            cout << "<SIGNAL>" << x << ", " << y  << "</SIGNAL> type: " << signalType.as<string>() << endl;
+        }
         for (auto c : this->channels_) {
             if (signalGeneration == 0) c->inject(s, signalGeneration + 1);
         }

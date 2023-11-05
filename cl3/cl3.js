@@ -80,7 +80,9 @@ function generateEventListenerForChannel_AreaElement(channel, domElement) {
         //var viewBox = domElement.getAttribute("viewBox");
         let relX = ev.clientX - boundingBox.x;
         let relY = ev.clientY - boundingBox.y;
-        channel.inject([relX, relY], 0);
+
+        let location = Module.WebElementChannel.makeDoublePair(relX, relY)
+        channel.inject(location, 0);
     }
 }
 
