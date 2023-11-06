@@ -81,14 +81,25 @@ class WebElementChannel : public Channel {
      * @return std::pair<double, double>
      */
     static std::pair<double, double> makeDoublePair(double x, double y) { return std::pair(x, y); }
+
+    /**
+     * @brief Intended to be called from JS event handlers that return an integer location value.
+     * 
+     * @param x 
+     * @param y 
+     * @return std::pair<double, double> 
+     */
+    static std::pair<int, int> makeIntPair(int x, int y) { return std::pair(x, y); }
 };
 
 EMSCRIPTEN_BINDINGS(WebElementChannel) {
-    emscripten::class_<std::pair<double, double>>("pair");
+    emscripten::class_<std::pair<double, double>>("dblpair");
+     emscripten::class_<std::pair<int, int>>("intpair");
 
     emscripten::class_<WebElementChannel>("WebElementChannel")
         .function("inject", &WebElementChannel::inject, emscripten::allow_raw_pointers())
-        .class_function("makeDoublePair", &WebElementChannel::makeDoublePair);
+        .class_function("makeDoublePair", &WebElementChannel::makeDoublePair)
+        .class_function("makeIntPair", &WebElementChannel::makeIntPair);
     // emscripten::class_<cl3::WebElementChannel>("WebElementChannel")
     //     .class_function("makeDoublePair", &cl3::WebElementChannel::makeDoublePair);
 }

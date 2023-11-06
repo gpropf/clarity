@@ -33,6 +33,7 @@ int main() {
     std::shared_ptr<cl3::AppBuilder> appBldr = std::make_shared<AppBuilder>();
 
     auto [svg, svgId] = appBldr->svg("svgArea1", 600, 400);
+    svg->setAttribute("viewBox", val("0 0 300 200"));
     auto [svgChannel, svgChannelId] = appBldr->makeWebElementChannel("svgChannel");
     svgChannel->installWebElement(svg);
 

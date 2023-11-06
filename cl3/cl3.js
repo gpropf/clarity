@@ -71,18 +71,46 @@ function generateInjectFn(channel) {
     };
 }
 
+/**
+ * New version of the `elgMouseSignal` method in CL2. We probably need a
+ * better way to filter these values depending on whether we have a canvas
+ * or svg area.
+ * 
+ * @param {WebElementChannel} channel 
+ * @param {val} domElement 
+ * @returns 
+ */
 function generateEventListenerForChannel_AreaElement(channel, domElement) {
     console.log("generateEventListenerForChannel_AreaElement: ", channel);
     return function (ev) {
-        //let text = ev.target.value;
         var boundingBox = domElement.getBoundingClientRect();
         // console.log("boundingBox: ", boundingBox);
         //var viewBox = domElement.getAttribute("viewBox");
         let relX = ev.clientX - boundingBox.x;
         let relY = ev.clientY - boundingBox.y;
 
-        let location = Module.WebElementChannel.makeDoublePair(relX, relY)
-        channel.inject(location, 0);
+
+        var viewBoxAttr = domElement.getAttribute("viewBox");
+        // console.log("viewBox: ", viewBoxAttr);
+        let loc;
+        if (viewBoxAttr == null) {
+            //loc = Module.WebElementChannel.makeIntPair(relX, relY);
+            loc = Module.WebElementChannel.makeDoublePair(relX, relY);
+            channel.inject(loc, 0);
+        }
+        else {
+            var viewBox = domElement.viewBox;
+            // console.log("viewBox.baseVal.width: ", viewBox.baseVal.width);
+            let ratioX = relX / boundingBox.width;
+            let ratioY = relY / boundingBox.height;
+            let vbX = viewBox.baseVal.width * ratioX + viewBox.baseVal.x;
+            let vbY = viewBox.baseVal.height * ratioY + viewBox.baseVal.y;
+            loc = Module.WebElementChannel.makeDoublePair(vbX, vbY);
+            channel.inject(loc, 0);
+            // console.log("viewBox location (x,y): ", vbX, vbY);
+        }
+        console.log("JS: ", ev.clientX, ev.clientY, relX, relY);
+
     }
 }
 
