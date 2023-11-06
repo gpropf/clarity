@@ -338,6 +338,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
                           val parentElement = val::null()) {
         auto [tf, tfid] = textField(name, descriptionText, parentElement);
         auto [c, cid] = makeWebElementChannel(name);
+        c->installWebElement(tf);
         return c;
     }
 
