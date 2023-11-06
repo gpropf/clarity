@@ -69,7 +69,6 @@ class Ticker {
         }
     }
 
-
     string getState() const { return state_; }
 
     /**
@@ -122,7 +121,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     map<const int, shared_ptr<WebElement>> webElements_;
     map<const string, vector<const int>> groups_;
 
-   // string state_ = "";
+    // string state_ = "";
 
     bool labelAllInputs_ = true;
     bool labelsSwallowTheirReferents_ = true;
@@ -189,7 +188,7 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         }
     }
 
-    //virtual void start(int tickInterval = 250) { Ticker::start(tickInterval); }
+    // virtual void start(int tickInterval = 250) { Ticker::start(tickInterval); }
 
     void tick() {
         cout << "AppBuilder says TICK!" << endl;
@@ -335,6 +334,13 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
         return std::make_pair(tf, tfid);
     }
 
+    auto textFieldChannel(const string& name, const string& descriptionText,
+                          val parentElement = val::null()) {
+        auto [tf, tfid] = textField(name, descriptionText, parentElement);
+        auto [c, cid] = makeWebElementChannel(name);
+        return c;
+    }
+
     /**
      * @brief Create an SVG area using the WebElements library.
      *
@@ -436,26 +442,6 @@ class AppBuilder : public std::enable_shared_from_this<AppBuilder>, public Ticke
     shared_ptr<Channel> getChannel(const int id) { return channels_.at(id); }
 
     int getNumWebElements() { return webElements_.size(); }
-
-    
-
-    // /**
-    //  * @brief Manipulates the AppBuilder's state machine. By defining an object channel that can set
-    //  * or get the string state value and then connecting that channel to a button channel, you can
-    //  * create a nice toggle control for the AppBuilder. This is illustrated in the demo app.
-    //  *
-    //  * @param newState
-    //  */
-    // void setState(const string& newState) {
-    //     if (newState == "CLICK") {
-    //         toggle();
-    //         if (running_) {
-    //             state_ = "RUNNING";
-    //         } else {
-    //             state_ = "NOT_RUNNING";
-    //         }
-    //     }
-    // }
 
     /**
      * @brief Basically for debugging.
