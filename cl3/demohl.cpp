@@ -42,6 +42,8 @@ int main() {
 
     auto [ellipse, ellipseId] =
         appBldr->ellipse("ellipse1", 200, 100, 80, 55, svg->getDomElement());
+    ellipse->setAttribute("fill", val("lightblue"));
+    ellipse->setAttribute("stroke", val("blue"));
     auto [rxChannel, rxChannelId] = appBldr->makeWebElementChannel("rxChannel");
     rxChannel->installWebElement(ellipse);
     rxChannel->setChannelAttributeName("rx");
