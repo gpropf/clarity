@@ -31,12 +31,15 @@ SRC = $(wildcard *.cpp)
 # %.o : %.hpp
 # 	$(ENV) $(CXX) $(CXXFLAGS) $< -o $@ -c
 
-all: demo demohl demoll
+demos: demohl demoll
+
+
+all: demos
 	make -C ../examples
 
 
-demo: demo.o
-	$(ENV) $(CXX) $(CXXFLAGS) -lembind demo.o -o demo.js -sALLOW_MEMORY_GROWTH
+# demo: demo.o
+# 	$(ENV) $(CXX) $(CXXFLAGS) -lembind demo.o -o demo.js -sALLOW_MEMORY_GROWTH
 
 demoll: demoll.o
 	$(ENV) $(CXX) $(CXXFLAGS) -lembind demoll.o -o demoll.js -sALLOW_MEMORY_GROWTH
@@ -51,15 +54,14 @@ demohl: demohl.o
 # 	rm -f *.o clarity_embind.js
 
 clean:	
-	rm -f *.o *.wasm *.wasm.map *.a signalTest.js
+	rm -f *.o *.wasm *.wasm.map *.a demohl.js demoll.js
 
 # simpleTest: simpleTest.o
 # 	$(ENV) $(CXX) $(CXXFLAGS) -lembind simpleTest.o -o signalTest.js
 
 
 
-realclean:
-	rm -f *.o *.wasm *.wasm.map *.a signalTest.js
+realclean: clean
 
 
 
