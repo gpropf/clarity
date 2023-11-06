@@ -4,7 +4,6 @@ clarity_embind.js
 html/
 junk/
 latex/
-work_shit/
 *.o
 *.a
 *.d
@@ -13,6 +12,5 @@ work_shit/
 #############################
 signalTest.js
 pixelreactor.js
-demo.js
 demoll.js
 demohl.js
