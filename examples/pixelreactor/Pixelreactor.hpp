@@ -905,22 +905,29 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      */
     string serializeBeaker() {
         ostringstream os;
-        MapVal gridWidth(gridWidth_);
-        string gridWidthStr = "gridWidth";
-        const MapVal gridWidthMV(&gridWidthStr);
+        MapVal gridWidth(gridWidth_);        
         MapVal gridHeight(gridHeight_);
-        //MapVal gw("GW");
-        string fooStr = "FOO";
-        MapVal foo(&fooStr);
         MapVal name(&name_);
 
         std::map<string, MapVal> m{
             {"gridWidth", gridWidth}, {"gridHeight", gridHeight}, {"name", name}};
-        //std::map<MapVal, MapVal> m2{{gridWidthMV, gridWidth}};
-        // std::map<MapVal, MapVal> m3{{MapVal("gridWidth"), gridWidth}};
-        //  m[gridWidthMV] = gridWidth;
+        
         os << "{" << endl << MapVal::mapToJson(m) << "}" << endl;
-        //os << "{" << endl << MapVal::mapToJson(m2) << "}" << endl;
+
+        int numChildren = reactionRules_.size();
+        cout << "There are " << numChildren << " reaction rules." << endl;
+
+        if (numChildren != 0) {
+            os << "children: {";
+            for (auto reactionRule : reactionRules_) {
+                string childStr = reactionRule->serializeBeaker();
+                cout << "childStr: " << childStr << endl;
+                // string childStr =  reactionRule->name_;
+                os << childStr << endl;
+            }
+            os << "}" << endl;
+        }
+        // os << "{" << endl << MapVal::mapToJson(m2) << "}" << endl;
         return os.str();
     }
 
