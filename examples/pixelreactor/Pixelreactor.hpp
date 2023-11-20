@@ -915,21 +915,21 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
 
         if (isReactionRule_) {
             gridControl_->makeFrame();
-            string snapshot = gridControl_->serializeFramesStr();
+            string snapshot = gridControl_->snapshotStr();
             MapVal snapshotMV(&snapshot);
             m = {{"gridWidth", gridWidth},
                  {"gridHeight", gridHeight},
                  {"name", name},
                  {"successorName", successorName},
                  {"successorOffsetX", successorOffsetX},
-                 {"successorOffsetY", successorOffsetY}, {"snapshot", snapshotMV}};
+                 {"successorOffsetY", successorOffsetY},
+                 {"snapshot", snapshotMV}};
         } else {
-            m = {{"gridWidth", gridWidth},
-                 {"gridHeight", gridHeight},
-                 {"name", name},
-                 {"successorName", successorName},
-                 {"successorOffsetX", successorOffsetX},
-                 {"successorOffsetY", successorOffsetY}};
+            m = {
+                {"gridWidth", gridWidth},
+                {"gridHeight", gridHeight},
+                {"name", name},
+            };
         }
 
         // std::map<string, MapVal> m{{"gridWidth", gridWidth},

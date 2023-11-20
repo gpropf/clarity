@@ -182,10 +182,16 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         return frameSet_.serializeFrames(frameIndex, endFrame);
     }
 
-    string serializeFramesStr(int frameIndex = 0, int endFrame = 0) {
-        ostringstream os = frameSet_.serializeFrames(frameIndex, endFrame);
-        //return "TEST";
+    string snapshotStr(int frameIndex = 0, int endFrame = 0) {
+        ostringstream os;
+        for (int i = 0; i < gridWidth_; i ++) {
+            for (int j = 0; j < gridHeight_; j ++) {
+                PixelT p = getPixelAt(i,j);
+                os << "[" << i << "," << j << "," << int(p) << "],";
+            }
+        }
         return os.str();
+        //return os.str();
     }
 
     GridControl(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight,
