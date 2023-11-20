@@ -903,30 +903,58 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
      *
      * @return string
      */
-    string serializeBeaker() {
+    string serializeBeaker(string extraTabs = "") {
         ostringstream os;
-        MapVal gridWidth(gridWidth_);        
+        MapVal gridWidth(gridWidth_);
         MapVal gridHeight(gridHeight_);
         MapVal name(&name_);
+        MapVal successorName(&successorName_);
+        MapVal successorOffsetX(successorOffsetX_);
+        MapVal successorOffsetY(successorOffsetY_);
+        std::map<string, MapVal> m;
 
-        std::map<string, MapVal> m{
-            {"gridWidth", gridWidth}, {"gridHeight", gridHeight}, {"name", name}};
-        
-        os << "{" << endl << MapVal::mapToJson(m) << "}" << endl;
+        if (isReactionRule_) {
+            gridControl_->makeFrame();
+            string snapshot = gridControl_->serializeFramesStr();
+            MapVal snapshotMV(&snapshot);
+            m = {{"gridWidth", gridWidth},
+                 {"gridHeight", gridHeight},
+                 {"name", name},
+                 {"successorName", successorName},
+                 {"successorOffsetX", successorOffsetX},
+                 {"successorOffsetY", successorOffsetY}, {"snapshot", snapshotMV}};
+        } else {
+            m = {{"gridWidth", gridWidth},
+                 {"gridHeight", gridHeight},
+                 {"name", name},
+                 {"successorName", successorName},
+                 {"successorOffsetX", successorOffsetX},
+                 {"successorOffsetY", successorOffsetY}};
+        }
+
+        // std::map<string, MapVal> m{{"gridWidth", gridWidth},
+        //                            {"gridHeight", gridHeight},
+        //                            {"name", name},
+        //                            {"successorName", successorName},
+        //                            {"successorOffsetX", successorOffsetX},
+        //                            {"successorOffsetY", successorOffsetY}};
+
+        os << extraTabs << "{" << endl << MapVal::mapToJson(m, extraTabs);
 
         int numChildren = reactionRules_.size();
         cout << "There are " << numChildren << " reaction rules." << endl;
 
         if (numChildren != 0) {
-            os << "children: {";
+            os << "\t\"children\": [" << endl;
             for (auto reactionRule : reactionRules_) {
-                string childStr = reactionRule->serializeBeaker();
+                string childStr = reactionRule->serializeBeaker("\t");
                 cout << "childStr: " << childStr << endl;
                 // string childStr =  reactionRule->name_;
                 os << childStr << endl;
             }
-            os << "}" << endl;
+            os << "\t]" << endl;
         }
+        os << extraTabs << "},";
         // os << "{" << endl << MapVal::mapToJson(m2) << "}" << endl;
         return os.str();
     }

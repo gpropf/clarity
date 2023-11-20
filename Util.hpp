@@ -59,7 +59,7 @@ struct MapVal {
 
     ~MapVal() {
         if (type_ == STR) {
-            delete mvu_.s_;
+           // delete mvu_.s_;
         }
     }
 
@@ -96,10 +96,10 @@ struct MapVal {
         return os.str();
     }
 
-    static string mapToJson(map<string, MapVal>& m) {
+    static string mapToJson(map<string, MapVal>& m, string extraTabs = "") {
         ostringstream os;
         for (const auto& [key, value] : m) {
-            os << "\t\"" << key << "\" : " << value.toJson() << "," << endl;
+            os << extraTabs << "\t\"" << key << "\" : " << value.toJson() << "," << endl;
         }
         return os.str();
     }

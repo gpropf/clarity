@@ -182,6 +182,12 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
         return frameSet_.serializeFrames(frameIndex, endFrame);
     }
 
+    string serializeFramesStr(int frameIndex = 0, int endFrame = 0) {
+        ostringstream os = frameSet_.serializeFrames(frameIndex, endFrame);
+        //return "TEST";
+        return os.str();
+    }
+
     GridControl(int gridWidth, int gridHeight, int pixelWidth, int pixelHeight,
                 shared_ptr<SignalBuilder> signalBuilder, const std::string &id = "",
                 val parentDOMElement = val::null())
