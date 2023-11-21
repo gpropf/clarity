@@ -912,11 +912,15 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         MapVal successorOffsetX(successorOffsetX_);
         MapVal successorOffsetY(successorOffsetY_);
         std::map<string, MapVal> m;
+        string *snapshotBuffer;
 
         if (isReactionRule_) {
             gridControl_->makeFrame();
-            string snapshot = gridControl_->snapshotStr();
-            MapVal snapshotMV(&snapshot);
+            string snapshot = "";
+            snapshot = gridControl_->snapshotStr();
+            snapshotBuffer = new string(snapshot);
+            cout << "WITHIN if/then snaphot = " << snapshot << endl;
+            MapVal snapshotMV(snapshotBuffer);
             m = {{"gridWidth", gridWidth},
                  {"gridHeight", gridHeight},
                  {"name", name},
@@ -956,6 +960,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         }
         os << extraTabs << "},";
         // os << "{" << endl << MapVal::mapToJson(m2) << "}" << endl;
+        delete snapshotBuffer;
         return os.str();
     }
 

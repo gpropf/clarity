@@ -190,7 +190,8 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
                 os << "[" << i << "," << j << "," << int(p) << "],";
             }
         }
-        return os.str();
+        string s = os.str();
+        return s;
         //return os.str();
     }
 
