@@ -919,7 +919,7 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
             string snapshot = "";
             snapshot = gridControl_->snapshotStr();
             snapshotBuffer = new string(snapshot);
-            cout << "WITHIN if/then snaphot = " << snapshot << endl;
+            //cout << "WITHIN if/then snaphot = " << snapshot << endl;
             MapVal snapshotMV(snapshotBuffer);
             m = {{"gridWidth", gridWidth},
                  {"gridHeight", gridHeight},
@@ -935,24 +935,17 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
                 {"name", name},
             };
         }
-
-        // std::map<string, MapVal> m{{"gridWidth", gridWidth},
-        //                            {"gridHeight", gridHeight},
-        //                            {"name", name},
-        //                            {"successorName", successorName},
-        //                            {"successorOffsetX", successorOffsetX},
-        //                            {"successorOffsetY", successorOffsetY}};
-
+        
         os << extraTabs << "{" << endl << MapVal::mapToJson(m, extraTabs);
 
         int numChildren = reactionRules_.size();
-        cout << "There are " << numChildren << " reaction rules." << endl;
+        //cout << "There are " << numChildren << " reaction rules." << endl;
 
         if (numChildren != 0) {
             os << "\t\"children\": [" << endl;
             for (auto reactionRule : reactionRules_) {
                 string childStr = reactionRule->serializeBeaker("\t");
-                cout << "childStr: " << childStr << endl;
+                //cout << "childStr: " << childStr << endl;
                 // string childStr =  reactionRule->name_;
                 os << childStr << endl;
             }

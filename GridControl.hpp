@@ -184,12 +184,14 @@ class GridControl : public std::enable_shared_from_this<GridControl<PixelT>> {
 
     string snapshotStr(int frameIndex = 0, int endFrame = 0) {
         ostringstream os;
+        os << "[";
         for (int i = 0; i < gridWidth_; i ++) {
             for (int j = 0; j < gridHeight_; j ++) {
                 PixelT p = getPixelAt(i,j);
                 os << "[" << i << "," << j << "," << int(p) << "],";
             }
         }
+        os << "]";
         string s = os.str();
         return s;
         //return os.str();
