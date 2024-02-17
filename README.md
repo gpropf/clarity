@@ -38,3 +38,5 @@ There is already a small "showcase" type app called `signalTest` that allows you
 ## Misc
 
 The directory `Screenshots-from-original-app` shows the test patterns from the old app that should be tried to verify the behavior of the new app.
+
+Tested with Emscripten 3.1.54

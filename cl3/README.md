@@ -11,3 +11,4 @@ I'm refactoring the code again. This time the goal is two-fold. First, we are go
 
 ## Misc
 
+Tested with Emscripten 3.1.54
