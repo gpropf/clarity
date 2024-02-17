@@ -69,6 +69,8 @@ int main() {
     
     // Code to create the height field and associate it with a channel.
     auto heightInputChannel = appBldr->textFieldChannel("heightInput", "Height (double)");
+
+    auto testAreaOutputChannel = appBldr->textFieldChannel("testAreaOutput", "Area output");
     
 
     // These are the endpoints that allow the values we input in the text fields to actually reach
@@ -93,6 +95,7 @@ int main() {
     widthInputChannel->addConnection(objWidthChannel);
     objWidthChannel->addConnection(rxChannel);
     cxChannel->addConnection(cxValChannel);
+    svgChannel->addConnection(testAreaOutputChannel);
 
     // objWidthChannel->finalize();
     // objHeightChannel->finalize();

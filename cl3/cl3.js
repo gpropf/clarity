@@ -71,6 +71,13 @@ function generateInjectFn(channel) {
     };
 }
 
+
+// function getCompleteType(jsobj) {
+//     return Object.prototype.toString.call(jsobj);
+// }
+
+
+
 /**
  * New version of the `elgMouseSignal` method in CL2. We probably need a
  * better way to filter these values depending on whether we have a canvas

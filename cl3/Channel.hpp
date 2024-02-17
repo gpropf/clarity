@@ -32,6 +32,10 @@ using std::vector;
 
 namespace cl3 {
 
+class Metaval : val {
+
+};
+
 class Channel : public std::enable_shared_from_this<Channel>, public Identifiable {
     val currentValue_;
 
@@ -80,8 +84,10 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
      */
     virtual void inject(val s, int signalGeneration = 0) {
         val printVal = val::global("printVal");
+        
+
         cout << "Channel name: " << name_ << ", signal generation = " << signalGeneration << endl;
-        val signalType = s.typeof();
+        val signalType = s.typeOf();
         if (signalType.as<string>() == "string")
             cout << "<SIGNAL>" << s.as<string>() << "</SIGNAL> type: " << signalType.as<string>()
                  << endl;
