@@ -104,6 +104,8 @@ function generateEventListenerForChannel_AreaElement(channel, domElement) {
             //loc = Module.WebElementChannel.makeIntPair(relX, relY);
             loc = Module.WebElementChannel.makeDoublePair(relX, relY);
             channel.inject(loc, 0);
+            let locMV = Module.WebElementChannel.makeMetaval2D(relX, relY);
+            channel.injectMetaval(locMV, 0);
         }
         else {
             var viewBox = domElement.viewBox;
@@ -114,7 +116,10 @@ function generateEventListenerForChannel_AreaElement(channel, domElement) {
             let vbY = viewBox.baseVal.height * ratioY + viewBox.baseVal.y;
             loc = Module.WebElementChannel.makeDoublePair(vbX, vbY);
             channel.inject(loc, 0);
-            // console.log("viewBox location (x,y): ", vbX, vbY);
+
+            let locMV = Module.WebElementChannel.makeMetaval2D(relX, relY);
+            channel.injectMetaval(locMV, 0);
+            
         }
         console.log("JS: ", ev.clientX, ev.clientY, relX, relY);
 

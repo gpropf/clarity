@@ -15,6 +15,7 @@
 
 #include <memory>
 
+#include "Metaval.hpp"
 #include "Util.hpp"
 #include "WebElements.hpp"
 
@@ -30,31 +31,6 @@ using std::vector;
 #include <emscripten/val.h>
 
 namespace cl3 {
-
-class Metaval {
-    val val_;
-
-   public:
-    virtual string toString() = 0;
-};
-
-class Metaval2D : public Metaval {
-    double x_, y_;
-
-   public:
-    Metaval2D(double x, double y) : x_(x), y_(y) {}
-
-    virtual string toString() { return std::to_string(x_) + string(", ") + std::to_string(y_); };
-};
-
-class MetavalInt : public Metaval {
-    int i_;
-
-   public:
-    MetavalInt(int i) : i_(i) {}
-
-    virtual string toString() { return std::to_string(i_); };
-};
 
 /**
  * @brief A type of channel with a WebElement at its core. The WebElement's event listeners will
@@ -93,12 +69,22 @@ class WebElementChannel : public Channel {
         }
     }
 
+    virtual void injectMetaval(shared_ptr<Metaval> mv, int signalGeneration = 0) {
+        cout << "WebElementChannel::injectMetaval() called!" << endl;
+        Channel::injectMetaval(mv, signalGeneration);
+        auto domEl = weptr_->getDomElement();
+        if (signalGeneration > 0) {
+            domEl.set(channelAttributeName_, val(mv->toString()));
+            domEl.call<void>("setAttribute", val(channelAttributeName_), val(mv->toString()));
+        }
+    }
+
     virtual void syncFrom(string tabs = "") {
         cout << tabs << "WebElementChannel::syncFrom() for '" << name_ << "', uid: " << getUid()
              << " DOES NOTHING." << endl;
     }
 
-    static shared_ptr<Metaval> makeMetaval(int i) {
+    static shared_ptr<cl3::Metaval> makeMetaval(int i) {
         shared_ptr<MetavalInt> mvp = std::make_shared<MetavalInt>(i);
         return std::dynamic_pointer_cast<Metaval>(mvp);
     };

@@ -15,6 +15,7 @@
 
 #include <memory>
 
+#include "Metaval.hpp"
 #include "Util.hpp"
 #include "WebElements.hpp"
 // #include "WebElementChannel.hpp"
@@ -31,8 +32,6 @@ using std::vector;
 #include <emscripten/val.h>
 
 namespace cl3 {
-
-
 
 class Channel : public std::enable_shared_from_this<Channel>, public Identifiable {
     val currentValue_;
@@ -82,7 +81,6 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
      */
     virtual void inject(val s, int signalGeneration = 0) {
         val printVal = val::global("printVal");
-        
 
         cout << "Channel name: " << name_ << ", signal generation = " << signalGeneration << endl;
         val signalType = s.typeOf();
@@ -90,11 +88,25 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
             cout << "<SIGNAL>" << s.as<string>() << "</SIGNAL> type: " << signalType.as<string>()
                  << endl;
         else {
-            auto [x,y] = s.as<std::pair<double, double>>();
-            cout << "<SIGNAL>" << x << ", " << y  << "</SIGNAL> type: " << signalType.as<string>() << endl;
+            auto [x, y] = s.as<std::pair<double, double>>();
+            cout << "<SIGNAL>" << x << ", " << y << "</SIGNAL> type: " << signalType.as<string>()
+                 << endl;
         }
         for (auto c : this->channels_) {
             if (signalGeneration == 0) c->inject(s, signalGeneration + 1);
+        }
+    }
+
+    virtual void injectMetaval(shared_ptr<Metaval> mv, int signalGeneration = 0) {
+        val printVal = val::global("printVal");
+
+        cout << "injectMetaval - Channel name: " << name_
+             << ", signal generation = " << signalGeneration << endl;
+
+        cout << "MV->toString: " << mv->toString() << endl;
+
+        for (auto c : this->channels_) {
+            if (signalGeneration == 0) c->injectMetaval(mv, signalGeneration + 1);
         }
     }
 
@@ -128,6 +140,7 @@ class Channel : public std::enable_shared_from_this<Channel>, public Identifiabl
 EMSCRIPTEN_BINDINGS(AppBuilder) {
     emscripten::class_<Channel>("Channel")
         .function("inject", &Channel::inject)
+        .function("injectMetaval", &Channel::injectMetaval)
         .smart_ptr<std::shared_ptr<cl3::Channel>>("Channel");
 }
 
