@@ -31,6 +31,31 @@ using std::vector;
 
 namespace cl3 {
 
+class Metaval {
+    val val_;
+
+   public:
+    virtual string toString() = 0;
+};
+
+class Metaval2D : public Metaval {
+    double x_, y_;
+
+   public:
+    Metaval2D(double x, double y) : x_(x), y_(y) {}
+
+    virtual string toString() { return std::to_string(x_) + string(", ") + std::to_string(y_); };
+};
+
+class MetavalInt : public Metaval {
+    int i_;
+
+   public:
+    MetavalInt(int i) : i_(i) {}
+
+    virtual string toString() { return std::to_string(i_); };
+};
+
 /**
  * @brief A type of channel with a WebElement at its core. The WebElement's event listeners will
  * originate signals that are then injected into the network.
@@ -73,6 +98,16 @@ class WebElementChannel : public Channel {
              << " DOES NOTHING." << endl;
     }
 
+    static shared_ptr<Metaval> makeMetaval(int i) {
+        shared_ptr<MetavalInt> mvp = std::make_shared<MetavalInt>(i);
+        return std::dynamic_pointer_cast<Metaval>(mvp);
+    };
+
+    static shared_ptr<Metaval> makeMetaval2D(double x, double y) {
+        shared_ptr<Metaval2D> mvp = std::make_shared<Metaval2D>(x, y);
+        return std::dynamic_pointer_cast<Metaval>(mvp);
+    };
+
     /**
      * @brief Intended to be called from JS event handlers that return a location value.
      *
@@ -84,29 +119,28 @@ class WebElementChannel : public Channel {
 
     /**
      * @brief Intended to be called from JS event handlers that return an integer location value.
-     * 
-     * @param x 
-     * @param y 
-     * @return std::pair<double, double> 
+     *
+     * @param x
+     * @param y
+     * @return std::pair<double, double>
      */
     static std::pair<int, int> makeIntPair(int x, int y) { return std::pair(x, y); }
 };
 
 EMSCRIPTEN_BINDINGS(WebElementChannel) {
     emscripten::class_<std::pair<double, double>>("dblpair");
-     emscripten::class_<std::pair<int, int>>("intpair");
+    emscripten::class_<std::pair<int, int>>("intpair");
 
     emscripten::class_<WebElementChannel>("WebElementChannel")
         .function("inject", &WebElementChannel::inject, emscripten::allow_raw_pointers())
         .class_function("makeDoublePair", &WebElementChannel::makeDoublePair)
-        .class_function("makeIntPair", &WebElementChannel::makeIntPair);
+        .class_function("makeIntPair", &WebElementChannel::makeIntPair)
+        .class_function("makeMetaval", &WebElementChannel::makeMetaval)
+        .class_function("makeMetaval2D", &WebElementChannel::makeMetaval2D);
     // emscripten::class_<cl3::WebElementChannel>("WebElementChannel")
     //     .class_function("makeDoublePair", &cl3::WebElementChannel::makeDoublePair);
 }
 
-
 };  // namespace cl3
-
-
 
 #endif
