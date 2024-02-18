@@ -58,6 +58,15 @@ class MetavalInt : public Metaval {
     virtual string toString() { return std::to_string(i_); };
 };
 
+class MetavalString : public Metaval {
+    string s_;
+
+   public:
+    MetavalString(string s) : s_(s) {}
+
+    virtual string toString() { return s_; };
+};
+
 EMSCRIPTEN_BINDINGS(Metaval) {
     emscripten::class_<Metaval>("Metaval")
         //.function("inject", &Channel::inject)
@@ -68,6 +77,9 @@ EMSCRIPTEN_BINDINGS(Metaval) {
     emscripten::class_<Metaval2D>("Metaval2D")
         //.function("inject", &Channel::inject)
         .smart_ptr<std::shared_ptr<cl3::Metaval2D>>("Metaval2D");
+    emscripten::class_<MetavalString>("MetavalString")
+        //.function("inject", &Channel::inject)
+        .smart_ptr<std::shared_ptr<cl3::MetavalString>>("MetavalString");
 }
 
 };  // namespace cl3

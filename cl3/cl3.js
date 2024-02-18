@@ -129,16 +129,22 @@ function generateEventListenerForChannel_AreaElement(channel, domElement) {
 function generateEventListenerForChannel_TextField(channel) {
     console.log("generateEventListenerForChannel_TextField: ", channel);
     return function (ev) {
-        console.log("generateEventListenerForChannel_TextField --> inject generated fn called for channel at: ", channel);
-        channel.inject(ev.target.value, 0);
+        //console.log("generateEventListenerForChannel_TextField --> inject generated fn called for channel at: ", channel);
+       // channel.inject(ev.target.value, 0);
+
+        let stringVal = Module.WebElementChannel.makeMetavalString(ev.target.value);
+        channel.injectMetaval(stringVal, 0);
     };
 }
 
 function generateEventListenerForChannel_RangeInput(channel) {
     console.log("generateEventListenerForChannel_RangeInput: ", channel);
     return function (ev) {
-        console.log("generateEventListenerForChannel_RangeInput --> inject generated fn called for channel at: ", channel);
-        channel.inject(ev.target.value, 0);
+        //console.log("generateEventListenerForChannel_RangeInput --> inject generated fn called for channel at: ", channel);
+        //channel.inject(ev.target.value, 0);
+
+        let stringVal = Module.WebElementChannel.makeMetavalString(ev.target.value);
+        channel.injectMetaval(stringVal, 0);
     };
 }
 

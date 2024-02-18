@@ -94,6 +94,11 @@ class WebElementChannel : public Channel {
         return std::dynamic_pointer_cast<Metaval>(mvp);
     };
 
+    static shared_ptr<Metaval> makeMetavalString(string s) {
+        shared_ptr<MetavalString> mvp = std::make_shared<MetavalString>(s);
+        return std::dynamic_pointer_cast<Metaval>(mvp);
+    };
+
     /**
      * @brief Intended to be called from JS event handlers that return a location value.
      *
@@ -122,7 +127,8 @@ EMSCRIPTEN_BINDINGS(WebElementChannel) {
         .class_function("makeDoublePair", &WebElementChannel::makeDoublePair)
         .class_function("makeIntPair", &WebElementChannel::makeIntPair)
         .class_function("makeMetaval", &WebElementChannel::makeMetaval)
-        .class_function("makeMetaval2D", &WebElementChannel::makeMetaval2D);
+        .class_function("makeMetaval2D", &WebElementChannel::makeMetaval2D)
+        .class_function("makeMetavalString", &WebElementChannel::makeMetavalString);;
     // emscripten::class_<cl3::WebElementChannel>("WebElementChannel")
     //     .class_function("makeDoublePair", &cl3::WebElementChannel::makeDoublePair);
 }
