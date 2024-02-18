@@ -32,9 +32,7 @@ using std::vector;
 
 namespace cl3 {
 
-class Metaval : val {
 
-};
 
 class Channel : public std::enable_shared_from_this<Channel>, public Identifiable {
     val currentValue_;

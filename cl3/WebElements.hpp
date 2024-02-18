@@ -34,6 +34,10 @@ namespace cl3 {
 class Channel;
 class WebElementChannel;
 
+class Metaval : val {
+
+};
+
 /**
  * @brief Represents a single web element. Defined as a struct because this is meant to defined
  * usually as const.
