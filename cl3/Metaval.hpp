@@ -32,11 +32,17 @@ using std::vector;
 
 namespace cl3 {
 
+/**
+ * @brief Metaval is a wrapper around the 'val' type in emscripten and has methods to translate it
+ * into standard useable forms, primarily string, The subclasses of Metaval define things like pairs
+ * of doubles, ints, doubles, etc...
+ *
+ */
 class Metaval {
     val val_;
 
    public:
-   virtual ~Metaval() {};
+    virtual ~Metaval(){};
     virtual string toString() = 0;
 };
 
