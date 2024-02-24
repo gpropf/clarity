@@ -48,7 +48,15 @@ struct WebElement : public Identifiable {
     bool deleteDomElementOnExit_ = false;
     // bool deleteDomElementOnExit_ = true;
 
-    virtual val handleMetaval(shared_ptr<cl3::Metaval> mv) { return val::null(); };
+    /**
+     * @brief Very important method! responsible for unwrapping Metaval objects for each type of
+     * WebElement. Different types may require different behavior. The default is just to return a
+     * string wrapped in a val.
+     *
+     * @param mv
+     * @return val
+     */
+    virtual val handleMetaval(shared_ptr<cl3::Metaval> mv) { return val(mv->toString()); };
 
     void forceDeleteDomElementOnExit() { deleteDomElementOnExit_ = true; }
 
@@ -137,8 +145,6 @@ struct TextField : public InputElement {
         : InputElement(name, "text", id, parentElement) {
         channelEventListenerName_ = "change";
     }
-
-    virtual val handleMetaval(shared_ptr<cl3::Metaval> mv) { return val(mv->toString()); };
 
     virtual val generateEventListenerForChannel(shared_ptr<Channel> wec) {
         val generateEventListenerForChannel_TextField =

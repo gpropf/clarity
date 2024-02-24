@@ -63,6 +63,28 @@ val cppToVal(string s) {
     return val(s);
 }
 
+// Metaval stuff
+
+template <typename S>
+S metavalToCPP(shared_ptr<Metaval> v) {
+    return v->toString();
+}
+
+template <>
+string metavalToCPP(shared_ptr<Metaval> v) {
+    return v->toString();
+}
+
+template <>
+int metavalToCPP(shared_ptr<Metaval> v) {
+    return std::stoi(v->toString());
+}
+
+template <>
+double metavalToCPP(shared_ptr<Metaval> v) {
+    return std::stod(v->toString());
+}
+
 template <class ObjClass, typename S>
 class ObjectChannel : public Channel {
     S signalValue_;
@@ -93,6 +115,23 @@ class ObjectChannel : public Channel {
         S s = valToCPP<S>(v);
         cout << "Injected value treated as '" << typeid(s).name() << "'" << endl;
         (*objPtr_.*setter_)(s);
+    }
+
+    virtual void injectMetaval(shared_ptr<Metaval> mv, int signalGeneration = 0) {
+        val printVal = val::global("printVal");
+        Channel::injectMetaval(mv, signalGeneration);
+
+        S s = metavalToCPP<S>(mv);
+
+        cout << "ObjectChannel::injectMetaval - Channel name: " << name_
+             << ", signal generation = " << signalGeneration << endl;
+
+        cout << "ObjectChannel::MV->toString: " << mv->toString() << endl;
+        (*objPtr_.*setter_)(s);
+
+        // for (auto c : this->channels_) {
+        //     if (signalGeneration == 0) c->injectMetaval(mv, signalGeneration + 1);
+        // }
     }
 
     /**

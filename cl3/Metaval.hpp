@@ -13,8 +13,8 @@
 #ifndef Metaval_hpp
 #define Metaval_hpp
 
-#include <memory>
 #include <map>
+#include <memory>
 
 // #include "Util.hpp"
 // #include "WebElements.hpp"
@@ -45,6 +45,7 @@ class Metaval {
     val val_;
 
    public:
+    val getval() { return val_; }
     virtual ~Metaval(){};
     virtual string toString() = 0;
 };
