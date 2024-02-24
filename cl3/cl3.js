@@ -152,8 +152,10 @@ function generateEventListenerForChannel_Button(channel, clickCommand = "CLICK")
     console.log("generateEventListenerForChannel_Button: ", channel);
     return function (ev) {
         //let s = testObjCSO.getSignal();
-        console.log("generateEventListenerForChannel_Button --> inject generated fn called for channel at: ", channel);
-        channel.inject(clickCommand, 0);
+        console.log("generateEventListenerForChannel_Button --> injectMetaval generated fn called for channel at: ", channel);
+        //channel.inject(clickCommand, 0);
+        let stringVal = Module.WebElementChannel.makeMetavalString(clickCommand);
+        channel.injectMetaval(stringVal, 0);
 
     };
 }
