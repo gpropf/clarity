@@ -14,6 +14,7 @@
 #define Channel3_hpp
 
 #include <memory>
+#include <iostream>
 
 #include "Metaval.hpp"
 #include "Util.hpp"

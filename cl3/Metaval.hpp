@@ -14,9 +14,10 @@
 #define Metaval_hpp
 
 #include <memory>
+#include <map>
 
-#include "Util.hpp"
-#include "WebElements.hpp"
+// #include "Util.hpp"
+// #include "WebElements.hpp"
 // #include "WebElementChannel.hpp"
 
 using std::cout;
@@ -29,6 +30,8 @@ using std::vector;
 #include <emscripten.h>
 #include <emscripten/bind.h>
 #include <emscripten/val.h>
+
+using emscripten::val;
 
 namespace cl3 {
 

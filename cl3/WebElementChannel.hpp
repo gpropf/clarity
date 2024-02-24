@@ -74,8 +74,8 @@ class WebElementChannel : public Channel {
         Channel::injectMetaval(mv, signalGeneration);
         auto domEl = weptr_->getDomElement();
         if (signalGeneration > 0) {
-            domEl.set(channelAttributeName_, val(mv->toString()));
-            domEl.call<void>("setAttribute", val(channelAttributeName_), val(mv->toString()));
+            domEl.set(channelAttributeName_, val(weptr_->handleMetaval(mv)));
+            domEl.call<void>("setAttribute", val(channelAttributeName_), val(weptr_->handleMetaval(mv)));
         }
     }
 

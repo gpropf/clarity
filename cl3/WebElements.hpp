@@ -23,6 +23,7 @@
 #include <map>
 #include <sstream>
 
+#include "Metaval.hpp"
 #include "Util.hpp"
 
 using emscripten::val;
@@ -33,8 +34,6 @@ namespace cl3 {
 
 class Channel;
 class WebElementChannel;
-
-
 
 /**
  * @brief Represents a single web element. Defined as a struct because this is meant to defined
@@ -49,7 +48,7 @@ struct WebElement : public Identifiable {
     bool deleteDomElementOnExit_ = false;
     // bool deleteDomElementOnExit_ = true;
 
-    
+    virtual val handleMetaval(shared_ptr<cl3::Metaval> mv) { return val::null(); };
 
     void forceDeleteDomElementOnExit() { deleteDomElementOnExit_ = true; }
 
@@ -138,6 +137,8 @@ struct TextField : public InputElement {
         : InputElement(name, "text", id, parentElement) {
         channelEventListenerName_ = "change";
     }
+
+    virtual val handleMetaval(shared_ptr<cl3::Metaval> mv) { return val(mv->toString()); };
 
     virtual val generateEventListenerForChannel(shared_ptr<Channel> wec) {
         val generateEventListenerForChannel_TextField =
