@@ -4,12 +4,12 @@
 #include <set>
 #include <utility>
 
-#include "GridControl.hpp"
-#include "Signal.hpp"
-#include "SignalBuilder.hpp"
-#include "SignalPrimitives.hpp"
+//#include "GridControl.hpp"
+// #include "Signal.hpp"
+// #include "SignalBuilder.hpp"
+//#include "SignalPrimitives.hpp"
 #include "Util.hpp"
-#include "WebElementSignals.hpp"
+//#include "WebElementSignals.hpp"
 #include "WebElements.hpp"
 
 using namespace cl2;
@@ -96,44 +96,44 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
     static const RotationMatrix2D<gridCoordinateT> rotationMatrices[4];  // = {r0, r90, r180, r270};
 
    protected:
-    shared_ptr<cl2::SignalBuilder> signalBuilder_;
+    //shared_ptr<cl2::SignalBuilder> signalBuilder_;
     val signalBuilderDomElement_ = val::null();
     shared_ptr<Div> beakerDiv_;
 
-    shared_ptr<GridControl<V>> gridControl_;
-    shared_ptr<WebElementSignal<std::string>> nameInput_;
-    shared_ptr<WebElementSignal<std::string>> successorNameInput_;
-    shared_ptr<WebElementSignal<std::string>> successorPriorityInput_;
-    shared_ptr<WebElementSignal<std::string>> successorOffsetXInput_;
-    shared_ptr<WebElementSignal<std::string>> successorOffsetYInput_;
-    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> nameInputLoop_;
-    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorNameInputLoop_;
-    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorPriorityInputLoop_;
-    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorOffsetXInputLoop_;
-    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorOffsetYInputLoop_;
-    // shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
-    shared_ptr<WebElementSignal<std::string>> newRuleButton_;
-    shared_ptr<WebElementSignal<std::string>> iterateButton_;
-    shared_ptr<WebElementSignal<std::string>> deleteRuleButton_;
-    shared_ptr<WebElementSignal<std::string>> clearButton_;
-    shared_ptr<WebElementSignal<std::string>> loadButton_;
+    // shared_ptr<GridControl<V>> gridControl_;
+    // shared_ptr<WebElementSignal<std::string>> nameInput_;
+    // shared_ptr<WebElementSignal<std::string>> successorNameInput_;
+    // shared_ptr<WebElementSignal<std::string>> successorPriorityInput_;
+    // shared_ptr<WebElementSignal<std::string>> successorOffsetXInput_;
+    // shared_ptr<WebElementSignal<std::string>> successorOffsetYInput_;
+    // shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> nameInputLoop_;
+    // shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorNameInputLoop_;
+    // shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorPriorityInputLoop_;
+    // shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorOffsetXInputLoop_;
+    // shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> successorOffsetYInputLoop_;
+    // // shared_ptr<WebElementSignal<std::string>> newRuleButtonOutput_;
+    // shared_ptr<WebElementSignal<std::string>> newRuleButton_;
+    // shared_ptr<WebElementSignal<std::string>> iterateButton_;
+    // shared_ptr<WebElementSignal<std::string>> deleteRuleButton_;
+    // shared_ptr<WebElementSignal<std::string>> clearButton_;
+    // shared_ptr<WebElementSignal<std::string>> loadButton_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> loadAcceptor_;
-    shared_ptr<WebElementSignal<std::string>> saveButton_;
+    //shared_ptr<WebElementSignal<std::string>> saveButton_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> saveAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> clearAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> objAcceptor_;
     shared_ptr<ObjectAcceptor<std::string, Beaker<V>>> iterateAcceptor_;
 
-    shared_ptr<WebElementSignal<std::string>> iterationIntervalInput_;
-    shared_ptr<WebElementSignal<std::string>> ruleWidthInput_;
-    shared_ptr<WebElementSignal<std::string>> ruleHeightInput_;
-    // shared_ptr<ObjectEmitter<std::string, Beaker<unsigned char>>> objectEmitter_;
+    // shared_ptr<WebElementSignal<std::string>> iterationIntervalInput_;
+    // shared_ptr<WebElementSignal<std::string>> ruleWidthInput_;
+    // shared_ptr<WebElementSignal<std::string>> ruleHeightInput_;
+    // // shared_ptr<ObjectEmitter<std::string, Beaker<unsigned char>>> objectEmitter_;
     // shared_ptr<ObjectAcceptor<std::string, Beaker<unsigned char>>> objectAcceptor_;
 
-    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> iterationIntervalLoop_;
+    //shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> iterationIntervalLoop_;
 
-    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleWidthLoop_;
-    shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleHeightLoop_;
+    //shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleWidthLoop_;
+    //shared_ptr<ObjectSignalLoop<std::string, Beaker<unsigned char>>> ruleHeightLoop_;
 
     std::string name_;
     bool isReactionRule_ = false;  //!< Set to true if this Beaker is being used as a reaction rule
@@ -212,112 +212,112 @@ class Beaker : public std::enable_shared_from_this<Beaker<V>> {
         if (isReactionRule_) {
             this->successor_ = getptr();
 
-            nameInput_ = signalBuilder_->withAttributes({{"class", val("medium_width")}})
-                             .textInputWSS<std::string>("nameInput", "Rule Name", false);
+            // nameInput_ = signalBuilder_->withAttributes({{"class", val("medium_width")}})
+            //                  .textInputWSS<std::string>("nameInput", "Rule Name", false);
 
-            nameInputLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-                getptr(), nameInput_, &Beaker<unsigned char>::setName,
-                &Beaker<unsigned char>::getName);
+            // nameInputLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+            //     getptr(), nameInput_, &Beaker<unsigned char>::setName,
+            //     &Beaker<unsigned char>::getName);
 
-            signalBuilder_->connectLoop(nameInputLoop_);
+            // signalBuilder_->connectLoop(nameInputLoop_);
 
-            successorNameInput_ =
-                signalBuilder_->withAttributes({{"class", val("medium_width")}})
-                    .textInputWSS<std::string>("successorNameInput", "Successor Rule Name", false);
+            // successorNameInput_ =
+            //     signalBuilder_->withAttributes({{"class", val("medium_width")}})
+            //         .textInputWSS<std::string>("successorNameInput", "Successor Rule Name", false);
 
-            successorNameInputLoop_ =
-                make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-                    getptr(), successorNameInput_, &Beaker<unsigned char>::setSuccessorName,
-                    &Beaker<unsigned char>::getSuccessorName);
+            // successorNameInputLoop_ =
+            //     make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+            //         getptr(), successorNameInput_, &Beaker<unsigned char>::setSuccessorName,
+            //         &Beaker<unsigned char>::getSuccessorName);
 
-            signalBuilder_->connectLoop(successorNameInputLoop_);
+            // signalBuilder_->connectLoop(successorNameInputLoop_);
 
-            successorPriorityInput_ =
-                signalBuilder_->withAttributes({{"class", val("small_width")}})
-                    .textInputWSS<std::string>("successorPriorityInput", "Successor Priority",
-                                               false);
+            // successorPriorityInput_ =
+            //     signalBuilder_->withAttributes({{"class", val("small_width")}})
+            //         .textInputWSS<std::string>("successorPriorityInput", "Successor Priority",
+            //                                    false);
 
-            successorPriorityInputLoop_ =
-                make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-                    getptr(), successorPriorityInput_, &Beaker<unsigned char>::setSuccessorPriority,
-                    &Beaker<unsigned char>::getSuccessorPriority);
+            // successorPriorityInputLoop_ =
+            //     make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+            //         getptr(), successorPriorityInput_, &Beaker<unsigned char>::setSuccessorPriority,
+            //         &Beaker<unsigned char>::getSuccessorPriority);
 
-            signalBuilder_->connectLoop(successorPriorityInputLoop_);
+            // signalBuilder_->connectLoop(successorPriorityInputLoop_);
 
-            successorOffsetXInput_ =
-                signalBuilder_->withAttributes({{"class", val("small_width")}})
-                    .textInputWSS<std::string>("successorOffsetXInput", "SX", false);
+            // successorOffsetXInput_ =
+            //     signalBuilder_->withAttributes({{"class", val("small_width")}})
+            //         .textInputWSS<std::string>("successorOffsetXInput", "SX", false);
 
-            successorOffsetXInputLoop_ =
-                make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-                    getptr(), successorOffsetXInput_, &Beaker<unsigned char>::setSuccessorOffsetX,
-                    &Beaker<unsigned char>::getSuccessorOffsetX);
+            // successorOffsetXInputLoop_ =
+            //     make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+            //         getptr(), successorOffsetXInput_, &Beaker<unsigned char>::setSuccessorOffsetX,
+            //         &Beaker<unsigned char>::getSuccessorOffsetX);
 
-            signalBuilder_->connectLoop(successorOffsetXInputLoop_);
+            // signalBuilder_->connectLoop(successorOffsetXInputLoop_);
 
-            successorOffsetYInput_ =
-                signalBuilder_->withAttributes({{"class", val("small_width")}})
-                    .textInputWSS<std::string>("successorOffsetYInput", "SY", false);
+            // successorOffsetYInput_ =
+            //     signalBuilder_->withAttributes({{"class", val("small_width")}})
+            //         .textInputWSS<std::string>("successorOffsetYInput", "SY", false);
 
-            successorOffsetYInputLoop_ =
-                make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-                    getptr(), successorOffsetYInput_, &Beaker<unsigned char>::setSuccessorOffsetY,
-                    &Beaker<unsigned char>::getSuccessorOffsetY);
+            // successorOffsetYInputLoop_ =
+            //     make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+            //         getptr(), successorOffsetYInput_, &Beaker<unsigned char>::setSuccessorOffsetY,
+            //         &Beaker<unsigned char>::getSuccessorOffsetY);
 
-            signalBuilder_->connectLoop(successorOffsetYInputLoop_);
+            // signalBuilder_->connectLoop(successorOffsetYInputLoop_);
 
-            objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
-            objAcceptor_->setSignalAcceptorMethod(&Beaker::deleteRuleSignal);
-            deleteRuleButton_ = signalBuilder_->buttonWSS<std::string>("Delete this rule");
-            signalBuilder_->connect<std::string>(deleteRuleButton_, objAcceptor_);
+            // objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            // objAcceptor_->setSignalAcceptorMethod(&Beaker::deleteRuleSignal);
+            // deleteRuleButton_ = signalBuilder_->buttonWSS<std::string>("Delete this rule");
+            // signalBuilder_->connect<std::string>(deleteRuleButton_, objAcceptor_);
 
         } else {
-            objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
-            objAcceptor_->setSignalAcceptorMethod(&Beaker::makeNewReactionRuleSignal);
-            newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");
-            signalBuilder_->connect<std::string>(newRuleButton_, objAcceptor_);
+            // objAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            // objAcceptor_->setSignalAcceptorMethod(&Beaker::makeNewReactionRuleSignal);
+            // newRuleButton_ = signalBuilder_->buttonWSS<std::string>("New Rule WSS");
+            // signalBuilder_->connect<std::string>(newRuleButton_, objAcceptor_);
 
-            iterateAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
-            iterateAcceptor_->setSignalAcceptorMethod(&Beaker::iterateSignalMethod);
-            iterateButton_ = signalBuilder_->buttonWSS<std::string>("Iterate");
-            signalBuilder_->connect<std::string>(iterateButton_, iterateAcceptor_);
+            // iterateAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            // iterateAcceptor_->setSignalAcceptorMethod(&Beaker::iterateSignalMethod);
+            // iterateButton_ = signalBuilder_->buttonWSS<std::string>("Iterate");
+            // signalBuilder_->connect<std::string>(iterateButton_, iterateAcceptor_);
 
-            clearAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
-            clearAcceptor_->setSignalAcceptorMethod(&Beaker::clearGrid);
-            clearButton_ = signalBuilder_->buttonWSS<std::string>("Clear Grid");
-            signalBuilder_->connect<std::string>(clearButton_, clearAcceptor_);
+            // clearAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            // clearAcceptor_->setSignalAcceptorMethod(&Beaker::clearGrid);
+            // clearButton_ = signalBuilder_->buttonWSS<std::string>("Clear Grid");
+            // signalBuilder_->connect<std::string>(clearButton_, clearAcceptor_);
 
-            loadButton_ = signalBuilder_->buttonWSS<std::string>("Load Rules");
-            saveButton_ = signalBuilder_->buttonWSS<std::string>("Save Rules");
-            saveAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
-            saveAcceptor_->setSignalAcceptorMethod(&Beaker::serialize);
-            signalBuilder_->connect<std::string>(saveButton_, saveAcceptor_);
+            // loadButton_ = signalBuilder_->buttonWSS<std::string>("Load Rules");
+            // saveButton_ = signalBuilder_->buttonWSS<std::string>("Save Rules");
+            // saveAcceptor_ = make_shared<ObjectAcceptor<std::string, Beaker<V>>>(getptr());
+            // saveAcceptor_->setSignalAcceptorMethod(&Beaker::serialize);
+            // signalBuilder_->connect<std::string>(saveButton_, saveAcceptor_);
 
-            iterationIntervalInput_ =
-                signalBuilder_->withAttributes({{"class", val("small_width")}})
-                    .textInputWSS<std::string>("iterationIntervalInput", "Iteration interval in ms",
-                                               false);
+            // iterationIntervalInput_ =
+            //     signalBuilder_->withAttributes({{"class", val("small_width")}})
+            //         .textInputWSS<std::string>("iterationIntervalInput", "Iteration interval in ms",
+            //                                    false);
 
-            ruleWidthInput_ =
-                signalBuilder_->withAttributes({{"class", val("small_width")}})
-                    .textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
+            // ruleWidthInput_ =
+            //     signalBuilder_->withAttributes({{"class", val("small_width")}})
+            //         .textInputWSS<std::string>("ruleWidthInput", "Rule Width in pixels", false);
 
-            ruleHeightInput_ =
-                signalBuilder_->withAttributes({{"class", val("small_width")}})
-                    .textInputWSS<std::string>("ruleHeightInput", "Rule Height in pixels", false);
+            // ruleHeightInput_ =
+            //     signalBuilder_->withAttributes({{"class", val("small_width")}})
+            //         .textInputWSS<std::string>("ruleHeightInput", "Rule Height in pixels", false);
 
-            iterationIntervalLoop_ =
-                make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-                    getptr(), iterationIntervalInput_, &Beaker<unsigned char>::setIterationInterval,
-                    &Beaker<unsigned char>::getIterationInterval);
+            // iterationIntervalLoop_ =
+            //     make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+            //         getptr(), iterationIntervalInput_, &Beaker<unsigned char>::setIterationInterval,
+            //         &Beaker<unsigned char>::getIterationInterval);
 
-            ruleWidthLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-                getptr(), ruleWidthInput_, &Beaker<unsigned char>::setRuleGridWidth,
-                &Beaker<unsigned char>::getRuleGridWidth);
+            // ruleWidthLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+            //     getptr(), ruleWidthInput_, &Beaker<unsigned char>::setRuleGridWidth,
+            //     &Beaker<unsigned char>::getRuleGridWidth);
 
-            ruleHeightLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
-                getptr(), ruleHeightInput_, &Beaker<unsigned char>::setRuleGridHeight,
-                &Beaker<unsigned char>::getRuleGridHeight);
+            // ruleHeightLoop_ = make_shared<ObjectSignalLoop<std::string, Beaker<unsigned char>>>(
+            //     getptr(), ruleHeightInput_, &Beaker<unsigned char>::setRuleGridHeight,
+            //     &Beaker<unsigned char>::getRuleGridHeight);
 
             signalBuilder_->connectLoop(ruleWidthLoop_);
             signalBuilder_->connectLoop(ruleHeightLoop_);

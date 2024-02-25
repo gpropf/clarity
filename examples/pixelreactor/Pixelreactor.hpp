@@ -12,7 +12,7 @@
 #include "WebElementSignals.hpp"
 #include "WebElements.hpp"
 
-using namespace cl2;
+using namespace cl3;
 using namespace std::chrono;
 
 /**
